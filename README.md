@@ -1,0 +1,4 @@
+Skimbo
+======
+
+Typesafe contest app
