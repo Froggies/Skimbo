@@ -6,8 +6,8 @@ import services.auth._
 
 object Twitter extends OAuthProvider {
 
-	override val name = "twitter"
-	override val namespace = "tw"
+  override val name = "twitter"
+  override val namespace = "tw"
 
 }
 

@@ -6,8 +6,8 @@ import services.auth._
 
 object Trello extends OAuthProvider {
 
-	override val name = "trello"
-	override val namespace = "tr"
+  override val name = "trello"
+  override val namespace = "tr"
 
 }
 
