@@ -20,16 +20,16 @@ trait OAuth2Provider extends GenericProvider {
   def processToken(response: play.api.libs.ws.Response): Token
 
   // Session and cookies fields
-  lazy val fieldCsrf 			= namespace+"_csrf"
-  lazy val fieldToken 		= namespace+"_token"
-  lazy val fieldExpires 	= namespace+"_expires"
+  lazy val fieldCsrf        = namespace+"_csrf"
+  lazy val fieldToken       = namespace+"_token"
+  lazy val fieldExpires     = namespace+"_expires"
 
   // Load infos (token, secret, urls) from configuration
-  lazy val config 				= current.configuration.getConfig("social."+name).get
-  lazy val clientId 			= config.getString("clientId").get
-  lazy val secret 				= config.getString("secret").get
-  lazy val authorizeUrl 	= config.getString("authorize").get
-  lazy val accessTokenUrl = config.getString("accessToken").get
+  lazy val config           = current.configuration.getConfig("social."+name).get
+  lazy val clientId         = config.getString("clientId").get
+  lazy val secret           = config.getString("secret").get
+  lazy val authorizeUrl     = config.getString("authorize").get
+  lazy val accessTokenUrl   = config.getString("accessToken").get
 
   /**
    * Execute authentification on provider
@@ -61,11 +61,11 @@ trait OAuth2Provider extends GenericProvider {
   private def redirectToAccreditationPage(implicit request: RequestHeader) = {
     val csrf = randomUUID().toString
     val redirectQueryString = Map(
-      "client_id" 		-> clientId,
-      "redirect_uri" 	-> authRoute.absoluteURL(false),
-      "state" 				-> csrf,
-      "scope" 				-> permissions.mkString(permissionsSep),
-      "response_type" -> "code")
+      "client_id"       -> clientId,
+      "redirect_uri"    -> authRoute.absoluteURL(false),
+      "state"           -> csrf,
+      "scope"           -> permissions.mkString(permissionsSep),
+      "response_type"   -> "code")
 
     val url = redirectQueryString.foldLeft(authorizeUrl+"?")((url, qs) => url + qs._1+"="+qs._2+"&")
 
@@ -115,11 +115,11 @@ trait OAuth2Provider extends GenericProvider {
    */
   private def fetchAccessTokenResponse(code: String)(implicit request: RequestHeader) = {
     val data = Map(
-      "client_id" 		-> clientId,
-      "client_secret" -> secret,
-      "code" 					-> code,
-      "redirect_uri" 	-> authRoute.absoluteURL(false),
-      "grant_type" 		-> "authorization_code")
+      "client_id"       -> clientId,
+      "client_secret"   -> secret,
+      "code"            -> code,
+      "redirect_uri"    -> authRoute.absoluteURL(false),
+      "grant_type"      -> "authorization_code")
 
     val req = WS.url(accessTokenUrl).withHeaders(accessTokenHeaders: _*)
 
