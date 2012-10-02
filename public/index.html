@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en" ng-app>
+<head>
+<meta charset="utf-8">
+<title>My HTML File</title>
+<script src="trello.js"></script>
+<script src="javascripts/jquery-1.7.1.min.js"></script>
+<script src="javascripts/angular-1.0.2/angular.min.js"></script>
+<script>
+    function trelloCtrl($scope, $http) {
+      //#####real jquery
+      /*
+      $.get('/ex/trello', function(d) {
+          $scope.$apply(function(){
+            $scope.data = d;
+          });
+      });
+      */
+      //#####real angular
+      /*
+      $http.get('/ex/trello').success(
+        function(json) {
+          $scope.data = json;
+      });
+      */
+      //#####local
+      $scope.data = dataTrello;
+    };
+  </script>
+</head>
+<body>
+ 
+  <div ng-controller="trelloCtrl">
+    Search: <input ng-model="query">
+    <ul>
+      <li ng-repeat="d in data | filter:query">
+        {{d.data.board.name}} : {{d.data.card.name}} ({{d.memberCreator.fullName}})
+        <p>{{d.data.text}}</p>
+      </li>
+    </ul>
+  </div>
+  
+</body>
+</html>
