@@ -1,0 +1,9 @@
+<div ng-controller="ColumnsCtrl">
+	Search: <input ng-model="query">
+	<ul>
+		<li class="hero-unit" ng-repeat="d in data | filter:query">
+			{{d.data.board.name}} : {{d.data.card.name}} ({{d.memberCreator.fullName}})
+			<p>{{d.data.text}}</p>
+		</li>
+	</ul>
+</div>
