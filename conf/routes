@@ -5,6 +5,7 @@
 # Home page
 GET     /                           controllers.Application.index
 GET     /connected                  controllers.Application.connected
+GET     /testActor                  controllers.Application.testActor
 
 # Authentificate to providers
 GET     /auth/:provider             controllers.Application.authenticate(provider: String)

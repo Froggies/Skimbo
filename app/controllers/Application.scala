@@ -1,6 +1,6 @@
 package controllers
 
-import model.WebsocketActor
+import model._
 
 import play.api._
 import play.api.mvc._
@@ -28,6 +28,16 @@ object Application extends Controller {
       case Viadeo.name        => Viadeo.auth(routes.SocialNetworksTest.viadeo)
       case Scoopit.name       => Scoopit.auth(routes.SocialNetworksTest.scoopit)
       case _                  => throw new PlayException("Provider not implemented", "The provider "+provider+" is not implemented")
+    }
+  }
+
+  def testActor() = Action { implicit request =>
+    GooglePlus.getToken match {
+      case Some(credentials) => {
+        println(credentials);
+        User.create(Enumerator(), request, Scoopit, credentials, "https://www.googleapis.com/plus/v1/people/me/activities/public")
+        Ok("blabla")
+      }
     }
   }
 
