@@ -1,0 +1,25 @@
+<html>
+<head></head>
+<body>
+<script>
+  if (!!window.EventSource) {
+    var source = new EventSource('http://127.0.0.1:9000/testActor');
+    
+    source.addEventListener('message', function(e) {
+      console.log(e.data);
+    }, false);
+
+    source.addEventListener('open', function(e) {
+      // Connection was opened.
+    }, false);
+
+    source.addEventListener('error', function(e) {
+      if (e.readyState == EventSource.CLOSED) {
+        // Connection was closed.
+      }
+    }, false);
+  }
+
+</script>
+</body>
+</html>

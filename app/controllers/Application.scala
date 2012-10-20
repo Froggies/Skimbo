@@ -6,8 +6,12 @@ import play.api._
 import play.api.mvc._
 import play.api.libs._
 import play.api.libs.json._
+import play.api.libs.json.Json._
 import services.auth.providers._
 import play.api.libs.iteratee._
+import play.api.libs.ws.{Response => ResponseWS, _}
+
+import play.api.libs.concurrent._
 
 object Application extends Controller {
 
@@ -32,11 +36,10 @@ object Application extends Controller {
   }
 
   def testActor() = Action { implicit request =>
-    GooglePlus.getToken match {
+    Trello.getToken match {
       case Some(credentials) => {
-        println(credentials);
-        User.create(Enumerator(), request, Scoopit, credentials, "https://www.googleapis.com/plus/v1/people/me/activities/public")
-        Ok("blabla")
+        val sse = SseActor.operations(request, Trello, "https://api.trello.com/1/members/me/notifications");
+        Ok.feed(sse &> EventSource()).as("text/event-stream")
       }
     }
   }
