@@ -116,7 +116,6 @@ object SocialNetworksTest extends Controller {
   }
 
   def trello = Action { implicit request =>
-
     Trello.getToken match {
       case Some(credentials) => Async { // DOC https://trello.com/docs/api/notification/index.html
         Trello.fetch("https://api.trello.com/1/members/me/notifications")
@@ -126,6 +125,19 @@ object SocialNetworksTest extends Controller {
           })
       }
       case _ => Redirect(Trello.authRoute)
+    }
+  }
+
+  def scoopit = Action { implicit request =>
+    Scoopit.getToken match {
+      case Some(credentials) => Async { // DOC https://trello.com/docs/api/notification/index.html
+        Scoopit.fetch("http://www.scoop.it/api/1/notifications")
+          .get.map(r => r.status match {
+            case 200 => Ok(r.json)
+            case _   => Redirect(Scoopit.authRoute)
+          })
+      }
+      case _ => Redirect(Scoopit.authRoute)
     }
   }
 

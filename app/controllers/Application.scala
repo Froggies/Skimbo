@@ -1,8 +1,13 @@
 package controllers
 
+import model.WebsocketActor
+
 import play.api._
 import play.api.mvc._
+import play.api.libs._
+import play.api.libs.json._
 import services.auth.providers._
+import play.api.libs.iteratee._
 
 object Application extends Controller {
 
@@ -21,8 +26,21 @@ object Application extends Controller {
       case Trello.name        => Trello.auth(routes.SocialNetworksTest.trello)
       case Twitter.name       => Twitter.auth(routes.SocialNetworksTest.twitter)
       case Viadeo.name        => Viadeo.auth(routes.SocialNetworksTest.viadeo)
+      case Scoopit.name       => Scoopit.auth(routes.SocialNetworksTest.scoopit)
       case _                  => throw new PlayException("Provider not implemented", "The provider "+provider+" is not implemented")
     }
+  }
+
+  def connected() = WebSocket.using[String] { request => 
+    // Log events to the console
+    val in = Iteratee.foreach[String](println).mapDone { _ =>
+      println("Disconnected")
+    }
+    
+    // Send a single 'Hello!' message
+    val out = Enumerator("Hello!")
+    
+    (in, out)
   }
 
 }
