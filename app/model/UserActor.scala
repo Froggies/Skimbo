@@ -19,15 +19,15 @@ import akka.actor._
 import akka.actor.ReceiveTimeout
 import akka.util._
 
-object User {
+object UserActor {
   def create(out:Enumerator[String], request:RequestHeader, provider:GenericProvider, token:Any, endUrl:String):ActorRef = {
     //new User(provider, token, endUrl);//not actor yet
     //val system = ActorSystem("ActorSystem")
-    Akka.system.actorOf(Props(new User(out, request, provider, token, endUrl)), "myactor")
+    Akka.system.actorOf(Props(new UserActor(out, request, provider, token, endUrl)), "myactor")
   }
 }
 
-class User(out:Enumerator[String], r:RequestHeader, provider:GenericProvider, token:Any, endUrl:String) extends Actor {
+class UserActor(out:Enumerator[String], r:RequestHeader, provider:GenericProvider, token:Any, endUrl:String) extends Actor {
 
   private val interval = 5;//Config.getLong("mail.check.interval")
   context.setReceiveTimeout(Duration(interval, TimeUnit.SECONDS))
