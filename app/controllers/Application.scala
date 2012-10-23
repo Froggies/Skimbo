@@ -15,7 +15,7 @@ import play.api.libs.concurrent._
 
 object Application extends Controller {
 
-  def index = Action {
+  def index = Action { implicit request =>
     Ok(views.html.index("Social Feeds"))
   }
 

@@ -8,11 +8,11 @@ object ApplicationBuild extends Build {
     val appVersion      = "0.1-SNAPSHOT"
 
 	val appDependencies = Seq(
-    	"se.radley" %% "play-plugins-salat" % "1.1"
+	  "play.modules.reactivemongo" %% "play2-reactivemongo" % "0.1-SNAPSHOT"
 	)
+	
 	val main = PlayProject(appName, appVersion, appDependencies, mainLang = SCALA).settings(
-		routesImport += "se.radley.plugin.salat.Binders._",
-		templatesImport += "org.bson.types.ObjectId"
+	  resolvers += "sgodbillon" at "https://bitbucket.org/sgodbillon/repository/raw/master/snapshots/"
 	)
 
 }
