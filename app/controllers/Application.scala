@@ -12,36 +12,17 @@ import play.api.libs.json.Json._
 import services.auth.providers._
 import play.api.libs.iteratee._
 import play.api.libs.ws.{Response => ResponseWS, _}
+import scala.util.control.Breaks._
 
 import play.api.libs.concurrent._
 
 object Application extends Controller {
 
   def index = Action { implicit request =>
-    var res = "provider not found"
-    if(hasToken(Twitter, request) ||
-        hasToken(GitHub, request) ||
-        hasToken(Facebook, request) ||
-        hasToken(GitHub, request) ||
-        hasToken(GooglePlus, request) ||
-        hasToken(LinkedIn, request) ||
-        hasToken(StackExchange, request) ||
-        hasToken(Trello, request) ||
-        hasToken(Viadeo, request) ||
-        hasToken(Scoopit, request)) {
+    if(GenericProvider.hasToken) {
       Redirect("assets/app/index.html")
     } else {
       Ok(views.html.index("Social Feeds"))
-    }
-  }
-
-  def hasToken(provider:GenericProvider, r:RequestHeader) = { 
-    implicit val request = r;
-    provider.getToken match {
-      // Authentification twitter valide
-      case Some(credentials) => true
-      // Autoriser l'application
-      case _ => false
     }
   }
 
