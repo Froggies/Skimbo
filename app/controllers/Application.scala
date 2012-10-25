@@ -26,6 +26,12 @@ object Application extends Controller {
     }
   }
 
+  def getProviders = Action {
+    Ok(Json.toJson(GenericProvider.providers.map({
+      p => Provider.toJson(Provider(p.name, p.authRoute.url, p.urlLogo))
+    })))
+  }
+
   def authenticate(provider: String) = Action { implicit request =>
     provider match {
       case GitHub.name        => GitHub.auth(routes.SocialNetworksTest.github)

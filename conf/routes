@@ -6,6 +6,7 @@
 GET     /                           controllers.Application.index
 GET     /connected                  controllers.Application.connected
 GET     /testActor                  controllers.Application.testActor
+GET     /getProviders               controllers.Application.getProviders
 
 # Authentificate to providers
 GET     /auth/:provider             controllers.Application.authenticate(provider: String)

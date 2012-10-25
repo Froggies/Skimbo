@@ -8,9 +8,6 @@ import play.api.libs.ws.WS
 
 trait OAuthProvider extends GenericProvider {
 
-  // Oauth1 configuration (from social.conf)
-  lazy val config = current.configuration.getConfig("social."+name).get
-
   lazy val KEY = ConsumerKey(config.getString("clientId").get, config.getString("secret").get)
 
   lazy val service = OAuth(ServiceInfo(

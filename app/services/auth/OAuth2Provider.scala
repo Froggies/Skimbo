@@ -25,7 +25,6 @@ trait OAuth2Provider extends GenericProvider {
   lazy val fieldExpires     = namespace+"_expires"
 
   // Load infos (token, secret, urls) from configuration
-  lazy val config           = current.configuration.getConfig("social."+name).get
   lazy val clientId         = config.getString("clientId").get
   lazy val secret           = config.getString("secret").get
   lazy val authorizeUrl     = config.getString("authorize").get
