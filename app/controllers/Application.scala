@@ -18,12 +18,9 @@ import services.auth.ProviderDispatcher
 object Application extends Controller {
 
   def index = Action { implicit request =>
-    if (ProviderDispatcher.atLeastOneIsConnected) {
-      Ok(views.html.unified())
-    } else {
-      Ok(views.html.index())
-    }
+    Ok(views.html.unified())
   }
+  
 
   def authenticate(providerName: String) = Action { implicit request =>
     ProviderDispatcher(providerName).map(provider =>

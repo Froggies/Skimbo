@@ -2,8 +2,15 @@
 
 @main("Unified live services") {
 
-
-
-	<script type="text/javascript" src="@routes.Assets.at("javascripts/unified.js")"></script>
+	<h1>Social providers</h1>
+	<ul id="providers">
 	
+	</ul>
+	
+	<script type="text/javascript" src="@routes.Assets.at("app/scripts/skimbo.js")"></script>
+	<script type="text/javascript">
+		$(function() { 
+			skimbo.providers.display();
+		});
+	</script>
 }
