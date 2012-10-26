@@ -14,6 +14,15 @@ import play.api.libs.ws.{Response => ResponseWS, _}
 import scala.util.control.Breaks._
 import play.api.libs.concurrent._
 import services.auth.ProviderDispatcher
+import play.api.libs.concurrent.execution.defaultContext
+import play.api.libs.concurrent.Promise
+import java.util.concurrent.TimeUnit
+import scala.concurrent.Future
+import play.api.libs.ws.WS
+import play.api.Play.current
+
+import akka.util.Timeout
+import akka.util.duration._
 
 object Application extends Controller {
 
@@ -28,11 +37,26 @@ object Application extends Controller {
   }
 
   def testActor() = Action { implicit request =>
-    /*Trello.getToken.map{token =>
-      val sse = SseActor.operations(request, Trello, "https://api.trello.com/1/members/me/notifications");
+    Twitter.getToken.map{ token =>
+      println("IN")
+      val sse = ProviderEnumerator(Twitter, "https://api.twitter.com/1.1/statuses/home_timeline.json");
       Ok.feed(sse &> EventSource()).as("text/event-stream")
-    }*/
-  	Ok("hello")
+    }.getOrElse(BadRequest)
   }
 
+}
+
+object ProviderEnumerator extends Results {
+
+  def apply(provider: GenericProvider, endpoint: String)(implicit req: RequestHeader) : Enumerator[JsValue] = { 
+    Enumerator.generateM[JsValue] {
+      Promise.timeout( { 
+        provider.fetch(endpoint).get.await(10000).fold( 
+            onError => None,
+            response => Some(response.json))
+      }, 5, TimeUnit.SECONDS)
+    }
+  }
+  
+    
 }
