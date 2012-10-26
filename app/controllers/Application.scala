@@ -20,7 +20,6 @@ object Application extends Controller {
   def index = Action { implicit request =>
     Ok(views.html.unified())
   }
-  
 
   def authenticate(providerName: String) = Action { implicit request =>
     ProviderDispatcher(providerName).map(provider =>
