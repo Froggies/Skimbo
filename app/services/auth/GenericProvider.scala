@@ -6,7 +6,7 @@ import play.api.mvc._
 import play.api.Play.current
 import play.api.libs.ws.WS.WSRequestHolder
 
-object GenericProvider {
+/*object GenericProvider {
 
   val providers:Seq[GenericProvider] = Seq(Twitter, GitHub, Facebook, 
       GooglePlus, LinkedIn, StackExchange, Trello, Viadeo, Scoopit)
@@ -19,7 +19,7 @@ object GenericProvider {
     }
     return false
   }
-}
+}*/
 
 trait GenericProvider extends Results {
 
@@ -31,8 +31,8 @@ trait GenericProvider extends Results {
   def permissionsSep = ","
 
   // From config file
-  lazy val config           = current.configuration.getConfig("social."+name).get
-  lazy val urlLogo = config.getString("urlLogo").get
+  lazy val config  = current.configuration.getConfig("social."+name).get
+  lazy val logo = config.getString("urlLogo").get
 
   // Common config
   lazy val authRoute: Call  = controllers.routes.Application.authenticate(name)
@@ -43,11 +43,11 @@ trait GenericProvider extends Results {
       case Some(credentials) => true
       case _ => false
     }
-  } 
+  }
 
   // Basic operations on providers
   def auth(redirectRoute: Call)(implicit request: RequestHeader): Result
-  def getToken(implicit request: RequestHeader): Any
+  def getToken(implicit request: RequestHeader): Any //FIXME : Virer ça !
   def fetch(url: String)(implicit request: RequestHeader): WSRequestHolder
 
 }

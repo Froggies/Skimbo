@@ -19,7 +19,7 @@ import akka.actor._
 import akka.actor.ReceiveTimeout
 import akka.util._
 
-object UserActor {
+/*object UserActor {
   def create(out:Enumerator[String], request:RequestHeader, provider:GenericProvider, token:Any, endUrl:String):ActorRef = {
     //new User(provider, token, endUrl);//not actor yet
     //val system = ActorSystem("ActorSystem")
@@ -54,15 +54,10 @@ class GenericPost {
 
 object SseActor {
 
-  /*val toGenericPost: Enumeratee[JsValue, GenericPost] = Enumeratee.map[JsValue] {
-    case e@Operation(_, amout) if amout > lowerBound && amout < higherBound => e
-    case e@SystemStatus(_) => e
-  }*/
-
   def operations(r:RequestHeader, provider:GenericProvider, endUrl:String): 
     Enumerator[JsValue] = Enumerator.generateM[JsValue] {
       //KK.asPromise(User.create(Enumerator(), r, provider, "", endUrl) ! Dispatch);
       implicit var request = r; 
       provider.fetch(endUrl).get.map{r => Some(r.json)};
   }
-}
+}*/

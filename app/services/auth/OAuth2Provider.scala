@@ -58,6 +58,10 @@ trait OAuth2Provider extends GenericProvider {
    * Redirect the user to the service's accreditation page
    */
   private def redirectToAccreditationPage(implicit request: RequestHeader) = {
+  	println(authorizeUrl);
+  	println(clientId)
+  	println(secret)
+  	println(config)
     val csrf = randomUUID().toString
     val redirectQueryString = Map(
       "client_id"       -> clientId,

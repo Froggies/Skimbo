@@ -25,36 +25,34 @@ object User extends Controller with MongoController {
   lazy val collection = db("users")
 
   def add(email: String) = Action {
-  	Async {
-	    val json = Json.obj(
-	      "email" -> email, 
-	      "created" -> new java.util.Date().getTime()
-	    )
+    Async {
+      val json = Json.obj(
+        "email" -> email,
+        "created" -> new java.util.Date().getTime())
 
-	    collection.insert[JsValue]( json ).map( lastError =>
-	      Ok("Mongo LastErorr : %s".format(lastError))
-	    )
+      collection.insert[JsValue](json).map(lastError =>
+        Ok("Mongo LastErorr : %s".format(lastError)))
     }
   }
 
   def findAll() = Action {
-	  Async {
-		  val qb = QueryBuilder().query(Json.obj()).sort( "created" -> SortOrder.Descending)
+    Async {
+      val qb = QueryBuilder().query(Json.obj()).sort("created" -> SortOrder.Descending)
 
-		  collection.find[JsValue]( qb ).toList.map { collection =>
-		    Ok(collection.foldLeft(JsArray(List()))( (obj, u) => obj ++ Json.arr(u) ))
-		  }
-	  } 
+      collection.find[JsValue](qb).toList.map { collection =>
+        Ok(collection.foldLeft(JsArray(List()))((obj, u) => obj ++ Json.arr(u)))
+      }
+    }
   }
 
-  def findOneByEmail(email:String) = Action {
-  	Async {
-	    val qb = QueryBuilder().query(Json.obj("email" -> email)).sort( "created" -> SortOrder.Descending)
+  def findOneByEmail(email: String) = Action {
+    Async {
+      val qb = QueryBuilder().query(Json.obj("email" -> email)).sort("created" -> SortOrder.Descending)
 
-	    collection.find[JsValue]( qb ).toList.map { collection =>
-	      Ok(collection.foldLeft(JsArray(List()))( (obj, u) => obj ++ Json.arr(u) ))
-	    }
-  	}
-	} 
+      collection.find[JsValue](qb).toList.map { collection =>
+        Ok(collection.foldLeft(JsArray(List()))((obj, u) => obj ++ Json.arr(u)))
+      }
+    }
+  }
 
 }
