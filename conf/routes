@@ -8,8 +8,9 @@ GET     /                           controllers.Application.index
 # API
 
 # Providers available
-GET     /api/providers/list        controllers.api.Providers.listAll
-
+GET     /api/providers/list         controllers.api.Providers.listAll
+GET     /api/unified                controllers.Application.testActor
+       
 # Authentificate to providers
 GET     /auth/:provider             controllers.Application.authenticate(provider: String)
 
@@ -17,6 +18,7 @@ GET     /auth/:provider             controllers.Application.authenticate(provide
 GET     /user/add/:email            controllers.User.add(email: String)
 GET     /user/get           		controllers.User.findAll()
 GET     /user/get/:email           	controllers.User.findOneByEmail(email: String)
+
 
 # Exemples
 GET     /ex/twitter                 controllers.SocialNetworksTest.twitter
