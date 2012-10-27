@@ -37,7 +37,7 @@ object Application extends Controller {
   }
 
   def testActor2() = Action { implicit request =>
-	  lazy val sse = UserActor.create(Twitter, "https://api.twitter.com/1.1/statuses/home_timeline.json");
+	  val sse = UserActor.create(Twitter, "https://api.twitter.com/1.1/statuses/home_timeline.json");
 	  Ok.feed(sse &> EventSource()).as("text/event-stream")
   }
   

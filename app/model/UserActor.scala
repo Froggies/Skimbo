@@ -16,37 +16,40 @@ import akka.util.Duration
 import services.auth.GenericProvider
 import java.util.concurrent.TimeUnit
 import play.api.libs.iteratee.PushEnumerator
+import play.libs.Scala
+import scala.concurrent.Future
+import play.libs.Akka
+import play.api.libs.iteratee.Concurrent
+import akka.actor.ReceiveTimeout
 
 object UserActor {
-  
+
   implicit val timeout = Timeout(100 second)
-  
-  def create(provider:GenericProvider, endpoint:String)(implicit request:RequestHeader):Enumerator[JsValue] = {
-	val channel =  Enumerator.imperative[JsValue]()
-    lazy val actor = Akka.system.actorOf(Props(new UserActor(channel, provider, endpoint)))
-    channel
+
+  def create(provider: GenericProvider, endpoint: String)(implicit request: RequestHeader): Enumerator[JsValue] = {
+    val (rawStream, channel) = Concurrent.broadcast[JsValue]
+    val actor = Akka.system.actorOf(Props(new UserActor(channel, provider, endpoint)))
+    rawStream
   }
 }
 
-class UserActor(channel:PushEnumerator[JsValue], provider:GenericProvider, endpoint:String)(implicit request:RequestHeader) extends Actor {
+class UserActor(channel:Concurrent.Channel[JsValue], provider: GenericProvider, endpoint: String)(implicit request: RequestHeader) extends Actor {
 
-  private val interval = 5;//Config.getLong("mail.check.interval")
+  val interval = 5; //Config.getLong("mail.check.interval")
   context.setReceiveTimeout(akka.util.Duration(interval, TimeUnit.SECONDS))
-
+  
   def receive = {
     case ReceiveTimeout => {
-      dispatch()          
+      dispatch()
     }
-    case Dispatch() => dispatch()
     case e: Exception => println("unexpected Error: " + e)
   }
 
   def dispatch() {
-      channel.push(provider.fetch(endpoint).get.await(10000).fold( 
-		            onError => Json.toJson("error"),
-		            response => response.json)); 
+    println("dispatch actor"+context.sender)
+    channel.push(provider.fetch(endpoint).get.await(10000).fold(
+                        onError => Json.toJson("error"),
+                        response => response.json)); 
   }
-  
-}
 
-case class Dispatch()
+}
