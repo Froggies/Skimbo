@@ -19,7 +19,7 @@ skimbo.unified = {
 		
 	run : function() {
 		if (!!window.EventSource) {
-			var source = new EventSource('/api/unified');
+			var source = new EventSource('/api/unified2');
 
 			source.addEventListener('message', function(e) {
 				console.log(e.data);

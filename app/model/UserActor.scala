@@ -1,63 +1,52 @@
 package model;
 
-import services.auth._
-
-import java.util.concurrent.TimeUnit
-
-import play.libs.{Akka => KK}
+import akka.actor._
+import akka.util.duration._
 import play.api._
-import play.api.Play.current
-import play.api.mvc._
-import play.api.libs._
 import play.api.libs.json._
-import play.api.libs.ws.{Response => ResponseWS, _}
 import play.api.libs.iteratee._
 import play.api.libs.concurrent._
+import akka.util.Timeout
+import akka.pattern.ask
+import play.api.Play.current
 import play.api.libs.concurrent.execution.defaultContext
+import services.auth.GenericProvider
+import play.api.mvc.RequestHeader
+import akka.util.Duration
+import services.auth.GenericProvider
+import java.util.concurrent.TimeUnit
+import play.api.libs.iteratee.PushEnumerator
 
-import akka.actor._
-import akka.actor.ReceiveTimeout
-import akka.util._
-
-/*object UserActor {
-  def create(out:Enumerator[String], request:RequestHeader, provider:GenericProvider, token:Any, endUrl:String):ActorRef = {
-    //new User(provider, token, endUrl);//not actor yet
-    //val system = ActorSystem("ActorSystem")
-    Akka.system.actorOf(Props(new UserActor(out, request, provider, token, endUrl)), "myactor")
+object UserActor {
+  
+  implicit val timeout = Timeout(100 second)
+  
+  def create(provider:GenericProvider, endpoint:String)(implicit request:RequestHeader):Enumerator[JsValue] = {
+	val channel =  Enumerator.imperative[JsValue]()
+    lazy val actor = Akka.system.actorOf(Props(new UserActor(channel, provider, endpoint)))
+    channel
   }
 }
 
-class UserActor(out:Enumerator[String], r:RequestHeader, provider:GenericProvider, token:Any, endUrl:String) extends Actor {
+class UserActor(channel:PushEnumerator[JsValue], provider:GenericProvider, endpoint:String)(implicit request:RequestHeader) extends Actor {
 
   private val interval = 5;//Config.getLong("mail.check.interval")
-  context.setReceiveTimeout(Duration(interval, TimeUnit.SECONDS))
+  context.setReceiveTimeout(akka.util.Duration(interval, TimeUnit.SECONDS))
 
   def receive = {
     case ReceiveTimeout => {
-      self ! Dispatch          
+      dispatch()          
     }
-    case Dispatch => dispatch()
+    case Dispatch() => dispatch()
     case e: Exception => println("unexpected Error: " + e)
   }
 
-  def dispatch() { 
-      implicit var request = r; 
-      sender ! provider.fetch(endUrl).get; 
+  def dispatch() {
+      channel.push(provider.fetch(endpoint).get.await(10000).fold( 
+		            onError => Json.toJson("error"),
+		            response => response.json)); 
   }
+  
 }
 
 case class Dispatch()
-
-class GenericPost {
-
-}
-
-object SseActor {
-
-  def operations(r:RequestHeader, provider:GenericProvider, endUrl:String): 
-    Enumerator[JsValue] = Enumerator.generateM[JsValue] {
-      //KK.asPromise(User.create(Enumerator(), r, provider, "", endUrl) ! Dispatch);
-      implicit var request = r; 
-      provider.fetch(endUrl).get.map{r => Some(r.json)};
-  }
-}*/
