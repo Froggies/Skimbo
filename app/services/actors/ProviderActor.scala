@@ -13,7 +13,13 @@ object ProviderActor {
 
   def apply(endpoints: Seq[Endpoint])(implicit request: RequestHeader): Enumerator[JsValue] = {
     val (rawStream, channel) = Concurrent.broadcast[JsValue]
-    endpoints.foreach(endpoint => Akka.system.actorOf(Props(new ProviderActor(channel, endpoint))))
+    endpoints.foreach({endpoint => 
+      val actor = Akka.system.actorOf(Props(new ProviderActor(channel, endpoint)))
+      rawStream.onDoneEnumerating({
+        println("ACTOR DONE "+endpoint.provider.name)
+        actor ! Kill
+      })
+    })
     rawStream
   }
 }
@@ -24,9 +30,17 @@ class ProviderActor(channel: Concurrent.Channel[JsValue], endpoint: Endpoint)(im
 
   def receive = {
     case ReceiveTimeout => {
-      channel.push(endpoint.provider.fetch(endpoint.url).get.await(10000).fold(
-        error => Json.toJson("error"),
-        response => response.json))
+      println("ACTOR GO "+endpoint.provider.name)
+      endpoint.provider.fetch(endpoint.url).get.await(10000).fold(
+        error => {
+          channel.push(Json.toJson("error with "+endpoint.provider.name))
+          self ! Kill
+        },
+        response => channel.push(response.json))
+    }
+    case Kill => {
+      println("ACTOR KILL "+endpoint.provider.name)
+      context.stop(self)
     }
     case e: Exception => println("unexpected Error: "+e)
   }
