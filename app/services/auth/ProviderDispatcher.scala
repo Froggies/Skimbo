@@ -27,5 +27,8 @@ object ProviderDispatcher {
     providers.exists(_.hasToken)
     
   def listAll : Seq[GenericProvider] = providers
+  
+  def listConnecteds(implicit req: RequestHeader) : Seq[GenericProvider] =
+     providers.filter(_.hasToken)
     
 }
