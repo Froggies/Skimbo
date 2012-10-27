@@ -8,8 +8,7 @@ import models.Service
 object Providers extends Controller {
 
   def listAll = Action { implicit req =>
-    val list = 
-    Ok(generate(list))
+    Ok(generate(Service.list))
   }
   
 }
