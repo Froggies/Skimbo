@@ -6,10 +6,12 @@ import services.actors.ProviderActor
 import services.auth.ProviderDispatcher
 import services.auth.providers._
 import services.actors.Endpoint
+import models.Service
 
 object Application extends Controller {
 
   def index = Action { implicit request =>
+    val services = Service.list
     Ok(views.html.unified())
   }
 
