@@ -27,6 +27,8 @@ object Application extends Controller {
       Endpoint(Facebook, "http://dev.studio-dev.fr/test-ws-json.php?nom=facebook", 5),
       Endpoint(Viadeo, "http://dev.studio-dev.fr/test-ws-json.php?nom=viadeo", 3))
 
+
+
     val enumerator = ProviderActor(endpoints);
     // -> to Skimbo 
     // -> filter en fonction des déjà vus

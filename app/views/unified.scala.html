@@ -1,11 +1,35 @@
-@()
+@(providers: Seq[Provider])
 
 @main("Unified live services") {
 
-	<h1>Social providers</h1>
+	<header>
+		<div id="logo">
+			<img src="@asset(img/brand/twitter.png)" />
+		</div>
+	</header>
+	<section>
+		<div id="connect-with">
+			Connect Skimbo with...
+		</div>
+		<ul id="social-networks">
+			@for(provider <- providers) {
+				<li>
+					<a href="#" title="Connect with @provider.name">
+						<img src="@asset(img/brand/twitter.png)" alt="facebook" width="64px" height="64px">
+					</a>
+				</li>
+			}
+		</ul>
+	</section>
+
+
+
+
+	<!-- <h1>Social providers</h1>
 	<ul id="providers">
-	
-	</ul>
+	@for(provider <- providers) {
+	}
+	</ul> -->
 	
 	<script type="text/javascript" src="@routes.Assets.at("app/scripts/skimbo.js")"></script>
 	<script type="text/javascript">
