@@ -13,16 +13,15 @@ import play.api.libs.iteratee.Enumeratee
 object Application extends Controller {
 
   def index = Action { implicit request =>
-    if (ProviderDispatcher.atLeastOneIsConnected(request)) {
+    request.session.get("id").map( _ =>  
       Ok(views.html.unified())
-    } else {
-      Ok(views.html.index(Service.list))
-    }
+    ).getOrElse( Ok(views.html.index(Service.list)))
   }
 
   def authenticate(providerName: String) = Action { implicit request =>
-    ProviderDispatcher(providerName).map(provider =>
-      provider.auth(routes.Application.index)).getOrElse(BadRequest)
+    ProviderDispatcher(providerName).map(provider => 
+      provider.auth(routes.Application.index)
+    ).getOrElse(BadRequest)
   }
 
   def testActor2() = Action { implicit request =>
@@ -37,6 +36,7 @@ object Application extends Controller {
     // -> trier par date
     // -> filter en fonction des déjà vus
     // -> to Json
+    
     //Ok.feed(enumerator &> EventSource()).as(EVENT_STREAM) // what'is the difference ?
     Ok.stream(enumerator &> EventSource()).as(EVENT_STREAM)
 

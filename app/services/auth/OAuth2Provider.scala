@@ -58,10 +58,6 @@ trait OAuth2Provider extends GenericProvider {
    * Redirect the user to the service's accreditation page
    */
   private def redirectToAccreditationPage(implicit request: RequestHeader) = {
-  	println(authorizeUrl);
-  	println(clientId)
-  	println(secret)
-  	println(config)
     val csrf = randomUUID().toString
     val redirectQueryString = Map(
       "client_id"       -> clientId,
@@ -79,7 +75,7 @@ trait OAuth2Provider extends GenericProvider {
    * Check authentification code and fetch accessToken from provider WS
    */
   private def retrieveAccessToken(code: String, redirectRoute: Call)(implicit request: RequestHeader) = {
-
+    
     // Check if CSRF fields are ok
     val sess_csrf = request.session.get(fieldCsrf)
     val verif_csrf = request.getQueryString("state")
@@ -93,13 +89,11 @@ trait OAuth2Provider extends GenericProvider {
 
             // Provider return both token and expires timestamp
             case Token(Some(token), Some(expires)) =>
-              Redirect(redirectRoute).withSession(request.session + (fieldToken -> token) + (fieldExpires -> expires.toString))
-                .withSession(generateUniqueId(request.session))
+              Redirect(redirectRoute).withSession(generateUniqueId(request.session) + (fieldToken -> token) + (fieldExpires -> expires.toString))
 
             // Provider return only token
             case Token(Some(token), None) =>
-              Redirect(redirectRoute).withSession(request.session + (fieldToken -> token))
-                .withSession(generateUniqueId(request.session))
+              Redirect(redirectRoute).withSession(generateUniqueId(request.session) + (fieldToken -> token))
 
             // Provider return nothing > an error has occurred during authentication
             case _ =>

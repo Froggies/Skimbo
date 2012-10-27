@@ -39,8 +39,7 @@ trait OAuthProvider extends GenericProvider {
       case Some(verifier) =>
         service.retrieveAccessToken(getToken(request).get, verifier) match {
           case Right(t) => Redirect(redirectRoute)
-                            .withSession(request.session + (fieldToken -> t.token) + (fieldSecret -> t.secret))
-                            .withSession(generateUniqueId(request.session))
+                            .withSession(generateUniqueId(request.session) + (fieldToken -> t.token) + (fieldSecret -> t.secret))
           case Left(e)  => Redirect(redirectRoute).withSession(request.session + ("login-error" -> name))
         }
     }
