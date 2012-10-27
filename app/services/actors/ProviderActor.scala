@@ -11,21 +11,20 @@ import services.auth.GenericProvider
 
 object ProviderActor {
 
-  // TODO : Remplacer le tuple3() par une CaseClass
-  def apply(endpoints: Seq[(GenericProvider, String, Int)])(implicit request: RequestHeader): Enumerator[JsValue] = {
+  def apply(endpoints: Seq[Endpoint])(implicit request: RequestHeader): Enumerator[JsValue] = {
     val (rawStream, channel) = Concurrent.broadcast[JsValue]
     endpoints.foreach(endpoint => Akka.system.actorOf(Props(new ProviderActor(channel, endpoint))))
     rawStream
   }
 }
 
-class ProviderActor(channel: Concurrent.Channel[JsValue], endpoint: (GenericProvider, String, Int))(implicit request: RequestHeader) extends Actor {
+class ProviderActor(channel: Concurrent.Channel[JsValue], endpoint: Endpoint)(implicit request: RequestHeader) extends Actor {
 
-  context.setReceiveTimeout(endpoint._3 seconds)
+  context.setReceiveTimeout(endpoint.interval seconds)
 
   def receive = {
     case ReceiveTimeout => {
-      channel.push(endpoint._1.fetch(endpoint._2).get.await(10000).fold(
+      channel.push(endpoint.provider.fetch(endpoint.url).get.await(10000).fold(
         error => Json.toJson("error"),
         response => response.json))
     }

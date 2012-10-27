@@ -18,9 +18,9 @@ object ProviderDispatcher {
       Viadeo
   ) 
   
-  def apply(providerName: String) = getByName(providerName)
+  def apply(providerName: String) = get(providerName)
 
-  def getByName(providerName: String) : Option[GenericProvider] = 
+  def get(providerName: String) : Option[GenericProvider] = 
     providers.find(_.name == providerName)
     
   def atLeastOneIsConnected(implicit req: RequestHeader) : Boolean = 
