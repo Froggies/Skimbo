@@ -1,17 +1,21 @@
-@()
+@main("Skimbo") {
 
-@main("Unified live services") {
+	<div ng-app="publicApp">
 
-	<h1>Social providers</h1>
-	<ul id="providers">
-	
-	</ul>
-	
-	<script type="text/javascript" src="@routes.Assets.at("app/scripts/skimbo.js")"></script>
-	<script type="text/javascript">
-		$(function() { 
-			skimbo.providers.display();
-			skimbo.unified.run();
-		});
-	</script>
+        <header ng-include src="'assets/app/views/header.html'">
+        </header>
+
+        <!-- Add your site or application content here -->
+        <section class="container" ng-view></section>
+
+        <script src="assets/app/scripts/vendor/angular.js"></script>
+
+        <!-- build:js scripts/scripts.js -->
+        <script src="assets/app/scripts/public.js"></script>
+        <script src="assets/app/scripts/controllers/main.js"></script>
+        <script src="assets/app/scripts/controllers/columns.js"></script>
+        <!-- endbuild -->
+
+    </div>
+
 }

@@ -12,9 +12,8 @@
 			ondrop="drop(this,event)">
 		<ul>
 			<li>{{i}}{{i}}</li>
-			<li class="hero-unit" ng-repeat="d in data | filter:query">
-				{{d.data.board.name}} : {{d.data.card.name}} ({{d.memberCreator.fullName}})
-				<p>{{d.data.text}}</p>
+			<li class="hero-unit" ng-repeat="d in data">
+				{{d}}
 			</li>
 		</ul>
 	</div>
