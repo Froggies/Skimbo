@@ -14,7 +14,7 @@
 		<ul id="social-networks">
 			@for(provider <- providers) {
 				<li>
-					<a href="#" title="Connect with @provider.name">
+					<a href="/auth/@provider.name" title="Connect with @provider.name">
 						<img src="@routes.Assets.at("img/brand/"+provider.name+".png")" alt="@provider.name" width="64px" height="64px">
 					</a>
 				</li>
