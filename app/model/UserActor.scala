@@ -23,33 +23,24 @@ import play.api.libs.iteratee.Concurrent
 import akka.actor.ReceiveTimeout
 
 object UserActor {
-
-  implicit val timeout = Timeout(100 second)
-
   def create(provider: GenericProvider, endpoint: String)(implicit request: RequestHeader): Enumerator[JsValue] = {
-    val (rawStream, channel) = Concurrent.broadcast[JsValue]
+    val (enumerator, channel) = Concurrent.broadcast[JsValue]
     val actor = Akka.system.actorOf(Props(new UserActor(channel, provider, endpoint)))
-    rawStream
+    enumerator
   }
 }
 
 class UserActor(channel:Concurrent.Channel[JsValue], provider: GenericProvider, endpoint: String)(implicit request: RequestHeader) extends Actor {
 
-  val interval = 5; //Config.getLong("mail.check.interval")
-  context.setReceiveTimeout(akka.util.Duration(interval, TimeUnit.SECONDS))
+  context.setReceiveTimeout(5 seconds)
   
   def receive = {
     case ReceiveTimeout => {
-      dispatch()
+      channel.push(provider.fetch(endpoint).get.await(10000).fold(
+        onError => Json.toJson("error"),
+        response => response.json));
     }
     case e: Exception => println("unexpected Error: " + e)
-  }
-
-  def dispatch() {
-    println("dispatch actor"+context.sender)
-    channel.push(provider.fetch(endpoint).get.await(10000).fold(
-                        onError => Json.toJson("error"),
-                        response => response.json)); 
   }
 
 }
