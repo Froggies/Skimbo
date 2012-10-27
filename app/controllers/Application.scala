@@ -11,8 +11,11 @@ import models.Service
 object Application extends Controller {
 
   def index = Action { implicit request =>
-    val services = Service.list
-    Ok(views.html.unified(services))
+    if(ProviderDispatcher.atLeastOneIsConnected(request)) {
+      Ok(views.html.unified())
+    } else {
+      Ok(views.html.index(Service.list))
+    }
   }
 
   def authenticate(providerName: String) = Action { implicit request =>

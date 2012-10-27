@@ -5,7 +5,7 @@ var publicApp = angular.module('publicApp', [])
   .config(['$routeProvider', function($routeProvider) {
     $routeProvider
       .when('/', {
-        templateUrl: 'views/main.html',
+        templateUrl: 'assets/app/views/main.html',
         controller: 'MainCtrl'
       })
       .otherwise({
