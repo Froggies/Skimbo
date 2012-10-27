@@ -1,10 +1,31 @@
 'use strict';
 
 publicApp.controller('ColumnsCtrl', function($scope, $http) {
-  $http.get('http://127.0.0.1:9000/ex/trello')
-  	.success(function(json) {
-	      $scope.data = json;
-  	});
+  if (!!window.EventSource) {
+    var source = new EventSource('http://127.0.0.1:9000/api/unified2');
+    source.addEventListener('message', function(e) {
+    	$scope.$apply(function() {
+    		if($scope.data == undefined) {
+        		$scope.data = [];
+        	}
+    		$scope.data.unshift(JSON.parse(e.data));
+    		console.log("###############")
+    		//console.log($scope.originalData)
+    		//$scope.data = JSON.parse(JSON.stringify($scope.originalData));
+    	});
+    }, false);
+
+    source.addEventListener('open', function(e) {
+      // Connection was opened.
+    }, false);
+
+    source.addEventListener('error', function(e) {
+      if (e.readyState == EventSource.CLOSED) {
+        // Connection was closed.
+      }
+    }, false);
+  }
+  
 });
 
 
