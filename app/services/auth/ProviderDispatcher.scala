@@ -14,7 +14,6 @@ object ProviderDispatcher {
       Scoopit,
       StackExchange,
       Trello,
-      Twitter,
       Viadeo
   ) 
   

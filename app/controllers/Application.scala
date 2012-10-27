@@ -12,7 +12,7 @@ object Application extends Controller {
 
   def index = Action { implicit request =>
     val services = Service.list
-    Ok(views.html.unified())
+    Ok(views.html.unified(services))
   }
 
   def authenticate(providerName: String) = Action { implicit request =>
