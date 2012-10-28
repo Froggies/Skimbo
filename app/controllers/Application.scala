@@ -10,11 +10,13 @@ import models.Service
 import play.api.libs.iteratee.Enumerator
 import play.api.libs.iteratee.Concurrent
 import play.api.libs.json.JsValue
+import play.api.libs.iteratee._
+import play.api.libs.iteratee.Enumeratee
 
 object Application extends Controller {
 
   def index = Action { implicit request =>
-    if(ProviderDispatcher.atLeastOneIsConnected(request)) {
+    if (ProviderDispatcher.atLeastOneIsConnected(request)) {
       Ok(views.html.unified())
     } else {
       Ok(views.html.index(Service.list))
@@ -33,11 +35,13 @@ object Application extends Controller {
       Endpoint(Facebook, "http://dev.studio-dev.fr/test-ws-json.php?nom=facebook", 5),
       Endpoint(Viadeo, "http://dev.studio-dev.fr/test-ws-json.php?nom=viadeo", 3))
 
-    val enumerator = ProviderActor(endpoints);
+    val enumerator = ProviderActor(endpoints)
     // -> to Skimbo 
+    // -> trier par date
     // -> filter en fonction des déjà vus
     // -> to Json
-    Ok.feed(enumerator &> EventSource()).as("text/event-stream")
+    //Ok.feed(enumerator &> EventSource()).as(EVENT_STREAM) // what'is the difference ?
+    Ok.stream(enumerator &> EventSource()).as(EVENT_STREAM)
   }
   
   def killAllActor() = Action {

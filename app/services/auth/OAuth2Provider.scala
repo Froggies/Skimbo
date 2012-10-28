@@ -94,10 +94,12 @@ trait OAuth2Provider extends GenericProvider {
             // Provider return both token and expires timestamp
             case Token(Some(token), Some(expires)) =>
               Redirect(redirectRoute).withSession(request.session + (fieldToken -> token) + (fieldExpires -> expires.toString))
+                .withSession(generateUniqueId(request.session))
 
             // Provider return only token
             case Token(Some(token), None) =>
               Redirect(redirectRoute).withSession(request.session + (fieldToken -> token))
+                .withSession(generateUniqueId(request.session))
 
             // Provider return nothing > an error has occurred during authentication
             case _ =>
