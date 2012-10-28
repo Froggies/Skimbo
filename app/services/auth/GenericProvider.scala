@@ -6,21 +6,6 @@ import play.api.Play.current
 import play.api.libs.ws.WS.WSRequestHolder
 import java.util.UUID
 
-/*object GenericProvider {
-
-  val providers:Seq[GenericProvider] = Seq(Twitter, GitHub, Facebook, 
-      GooglePlus, LinkedIn, StackExchange, Trello, Viadeo, Scoopit)
-
-  def hasToken(implicit request: RequestHeader):Boolean = {
-    for (provider <- providers) {
-      if(provider.hasToken) {
-        return true
-      }
-    }
-    return false
-  }
-}*/
-
 trait GenericProvider extends Results {
 
   // Generic provider settings (override it)
@@ -37,23 +22,31 @@ trait GenericProvider extends Results {
   // Common config
   lazy val authRoute: Call  = controllers.routes.Application.authenticate(name)
 
-  // Generic operations
-  def hasToken(implicit request: RequestHeader) = {
-    getToken match {
-      case Some(credentials) => true
-      case _ => false
-    }
-  }
-
-  // Basic operations on providers
-  // TODO : Add redirectOk / redirectError
+  /**
+   * Execute authentification process with this provider and redirect to `redirectRoute`
+   */
   def auth(redirectRoute: Call)(implicit request: RequestHeader): Result
-  def getToken(implicit request: RequestHeader): Any //FIXME : Virer ça !
+  
+  /**
+   * Retrieve security token
+   */
+  def getToken(implicit request: RequestHeader): Option[Any]
+  
+  /**
+   * Create a basic webservice call and sign the request with token
+   */
   def fetch(url: String)(implicit request: RequestHeader): WSRequestHolder
   
-  // Attache unique ID to client after authentification
+  /**
+   * Assign unique ID to client after authentification
+   */
   protected def generateUniqueId(session : Session) = {
     session + ("id" -> session.get("id").getOrElse(UUID.randomUUID().toString))
   }
+
+  /**
+   * Has the client a token on this service
+   */
+  def hasToken(implicit request: RequestHeader) = getToken.isDefined
 
 }

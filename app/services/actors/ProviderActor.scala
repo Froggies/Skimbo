@@ -31,7 +31,7 @@ class ProviderActor(channel: Concurrent.Channel[JsValue], endpoint: Endpoint)(im
   def receive = {
     case ReceiveTimeout => {
       println("ACTOR GO "+endpoint.provider.name)
-      endpoint.provider.fetch(endpoint.url).get.await(10000).fold(
+      endpoint.provider.fetch(endpoint.url).get.await(10000).fold(// TODO : Virer cet await que je ne saurais voir !
         error => {
           channel.push(Json.toJson("error with "+endpoint.provider.name))
           self ! Kill
