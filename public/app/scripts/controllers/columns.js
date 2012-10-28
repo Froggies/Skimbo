@@ -25,6 +25,10 @@ publicApp.controller('ColumnsCtrl', function($scope, $http) {
       }
     }, false);
   }
+
+  function logout() {
+    $http.get("http://127.0.0.1:9000/api/killMyActors")
+  }
   
 });
 

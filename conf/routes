@@ -8,6 +8,7 @@ GET     /                           controllers.Application.index
 # Providers available
 GET     /api/providers/list         controllers.api.Providers.listAll
 GET     /api/unified2               controllers.Application.testActor2
+GET     /api/killMyActors           controllers.Application.killMyActors
        
 # Authentificate to providers
 GET     /auth/:provider             controllers.Application.authenticate(provider: String)
