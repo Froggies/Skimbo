@@ -11,7 +11,7 @@ object Twitter extends OAuthProvider {
   override val name = "twitter"
   override val namespace = "tw"
 
-  override def distantUserToSkimboUser(response: play.api.libs.ws.Response): Option[User] = {
+  override def distantUserToSkimboUser(ident: String, response: play.api.libs.ws.Response): Option[User] = {
     try {
       val me = response.json
       val id = (me \ "id").as[Int]
@@ -19,7 +19,7 @@ object Twitter extends OAuthProvider {
       val name = (me \ "name").as[String]
       val description = (me \ "description").asOpt[String]
       val profileImage = (me \ "profile_image_url").asOpt[String]
-      Some(User(username, name, this.name, description, profileImage))
+      Some(User(ident, username, name, this.name, description, profileImage))
     } catch {
       case _ => {
         Logger.error("Error during fetching user details")

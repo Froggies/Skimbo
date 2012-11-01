@@ -14,19 +14,22 @@ import scala.concurrent.util.duration._
 import scala.concurrent.Await
 import java.io.File
 import services.actors.UserInfosActor
+import services.security.AuthenticatedAction._
 
 object Application extends Controller {
 
   def index = Action { implicit request =>
-    request.session.get("id").map(_ => {
-      val userId = request.session.get("id").getOrElse("None")
+    
+    println(request.session)
+    request.session.get("id").map(userId => {
       //UserInfosActor(Endpoint(Twitter, "http://dev.studio-dev.fr/test-ws-json.php?nom=twitter", 3, userId))
       //UserInfosActor(Endpoint(GooglePlus, "http://dev.studio-dev.fr/test-ws-json.php?nom=twitter", 3, userId))
       //UserInfosActor(Endpoint(LinkedIn, "http://dev.studio-dev.fr/test-ws-json.php?nom=twitter", 3, userId))
       //UserInfosActor(Endpoint(Scoopit, "http://dev.studio-dev.fr/test-ws-json.php?nom=twitter", 3, userId))
       //UserInfosActor(Endpoint(Trello, "http://dev.studio-dev.fr/test-ws-json.php?nom=twitter", 3, userId))
       //DONT WORK UserInfosActor(Endpoint(StackExchange, "http://dev.studio-dev.fr/test-ws-json.php?nom=twitter", 3, userId))
-      UserInfosActor(Endpoint(GitHub, "http://dev.studio-dev.fr/test-ws-json.php?nom=twitter", 3, userId))
+      
+      UserInfosActor(Endpoint(Twitter, "http://dev.studio-dev.fr/test-ws-json.php?nom=twitter", 3, userId))
       Ok(views.html.unified())
     }).getOrElse(Ok(views.html.index(Service.list)))
   }
@@ -36,12 +39,12 @@ object Application extends Controller {
       provider.auth(routes.Application.index)).getOrElse(BadRequest)
   }
 
-  def testActor2() = Action { implicit request =>
-    //FIXME : meilleurs moyen pour récupérer l'unique id -> JLA : Je m'en occupe ASAP
-    val userId = request.session.get("id").getOrElse("None") 
-    
-    val endpoints = Seq()
-      //Endpoint(Twitter, "http://dev.studio-dev.fr/test-ws-json.php?nom=twitter", 3, userId))
+  def testActor2() = Authenticated { action =>
+    implicit val request = action.request
+    val user = action.user // (Pour la suite)
+
+    val endpoints = Seq(
+      Endpoint(Twitter, "http://dev.studio-dev.fr/test-ws-json.php?nom=twitter", 3, action.user.id))
       //Endpoint(Facebook, "http://dev.studio-dev.fr/test-ws-json.php?nom=facebook", 5),
       //Endpoint(Viadeo, "http://dev.studio-dev.fr/test-ws-json.php?nom=viadeo", 3))
 
@@ -54,10 +57,9 @@ object Application extends Controller {
     Ok.stream(enumerator &> EventSource()).as(EVENT_STREAM)
   }
 
-  def killMyActors() = Action { implicit request =>
-    val userId = request.session.get("id").getOrElse("None") // JLA : idem je m'en occupes
-    println("Aplication.scala :: KillMyActors :: " + userId)
-    ProviderActor.killActorsForUser(userId)
+  def killMyActors() = Authenticated { action =>
+    println("Aplication.scala :: KillMyActors :: " + action.user.id)
+    ProviderActor.killActorsForUser(action.user.id)
     Ok("ok")
   }
 

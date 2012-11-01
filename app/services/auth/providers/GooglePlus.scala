@@ -18,15 +18,15 @@ object GooglePlus extends OAuth2Provider {
   override def processToken(response: play.api.libs.ws.Response) =
     Token((response.json \ "access_token").asOpt[String], (response.json \ "expires_in").asOpt[Int])
     
-  override def distantUserToSkimboUser(response: play.api.libs.ws.Response): Option[User] = {
+  override def distantUserToSkimboUser(ident: String, response: play.api.libs.ws.Response): Option[User] = {
     try {
-      val me = response.json
+      val me = response.json // TODO : En faire un parser
       val id = (me \ "id").as[String]
       val username = (me \ "displayName").as[String]
       val name = (me \ "name" \ "familyName").as[String]
       val description = Some("")
       val profileImage = (me \ "image" \ "url").asOpt[String]
-      Some(User(username, name, this.name, description, profileImage))
+      Some(User(ident, username, name, this.name, description, profileImage))
     } catch {
       case _ => {
         Logger.error("Error during fetching user details")

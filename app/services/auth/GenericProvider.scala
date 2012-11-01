@@ -56,17 +56,17 @@ trait GenericProvider extends Results {
    * Retrieve user informations from provider
    */
   def getUser(implicit request: RequestHeader): Option[User] = {
-    config.getString("urlUserInfos").flatMap { url => 
+    config.getString("urlUserInfos").map { url => 
       fetch(url).get().await(20000).fold( //TODO : remove await quand tu pourras
         onError => {
           Logger.error("urlUserInfos timed out waiting for "+name)
           None
         },
         response => {
-          Logger.info(name+" users infos : "+response.body)
-          distantUserToSkimboUser(response)
+          Logger.info(name + " users infos : " + response.body)
+          distantUserToSkimboUser(request.session("id"), response)
         })
-    } orElse {
+    } getOrElse {
       Logger.error(name+" hasn't urlUserInfos in config !")
       None
     }
@@ -75,6 +75,6 @@ trait GenericProvider extends Results {
   /**
    * Transcript getUser to real User
    */
-  def distantUserToSkimboUser(response: play.api.libs.ws.Response): Option[User] = None
+  def distantUserToSkimboUser(id: String, response: play.api.libs.ws.Response): Option[User] = None
 
 }

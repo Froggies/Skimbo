@@ -1,6 +1,7 @@
 package models
 
 case class User(
+  id : String,
   username: String,
   name: String,
   socialType: String,
@@ -10,10 +11,11 @@ case class User(
 object User {
   def apply(sess: play.api.mvc.Session): Option[User] = {
     for (
-      login <- sess.get("user-username");
-      social <- sess.get("provider");
-      name <- sess.get("user-name");
-      desc <- Some(sess.get("user-description"))
-    ) yield User(login, name, social, desc, sess.get("user-avatar"))
+      id <- sess.get("id");
+      login <- sess.get("id"); // TODO : Aller chercher les infos en BDD
+      social <- sess.get("id");
+      name <- sess.get("id");
+      desc <- None
+    ) yield User(id, login, name, social, desc, None)
   }
 }
