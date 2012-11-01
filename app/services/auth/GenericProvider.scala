@@ -65,7 +65,7 @@ trait GenericProvider extends Results {
         },
         response =>
           {
-            Logger.info(name+" users infos : "+response.json)
+            Logger.info(name+" users infos : "+response.body)
             distantUserToSkimboUser(response)
           })
     } else {

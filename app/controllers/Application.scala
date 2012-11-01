@@ -14,7 +14,6 @@ import scala.concurrent.util.duration._
 import scala.concurrent.Await
 import java.io.File
 import services.actors.UserInfosActor
-import services.auth.providers.GooglePlus
 
 object Application extends Controller {
 
@@ -25,7 +24,9 @@ object Application extends Controller {
       //UserInfosActor(Endpoint(GooglePlus, "http://dev.studio-dev.fr/test-ws-json.php?nom=twitter", 3, userId))
       //UserInfosActor(Endpoint(LinkedIn, "http://dev.studio-dev.fr/test-ws-json.php?nom=twitter", 3, userId))
       //UserInfosActor(Endpoint(Scoopit, "http://dev.studio-dev.fr/test-ws-json.php?nom=twitter", 3, userId))
-      UserInfosActor(Endpoint(Trello, "http://dev.studio-dev.fr/test-ws-json.php?nom=twitter", 3, userId))
+      //UserInfosActor(Endpoint(Trello, "http://dev.studio-dev.fr/test-ws-json.php?nom=twitter", 3, userId))
+      //DONT WORK UserInfosActor(Endpoint(StackExchange, "http://dev.studio-dev.fr/test-ws-json.php?nom=twitter", 3, userId))
+      UserInfosActor(Endpoint(GitHub, "http://dev.studio-dev.fr/test-ws-json.php?nom=twitter", 3, userId))
       Ok(views.html.unified())
     }).getOrElse(Ok(views.html.index(Service.list)))
   }
