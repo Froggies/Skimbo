@@ -37,11 +37,13 @@ object Application extends Controller {
   }
 
   def testActor2() = Action { implicit request =>
-    val userId = request.session.get("id").getOrElse("None") //FIXME : meilleurs moyen pour récupérer l'unique id
+    //FIXME : meilleurs moyen pour récupérer l'unique id -> JLA : Je m'en occupe ASAP
+    val userId = request.session.get("id").getOrElse("None") 
+    
     val endpoints = Seq()
       //Endpoint(Twitter, "http://dev.studio-dev.fr/test-ws-json.php?nom=twitter", 3, userId))
-    //Endpoint(Facebook, "http://dev.studio-dev.fr/test-ws-json.php?nom=facebook", 5),
-    //Endpoint(Viadeo, "http://dev.studio-dev.fr/test-ws-json.php?nom=viadeo", 3))
+      //Endpoint(Facebook, "http://dev.studio-dev.fr/test-ws-json.php?nom=facebook", 5),
+      //Endpoint(Viadeo, "http://dev.studio-dev.fr/test-ws-json.php?nom=viadeo", 3))
 
     val enumerator = ProviderActor.create(endpoints)
     // -> to Skimbo 
@@ -49,12 +51,11 @@ object Application extends Controller {
     // -> filter en fonction des déjà vus
     // -> to Json
 
-    //Ok.feed(enumerator &> EventSource()).as(EVENT_STREAM) // what'is the difference ?
     Ok.stream(enumerator &> EventSource()).as(EVENT_STREAM)
   }
 
   def killMyActors() = Action { implicit request =>
-    val userId = request.session.get("id").getOrElse("None")
+    val userId = request.session.get("id").getOrElse("None") // JLA : idem je m'en occupes
     println("Aplication.scala :: KillMyActors :: " + userId)
     ProviderActor.killActorsForUser(userId)
     Ok("ok")

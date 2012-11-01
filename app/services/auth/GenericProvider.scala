@@ -53,22 +53,20 @@ trait GenericProvider extends Results {
   def hasToken(implicit request: RequestHeader) = getToken.isDefined
 
   /**
-   * Retreive user informations from provider
+   * Retrieve user informations from provider
    */
   def getUser(implicit request: RequestHeader): Option[User] = {
-    val urlUserInfos = config.getString("urlUserInfos").getOrElse("")
-    if(urlUserInfos != "") {
-      fetch(urlUserInfos).get().await(20000).fold(//TODO : remove await quand tu pourras
+    config.getString("urlUserInfos").flatMap { url => 
+      fetch(url).get().await(20000).fold( //TODO : remove await quand tu pourras
         onError => {
           Logger.error("urlUserInfos timed out waiting for "+name)
           None
         },
-        response =>
-          {
-            Logger.info(name+" users infos : "+response.body)
-            distantUserToSkimboUser(response)
-          })
-    } else {
+        response => {
+          Logger.info(name+" users infos : "+response.body)
+          distantUserToSkimboUser(response)
+        })
+    } orElse {
       Logger.error(name+" hasn't urlUserInfos in config !")
       None
     }
