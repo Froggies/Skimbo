@@ -4,7 +4,7 @@ case class User(
   username: String,
   name: String,
   socialType: String,
-  description: String,
+  description: Option[String] = None,
   avatar: Option[String] = None)
 
 object User {
@@ -13,7 +13,7 @@ object User {
       login <- sess.get("user-username");
       social <- sess.get("provider");
       name <- sess.get("user-name");
-      desc <- sess.get("user-description")
+      desc <- Some(sess.get("user-description"))
     ) yield User(login, name, social, desc, sess.get("user-avatar"))
   }
 }

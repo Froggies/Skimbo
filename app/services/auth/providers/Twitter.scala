@@ -17,7 +17,7 @@ object Twitter extends OAuthProvider {
       val id = (me \ "id").as[Int]
       val username = (me \ "screen_name").as[String]
       val name = (me \ "name").as[String]
-      val description = (me \ "description").as[String]
+      val description = (me \ "description").asOpt[String]
       val profileImage = (me \ "profile_image_url").asOpt[String]
       Some(User(username, name, this.name, description, profileImage))
     } catch {

@@ -31,7 +31,7 @@ object LinkedIn extends OAuthProvider {
       val id = (me \ "id").as[String]
       val username = (me \ "firstname").as[String]
       val name = (me \ "lastname").as[String]
-      val description = (me \ "headline").as[String]
+      val description = (me \ "headline").asOpt[String]
       val profileImage = (me \ "picture-url").asOpt[String]
       Some(User(username, name, this.name, description, profileImage))
     } catch {
