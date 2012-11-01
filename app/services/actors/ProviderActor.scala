@@ -7,8 +7,10 @@ import play.api.libs.iteratee.{Concurrent, Enumerator}
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.RequestHeader
 import play.libs.Akka
+import play.api.PlayException
+import play.api.UnexpectedException
 
-case class Dead(idUser: String)
+sealed case class Dead(idUser: String)
 
 object ProviderActor {
 
@@ -16,10 +18,10 @@ object ProviderActor {
 
   def create(endpoints: Seq[Endpoint])(implicit request: RequestHeader): Enumerator[JsValue] = {
     val (rawStream, channel) = Concurrent.broadcast[JsValue]
-    endpoints.map({ endpoint =>
+    endpoints.map{ endpoint =>
       val actor = system.actorOf(Props(new ProviderActor(channel, endpoint)))
       system.eventStream.subscribe(actor, classOf[Dead])
-    })
+    }
     rawStream
   }
 
@@ -43,8 +45,10 @@ class ProviderActor(channel: Concurrent.Channel[JsValue], endpoint: Endpoint)(im
           channel.push(Json.toJson("error with " + endpoint.provider.name))
           self ! Dead
         },
-        response => channel.push(response.json))
+        response => 
+          channel.push(response.json))
     }
+    
     case Dead(idUser) => {
       if (idUser == endpoint.idUser) {
         println("actor provider kill for " + idUser)
@@ -52,7 +56,8 @@ class ProviderActor(channel: Concurrent.Channel[JsValue], endpoint: Endpoint)(im
         context.stop(self)
       }
     }
-    case e: Exception => println("unexpected Error: " + e)
+    
+    case e: Exception => throw new UnexpectedException(Some("Incorrect message receive"), Some(e))
   }
 
 }

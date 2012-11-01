@@ -25,7 +25,7 @@ object LinkedIn extends OAuthProvider {
   override def fetch(url: String)(implicit request: RequestHeader) =
     super.fetch(url).withHeaders("x-li-format" -> "json")
     
-  override def distantUserToSkimboUser(response: play.api.libs.ws.Response): Option[User] = {
+  override def distantUserToSkimboUser(ident: String, response: play.api.libs.ws.Response): Option[User] = {
     try {
       val me = response.json
       val id = (me \ "id").as[String]

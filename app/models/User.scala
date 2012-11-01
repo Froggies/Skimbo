@@ -15,11 +15,11 @@ object User {
   def fromSession(sess: play.api.mvc.Session): Option[User] = {
     for (
       id <- sess.get("id");
-      login <- sess.get("user-username");
-      social <- sess.get("provider");
-      name <- sess.get("user-name");
-      desc <- Some(sess.get("user-description"))
-    ) yield User(id, login, name, social, desc, sess.get("user-avatar"))
+      login <- sess.get("id"); // TODO : Aller chercher les infos en BDD
+      social <- sess.get("id");
+      name <- sess.get("id");
+      desc <- None
+    ) yield User(id, login, name, social, desc, None)
   }
 
   def fromJson(json: JsValue): User = {

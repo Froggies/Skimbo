@@ -11,7 +11,7 @@ object Twitter extends OAuthProvider {
   override val name = "twitter"
   override val namespace = "tw"
 
-  override def distantUserToSkimboUser(response: play.api.libs.ws.Response): Option[User] = {
+  override def distantUserToSkimboUser(ident: String, response: play.api.libs.ws.Response): Option[User] = {
     try {
       val me = response.json
       val id = (me \ "id").as[Int].toString
