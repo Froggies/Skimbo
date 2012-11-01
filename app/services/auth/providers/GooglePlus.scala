@@ -26,7 +26,7 @@ object GooglePlus extends OAuth2Provider {
       val name = (me \ "name" \ "familyName").as[String]
       val description = Some("")
       val profileImage = (me \ "image" \ "url").asOpt[String]
-      Some(User(username, name, this.name, description, profileImage))
+      Some(User(id, username, name, this.name, description, profileImage))
     } catch {
       case _ => {
         Logger.error("Error during fetching user details")

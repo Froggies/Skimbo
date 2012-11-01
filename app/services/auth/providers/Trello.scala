@@ -19,9 +19,9 @@ object Trello extends OAuthProvider {
       val description = (me \ "bio").asOpt[String]
       val profileImage = (me \ "gravatarHash").asOpt[String]
       if(profileImage.isDefined)
-        Some(User(username, name, this.name, description, Some("http://www.gravatar.com/avatar/"+profileImage.get)))
+        Some(User(id, username, name, this.name, description, Some("http://www.gravatar.com/avatar/"+profileImage.get)))
       else
-        Some(User(username, name, this.name, description, profileImage))
+        Some(User(id, username, name, this.name, description, profileImage))
     } catch {
       case _ => {
         Logger.error("Error during fetching user details")

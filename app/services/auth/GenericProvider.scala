@@ -57,19 +57,19 @@ trait GenericProvider extends Results {
    */
   def getUser(implicit request: RequestHeader): Option[User] = {
     val urlUserInfos = config.getString("urlUserInfos").getOrElse("")
-    if(urlUserInfos != "") {
-      fetch(urlUserInfos).get().await(20000).fold(//TODO : remove await quand tu pourras
+    if (urlUserInfos != "") {
+      fetch(urlUserInfos).get().await(20000).fold( //TODO : remove await quand tu pourras
         onError => {
-          Logger.error("urlUserInfos timed out waiting for "+name)
+          Logger.error("urlUserInfos timed out waiting for " + name)
           None
         },
         response =>
           {
-            Logger.info(name+" users infos : "+response.body)
+            Logger.info(name + " users infos : " + response.body)
             distantUserToSkimboUser(response)
           })
     } else {
-      Logger.error(name+" hasn't urlUserInfos in config !")
+      Logger.error(name + " hasn't urlUserInfos in config !")
       None
     }
   }

@@ -1,6 +1,10 @@
 package models
+import play.api.libs.json.JsValue
+import play.api.libs.json.JsObject
+import play.api.libs.json.JsString
 
 case class User(
+  id: String,
   username: String,
   name: String,
   socialType: String,
@@ -8,12 +12,27 @@ case class User(
   avatar: Option[String] = None)
 
 object User {
-  def apply(sess: play.api.mvc.Session): Option[User] = {
+  def fromSession(sess: play.api.mvc.Session): Option[User] = {
     for (
+      id <- sess.get("id");
       login <- sess.get("user-username");
       social <- sess.get("provider");
       name <- sess.get("user-name");
       desc <- Some(sess.get("user-description"))
-    ) yield User(login, name, social, desc, sess.get("user-avatar"))
+    ) yield User(id, login, name, social, desc, sess.get("user-avatar"))
   }
+
+  def fromJson(json: JsValue): User = {
+    User((json \ "id").as[String], 
+        (json \ "login").as[String], 
+        (json \ "name").as[String], 
+        (json \ "social").as[String], 
+        (json \ "desc").asOpt[String], 
+        (json \ "avatar").asOpt[String])
+  }
+
+  def toJson(user: User): JsValue = {
+    JsString("b")
+  }
+
 }

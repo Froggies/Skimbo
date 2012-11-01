@@ -14,12 +14,6 @@ GET     /api/connected           	controllers.Application.connected
 # Authentificate to providers
 GET     /auth/:provider             controllers.Application.authenticate(provider: String)
 
-# Test bd user
-GET     /user/add/:email            controllers.User.add(email: String)
-GET     /user/get           		controllers.User.findAll()
-GET     /user/get/:email           	controllers.User.findOneByEmail(email: String)
-
-
 # Exemples
 GET     /ex/twitter                 controllers.SocialNetworksTest.twitter
 GET     /ex/facebook                controllers.SocialNetworksTest.facebook

@@ -14,12 +14,12 @@ object Twitter extends OAuthProvider {
   override def distantUserToSkimboUser(response: play.api.libs.ws.Response): Option[User] = {
     try {
       val me = response.json
-      val id = (me \ "id").as[Int]
+      val id = (me \ "id").as[Int].toString
       val username = (me \ "screen_name").as[String]
       val name = (me \ "name").as[String]
       val description = (me \ "description").asOpt[String]
       val profileImage = (me \ "profile_image_url").asOpt[String]
-      Some(User(username, name, this.name, description, profileImage))
+      Some(User(id, username, name, this.name, description, profileImage))
     } catch {
       case _ => {
         Logger.error("Error during fetching user details")

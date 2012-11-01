@@ -33,7 +33,7 @@ object LinkedIn extends OAuthProvider {
       val name = (me \ "lastname").as[String]
       val description = (me \ "headline").asOpt[String]
       val profileImage = (me \ "picture-url").asOpt[String]
-      Some(User(username, name, this.name, description, profileImage))
+      Some(User(id, username, name, this.name, description, profileImage))
     } catch {
       case _ => {
         Logger.error("Error during fetching user details")
