@@ -19,8 +19,6 @@ import services.security.AuthenticatedAction._
 object Application extends Controller {
 
   def index = Action { implicit request =>
-    
-    println(request.session)
     request.session.get("id").map(userId => {
       //UserInfosActor(Endpoint(Twitter, "http://dev.studio-dev.fr/test-ws-json.php?nom=twitter", 3, userId))
       //UserInfosActor(Endpoint(GooglePlus, "http://dev.studio-dev.fr/test-ws-json.php?nom=twitter", 3, userId))
