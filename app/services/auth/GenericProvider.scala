@@ -53,7 +53,7 @@ trait GenericProvider extends Results {
   def hasToken(implicit request: RequestHeader) = getToken.isDefined
 
   /**
-   * Retreive user informations from provider, never override it, just override distantUserToSkimboUser
+   * Retreive user informations from provider
    */
   def getUser(implicit request: RequestHeader): Option[User] = {
     val urlUserInfos = config.getString("urlUserInfos").getOrElse("")
