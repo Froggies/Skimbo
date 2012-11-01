@@ -8,9 +8,6 @@ import play.api.libs.ws.WS
 
 trait OAuthProvider extends GenericProvider {
 
-  // Oauth1 configuration (from social.conf)
-  lazy val config = current.configuration.getConfig("social."+name).get
-
   lazy val KEY = ConsumerKey(config.getString("clientId").get, config.getString("secret").get)
 
   lazy val service = OAuth(ServiceInfo(
@@ -33,14 +30,16 @@ trait OAuthProvider extends GenericProvider {
       // Step 1 : ask request token to provider and then redirect to accreditation page
       case None =>
         service.retrieveRequestToken(authRoute.absoluteURL(false)) match {
-          case Right(t) => Redirect(service.redirectUrl(t.token)).withSession(request.session + (fieldToken -> t.token) + (fieldSecret -> t.secret))
+          case Right(t) => Redirect(service.redirectUrl(t.token))
+                            .withSession(request.session + (fieldToken -> t.token) + (fieldSecret -> t.secret))
           case Left(e)  => throw e
         }
 
       // Step 2 : Retrieve access-token from WS and redirect to app
       case Some(verifier) =>
         service.retrieveAccessToken(getToken(request).get, verifier) match {
-          case Right(t) => Redirect(redirectRoute).withSession(request.session + (fieldToken -> t.token) + (fieldSecret -> t.secret))
+          case Right(t) => Redirect(redirectRoute)
+                            .withSession(generateUniqueId(request.session) + (fieldToken -> t.token) + (fieldSecret -> t.secret))
           case Left(e)  => Redirect(redirectRoute).withSession(request.session + ("login-error" -> name))
         }
     }
