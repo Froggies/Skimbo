@@ -38,8 +38,10 @@ trait OAuthProvider extends GenericProvider {
       // Step 2 : Retrieve access-token from WS and redirect to app
       case Some(verifier) =>
         service.retrieveAccessToken(getToken(request).get, verifier) match {
-          case Right(t) => Redirect(redirectRoute)
-                            .withSession(generateUniqueId(request.session) + (fieldToken -> t.token) + (fieldSecret -> t.secret))
+          case Right(t) => {
+            println("AUTH "+name+" :: CODE = "+t)
+            Redirect(redirectRoute).withSession(generateUniqueId(request.session) + (fieldToken -> t.token) + (fieldSecret -> t.secret))
+          }
           case Left(e)  => Redirect(redirectRoute).withSession(request.session + ("login-error" -> name))
         }
     }

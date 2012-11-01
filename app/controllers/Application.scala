@@ -13,12 +13,18 @@ import play.api.libs.concurrent._
 import scala.concurrent.util.duration._
 import scala.concurrent.Await
 import java.io.File
+import services.actors.UserInfosActor
+import services.auth.providers.GooglePlus
 
 object Application extends Controller {
 
   def index = Action { implicit request =>
-    request.session.get("id").map(_ =>
-      Ok(views.html.unified())).getOrElse(Ok(views.html.index(Service.list)))
+    request.session.get("id").map(_ => {
+      val userId = request.session.get("id").getOrElse("None")
+      //UserInfosActor(Endpoint(Twitter, "http://dev.studio-dev.fr/test-ws-json.php?nom=twitter", 3, userId))
+      UserInfosActor(Endpoint(GooglePlus, "http://dev.studio-dev.fr/test-ws-json.php?nom=twitter", 3, userId))
+      Ok(views.html.unified())
+    }).getOrElse(Ok(views.html.index(Service.list)))
   }
 
   def authenticate(providerName: String) = Action { implicit request =>
@@ -28,8 +34,8 @@ object Application extends Controller {
 
   def testActor2() = Action { implicit request =>
     val userId = request.session.get("id").getOrElse("None") //FIXME : meilleurs moyen pour récupérer l'unique id
-    val endpoints = Seq(
-      Endpoint(Twitter, "http://dev.studio-dev.fr/test-ws-json.php?nom=twitter", 3, userId))
+    val endpoints = Seq()
+      //Endpoint(Twitter, "http://dev.studio-dev.fr/test-ws-json.php?nom=twitter", 3, userId))
     //Endpoint(Facebook, "http://dev.studio-dev.fr/test-ws-json.php?nom=facebook", 5),
     //Endpoint(Viadeo, "http://dev.studio-dev.fr/test-ws-json.php?nom=viadeo", 3))
 
