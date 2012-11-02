@@ -10,7 +10,7 @@ import play.libs.Akka
 import play.api.PlayException
 import play.api.UnexpectedException
 
-sealed case class Dead(idUser: String)
+sealed case class Dead(idUser: String = "")
 
 object ProviderActor {
 

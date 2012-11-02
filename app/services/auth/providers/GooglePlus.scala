@@ -3,7 +3,7 @@ package services.auth.providers
 import play.api._
 import play.api.mvc._
 import services.auth._
-import models.User
+import models.ProviderUser
 
 object GooglePlus extends OAuth2Provider {
 
@@ -18,7 +18,7 @@ object GooglePlus extends OAuth2Provider {
   override def processToken(response: play.api.libs.ws.Response) =
     Token((response.json \ "access_token").asOpt[String], (response.json \ "expires_in").asOpt[Int])
     
-  override def distantUserToSkimboUser(ident: String, response: play.api.libs.ws.Response): Option[User] = {
+  override def distantUserToSkimboUser(ident: String, response: play.api.libs.ws.Response): Option[ProviderUser] = {
     try {
       val me = response.json // TODO : En faire un parser
       val id = (me \ "id").as[String]
@@ -26,7 +26,7 @@ object GooglePlus extends OAuth2Provider {
       val name = (me \ "name" \ "familyName").as[String]
       val description = Some("")
       val profileImage = (me \ "image" \ "url").asOpt[String]
-      Some(User(id, username, name, this.name, description, profileImage))
+      Some(ProviderUser(id, username, name, this.name, description, profileImage))
     } catch {
       case _ => {
         Logger.error("Error during fetching user details")

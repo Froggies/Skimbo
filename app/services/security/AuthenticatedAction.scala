@@ -9,7 +9,7 @@ object AuthenticatedAction extends Results {
 
   def Authenticated[A](p: BodyParser[A])(f: AuthenticatedRequest[A] => Result) = {
     Action(p) { request =>
-      request.session.get("id").flatMap(u => User(request.session)).map { user =>
+      request.session.get("id").flatMap(id => User.load(id)).map { user =>
         f(AuthenticatedRequest(user, request))
       }.getOrElse(Redirect(controllers.routes.Application.index))
     }

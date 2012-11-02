@@ -8,6 +8,7 @@ import java.util.UUID
 import models.User
 import play.api.libs.concurrent.futureToPlayPromise
 import play.api.Logger
+import models.ProviderUser
 
 trait GenericProvider extends Results {
 
@@ -55,7 +56,7 @@ trait GenericProvider extends Results {
   /**
    * Retrieve user informations from provider
    */
-  def getUser(implicit request: RequestHeader): Option[User] = {
+  def getUser(implicit request: RequestHeader): Option[ProviderUser] = {
     config.getString("urlUserInfos").map { url => 
       fetch(url).get().await(20000).fold( //TODO : remove await quand tu pourras
         onError => {
@@ -75,6 +76,6 @@ trait GenericProvider extends Results {
   /**
    * Transcript getUser to real User
    */
-  def distantUserToSkimboUser(id: String, response: play.api.libs.ws.Response): Option[User] = None
+  def distantUserToSkimboUser(id: String, response: play.api.libs.ws.Response): Option[ProviderUser] = None
 
 }

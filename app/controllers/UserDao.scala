@@ -23,10 +23,17 @@ object UserDao extends Controller with MongoController {
       Logger.error("Mongo LastErorr : %s".format(lastError)))
   }
 
+  def findAll() = {
+    val qb = QueryBuilder().query(Json.obj())
+    collection.find[JsValue](qb).toList.map { collection =>
+      models.User.fromJson(collection.foldLeft(JsArray(List()))((obj, u) => obj ++ Json.arr(u)))
+    }
+  }
+  
   def findOneById(id: String) = {
     val qb = QueryBuilder().query(Json.obj("id" -> id))
     collection.find[JsValue](qb).toList.map { collection =>
-      collection.foldLeft(JsArray(List()))((obj, u) => obj ++ Json.arr(u))
+      models.User.fromJson(collection.foldLeft(JsArray(List()))((obj, u) => obj ++ Json.arr(u)))
     }
   }
 

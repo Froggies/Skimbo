@@ -4,7 +4,7 @@ import play.api._
 import play.api.mvc._
 import services.auth._
 import play.api.mvc.WithHeaders
-import models.User
+import models.ProviderUser
 import play.api.libs.concurrent.futureToPlayPromise
 
 object LinkedIn extends OAuthProvider {
@@ -25,7 +25,7 @@ object LinkedIn extends OAuthProvider {
   override def fetch(url: String)(implicit request: RequestHeader) =
     super.fetch(url).withHeaders("x-li-format" -> "json")
     
-  override def distantUserToSkimboUser(ident: String, response: play.api.libs.ws.Response): Option[User] = {
+  override def distantUserToSkimboUser(ident: String, response: play.api.libs.ws.Response): Option[ProviderUser] = {
     try {
       val me = response.json
       val id = (me \ "id").as[String]
@@ -33,7 +33,7 @@ object LinkedIn extends OAuthProvider {
       val name = (me \ "lastname").as[String]
       val description = (me \ "headline").asOpt[String]
       val profileImage = (me \ "picture-url").asOpt[String]
-      Some(User(id, username, name, this.name, description, profileImage))
+      Some(ProviderUser(id, username, name, this.name, description, profileImage))
     } catch {
       case _ => {
         Logger.error("Error during fetching user details")

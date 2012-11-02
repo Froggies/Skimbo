@@ -8,6 +8,9 @@ import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.RequestHeader
 import play.libs.Akka
 import play.api.UnexpectedException
+import play.api.Logger
+import controllers.UserDao
+import models.User
 
 case class Refresh()
 
@@ -25,15 +28,25 @@ class UserInfosActor(endpoint: Endpoint)(implicit request: RequestHeader) extend
 
   def receive = {
     case Refresh => {
-      println("actor user infos pull " + endpoint.provider.name + " on " + endpoint.url)
+      Logger.info("actor user infos pull " + endpoint.provider.name + " on " + endpoint.url)
       println(endpoint.provider.getUser)
-      //TODO save in bd
-    }
-    case Dead(idUser) => {
-      if (idUser == endpoint.idUser) {
-        println("actor user infos kill for " + idUser)
-        context.stop(self)
+      //get in bd if user exist
+      //if exist check provider info and update
+      //else create
+      import scala.concurrent.ExecutionContext.Implicits.global
+      UserDao.add(User(endpoint.idUser)).onComplete { l =>
+//        UserDao.findAll().foreach {
+//          user => {
+//            println("UserInfosActor :: "+user)
+//            //self ! Dead
+//          }
+//        }
+        println(l)
       }
+    }
+    case Dead => {
+      Logger.info("actor user infos kill")
+      context.stop(self)
     }
     case e: Exception => throw new UnexpectedException(Some("Incorrect message receive"), Some(e))
   }
