@@ -3,8 +3,8 @@ package services.actors;
 import akka.actor._
 import akka.util.duration.intToDurationInt
 import play.api.libs.concurrent.futureToPlayPromise
-import play.api.libs.iteratee.{Concurrent, Enumerator}
-import play.api.libs.json.{JsValue, Json}
+import play.api.libs.iteratee.{ Concurrent, Enumerator }
+import play.api.libs.json.{ JsValue, Json }
 import play.api.mvc.RequestHeader
 import play.libs.Akka
 import play.api.PlayException
@@ -19,7 +19,7 @@ object ProviderActor {
 
   def create(endpoints: Seq[Endpoint])(implicit request: RequestHeader): Enumerator[JsValue] = {
     val (rawStream, channel) = Concurrent.broadcast[JsValue]
-    endpoints.map{ endpoint =>
+    endpoints.map { endpoint =>
       val actor = system.actorOf(Props(new ProviderActor(channel, endpoint)))
       system.eventStream.subscribe(actor, classOf[Dead])
     }
@@ -40,14 +40,14 @@ class ProviderActor(channel: Concurrent.Channel[JsValue], endpoint: Endpoint)(im
 
   def receive = {
     case ReceiveTimeout => {
-      if(endpoint.provider.hasToken(request)) {//TODO RM : remove when api endpoint from JL was done
+      if (endpoint.provider.hasToken(request)) { //TODO RM : remove when api endpoint from JL was done
         println("actor provider pull " + endpoint.provider.name + " on " + endpoint.url)
         endpoint.provider.fetch(endpoint.url).get.map(response => channel.push(response.json))
       } else {
         self ! Dead(endpoint.idUser)
       }
     }
-    
+
     case Dead(idUser) => {
       if (idUser == endpoint.idUser) {
         println("actor provider kill for " + idUser)
@@ -55,7 +55,7 @@ class ProviderActor(channel: Concurrent.Channel[JsValue], endpoint: Endpoint)(im
         context.stop(self)
       }
     }
-    
+
     case e: Exception => throw new UnexpectedException(Some("Incorrect message receive"), Some(e))
   }
 
