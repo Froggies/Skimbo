@@ -13,7 +13,7 @@ App created during the [Typesafe contest app](http://blog.typesafe.com/typesafe-
  * [@vp3n](https://twitter.com/vp3n)
  * Laurent Dufour (This guy is not on twitter !!)
 
- # Test app
+# Test app
   * launch server
   * go on 127.0.0.1:9000
   * if login page -> choose provider
