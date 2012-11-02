@@ -11,7 +11,7 @@ import play.api.PlayException
 import play.api.UnexpectedException
 import play.api.libs.concurrent.execution.defaultContext
 
-sealed case class Dead(idUser: String)
+sealed case class Dead(idUser: String = "")
 
 object ProviderActor {
 

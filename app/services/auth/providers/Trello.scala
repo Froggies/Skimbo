@@ -3,14 +3,14 @@ package services.auth.providers
 import play.api._
 import play.api.mvc._
 import services.auth._
-import models.User
+import models.ProviderUser
 
 object Trello extends OAuthProvider {
 
   override val name = "trello"
   override val namespace = "tr"
 
-  override def distantUserToSkimboUser(ident: String, response: play.api.libs.ws.Response): Option[User] = {
+  override def distantUserToSkimboUser(ident: String, response: play.api.libs.ws.Response): Option[ProviderUser] = {
     try {
       val me = response.json
       val id = (me \ "id").as[String]
@@ -18,8 +18,7 @@ object Trello extends OAuthProvider {
       val name = (me \ "fullName").as[String]
       val description = (me \ "bio").asOpt[String]
       val profileImage = (me \ "gravatarHash").asOpt[String]
-      Some(User(ident, username, name, this.name, description, profileImage.map(img => "http://www.gravatar.com/avatar/"+img)))
- 
+      Some(ProviderUser(id, username, name, this.name, description, profileImage.map(img => "http://www.gravatar.com/avatar/"+img)))
     } catch {
       case _ => {
         Logger.error("Error during fetching user details")

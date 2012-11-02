@@ -21,13 +21,12 @@ object Application extends Controller {
   def index = Action { implicit request =>
     request.session.get("id").map(userId => {
       //UserInfosActor(Endpoint(Twitter, "http://dev.studio-dev.fr/test-ws-json.php?nom=twitter", 3, userId))
-      //UserInfosActor(Endpoint(GooglePlus, "http://dev.studio-dev.fr/test-ws-json.php?nom=twitter", 3, userId))
-      //UserInfosActor(Endpoint(LinkedIn, "http://dev.studio-dev.fr/test-ws-json.php?nom=twitter", 3, userId))
-      //UserInfosActor(Endpoint(Scoopit, "http://dev.studio-dev.fr/test-ws-json.php?nom=twitter", 3, userId))
-      //UserInfosActor(Endpoint(Trello, "http://dev.studio-dev.fr/test-ws-json.php?nom=twitter", 3, userId))
-      //DONT WORK UserInfosActor(Endpoint(StackExchange, "http://dev.studio-dev.fr/test-ws-json.php?nom=twitter", 3, userId))
-      
-      UserInfosActor(Endpoint(Twitter, "http://dev.studio-dev.fr/test-ws-json.php?nom=twitter", 3, userId))
+    //UserInfosActor(Endpoint(GooglePlus, "http://dev.studio-dev.fr/test-ws-json.php?nom=twitter", 3, userId))
+    //UserInfosActor(Endpoint(LinkedIn, "http://dev.studio-dev.fr/test-ws-json.php?nom=twitter", 3, userId))
+    //UserInfosActor(Endpoint(Scoopit, "http://dev.studio-dev.fr/test-ws-json.php?nom=twitter", 3, userId))
+    //UserInfosActor(Endpoint(Trello, "http://dev.studio-dev.fr/test-ws-json.php?nom=twitter", 3, userId))
+    //DONT WORK UserInfosActor(Endpoint(StackExchange, "http://dev.studio-dev.fr/test-ws-json.php?nom=twitter", 3, userId))
+    //UserInfosActor(Endpoint(Twitter, "http://dev.studio-dev.fr/test-ws-json.php?nom=twitter", 3, userId))
       Ok(views.html.unified())
     }).getOrElse(Ok(views.html.index(Service.list)))
   }
@@ -41,8 +40,8 @@ object Application extends Controller {
     implicit val request = action.request
     val user = action.user // (Pour la suite)
 
-    val endpoints = Seq(
-      Endpoint(Twitter, "http://dev.studio-dev.fr/test-ws-json.php?nom=twitter", 3, action.user.id))
+    val endpoints = Seq()
+      //Endpoint(Twitter, "http://dev.studio-dev.fr/test-ws-json.php?nom=twitter", 3, action.user.id))
       //Endpoint(Facebook, "http://dev.studio-dev.fr/test-ws-json.php?nom=facebook", 5),
       //Endpoint(Viadeo, "http://dev.studio-dev.fr/test-ws-json.php?nom=viadeo", 3))
 
