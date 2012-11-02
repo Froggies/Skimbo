@@ -9,7 +9,7 @@ GET     /                           controllers.Application.index
 GET     /api/providers/list         controllers.api.Providers.listAll
 
 # Streams
-GET     /api/logout           controllers.Application.logout
+GET     /api/logout           		controllers.Application.logout
 # Streams -- websocket
 GET     /api/stream/webSocket       controllers.stream.WebSocket.connect
 # Streams -- Sse

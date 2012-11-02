@@ -2,7 +2,7 @@
 
 publicApp.controller('ColumnsCtrl', function($scope, $http) {
   if (!!window.EventSource) {
-    var source = new EventSource('http://127.0.0.1:9000/api/unified2');
+    var source = new EventSource('http://127.0.0.1:9000/api/stream/sse');
     source.addEventListener('message', function(e) {
     	$scope.$apply(function() {
     		if($scope.data == undefined) {
@@ -10,6 +10,8 @@ publicApp.controller('ColumnsCtrl', function($scope, $http) {
         	}
     		$scope.data.unshift(JSON.parse(e.data));
     	});
+      console.log("ping");
+      $http.get('http://127.0.0.1:9000/api/stream/ping');
     }, false);
 
     source.addEventListener('open', function(e) {

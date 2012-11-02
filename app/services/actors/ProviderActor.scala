@@ -23,11 +23,12 @@ object ProviderActor {
     endpoints.map { endpoint =>
       val actor = system.actorOf(Props(new ProviderActor(channel, endpoint)))
       system.eventStream.subscribe(actor, classOf[Dead])
+      system.eventStream.subscribe(actor, classOf[Ping])
     }
     rawStream
   }
-  
-  def ping(userId:String) = {
+
+  def ping(userId: String) = {
     system.eventStream.publish(Ping(userId))
   }
 
@@ -45,8 +46,8 @@ class ProviderActor(channel: Concurrent.Channel[JsValue], endpoint: Endpoint)(im
 
   def receive = {
     case ReceiveTimeout => {
-      if(endpoint.longPolling) {
-        scheduler.cancel()//need ping to call provider
+      if (endpoint.longPolling) {
+        scheduler.cancel() //need ping to call provider
       }
       if (endpoint.provider.hasToken(request)) { //TODO RM : remove when api endpoint from JL was done
         println("actor provider pull " + endpoint.provider.name + " on " + endpoint.url)
@@ -57,6 +58,7 @@ class ProviderActor(channel: Concurrent.Channel[JsValue], endpoint: Endpoint)(im
     }
     case Ping(idUser) => {
       if (idUser == endpoint.idUser) {
+        println("actor provider ping for " + idUser)
         Akka.system.scheduler.scheduleOnce(endpoint.interval second) {
           self ! ReceiveTimeout
         }
@@ -64,7 +66,7 @@ class ProviderActor(channel: Concurrent.Channel[JsValue], endpoint: Endpoint)(im
     }
     case Dead(idUser) => {
       if (idUser == endpoint.idUser) {
-        println("actor provider kill for " + idUser)
+        println("actor provider kill " + endpoint.provider.name + " for " + idUser)
         scheduler.cancel()
         context.stop(self)
       }
