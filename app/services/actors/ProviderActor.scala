@@ -40,8 +40,12 @@ class ProviderActor(channel: Concurrent.Channel[JsValue], endpoint: Endpoint)(im
 
   def receive = {
     case ReceiveTimeout => {
-      println("actor provider pull " + endpoint.provider.name + " on " + endpoint.url)
-      endpoint.provider.fetch(endpoint.url).get.map(response => channel.push(response.json))
+      if(endpoint.provider.hasToken(request)) {//TODO RM : remove when api endpoint from JL was done
+        println("actor provider pull " + endpoint.provider.name + " on " + endpoint.url)
+        endpoint.provider.fetch(endpoint.url).get.map(response => channel.push(response.json))
+      } else {
+        self ! Dead(endpoint.idUser)
+      }
     }
     
     case Dead(idUser) => {

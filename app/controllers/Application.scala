@@ -15,12 +15,14 @@ import scala.concurrent.Await
 import java.io.File
 import services.actors.UserInfosActor
 import services.security.AuthenticatedAction._
+import play.api.Logger
 
 object Application extends Controller {
 
   def index = Action { implicit request =>
     request.session.get("id").map(userId => {
-      //UserInfosActor(Endpoint(Twitter, "http://dev.studio-dev.fr/test-ws-json.php?nom=twitter", 3, userId))
+      //RM : keep this for bd test when reactivemongo run
+    //UserInfosActor(Endpoint(Twitter, "http://dev.studio-dev.fr/test-ws-json.php?nom=twitter", 3, userId))
     //UserInfosActor(Endpoint(GooglePlus, "http://dev.studio-dev.fr/test-ws-json.php?nom=twitter", 3, userId))
     //UserInfosActor(Endpoint(LinkedIn, "http://dev.studio-dev.fr/test-ws-json.php?nom=twitter", 3, userId))
     //UserInfosActor(Endpoint(Scoopit, "http://dev.studio-dev.fr/test-ws-json.php?nom=twitter", 3, userId))
@@ -40,21 +42,28 @@ object Application extends Controller {
     implicit val request = action.request
     val user = action.user // (Pour la suite)
 
+    //TODO RM : remove when api endpoint from JL was done
     val endpoints = Seq(
       Endpoint(Twitter, "http://dev.studio-dev.fr/test-ws-json.php?nom=twitter", 5, action.user.id),
-      Endpoint(GitHub, "http://dev.studio-dev.fr/test-ws-json.php?nom=github", 5, action.user.id))
+      Endpoint(GitHub, "http://dev.studio-dev.fr/test-ws-json.php?nom=github", 10, action.user.id),
+      Endpoint(Facebook, "http://dev.studio-dev.fr/test-ws-json.php?nom=facebook", 15, action.user.id),
+      Endpoint(GooglePlus, "http://dev.studio-dev.fr/test-ws-json.php?nom=googlePlus", 3, action.user.id),
+      Endpoint(LinkedIn, "http://dev.studio-dev.fr/test-ws-json.php?nom=linkedIn", 8, action.user.id),
+      Endpoint(Scoopit, "http://dev.studio-dev.fr/test-ws-json.php?nom=scoopit", 5, action.user.id),
+      Endpoint(StackExchange, "http://dev.studio-dev.fr/test-ws-json.php?nom=stackExchange", 6, action.user.id),
+      Endpoint(Trello, "http://dev.studio-dev.fr/test-ws-json.php?nom=trello", 5, action.user.id),
+      Endpoint(Viadeo, "http://dev.studio-dev.fr/test-ws-json.php?nom=viadeo", 15, action.user.id))
 
     val enumerator = ProviderActor.create(endpoints)
     // -> to Skimbo 
     // -> trier par date
     // -> filter en fonction des déjà vus
     // -> to Json
-
     Ok.stream(enumerator &> EventSource()).as(EVENT_STREAM)
   }
 
   def killMyActors() = Authenticated { action =>
-    println("Aplication.scala :: KillMyActors :: " + action.user.id)
+    Logger.info("Aplication.scala :: KillMyActors :: " + action.user.id)
     ProviderActor.killActorsForUser(action.user.id)
     Ok("ok")
   }
