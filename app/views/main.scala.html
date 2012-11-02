@@ -1,4 +1,4 @@
-@(title: String)(content: Html)
+@(title: String)(css: Html)(content: Html)
 
 <!DOCTYPE html>
 <!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
@@ -11,7 +11,7 @@
         <meta name="description" content=""/>
         <meta name="viewport" content="width=device-width"/>
         <title>@title</title>
-        <link rel="stylesheet" media="screen" href="@routes.Assets.at("app/styles/main.css")">
+        @css
         <link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.png")">
         <!-- <script src="@routes.Assets.at("app/scripts/jquery-1.8.2.min.js")" type="text/javascript"></script> -->
     </head>
