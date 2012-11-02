@@ -35,12 +35,12 @@ class UserInfosActor(endpoint: Endpoint)(implicit request: RequestHeader) extend
       //else create
       import scala.concurrent.ExecutionContext.Implicits.global
       UserDao.add(User(endpoint.idUser)).onComplete { l =>
-//        UserDao.findAll().foreach {
-//          user => {
-//            println("UserInfosActor :: "+user)
-//            //self ! Dead
-//          }
-//        }
+        UserDao.findAll().foreach {
+          user => {
+            println("UserInfosActor :: "+user)
+            //self ! Dead
+          }
+        }
         println(l)
       }
     }
