@@ -46,8 +46,8 @@ object User {
   def toJson(user: User): JsValue = {
     val distants = user.distants.map { d => d }.getOrElse {Seq()}
     JsObject(Seq(
-      "id" -> JsString(user.id)
-      //,"distants" -> JsArray(toJson(distants))
+      "id" -> JsString(user.id),
+      "distants" -> JsArray(toJson(distants))
     ))
   }
   
