@@ -25,9 +25,12 @@ object UserInfosActor {
 }
 
 class UserInfosActor(endpoint: Endpoint)(implicit request: RequestHeader) extends Actor {
+  
+  import play.api.libs.concurrent.execution.defaultContext
 
   def receive = {
     case Refresh => {
+
       Logger.info("actor user infos pull " + endpoint.provider.name + " on " + endpoint.url)
       println(endpoint.provider.getUser)
       //get in bd if user exist

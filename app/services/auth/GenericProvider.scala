@@ -8,9 +8,12 @@ import java.util.UUID
 import models.User
 import play.api.libs.concurrent.futureToPlayPromise
 import play.api.Logger
+import scala.concurrent.Future
+import play.api.libs.concurrent.execution.defaultContext
+import services.auth.actions._
 import models.ProviderUser
 
-trait GenericProvider extends Results {
+trait GenericProvider extends Results with WsProvider with AccountWsProvider with SecurityProvider {
 
   // Generic provider settings (override it)
   def name: String
@@ -25,57 +28,5 @@ trait GenericProvider extends Results {
 
   // Common config
   lazy val authRoute: Call = controllers.routes.Application.authenticate(name)
-
-  /**
-   * Execute authentification process with this provider and redirect to `redirectRoute`
-   */
-  def auth(redirectRoute: Call)(implicit request: RequestHeader): Result
-
-  /**
-   * Retrieve security token
-   */
-  def getToken(implicit request: RequestHeader): Option[Any]
-
-  /**
-   * Create a basic webservice call and sign the request with token
-   */
-  def fetch(url: String)(implicit request: RequestHeader): WSRequestHolder
-
-  /**
-   * Assign unique ID to client after authentification
-   */
-  protected def generateUniqueId(session: Session) = {
-    session + ("id" -> session.get("id").getOrElse(UUID.randomUUID().toString))
-  }
-
-  /**
-   * Has the client a token on this service
-   */
-  def hasToken(implicit request: RequestHeader) = getToken.isDefined
-
-  /**
-   * Retrieve user informations from provider
-   */
-  def getUser(implicit request: RequestHeader): Option[ProviderUser] = {
-    config.getString("urlUserInfos").map { url => 
-      fetch(url).get().await(20000).fold( //TODO : remove await quand tu pourras
-        onError => {
-          Logger.error("urlUserInfos timed out waiting for " + name)
-          None
-        },
-        response => {
-          Logger.info(name + " users infos : " + response.body)
-          distantUserToSkimboUser(request.session("id"), response)
-        })
-    } getOrElse {
-      Logger.error(name+" hasn't urlUserInfos in config !")
-      None
-    }
-  }
-
-  /**
-   * Transcript getUser to real User
-   */
-  def distantUserToSkimboUser(id: String, response: play.api.libs.ws.Response): Option[ProviderUser] = None
 
 }

@@ -9,6 +9,7 @@ import play.api.mvc.RequestHeader
 import play.libs.Akka
 import play.api.PlayException
 import play.api.UnexpectedException
+import play.api.libs.concurrent.execution.defaultContext
 
 sealed case class Dead(idUser: String = "")
 
@@ -40,13 +41,7 @@ class ProviderActor(channel: Concurrent.Channel[JsValue], endpoint: Endpoint)(im
   def receive = {
     case ReceiveTimeout => {
       println("actor provider pull " + endpoint.provider.name + " on " + endpoint.url)
-      endpoint.provider.fetch(endpoint.url).get.await(10000).fold( // TODO : Virer cet await que je ne saurais voir !
-        error => {
-          channel.push(Json.toJson("error with " + endpoint.provider.name))
-          self ! Dead
-        },
-        response => 
-          channel.push(response.json))
+      endpoint.provider.fetch(endpoint.url).get.map(response => channel.push(response.json))
     }
     
     case Dead(idUser) => {
