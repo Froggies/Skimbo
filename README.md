@@ -12,3 +12,15 @@ App created during the [Typesafe contest app](http://blog.typesafe.com/typesafe-
  * [@studiodev](https://twitter.com/studiodev)
  * [@vp3n](https://twitter.com/vp3n)
  * Laurent Dufour (This guy is not on twitter !!)
+
+ # Test app
+  * launch server
+  * go on 127.0.0.1:9000
+  * if login page -> choose provider
+  * and then column page with provider(s) call
+  * click on logout -> must stop stream !
+
+# Technical
+	* on logon : UserInfosActor start for retreive users infos (in bd if exist, else call provider(s))
+	* on endpoint start (sse for now in Application.scala/testActor2()) start ProviderActor
+	* on logout shutdown all ProviderActor for user 
