@@ -1,9 +1,8 @@
 @main("Skimbo") {
 
-	<div ng-app="publicApp">
+	<div ng-app="publicApp" ng-controller="MainCtrl">
 
-        <header ng-include="'@routes.Assets.at("app/views/header.html")'">
-        </header>
+        <header ng-include="'@routes.Assets.at("app/views/header.html")'"></header>
 
         <!-- Add your site or application content here -->
         <div class="container" ng-view></div>

@@ -9,9 +9,6 @@ publicApp.controller('ColumnsCtrl', function($scope, $http) {
         		$scope.data = [];
         	}
     		$scope.data.unshift(JSON.parse(e.data));
-    		console.log("###############")
-    		//console.log($scope.originalData)
-    		//$scope.data = JSON.parse(JSON.stringify($scope.originalData));
     	});
     }, false);
 

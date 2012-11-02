@@ -40,10 +40,9 @@ object Application extends Controller {
     implicit val request = action.request
     val user = action.user // (Pour la suite)
 
-    val endpoints = Seq()
-      //Endpoint(Twitter, "http://dev.studio-dev.fr/test-ws-json.php?nom=twitter", 3, action.user.id))
-      //Endpoint(Facebook, "http://dev.studio-dev.fr/test-ws-json.php?nom=facebook", 5),
-      //Endpoint(Viadeo, "http://dev.studio-dev.fr/test-ws-json.php?nom=viadeo", 3))
+    val endpoints = Seq(
+      Endpoint(Twitter, "http://dev.studio-dev.fr/test-ws-json.php?nom=twitter", 5, action.user.id),
+      Endpoint(GitHub, "http://dev.studio-dev.fr/test-ws-json.php?nom=github", 5, action.user.id))
 
     val enumerator = ProviderActor.create(endpoints)
     // -> to Skimbo 

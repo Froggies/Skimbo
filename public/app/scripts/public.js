@@ -4,8 +4,7 @@
 var publicApp = angular.module('publicApp', [], function($routeProvider, $locationProvider) {
   $routeProvider
     .when('/', {
-      templateUrl: 'assets/app/views/main.html',
-      controller: 'MainCtrl'
+      templateUrl: 'assets/app/views/main.html'
     })
     .otherwise({
       redirectTo: '/'
