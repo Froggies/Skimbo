@@ -12,8 +12,10 @@ import play.modules.reactivemongo.PlayBsonImplicits._
 import play.api.libs.json._
 import play.api.Play.current
 
-object UserDao extends Controller with MongoController {
+object UserDao {
 
+  import scala.concurrent.ExecutionContext.Implicits.global
+  
   val db = ReactiveMongoPlugin.db
   lazy val collection = db("users")
 
