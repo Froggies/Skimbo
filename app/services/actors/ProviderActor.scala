@@ -11,6 +11,7 @@ import play.api.PlayException
 import play.api.UnexpectedException
 import play.api.libs.concurrent.execution.defaultContext
 
+sealed case class Ping(idUser: String)
 sealed case class Dead(idUser: String = "")
 
 object ProviderActor {
@@ -24,6 +25,10 @@ object ProviderActor {
       system.eventStream.subscribe(actor, classOf[Dead])
     }
     rawStream
+  }
+  
+  def ping(userId:String) = {
+    system.eventStream.publish(Ping(userId))
   }
 
   def killActorsForUser(userId: String) = {
@@ -40,6 +45,9 @@ class ProviderActor(channel: Concurrent.Channel[JsValue], endpoint: Endpoint)(im
 
   def receive = {
     case ReceiveTimeout => {
+      if(endpoint.longPolling) {
+        scheduler.cancel()//need ping to call provider
+      }
       if (endpoint.provider.hasToken(request)) { //TODO RM : remove when api endpoint from JL was done
         println("actor provider pull " + endpoint.provider.name + " on " + endpoint.url)
         endpoint.provider.fetch(endpoint.url).get.map(response => channel.push(response.json))
@@ -47,7 +55,13 @@ class ProviderActor(channel: Concurrent.Channel[JsValue], endpoint: Endpoint)(im
         self ! Dead(endpoint.idUser)
       }
     }
-
+    case Ping(idUser) => {
+      if (idUser == endpoint.idUser) {
+        Akka.system.scheduler.scheduleOnce(endpoint.interval second) {
+          self ! ReceiveTimeout
+        }
+      }
+    }
     case Dead(idUser) => {
       if (idUser == endpoint.idUser) {
         println("actor provider kill for " + idUser)

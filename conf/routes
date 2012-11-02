@@ -7,9 +7,14 @@ GET     /                           controllers.Application.index
 
 # Providers available
 GET     /api/providers/list         controllers.api.Providers.listAll
-GET     /api/unified2               controllers.Application.testActor2
-GET     /api/killMyActors           controllers.Application.killMyActors
-GET     /api/connected           	controllers.Application.connected
+
+# Streams
+GET     /api/logout           controllers.Application.logout
+# Streams -- websocket
+GET     /api/stream/webSocket       controllers.stream.WebSocket.connect
+# Streams -- Sse
+GET     /api/stream/sse       		controllers.stream.Sse.connect
+GET     /api/stream/ping       		controllers.stream.Sse.ping
        
 # Authentificate to providers
 GET     /auth/:provider             controllers.Application.authenticate(provider: String)

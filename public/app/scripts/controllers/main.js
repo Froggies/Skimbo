@@ -3,8 +3,8 @@
 publicApp.controller('MainCtrl', function($scope, $http) {
 
   $scope.logout = function() {
-  	console.log("killMyActors");
-    $http.get("http://127.0.0.1:9000/api/killMyActors");
+  	console.log("logout");
+    $http.get("http://127.0.0.1:9000/api/logout");
   }
 
 });
