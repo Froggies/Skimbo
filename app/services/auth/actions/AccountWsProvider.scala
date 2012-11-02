@@ -14,7 +14,7 @@ trait AccountWsProvider extends WsProvider {
   /**
    * Retrieve user informations from provider
    */
-  def getUser(implicit request: RequestHeader): Future[Option[ProvidedUser]] = {
+  def getUser(implicit request: RequestHeader): Future[Option[ProviderUser]] = {
     config.getString("urlUserInfos").map { url => 
       fetch(url).get().map{ response =>
           Logger.info("Users infos : " + response.body)
@@ -26,6 +26,6 @@ trait AccountWsProvider extends WsProvider {
   /**
    * Transcript getUser to real User
    */
-  def distantUserToSkimboUser(id: String, response: play.api.libs.ws.Response): Option[ProvidedUser] = None
+  def distantUserToSkimboUser(id: String, response: play.api.libs.ws.Response): Option[ProviderUser] = None
 
 }
