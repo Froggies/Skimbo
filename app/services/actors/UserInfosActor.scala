@@ -22,12 +22,17 @@ object UserInfosActor {
 }
 
 class UserInfosActor(endpoint: Endpoint)(implicit request: RequestHeader) extends Actor {
+  
+  import play.api.libs.concurrent.execution.defaultContext
 
   def receive = {
     case Refresh => {
-      println("actor user infos pull " + endpoint.provider.name + " on " + endpoint.url)
-      println(endpoint.provider.getUser)
-      //TODO save in bd
+      endpoint.provider.getUser.map{ user =>
+        println("actor user infos pull " + endpoint.provider.name + " on " + endpoint.url)
+        println(user)
+        //TODO save in bd
+      }
+      
     }
     case Dead(idUser) => {
       if (idUser == endpoint.idUser) {
