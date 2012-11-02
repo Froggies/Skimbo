@@ -1,14 +1,23 @@
 'use strict';
 
 // Declare app level module which depends on filters, and services
-var publicApp = angular.module('publicApp', [])
-  .config(['$routeProvider', function($routeProvider) {
-    $routeProvider
-      .when('/', {
-        templateUrl: 'assets/app/views/main.html',
-        controller: 'MainCtrl'
-      })
-      .otherwise({
-        redirectTo: '/'
-      });
-  }]);
+var publicApp = angular.module('publicApp', [], function($routeProvider, $locationProvider) {
+  $routeProvider
+    .when('/', {
+      templateUrl: 'assets/app/views/main.html',
+      controller: 'MainCtrl'
+    })
+    .otherwise({
+      redirectTo: '/'
+    });
+  $locationProvider.html5Mode(true);
+})
+
+//TO ADD ON ROOT SCOPE
+/*.run(function($rootScope) {
+  $rootScope.logout = function() {
+    console.log('hello');
+    $http.get("http://127.0.0.1:9000/api/killMyActors");
+  }
+});*/
+
