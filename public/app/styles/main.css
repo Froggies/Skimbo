@@ -1,38 +1,76 @@
 /* Will be compiled down to a single stylesheet with your sass files */
 
 
-body {
+body,html {
+	height: 100%;
+	width: 100%;
 	padding: 0;
 	margin: 0;
 	font-family: Arial, Helvetica, sans-serif;
 	font-size: 16px;
 }
 
+h1 {
+	font-size: 24px;
+	margin: 0;
+}
+
+img
+ {
+	max-width: 100%;
+	height: auto;
+}
+
 /** header **/
-#logo {
+header, .test {
+	max-height: 33%;
+	height: 33%;
+	background-color: red;
+}
+
+.logo {
 	text-align: center;
+}
+
+.logo img {
+	min-height: 16px;
+	max-height: 100%;
+	width: auto;
 }
 
 #connect-with {
-	font-size: 36px;
+	font-size:36px;
 	color: #7E7F81;
 }
-/** Section **/
 
+
+/** Section **/
 section {
+	min-height: 33%;
+	max-height: 33%;
+	height: 33%;
+	box-sizing: border-box;
 	text-align: center;
-	height: 25%;
+	padding-top: 30px;
 }
 
 section ul {
-  list-style-type: none ;
+	height: 100%;
+	margin: 0;
+   	list-style-type: none ;
+  	padding: 0;
 }
 
 section li {
 	display: inline-block;
-	padding: 8px;
 }
 
+#social-networks li a img{
+	min-height: 16px;
+	max-width: 100%;
+	height: auto;
+	margin: 0px;
+}
 
 [draggable] {
     -moz-user-select: none;
@@ -64,13 +102,15 @@ section li {
 	-moz-resize:horizontal;
 	resize:horizontal;
 }
+
 /** footer **/
 footer {
-	position: absolute;
-	bottom: 0;
+    text-align: center;
 	box-sizing: border-box;
-	height: 250px;
-    padding: 20px;
+	min-height: 33%;
+	max-height: 33%;
+	height: 33%;
+    padding: 1%;
 	border-top: 1px solid black;
     -moz-box-shadow:inset 0 3px 10px black;
     -webkit-box-shadow:inset 0 3px 10px black;
@@ -78,11 +118,20 @@ footer {
 }
 
 footer p {
-	color: white;
+	box-sizing: border-box;
+	color: black;
 	display: inline-block;
-	width: 28%;
-	margin: 17px;
+	width: 27%;
+	min-height: 100%;
+	height: 33%;
     vertical-align: top;
+    text-align: left;
+    overflow: hidden;
+    margin-right: 1%;
+    margin-left: 1%;
+    margin-top: 1%;
+    margin-bottom: 0px;
+
 }
 
 .footer-graddient {
@@ -103,7 +152,6 @@ footer p {
 .separateur {
 	display: inline-block;
 	height: 100%;
-	margin: 0 15px;
 	width: 2px;
 	overflow: hidden;
 }
