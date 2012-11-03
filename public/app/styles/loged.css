@@ -67,7 +67,8 @@ a div{
 }
 
 #bloc-utilisateur {
-	display: none;
+	position:absolute;
+	bottom:0;
 }
 
 [draggable] {
