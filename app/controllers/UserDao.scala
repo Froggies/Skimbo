@@ -2,41 +2,55 @@ package controllers;
 
 import play.api._
 import play.api.mvc._
+import play.api.libs.json._
+import play.api.Play.current
+import scala.concurrent.{ ExecutionContext, Future }
+import play.api.libs.iteratee.{Iteratee, Enumerator}
+import models.User
+import play.api.libs.concurrent.futureToPlayPromise
+import play.modules.reactivemongo._
 import reactivemongo.api._
 import reactivemongo.bson._
 import reactivemongo.bson.handlers.DefaultBSONHandlers._
-import reactivemongo.core.commands._
-import scala.concurrent.ExecutionContext
-import play.modules.reactivemongo._
-import play.modules.reactivemongo.PlayBsonImplicits._
-import play.api.libs.json._
-import play.api.Play.current
 
 object UserDao {
 
-  import scala.concurrent.ExecutionContext.Implicits.global
-  
   val db = ReactiveMongoPlugin.db
-  lazy val collection = db("users")
-
-  def add(user:models.User) = {
-    val json = models.User.toJson(user)
-    collection.insert[JsValue](json).map(lastError =>
-      Logger.error("Mongo LastErorr : %s".format(lastError)))
+  val collection = db("users2")
+    
+  def add(user: models.User)(implicit context:scala.concurrent.ExecutionContext):Future[User] = {
+    implicit val writer = User.UserBSONWriter
+    collection.insert(user)
+    findOneById(user.id).map { user =>
+      user.getOrElse { 
+        throw new UnexpectedException(Some("Add user fail"))
+      }
+    }
   }
 
-  def findAll() = {
-    val qb = QueryBuilder().query(Json.obj())
-    collection.find[JsValue](qb).toList.map { collection =>
-      models.User.fromJson(collection.foldLeft(JsArray(List()))((obj, u) => obj ++ Json.arr(u)))
+  def findAll()(implicit context:scala.concurrent.ExecutionContext):Future[List[User]] = {
+    implicit val reader = User.UserBSONReader
+    val query = BSONDocument()
+    val found = collection.find(query)
+    found.toList
+  }
+
+  def findOneById(id: String)(implicit context:scala.concurrent.ExecutionContext):Future[Option[User]] = {
+    implicit val reader = User.UserBSONReader
+    val query = BSONDocument("id" -> new BSONString(id))
+    collection.find(query).headOption()
+  }
+  
+  def findOrCreate(id: String)(implicit context:scala.concurrent.ExecutionContext):Future[User] = {
+    findOneById(id).map { user =>
+      user.getOrElse { 
+        return add(User(id))
+      }
     }
   }
   
-  def findOneById(id: String) = {
-    val qb = QueryBuilder().query(Json.obj("id" -> id))
-    collection.find[JsValue](qb).toList.map { collection =>
-      models.User.fromJson(collection.foldLeft(JsArray(List()))((obj, u) => obj ++ Json.arr(u)))
-    }
+  def update(user:models.User)(implicit context:scala.concurrent.ExecutionContext) = {
+    collection.update(BSONDocument("id" -> new BSONString(user.id)), user)
   }
 
 }

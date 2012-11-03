@@ -9,6 +9,19 @@ import play.api.libs.json.JsObject
 import play.api.libs.json.JsArray
 import play.api.libs.json.JsString
 import play.api.libs.json.JsNull
+import reactivemongo.bson.handlers.BSONReader
+import reactivemongo.bson.BSONDocument
+import reactivemongo.bson.BSONArray
+import reactivemongo.bson.BSONObjectID
+import reactivemongo.bson.BSONString
+import reactivemongo.bson.handlers.BSONWriter
+import reactivemongo.bson.BSONIterator
+import play.api.libs.iteratee.Iteratee$
+import play.api.libs.iteratee.Iteratee
+import reactivemongo.bson.DefaultBSONIterator
+import reactivemongo.bson.BSONElement
+import reactivemongo.bson.BSONStructure
+import reactivemongo.bson.BSONValue
 
 case class User(
   id: String,
@@ -63,6 +76,48 @@ object User {
          "avatar" -> JsString(distant.avatar.getOrElse(""))
        )
      )
+    }
+  }
+  
+  implicit object UserBSONReader extends BSONReader[User] {
+    def fromBSON(document: BSONDocument) :User = {
+      val doc = document.toTraversable
+      val distants = doc.getAs[BSONArray]("distants").getOrElse(BSONArray()).toTraversable.bsonIterator
+      val seqProviders = for(dist <- distants) yield {
+        val d = dist.value.asInstanceOf[BSONDocument].toTraversable
+        ProviderUser(
+          d.getAs[BSONString]("id").get.value,
+          d.getAs[BSONString]("login").get.value,
+          d.getAs[BSONString]("name").get.value,
+          d.getAs[BSONString]("social").get.value,
+          Some(d.getAs[BSONString]("desc").get.value),
+          Some(d.getAs[BSONString]("avatar").get.value)
+        )
+      }
+      User(
+        doc.getAs[BSONString]("id").get.value,
+        Some(seqProviders.toList)
+      )
+    }
+  }
+
+  implicit object UserBSONWriter extends BSONWriter[User] {
+    def toBSON(user: User) = {
+      val distants = BSONArray().toAppendable
+      for(distant <- user.distants.getOrElse(Seq())) yield {
+        distants.append(BSONDocument(
+          "id" -> BSONString(distant.id),
+          "login" -> BSONString(distant.username),
+          "name" -> BSONString(distant.name),
+          "social" -> BSONString(distant.socialType),
+          "desc" -> BSONString(distant.description.getOrElse("")),
+          "avatar" -> BSONString(distant.avatar.getOrElse(""))
+        ))
+      }
+      
+      BSONDocument(
+        "id" -> BSONString(user.id),
+        "distants" -> distants)
     }
   }
 

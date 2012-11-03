@@ -11,6 +11,10 @@ import play.api.UnexpectedException
 import play.api.Logger
 import controllers.UserDao
 import models.User
+import play.api.libs.iteratee.Iteratee
+import reactivemongo.bson.handlers.DefaultBSONHandlers._
+import reactivemongo.bson._
+import scala.collection.mutable.ListBuffer
 
 case class Refresh()
 
@@ -18,42 +22,43 @@ object UserInfosActor {
 
   val system: ActorSystem = ActorSystem("userInfos");
 
-  def apply(endpoints: Seq[Endpoint])(implicit request: RequestHeader) = {
-    endpoints.map { endpoint =>
-      system.actorOf(Props(new UserInfosActor(endpoint))) ! Refresh
-    }
+  def apply(idUser: String, endpoints: Seq[Endpoint])(implicit request: RequestHeader) = {
+    system.actorOf(Props(new UserInfosActor(idUser, endpoints))) ! Refresh
   }
 }
 
-class UserInfosActor(endpoint: Endpoint)(implicit request: RequestHeader) extends Actor {
+class UserInfosActor(idUser: String, endpoints: Seq[Endpoint])(implicit request: RequestHeader) extends Actor {
 
   import play.api.libs.concurrent.execution.defaultContext
 
-  def receive = {
+  def receive() = {
     case Refresh => {
-      if (endpoint.provider.hasToken(request)) { //TODO RM : remove when api endpoint from JL was done
-        Logger.info("actor user infos pull " + endpoint.provider.name + " on " + endpoint.url)
-        println(endpoint.provider.getUser)
-        //get in bd if user exist
-        //if exist check provider info and update
-        //else create
-        import scala.concurrent.ExecutionContext.Implicits.global
-        UserDao.add(User(endpoint.idUser)).onComplete { l =>
-          UserDao.findAll().foreach {
-            user =>
-              {
-                println("UserInfosActor :: " + user)
-                //self ! Dead
+      UserDao.findOrCreate(idUser).foreach { user =>
+        endpoints.foreach { endpoint =>
+          if (endpoint.provider.hasToken(request)) { //TODO RM : remove when api endpoint from JL was done
+            val notFound = user.distants.getOrElse(Seq()).count { provider =>
+              provider.socialType == endpoint.provider.name
+            } == 0
+            if (notFound) {
+              endpoint.provider.getUser.foreach { providerUser =>
+                providerUser.map { pu =>
+                  val distants = new ListBuffer[models.ProviderUser]() //TODO JL is good ?
+                  distants ++= user.distants.getOrElse(Seq())
+                  distants += pu
+                  val userModif = User(endpoint.idUser, Some(distants.toList))
+                  UserDao.update(userModif)
+                }
               }
+            }
           }
-          println(l)
         }
-      } else {
-        self ! Dead
       }
+      // TODO RM : find when kill actor
+      //. onDone {
+      //  self ! Dead
+      //}
     }
     case Dead => {
-      Logger.info("actor user infos kill")
       context.stop(self)
     }
     case e: Exception => throw new UnexpectedException(Some("Incorrect message receive"), Some(e))

@@ -50,7 +50,6 @@ class ProviderActor(channel: Concurrent.Channel[JsValue], endpoint: Endpoint)(im
         scheduler.cancel() //need ping to call provider
       }
       if (endpoint.provider.hasToken(request)) { //TODO RM : remove when api endpoint from JL was done
-        println("actor provider pull " + endpoint.provider.name + " on " + endpoint.url)
         endpoint.provider.fetch(endpoint.url).get.map(response => channel.push(response.json))
       } else {
         self ! Dead(endpoint.idUser)
@@ -58,7 +57,6 @@ class ProviderActor(channel: Concurrent.Channel[JsValue], endpoint: Endpoint)(im
     }
     case Ping(idUser) => {
       if (idUser == endpoint.idUser) {
-        println("actor provider ping for " + idUser)
         Akka.system.scheduler.scheduleOnce(endpoint.interval second) {
           self ! ReceiveTimeout
         }
@@ -66,7 +64,6 @@ class ProviderActor(channel: Concurrent.Channel[JsValue], endpoint: Endpoint)(im
     }
     case Dead(idUser) => {
       if (idUser == endpoint.idUser) {
-        println("actor provider kill " + endpoint.provider.name + " for " + idUser)
         scheduler.cancel()
         context.stop(self)
       }
