@@ -4,16 +4,16 @@
 	<link rel="stylesheet" media="screen" href="@routes.Assets.at("app/styles/login.css")">
 } {
 	<header>
-		<div id="logo">
-			<img src="@routes.Assets.at("img/brand/logo-skimbo-256.png")" />
+		<div class="logo">
+			<img src="@routes.Assets.at("img/brand/logo-skimbo-256.png")" width="256px" height="256px"/>
 		</div>
 	</header>
-	<section>
-		<div id="connect-with">
-			Connect Skimbo with...
-		</div>
-		<ul id="social-networks">
-			@for(provider <- providers) {
+    <section>
+        <div id="connect-with">
+            <h1>Connect Skimbo with...</h1>
+        </div>
+        <ul id="social-networks">
+            @for(provider <- providers) {
 				<li>
 					<a href="/auth/@provider.name" title="Connect with @provider.name">
 						<img src="@routes.Assets.at("img/brand/"+provider.name+".png")" alt="@provider.name" width="64px" height="64px">
@@ -29,27 +29,27 @@
 			quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
 			consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
 			cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
-			proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+			proident.</p>
 			<div class="separateur">
 				<div class="divSeparateurGauche"></div>
 				<div class="divSeparateurDroit"></div>
 			</div>
 			<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-			tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-			quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-			consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
-			cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
-			proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+            tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+            quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+            consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+            cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
+            proident.</p>
 			<div class="separateur">
 				<div class="divSeparateurGauche"></div>
 				<div class="divSeparateurDroit"></div>
 			</div>
 			<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-			tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-			quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-			consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
-			cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
-			proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+            tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+            quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+            consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+            cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
+            proident.</p>
 	</footer>
 
 }

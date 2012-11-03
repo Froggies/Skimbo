@@ -11,6 +11,11 @@ header {
 	cursor: pointer;
 }
 
+input {
+	height: 30px;
+	border-radius: 10px;
+}
+
 [draggable] {
     -moz-user-select: none;
     -khtml-user-select: none;
