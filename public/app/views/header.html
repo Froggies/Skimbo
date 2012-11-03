@@ -7,9 +7,22 @@
 <input id="skimber" type="button" value="Skimber !">
 <div id="recherche-et-profil">
 	<input type="search" placeholder="Rechercher" results="5" name="test" ng-model="$parent.query">
-	<a href="#"><div>Nom Prénom ▼</div></a>
+	<a id="nom-prenom" href="#" onClick="document.getElementById('bloc-utilisateur').style.display = 'block';return false;"><img src="assets/img/skimbo-pieuvre-64.png" width="32" height="32">Nom Prénom ▼</a>
+	<div id="bloc-utilisateur">
+		<div id="reseaux-connectes">Vous êtes connecté sur :
+			<ul>
+				<li><a href="#"><img src="assets/img/brand/facebook.png" alt="Facebook" width="16" height="16"> NomUtilisateur</a><a href="#">✘</a></li>
+				<li><a href="#"><img src="assets/img/brand/twitter.png" alt="Twitter" width="16" height="16"> NomUtilisateur</a><a href="#">✘</a></li>
+				<li><a href="#"><img src="assets/img/brand/viadeo.png" alt="Viadeo" width="16" height="16"> NomUtilisateur</a><a href="#">✘</a></li>
+			</ul>
+		</div>
+		<footer>
+			<a href="#">@ Contact</a>
+			<a href="#">?</a>
+			<a href="#" ng-click="logout()">✘ Déconnexion</a>
+		</footer>
+	</div>
 </div>
 
-<div id="bloc-utilisateur">
-	<a href="#" ng-click="logout()">Déconnexion</a>
-</div>
+
+
