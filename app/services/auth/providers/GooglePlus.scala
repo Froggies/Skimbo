@@ -22,8 +22,8 @@ object GooglePlus extends OAuth2Provider {
     try {
       val me = response.json // TODO : En faire un parser
       val id = (me \ "id").as[String]
-      val username = (me \ "displayName").as[String]
-      val name = (me \ "name" \ "familyName").as[String]
+      val username = (me \ "displayName").asOpt[String]
+      val name = (me \ "name" \ "familyName").asOpt[String]
       val description = Some("")
       val profileImage = (me \ "image" \ "url").asOpt[String]
       Some(ProviderUser(id, username, name, this.name, description, profileImage))

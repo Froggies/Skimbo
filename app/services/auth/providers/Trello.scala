@@ -14,8 +14,8 @@ object Trello extends OAuthProvider {
     try {
       val me = response.json
       val id = (me \ "id").as[String]
-      val username = (me \ "username").as[String]
-      val name = (me \ "fullName").as[String]
+      val username = (me \ "username").asOpt[String]
+      val name = (me \ "fullName").asOpt[String]
       val description = (me \ "bio").asOpt[String]
       val profileImage = (me \ "gravatarHash").asOpt[String]
       Some(ProviderUser(id, username, name, this.name, description, profileImage.map(img => "http://www.gravatar.com/avatar/"+img)))

@@ -14,8 +14,8 @@ object Scoopit extends OAuthProvider {
     try {
       val me = response.json \ "user"
       val id = (me \ "id").as[Int].toString
-      val username = (me \ "shortName").as[String]
-      val name = (me \ "name").as[String]
+      val username = (me \ "shortName").asOpt[String]
+      val name = (me \ "name").asOpt[String]
       val description = (me \ "bio").asOpt[String]
       val profileImage = (me \ "avatarUrl").asOpt[String]
       Some(ProviderUser(id, username, name, this.name, description, profileImage))

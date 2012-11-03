@@ -27,10 +27,11 @@ case class User(
   id: String,
   distants: Option[Seq[ProviderUser]] = None)
 
+//keep has Option rules username, name, desctription and avatar for condition's providers 
 case class ProviderUser(
   id: String,
-  username: String,
-  name: String,
+  username: Option[String] = None,
+  name: Option[String] = None,
   socialType: String,
   description: Option[String] = None,
   avatar: Option[String] = None)
@@ -46,8 +47,8 @@ object User {
     distants.flatMap { d =>
       val transform = for (distant <- d) yield {
         ProviderUser((distant \ "id").as[String],
-          (distant \ "login").as[String],
-          (distant \ "name").as[String],
+          (distant \ "login").asOpt[String],
+          (distant \ "name").asOpt[String],
           (distant \ "social").as[String],
           (distant \ "desc").asOpt[String],
           (distant \ "avatar").asOpt[String])
@@ -69,8 +70,8 @@ object User {
      JsObject(
        Seq(
          "id" -> JsString(distant.id),
-         "login" -> JsString(distant.username),
-         "name" -> JsString(distant.name),
+         "login" -> JsString(distant.username.getOrElse("")),
+         "name" -> JsString(distant.name.getOrElse("")),
          "social" -> JsString(distant.socialType),
          "desc" -> JsString(distant.description.getOrElse("")),
          "avatar" -> JsString(distant.avatar.getOrElse(""))
@@ -79,6 +80,9 @@ object User {
     }
   }
   
+  /**
+   * From bd, keep comment for condition's providers
+   */
   implicit object UserBSONReader extends BSONReader[User] {
     def fromBSON(document: BSONDocument) :User = {
       val doc = document.toTraversable
@@ -87,11 +91,11 @@ object User {
         val d = dist.value.asInstanceOf[BSONDocument].toTraversable
         ProviderUser(
           d.getAs[BSONString]("id").get.value,
-          d.getAs[BSONString]("login").get.value,
-          d.getAs[BSONString]("name").get.value,
+          None,//d.getAs[BSONString]("login").get.value,
+          None,//d.getAs[BSONString]("name").get.value,
           d.getAs[BSONString]("social").get.value,
-          Some(d.getAs[BSONString]("desc").get.value),
-          Some(d.getAs[BSONString]("avatar").get.value)
+          None,//Some(d.getAs[BSONString]("desc").get.value),
+          None//Some(d.getAs[BSONString]("avatar").get.value)
         )
       }
       User(
@@ -101,17 +105,20 @@ object User {
     }
   }
 
+  /**
+   * To bd, keep comment for condition's providers
+   */
   implicit object UserBSONWriter extends BSONWriter[User] {
     def toBSON(user: User) = {
       val distants = BSONArray().toAppendable
       for(distant <- user.distants.getOrElse(Seq())) yield {
         distants.append(BSONDocument(
           "id" -> BSONString(distant.id),
-          "login" -> BSONString(distant.username),
-          "name" -> BSONString(distant.name),
-          "social" -> BSONString(distant.socialType),
-          "desc" -> BSONString(distant.description.getOrElse("")),
-          "avatar" -> BSONString(distant.avatar.getOrElse(""))
+          //"login" -> BSONString(distant.username),
+          //"name" -> BSONString(distant.name),
+          "social" -> BSONString(distant.socialType)
+          //"desc" -> BSONString(distant.description.getOrElse("")),
+          //"avatar" -> BSONString(distant.avatar.getOrElse(""))
         ))
       }
       
