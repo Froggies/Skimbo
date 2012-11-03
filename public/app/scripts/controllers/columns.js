@@ -1,18 +1,50 @@
 'use strict';
 
 publicApp.controller('ColumnsCtrl', function($scope, $http) {
-  if (!!window.EventSource) {
-    var source = new EventSource('http://127.0.0.1:9000/api/unified2');
+  var wshost = 'ws://127.0.0.1:9000/api/stream/webSocket';
+  var ssehost = 'http://127.0.0.1:9000/api/stream/sse';
+  var sseping = 'http://127.0.0.1:9000/api/stream/ping';
+
+  if(window.MozWebSocket) {
+    window.WebSocket=window.MozWebSocket;
+  }
+  if(!window.WebSocket) {
+    //alert('Votre navigateur ne supporte pas les webSocket!');
+    return false;
+  } else {
+    var socket = new WebSocket(wshost);
+    socket.onopen = function() { console.log('socket ouverte'); }
+    socket.onclose = function() { console.log('socket fermée'); }
+    socket.onerror = function() { console.log('Une erreur est survenue'); }
+    socket.onmessage = function(msg){
+      var data;
+      try { //tente de parser data
+        data = JSON.parse(msg.data);
+      } catch(exception) {
+        data = msg.data
+      }      
+      //ici on poura effectuer tout ce que l'on veux sur notre objet data
+      console.log(data);
+      $scope.$apply(function() {
+        if($scope.data == undefined) {
+            $scope.data = [];
+          }
+        $scope.data.unshift(data);
+      });
+    }
+  } 
+
+  if (!window.WebSocket && !!window.EventSource) {
+    var source = new EventSource(ssehost);
     source.addEventListener('message', function(e) {
     	$scope.$apply(function() {
     		if($scope.data == undefined) {
         		$scope.data = [];
         	}
     		$scope.data.unshift(JSON.parse(e.data));
-    		console.log("###############")
-    		//console.log($scope.originalData)
-    		//$scope.data = JSON.parse(JSON.stringify($scope.originalData));
     	});
+      console.log("ping");
+      $http.get(sseping);
     }, false);
 
     source.addEventListener('open', function(e) {
@@ -25,7 +57,7 @@ publicApp.controller('ColumnsCtrl', function($scope, $http) {
       }
     }, false);
   }
-  
+
 });
 
 

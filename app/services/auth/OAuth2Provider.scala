@@ -37,7 +37,10 @@ trait OAuth2Provider extends GenericProvider {
   override def auth(redirectRoute: Call)(implicit request: RequestHeader): Result = {
     request.getQueryString("code") match {
       case None       => redirectToAccreditationPage // Step one : redirect the user to the service's accreditation page
-      case Some(code) => retrieveAccessToken(code, redirectRoute) // Step two : Retrieve authentication token from WS
+      case Some(code) => {
+        println("AUTH "+name+" :: CODE = "+code)
+        retrieveAccessToken(code, redirectRoute) // Step two : Retrieve authentication token from WS
+      }
     }
   }
 

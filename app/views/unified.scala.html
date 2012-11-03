@@ -1,19 +1,18 @@
 @main("Skimbo") {
 
-	<div ng-app="publicApp">
+	<div ng-app="publicApp" ng-controller="MainCtrl">
 
-        <header ng-include src="'assets/app/views/header.html'">
-        </header>
+        <header ng-include="'@routes.Assets.at("app/views/header.html")'"></header>
 
         <!-- Add your site or application content here -->
-        <section class="container" ng-view></section>
+        <div class="container" ng-view></div>
 
-        <script src="assets/app/scripts/vendor/angular.js"></script>
+        <script src="@routes.Assets.at("/app/scripts/vendor/angular.js")"></script>
 
         <!-- build:js scripts/scripts.js -->
-        <script src="assets/app/scripts/public.js"></script>
-        <script src="assets/app/scripts/controllers/main.js"></script>
-        <script src="assets/app/scripts/controllers/columns.js"></script>
+        <script src="@routes.Assets.at("/app/scripts/public.js")"></script>
+        <script src="@routes.Assets.at("/app/scripts/controllers/main.js")"></script>
+        <script src="@routes.Assets.at("/app/scripts/controllers/columns.js")"></script>
         <!-- endbuild -->
 
     </div>

@@ -1,34 +1,78 @@
 package services.actors;
 
 import akka.actor._
-import akka.util.duration._
-import play.api.libs.concurrent.futureToPlayPromise // TODO JLA : Regarder comment rester sur les Future
-import play.api.libs.iteratee._
-import play.api.libs.json._
+import akka.util.duration.intToDurationInt
+import play.api.libs.concurrent.futureToPlayPromise
+import play.api.libs.iteratee.{ Concurrent, Enumerator }
+import play.api.libs.json.{ JsValue, Json }
 import play.api.mvc.RequestHeader
 import play.libs.Akka
-import services.auth.GenericProvider
+import play.api.PlayException
+import play.api.UnexpectedException
+import play.api.libs.concurrent.execution.defaultContext
+
+sealed case class Ping(idUser: String)
+sealed case class Dead(idUser: String = "")
 
 object ProviderActor {
 
-  def apply(endpoints: Seq[Endpoint])(implicit request: RequestHeader): Enumerator[JsValue] = {
+  val system: ActorSystem = ActorSystem("providers");
+
+  def create(endpoints: Seq[Endpoint])(implicit request: RequestHeader): Enumerator[JsValue] = {
     val (rawStream, channel) = Concurrent.broadcast[JsValue]
-    endpoints.foreach(endpoint => Akka.system.actorOf(Props(new ProviderActor(channel, endpoint))))
+    endpoints.map { endpoint =>
+      val actor = system.actorOf(Props(new ProviderActor(channel, endpoint)))
+      system.eventStream.subscribe(actor, classOf[Dead])
+      system.eventStream.subscribe(actor, classOf[Ping])
+    }
     rawStream
   }
+
+  def ping(userId: String) = {
+    system.eventStream.publish(Ping(userId))
+  }
+
+  def killActorsForUser(userId: String) = {
+    system.eventStream.publish(Dead(userId))
+  }
+
 }
 
 class ProviderActor(channel: Concurrent.Channel[JsValue], endpoint: Endpoint)(implicit request: RequestHeader) extends Actor {
 
-  context.setReceiveTimeout(endpoint.interval seconds)
+  val scheduler = Akka.system.scheduler.schedule(0 second, endpoint.interval second) {
+    self ! ReceiveTimeout
+  }
 
   def receive = {
     case ReceiveTimeout => {
-      channel.push(endpoint.provider.fetch(endpoint.url).get.await(10000).fold( // TODO : Virer cet await que je ne saurais voir !
-        error => Json.toJson("error"),
-        response => response.json))
+      if (endpoint.longPolling) {
+        scheduler.cancel() //need ping to call provider
+      }
+      if (endpoint.provider.hasToken(request)) { //TODO RM : remove when api endpoint from JL was done
+        println("actor provider pull " + endpoint.provider.name + " on " + endpoint.url)
+        endpoint.provider.fetch(endpoint.url).get.map(response => channel.push(response.json))
+      } else {
+        self ! Dead(endpoint.idUser)
+      }
     }
-    case e: Exception => println("unexpected Error: "+e)
+    case Ping(idUser) => {
+      if (idUser == endpoint.idUser) {
+        println("actor provider ping for " + idUser)
+        Akka.system.scheduler.scheduleOnce(endpoint.interval second) {
+          self ! ReceiveTimeout
+        }
+      }
+    }
+    case Dead(idUser) => {
+      if (idUser == endpoint.idUser) {
+        println("actor provider kill " + endpoint.provider.name + " for " + idUser)
+        scheduler.cancel()
+        context.stop(self)
+      }
+    }
+
+    case e: Exception => throw new UnexpectedException(Some("Incorrect message receive"), Some(e))
   }
 
 }
