@@ -26,7 +26,7 @@ object WebSocket extends Controller {
       Endpoint(Trello, "http://dev.studio-dev.fr/test-ws-json.php?nom=trello", 5, userId, false),
       Endpoint(Viadeo, "http://dev.studio-dev.fr/test-ws-json.php?nom=viadeo", 15, userId, false))
 
-    val out = ProviderActor.create(endpoints)
+    val out = ProviderActor.create(Seq[Endpoint]())//endpoints)
     
     // Log events to the console
     val in = Iteratee.foreach[JsValue](println).mapDone { _ =>
