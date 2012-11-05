@@ -72,7 +72,6 @@ a {
 }
 
 #bloc-utilisateur {
-	display: none;
 	line-height: 0;
 	position: absolute;
 	background-color: #FAFAFA;
@@ -108,6 +107,7 @@ a {
 #reseaux-connectes a {
 	border: none;
 	border-radius: 0;
+	background: #FAFAFA;
 }
 
 #reseaux-connectes li {

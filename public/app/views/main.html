@@ -12,7 +12,7 @@
 			ondrop="drop(this,event)">
 		<ul>
 			<li>{{i}}{{i}}</li>
-			<li class="hero-unit" ng-repeat="d in data | filter:$scope.query">
+			<li class="hero-unit" ng-repeat="d in data | filter:$parent.query">
 				{{d}}
 			</li>
 		</ul>
