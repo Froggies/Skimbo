@@ -1,0 +1,7 @@
+{ 
+	"channels": [
+		{ "service": "twitter.wall" }, 
+		{ "service": "twitter.hashtag", "args": { "hashtag": "skimbo" } },
+		{ "service": "twitter.user", "args": {"username": "studiodev"} }
+	]
+}
