@@ -3,6 +3,8 @@ package services.endpoints
 import play.api.Logger
 import play.api.mvc._
 import services.endpoints.JsonRequest._
+import play.api.libs.json.JsValue
+import services.auth.GenericProvider
 
 object Endpoints {
 
@@ -13,6 +15,12 @@ object Endpoints {
       "twitter.user" -> Configuration.Twitter.user,
       "facebook.wall" -> Configuration.Facebook.wall
   )
+  
+  def getProvider(endpoint:String): Option[GenericProvider] = {
+    endpoints.get(endpoint).map { config =>
+      config.provider
+    }.orElse(None)
+  }
 
   def genererUrl(endpoint: String, param: Map[String, String], sinceOpt: Option[String]) : Option[String] = {
     endpoints.get(endpoint).map { config =>
@@ -32,8 +40,12 @@ object Endpoints {
   
   def listEndpointsFromRequest(req: Request[AnyContent]) = {
     req.body.asJson.map(json => 
-      (json \("channels")).as[List[UnifiedRequest]]
+      listEndpointsFromJson(json)
     ).getOrElse(List.empty)
+  }
+  
+  def listEndpointsFromJson(json: JsValue) = {
+    (json \("channels")).as[List[UnifiedRequest]]
   }
 
 }

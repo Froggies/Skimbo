@@ -28,12 +28,12 @@ object Sse extends Controller {
       Endpoint(Trello, "http://dev.studio-dev.fr/test-ws-json.php?nom=trello", 5, action.user.id, true),
       Endpoint(Viadeo, "http://dev.studio-dev.fr/test-ws-json.php?nom=viadeo", 15, action.user.id, true))
 
-    val enumerator = ProviderActor.create(endpoints)
+    val (out, channelClient) = ProviderActor.create(endpoints)
     // -> to Skimbo 
     // -> trier par date
     // -> filter en fonction des déjà vus
     // -> to Json
-    Ok.stream(enumerator &> EventSource()).as(play.api.http.ContentTypes.EVENT_STREAM)
+    Ok.stream(out &> EventSource()).as(play.api.http.ContentTypes.EVENT_STREAM)
   }
   
 }

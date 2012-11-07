@@ -32,7 +32,7 @@ object Application extends Controller {
 //        Endpoint(StackExchange, "http://dev.studio-dev.fr/test-ws-json.php?nom=stackExchange", 6, userId, true),
 //        Endpoint(Trello, "http://dev.studio-dev.fr/test-ws-json.php?nom=trello", 5, userId, true),
 //        Endpoint(Viadeo, "http://dev.studio-dev.fr/test-ws-json.php?nom=viadeo", 15, userId, true))
-      UserInfosActor(userId, endpoints)//RM : decomment this if you want to test bd retreive
+      //UserInfosActor(userId, endpoints)//RM : decomment this if you want to test bd retreive
       Ok(views.html.unified())
     }).getOrElse(Ok(views.html.index(Service.list)))
   }

@@ -18,14 +18,18 @@ object ProviderActor {
 
   val system: ActorSystem = ActorSystem("providers");
 
-  def create(endpoints: Seq[Endpoint])(implicit request: RequestHeader): Enumerator[JsValue] = {
+  def create(endpoints: Seq[Endpoint])(implicit request: RequestHeader): (Enumerator[JsValue], Concurrent.Channel[JsValue]) = {
     val (rawStream, channel) = Concurrent.broadcast[JsValue]
+    createWithOutput(channel, endpoints)
+    (rawStream, channel)
+  }
+  
+  def createWithOutput(channel:Concurrent.Channel[JsValue], endpoints: Seq[Endpoint])(implicit request: RequestHeader) {
     endpoints.map { endpoint =>
       val actor = system.actorOf(Props(new ProviderActor(channel, endpoint)))
       system.eventStream.subscribe(actor, classOf[Dead])
       system.eventStream.subscribe(actor, classOf[Ping])
     }
-    rawStream
   }
 
   def ping(userId: String) = {

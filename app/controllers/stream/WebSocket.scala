@@ -7,6 +7,8 @@ import services.auth.providers._
 import services.security.AuthenticatedAction._
 import play.api.mvc.AnyContent
 import play.api.libs.json.JsValue
+import play.api.Logger
+import services.endpoints.Endpoints
 
 object WebSocket extends Controller {
 
@@ -26,10 +28,23 @@ object WebSocket extends Controller {
       Endpoint(Trello, "http://dev.studio-dev.fr/test-ws-json.php?nom=trello", 5, userId, false),
       Endpoint(Viadeo, "http://dev.studio-dev.fr/test-ws-json.php?nom=viadeo", 15, userId, false))
 
-    val out = ProviderActor.create(Seq[Endpoint]())//endpoints)
+    val (out, channelClient) = ProviderActor.create(Seq[Endpoint]())//endpoints)
     
     // Log events to the console
-    val in = Iteratee.foreach[JsValue](println).mapDone { _ =>
+    val in = Iteratee.foreach[JsValue]{ cmd =>
+      Logger.info("Command from client : "+cmd)
+      val channels = Endpoints.listEndpointsFromJson(cmd)
+      channels.foreach { channel =>
+        val provider = Endpoints.getProvider(channel.service)
+        val url = Endpoints.genererUrl(channel.service, channel.args.getOrElse(Map.empty), None)
+        if(provider.isDefined && url.isDefined) {
+          Logger.info("Provider : "+provider.get.name)
+          ProviderActor.createWithOutput(channelClient, Seq[Endpoint](Endpoint(provider.get, url.get, 5, userId, false)))
+        } else {
+          Logger.error("Provider or Url not found for "+channel.service+" :: args = "+channel.args)
+        }
+      }
+    }.mapDone { _ =>
       println("Disconnected")
       ProviderActor.killActorsForUser(userId)
     }

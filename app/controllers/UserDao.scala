@@ -13,6 +13,7 @@ import reactivemongo.api._
 import reactivemongo.bson._
 import reactivemongo.bson.handlers.DefaultBSONHandlers._
 import models.ProviderUser
+import reactivemongo.core.protocol.Query
 
 object UserDao {
 
@@ -64,7 +65,8 @@ object UserDao {
   
   def findByIdProvider(provider:String, id:String, f:(Option[User]) => Any)(implicit context:scala.concurrent.ExecutionContext) = {
     implicit val reader = User.UserBSONReader
-    val query = BSONDocument(
+    val query = BSONDocument()
+    query += "$query" -> BSONDocument(
       "distants.social" -> new BSONString(provider), 
       "distants.id" -> new BSONString(id))
     collection.find(query).headOption().map {
@@ -72,12 +74,18 @@ object UserDao {
     }
   }
   
-  def findByIdProvider(provider:String, id:String)(implicit context:scala.concurrent.ExecutionContext):Future[Option[User]] = {
+  def findByIdProvider(provider:String, id:String):Future[Option[User]] = {
     implicit val reader = User.UserBSONReader
-    val query = BSONDocument(
+    import scala.concurrent.ExecutionContext.Implicits.global
+    val query = /*BSONDocument()
+    query += "$query" -> */BSONDocument(
       "distants.social" -> new BSONString(provider), 
       "distants.id" -> new BSONString(id))
-    collection.find(query).headOption()
+    println("DaoUSER :: "+query)
+    val db = ReactiveMongoPlugin.db
+    val res = db("users2").find(query).headOption()
+    for { r <- res } yield println("FOUND IN DB :: "+r)
+    res
   }
 
 }

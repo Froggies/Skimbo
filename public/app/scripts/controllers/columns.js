@@ -13,7 +13,17 @@ publicApp.controller('ColumnsCtrl', function($scope, $http) {
     return false;
   } else {
     var socket = new WebSocket(wshost);
-    socket.onopen = function() { console.log('socket ouverte'); }
+    socket.onopen = function() { 
+      console.log('socket ouverte'); 
+      var json = { 
+        "channels": [
+          { "service": "twitter.wall" }, 
+          { "service": "twitter.hashtag", "args": { "hashtag": "skimbo" } },
+          { "service": "twitter.user", "args": {"username": "studiodev"} }
+        ]
+      }
+      socket.send(JSON.stringify(json));
+    }
     socket.onclose = function() { console.log('socket fermée'); }
     socket.onerror = function() { console.log('Une erreur est survenue'); }
     socket.onmessage = function(msg){
