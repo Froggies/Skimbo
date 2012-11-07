@@ -7,6 +7,7 @@ GET     /                           controllers.Application.index
 
 # Providers available
 GET     /api/providers/list         controllers.api.Providers.listAll
+POST    /api/unified                controllers.api.Unified.stream
 
 # Streams
 GET     /api/logout           		controllers.Application.logout
