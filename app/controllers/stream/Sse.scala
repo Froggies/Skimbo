@@ -5,6 +5,10 @@ import services.actors.{Endpoint, ProviderActor}
 import services.auth.providers._
 import play.api.libs.EventSource
 import play.api.mvc.Controller
+import services.endpoints.Endpoints
+import play.api.Logger
+import play.api.libs.iteratee.Enumerator
+import services.endpoints.JsonRequest.UnifiedRequest
 
 object Sse extends Controller {
 
@@ -16,17 +20,17 @@ object Sse extends Controller {
   def connect() = Authenticated { action =>
     implicit val request = action.request
 
-    //TODO RM : remove when api endpoint from JL was done
-    val endpoints = Seq(
-      Endpoint(Twitter, "http://dev.studio-dev.fr/test-ws-json.php?nom=twitter", 5, action.user.id, true),
-      Endpoint(GitHub, "http://dev.studio-dev.fr/test-ws-json.php?nom=github", 10, action.user.id, true),
-      Endpoint(Facebook, "http://dev.studio-dev.fr/test-ws-json.php?nom=facebook", 15, action.user.id, true),
-      Endpoint(GooglePlus, "http://dev.studio-dev.fr/test-ws-json.php?nom=googlePlus", 3, action.user.id, true),
-      Endpoint(LinkedIn, "http://dev.studio-dev.fr/test-ws-json.php?nom=linkedIn", 8, action.user.id, true),
-      Endpoint(Scoopit, "http://dev.studio-dev.fr/test-ws-json.php?nom=scoopit", 5, action.user.id, true),
-      Endpoint(StackExchange, "http://dev.studio-dev.fr/test-ws-json.php?nom=stackExchange", 6, action.user.id, true),
-      Endpoint(Trello, "http://dev.studio-dev.fr/test-ws-json.php?nom=trello", 5, action.user.id, true),
-      Endpoint(Viadeo, "http://dev.studio-dev.fr/test-ws-json.php?nom=viadeo", 15, action.user.id, true))
+    val channels = Endpoints.listEndpointsFromRequest(request)
+    val endpoints = channels.map[Endpoint, Seq[Endpoint]] { channel =>
+          val provider = Endpoints.getProvider(channel.service)
+          val url = Endpoints.genererUrl(channel.service, channel.args.getOrElse(Map.empty), None)
+          if(provider.isDefined && url.isDefined) {
+            Logger.info("Provider : "+provider.get.name)
+            Endpoint(provider.get, url.get, 5, action.user.id, true)//TODO : What about time ??
+          } else {
+            Endpoint(null, null, 1, null, false)//TODO JL : please remove this from RM
+          }
+        }
 
     val (out, channelClient) = ProviderActor.create(endpoints)
     // -> to Skimbo 

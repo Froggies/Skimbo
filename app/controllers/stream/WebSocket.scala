@@ -39,7 +39,7 @@ object WebSocket extends Controller {
         val url = Endpoints.genererUrl(channel.service, channel.args.getOrElse(Map.empty), None)
         if(provider.isDefined && url.isDefined) {
           Logger.info("Provider : "+provider.get.name)
-          ProviderActor.createWithOutput(channelClient, Seq[Endpoint](Endpoint(provider.get, url.get, 5, userId, false)))
+          ProviderActor.createWithOutput(channelClient, Seq[Endpoint](Endpoint(provider.get, url.get, 5, userId, false)))//TODO : What about time ??
         } else {
           Logger.error("Provider or Url not found for "+channel.service+" :: args = "+channel.args)
         }
