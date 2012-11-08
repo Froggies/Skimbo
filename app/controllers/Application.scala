@@ -15,6 +15,8 @@ import java.io.File
 import services.actors.UserInfosActor
 import services.security.AuthenticatedAction._
 import play.api.Logger
+import models._
+import services.endpoints.JsonRequest._
 
 object Application extends Controller {
 
@@ -35,6 +37,20 @@ object Application extends Controller {
     ProviderActor.killActorsForUser(action.user.id)
     //TODO remove session id and redirect to index.html
     Ok("ok")
+  }
+  
+  def testUnifiedRequest() = Action { 
+    import play.api.libs.concurrent.execution.defaultContext
+    UserDao.add(User("test2", 
+        Some(Seq[ProviderUser](ProviderUser("test",None,None,"test"),ProviderUser("test2",None,None,"test2"))), 
+        Some(Seq[UnifiedRequest](UnifiedRequest("test", Some(Map[String, String](("gg" -> "gg"), ("ggbb" -> "ggbb")))),
+            UnifiedRequest("test18", Some(Map[String, String](("cc" -> "vvvv"), ("fdg" -> "ggbb"))))))
+    ))
+    Async {
+      UserDao.findOneById("test2").map { user =>
+        Ok(User.toJson(user.get))
+      }
+    }
   }
 
 }

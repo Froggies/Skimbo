@@ -1,31 +1,20 @@
 package models
-import play.api.libs.json.JsValue
+
 import controllers.UserDao
-import services.actors.UserInfosActor
-import play.api.libs.iteratee.Enumerator
-import play.api.libs.json.Json
+import play.api.libs.json._
+import reactivemongo.bson._
 import scala.collection.Map
-import play.api.libs.json.JsObject
-import play.api.libs.json.JsArray
-import play.api.libs.json.JsString
-import play.api.libs.json.JsNull
-import reactivemongo.bson.handlers.BSONReader
-import reactivemongo.bson.BSONDocument
-import reactivemongo.bson.BSONArray
-import reactivemongo.bson.BSONObjectID
-import reactivemongo.bson.BSONString
-import reactivemongo.bson.handlers.BSONWriter
-import reactivemongo.bson.BSONIterator
-import play.api.libs.iteratee.Iteratee$
+import play.api.libs.json.JsValue
+import services.actors.UserInfosActor
+import services.endpoints.JsonRequest._
 import play.api.libs.iteratee.Iteratee
-import reactivemongo.bson.DefaultBSONIterator
-import reactivemongo.bson.BSONElement
-import reactivemongo.bson.BSONStructure
-import reactivemongo.bson.BSONValue
+import play.api.libs.iteratee.Enumerator
+import reactivemongo.bson.handlers.{BSONReader, BSONWriter}
 
 case class User(
   id: String,
-  distants: Option[Seq[ProviderUser]] = None)
+  distants: Option[Seq[ProviderUser]] = None,
+  unifiedRequests: Option[Seq[UnifiedRequest]] = None)
 
 //keep has Option rules username, name, desctription and avatar for condition's providers 
 case class ProviderUser(
@@ -59,9 +48,11 @@ object User {
 
   def toJson(user: User): JsValue = {
     val distants = user.distants.map { d => d }.getOrElse {Seq()}
+    val unifiedRequests = user.unifiedRequests.getOrElse {Seq()}
     JsObject(Seq(
       "id" -> JsString(user.id),
-      "distants" -> JsArray(toJson(distants))
+      "distants" -> JsArray(toJson(distants)),
+      "unifiedRequests" -> JsArray(toJsonU(unifiedRequests))
     ))
   }
   
@@ -77,6 +68,20 @@ object User {
          "avatar" -> JsString(distant.avatar.getOrElse(""))
        )
      )
+    }
+  }
+  
+  def toJsonU(unifiedRequests: Seq[UnifiedRequest]): Seq[JsObject] = {
+    unifiedRequests.map { unifiedRequest =>
+      val args = unifiedRequest.args.getOrElse(Seq()).map { m => 
+        m._1 -> JsString(m._2)
+      }
+      JsObject(
+         Seq(
+           "service" -> JsString(unifiedRequest.service),
+           "args" -> JsObject(args.toList)
+         )
+      )
     }
   }
   
@@ -98,9 +103,22 @@ object User {
           None//Some(d.getAs[BSONString]("avatar").get.value)
         )
       }
+      val unifiedRequests = doc.getAs[BSONArray]("unifiedRequests").getOrElse(BSONArray()).toTraversable.bsonIterator
+      val seqUnifiedRequests = for(request <- unifiedRequests) yield {
+        val r = request.value.asInstanceOf[BSONDocument].toTraversable
+        val requestArgs = r.getAs[BSONDocument]("args").get.toTraversable.bsonIterator
+        val args = for(requestArg <- requestArgs) yield {
+          (requestArg.name, r.getAs[BSONDocument]("args").get.toTraversable.getAs[BSONString](requestArg.name).get.value)
+        }
+        UnifiedRequest(
+          r.getAs[BSONString]("service").get.value,
+          Some(args.toMap)
+        )
+      }
       User(
         doc.getAs[BSONString]("id").get.value,
-        Some(seqProviders.toList)
+        Some(seqProviders.toList),
+        Some(seqUnifiedRequests.toList)
       )
     }
   }
@@ -122,9 +140,22 @@ object User {
         ))
       }
       
+      val unifiedRequests = BSONArray().toAppendable
+      for(unifiedRequest <- user.unifiedRequests.getOrElse(Seq())) yield {
+        val args = BSONDocument().toAppendable
+        for((argKey, argValue) <- unifiedRequest.args.getOrElse(Map.empty)) yield {
+          args.append(argKey -> BSONString(argValue))
+        }
+        unifiedRequests.append(BSONDocument(
+          "service" -> BSONString(unifiedRequest.service),
+          "args" -> args
+        ))
+      }
+      
       BSONDocument(
         "id" -> BSONString(user.id),
-        "distants" -> distants)
+        "distants" -> distants,
+        "unifiedRequests" -> unifiedRequests)
     }
   }
 

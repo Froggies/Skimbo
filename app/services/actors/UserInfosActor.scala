@@ -66,7 +66,13 @@ class UserInfosActor(idUser: String)(implicit request: RequestHeader) extends Ac
 //          }
 //      }
       
-      
+      UserDao.findOneById(idUser).map { optionUser =>
+        if(optionUser.isDefined) {
+          
+        } else {
+          
+        }
+      }
       
       // TODO RM : find when kill actor
       //. onDone {
