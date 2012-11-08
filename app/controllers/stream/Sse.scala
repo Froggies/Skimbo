@@ -21,18 +21,7 @@ object Sse extends Controller {
     implicit val request = action.request
 
     val channels = Endpoints.listEndpointsFromRequest(request)
-    val endpoints = channels.map[Endpoint, Seq[Endpoint]] { channel =>
-          val provider = Endpoints.getProvider(channel.service)
-          val url = Endpoints.genererUrl(channel.service, channel.args.getOrElse(Map.empty), None)
-          if(provider.isDefined && url.isDefined) {
-            Logger.info("Provider : "+provider.get.name)
-            Endpoint(provider.get, url.get, 5, action.user.id, true)//TODO : What about time ??
-          } else {
-            Endpoint(null, null, 1, null, false)//TODO JL : please remove this from RM
-          }
-        }
-
-    val (out, channelClient) = ProviderActor.create(endpoints)
+    val (out, channelClient) = ProviderActor.create(action.user.id, channels)
     // -> to Skimbo 
     // -> trier par date
     // -> filter en fonction des déjà vus
