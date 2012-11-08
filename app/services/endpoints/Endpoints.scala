@@ -21,6 +21,10 @@ object Endpoints {
       config.provider
     }.orElse(None)
   }
+  
+  def getConfig(endpoint:String): Option[EndpointConfig] = {
+    endpoints.get(endpoint)
+  }
 
   def genererUrl(endpoint: String, param: Map[String, String], sinceOpt: Option[String]) : Option[String] = {
     endpoints.get(endpoint).map { config =>

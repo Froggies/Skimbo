@@ -31,9 +31,10 @@ object ProviderActor {
     unifiedRequests.foreach { unifiedRequest:UnifiedRequest =>
       val provider = Endpoints.getProvider(unifiedRequest.service)
       val url = Endpoints.genererUrl(unifiedRequest.service, unifiedRequest.args.getOrElse(Map.empty), None)
-      if(provider.isDefined && url.isDefined) {
-        Logger.info("Provider : "+provider.get.name)
-        val endpoint = Endpoint(provider.get, url.get, 5, userId, false)//TODO : What about time ??
+      val time = Endpoints.getConfig(unifiedRequest.service).map(_.delay)
+      if(provider.isDefined && url.isDefined && time.isDefined) {
+        Logger.info("Provider : "+provider.get.name+" every "+time.get+" seconds")
+        val endpoint = Endpoint(provider.get, url.get, time.get, userId, false)
         val actor = system.actorOf(Props(new ProviderActor(channel, endpoint)))
         system.eventStream.subscribe(actor, classOf[Dead])
         system.eventStream.subscribe(actor, classOf[Ping])
