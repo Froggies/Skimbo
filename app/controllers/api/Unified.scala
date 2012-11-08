@@ -2,7 +2,6 @@ package controllers.api
 
 import play.api.mvc._
 import services.auth.ProviderDispatcher
-import com.codahale.jerkson.Json.generate
 import services.endpoints.Endpoints
 import services.endpoints.Endpoints
 

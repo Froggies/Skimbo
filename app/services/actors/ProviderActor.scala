@@ -13,6 +13,7 @@ import play.api.libs.concurrent.execution.defaultContext
 import play.api.Logger
 import services.endpoints.Endpoints
 import services.endpoints.JsonRequest._
+import services.auth.GenericProvider
 
 sealed case class Ping(idUser: String)
 sealed case class Dead(idUser: String = "")
@@ -21,25 +22,24 @@ object ProviderActor {
 
   val system: ActorSystem = ActorSystem("providers");
 
-  def create(userId:String, unifiedRequests: Seq[UnifiedRequest])(implicit request: RequestHeader): (Enumerator[JsValue], Concurrent.Channel[JsValue]) = {
+  def create(userId: String, unifiedRequests: Seq[UnifiedRequest])(implicit request: RequestHeader): (Enumerator[JsValue], Concurrent.Channel[JsValue]) = {
     val (rawStream, channel) = Concurrent.broadcast[JsValue]
     create(channel, userId, unifiedRequests)
     (rawStream, channel)
   }
-  
-  def create(channel:Concurrent.Channel[JsValue], userId:String, unifiedRequests: Seq[UnifiedRequest])(implicit request: RequestHeader) {
-    unifiedRequests.foreach { unifiedRequest:UnifiedRequest =>
+
+  def create(channel: Concurrent.Channel[JsValue], userId: String, unifiedRequests: Seq[UnifiedRequest])(implicit request: RequestHeader) {
+    unifiedRequests.foreach { unifiedRequest: UnifiedRequest =>
       val provider = Endpoints.getProvider(unifiedRequest.service)
       val url = Endpoints.genererUrl(unifiedRequest.service, unifiedRequest.args.getOrElse(Map.empty), None)
       val time = Endpoints.getConfig(unifiedRequest.service).map(_.delay)
-      if(provider.isDefined && url.isDefined && time.isDefined) {
-        Logger.info("Provider : "+provider.get.name+" every "+time.get+" seconds")
-        val endpoint = Endpoint(provider.get, url.get, time.get, userId, false)
-        val actor = system.actorOf(Props(new ProviderActor(channel, endpoint)))
+      if (provider.isDefined && url.isDefined && time.isDefined) {
+        Logger.info("Provider : " + provider.get.name + " every " + time.get + " seconds")
+        val actor = system.actorOf(Props(new ProviderActor(channel, provider.get, url.get, time.get, userId, false)))
         system.eventStream.subscribe(actor, classOf[Dead])
         system.eventStream.subscribe(actor, classOf[Ping])
       } else {
-        Logger.error("Provider or Url not found for "+unifiedRequest.service+" :: args = "+unifiedRequest.args)
+        Logger.error("Provider or Url not found for " + unifiedRequest.service + " :: args = " + unifiedRequest.args)
       }
     }
   }
@@ -54,32 +54,34 @@ object ProviderActor {
 
 }
 
-class ProviderActor(channel: Concurrent.Channel[JsValue], endpoint: Endpoint)(implicit request: RequestHeader) extends Actor {
+class ProviderActor(channel: Concurrent.Channel[JsValue],
+  provider: GenericProvider, url: String, delay: Int,
+  idUser: String, longPolling: Boolean)(implicit request: RequestHeader) extends Actor {
 
-  val scheduler = Akka.system.scheduler.schedule(0 second, endpoint.interval second) {
+  val scheduler = Akka.system.scheduler.schedule(0 second, delay second) {
     self ! ReceiveTimeout
   }
 
   def receive = {
     case ReceiveTimeout => {
-      if (endpoint.longPolling) {
+      if (longPolling) {
         scheduler.cancel() //need ping to call provider
       }
-      if (endpoint.provider.hasToken(request)) { //TODO RM : remove when api endpoint from JL was done
-        endpoint.provider.fetch(endpoint.url).get.map(response => channel.push(response.json))
+      if (provider.hasToken(request)) {
+        provider.fetch(url).get.map(response => channel.push(response.json))
       } else {
-        self ! Dead(endpoint.idUser)
+        self ! Dead(idUser)
       }
     }
-    case Ping(idUser) => {
-      if (idUser == endpoint.idUser) {
-        Akka.system.scheduler.scheduleOnce(endpoint.interval second) {
+    case Ping(id) => {
+      if (id == idUser) {
+        Akka.system.scheduler.scheduleOnce(delay second) {
           self ! ReceiveTimeout
         }
       }
     }
-    case Dead(idUser) => {
-      if (idUser == endpoint.idUser) {
+    case Dead(id) => {
+      if (id == idUser) {
         scheduler.cancel()
         context.stop(self)
       }

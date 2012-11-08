@@ -1,7 +1,7 @@
 package controllers.stream
 
 import services.security.AuthenticatedAction._
-import services.actors.{Endpoint, ProviderActor}
+import services.actors.ProviderActor
 import services.auth.providers._
 import play.api.libs.EventSource
 import play.api.mvc.Controller

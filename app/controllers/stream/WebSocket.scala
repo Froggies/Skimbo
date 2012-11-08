@@ -2,7 +2,7 @@ package controllers.stream
 import play.api.mvc.Controller
 import play.api.libs.iteratee.Iteratee
 import play.api.libs.iteratee.Enumerator
-import services.actors.{Endpoint, ProviderActor}
+import services.actors.ProviderActor
 import services.auth.providers._
 import services.security.AuthenticatedAction._
 import play.api.mvc.AnyContent

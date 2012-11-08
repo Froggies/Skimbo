@@ -19,6 +19,7 @@ import models.ProviderUser
 import scala.concurrent._
 import scala.annotation.tailrec
 import akka.util.Duration
+import services.auth.GenericProvider
 
 case class Refresh()
 
@@ -26,18 +27,18 @@ object UserInfosActor {
 
   val system: ActorSystem = ActorSystem("userInfos");
 
-  def apply(idUser: String, endpoints: Seq[Endpoint])(implicit request: RequestHeader) = {
-    system.actorOf(Props(new UserInfosActor(idUser, endpoints))) ! Refresh
+  def apply(idUser: String)(implicit request: RequestHeader) = {
+    system.actorOf(Props(new UserInfosActor(idUser))) ! Refresh
   }
 }
 
-class UserInfosActor(idUser: String, endpoints: Seq[Endpoint])(implicit request: RequestHeader) extends Actor {
+class UserInfosActor(idUser: String)(implicit request: RequestHeader) extends Actor {
 
   import play.api.libs.concurrent.execution.defaultContext
 
   def receive() = {
     case Refresh => {
-      findUser()
+      //findUser()
 //      findUser { user =>
 //        println("User !!!!!!!!"+user)
 //        
@@ -78,47 +79,47 @@ class UserInfosActor(idUser: String, endpoints: Seq[Endpoint])(implicit request:
     case e: Exception => throw new UnexpectedException(Some("Incorrect message receive"), Some(e))
   }
 
-  def findUser() = {
-    val byId = UserDao.findOneById(idUser)
-    val byIdProvider = findByIdProviders(endpoints)
-    val create = UserDao.add(User(idUser))
-    
-    val anyQuote = byId fallbackTo byIdProvider fallbackTo create
-    anyQuote onSuccess { 
-      case u => println("FINISH "+u) 
-    }
-    
-  }
+//  def findUser() = {
+//    val byId = UserDao.findOneById(idUser)
+//    val byIdProvider = findByIdProviders(endpoints)
+//    val create = UserDao.add(User(idUser))
+//    
+//    val anyQuote = byId fallbackTo byIdProvider fallbackTo create
+//    anyQuote onSuccess { 
+//      case u => println("FINISH "+u) 
+//    }
+//    
+//  }
+//  
+//  def findByIdProviders(endpoints: => Seq[Endpoint]) = {
+//    @tailrec
+//    def findByIdProviders_(endpoints:Seq[Endpoint]):Future[Option[User]] = {
+//      if(endpoints.size == 0) {
+//        println("NONE FIND USER !!!")
+//        Future(None)
+//      } else {
+//        val maybeUser = findByIdProvider(endpoints.head)
+//        val v = for { user <- maybeUser } yield {
+//          println("FIND USER BY ID PROVIDER "+endpoints.head.provider.name+" !!!")
+//          if(user.isDefined) {
+//            println("FIND USER BY ID PROVIDER MAP "+endpoints.head.provider.name+" !!!")
+//            user
+//          } else {
+//            println("RECURSION USER !!!")
+//            None
+//          }
+//        }
+//        findByIdProviders_(endpoints.splitAt(1)._2)
+//      }
+//    }
+//    findByIdProviders_(endpoints)
+//  }
   
-  def findByIdProviders(endpoints: => Seq[Endpoint]) = {
-    @tailrec
-    def findByIdProviders_(endpoints:Seq[Endpoint]):Future[Option[User]] = {
-      if(endpoints.size == 0) {
-        println("NONE FIND USER !!!")
-        Future(None)
-      } else {
-        val maybeUser = findByIdProvider(endpoints.head)
-        val v = for { user <- maybeUser } yield {
-          println("FIND USER BY ID PROVIDER "+endpoints.head.provider.name+" !!!")
-          if(user.isDefined) {
-            println("FIND USER BY ID PROVIDER MAP "+endpoints.head.provider.name+" !!!")
-            user
-          } else {
-            println("RECURSION USER !!!")
-            None
-          }
-        }
-        findByIdProviders_(endpoints.splitAt(1)._2)
-      }
-    }
-    findByIdProviders_(endpoints)
-  }
-  
-  def findByIdProvider(endpoint:Endpoint):Future[Option[User]] = {
-    endpoint.provider.getUser.flatMap { providerUser =>
+  def findByIdProvider(provider:GenericProvider):Future[Option[User]] = {
+    provider.getUser.flatMap { providerUser =>
       println("FIND DISTANT USER !!!;"+providerUser.get)
       if(providerUser.isDefined) {
-        UserDao.findByIdProvider(endpoint.provider.name, providerUser.get.id)
+        UserDao.findByIdProvider(provider.name, providerUser.get.id)
       } else {
         Future(None)
       }
