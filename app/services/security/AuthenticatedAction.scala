@@ -2,6 +2,9 @@ package services.security
 
 import play.api.mvc._
 import models.User
+import controllers.UserDao
+import models.Account
+import java.util.Date
 
 object AuthenticatedAction extends Results {
 
@@ -9,8 +12,9 @@ object AuthenticatedAction extends Results {
 
   def Authenticated[A](p: BodyParser[A])(f: AuthenticatedRequest[A] => Result) = {
     Action(p) { request =>
-      request.session.get("id").flatMap(id => User.load(id)).map { user =>
-        f(AuthenticatedRequest(user, request))
+      request.session.get("id").map {id => 
+        //just for common use, not really needed
+        f(AuthenticatedRequest(User.create(id), request))
       }.getOrElse(Redirect(controllers.routes.Application.index))
     }
   }

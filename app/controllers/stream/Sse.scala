@@ -13,7 +13,7 @@ import services.endpoints.JsonRequest.UnifiedRequest
 object Sse extends Controller {
 
   def ping() = Authenticated { action =>
-    ProviderActor.ping(action.user.id)
+    ProviderActor.ping(action.user.accounts.last.id)
     Ok("ok")
   }
   
@@ -21,7 +21,7 @@ object Sse extends Controller {
     implicit val request = action.request
 
     val channels = Endpoints.listEndpointsFromRequest(request)
-    val (out, channelClient) = ProviderActor.create(action.user.id, channels)
+    val (out, channelClient) = ProviderActor.create(action.user.accounts.last.id, channels)
     // -> to Skimbo 
     // -> trier par date
     // -> filter en fonction des déjà vus

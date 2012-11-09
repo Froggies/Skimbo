@@ -19,7 +19,11 @@ import models.ProviderUser
 import scala.concurrent._
 import scala.annotation.tailrec
 import akka.util.Duration
+import services.auth.ProviderDispatcher
 import services.auth.GenericProvider
+import akka.dispatch.OnSuccess
+import models.Account
+import java.util.Date
 
 case class Refresh()
 
@@ -38,42 +42,44 @@ class UserInfosActor(idUser: String)(implicit request: RequestHeader) extends Ac
 
   def receive() = {
     case Refresh => {
-      //findUser()
-//      findUser { user =>
-//        println("User !!!!!!!!"+user)
-//        
-//          println("in user")
-//          endpoints.foreach { endpoint =>
-//            println("in endpoint ")+endpoint.provider.name
-//            if (endpoint.provider.hasToken(request)) { //TODO RM : remove when api endpoint from JL was done
-//              println("has token for "+endpoint.provider.name)
-//              val notFound = user.distants.getOrElse(Seq()).count { provider =>
-//                provider.socialType == endpoint.provider.name
-//              } == 0
-//              if (notFound) {
-//                println("endpoint not found "+endpoint.provider.name)
-//                endpoint.provider.getUser.foreach { providerUser =>
-//                  providerUser.map { pu =>
-//                    val distants = new ListBuffer[models.ProviderUser]() //TODO JL is good ?
-//                    distants ++= user.distants.getOrElse(Seq())
-//                    distants += pu
-//                    val userModif = User(endpoint.idUser, Some(distants.toList))
-//                    UserDao.update(userModif)
-//                  }
-//                }
-//              }
-//            }
-//          }
-//      }
-      
+
       UserDao.findOneById(idUser).map { optionUser =>
-        if(optionUser.isDefined) {
-          
+        if (optionUser.isDefined) {
+          Logger.info("User has id in DB")
         } else {
-          
+          ProviderDispatcher.listAll.map { provider =>
+            if (provider.hasToken(request)) {
+              Logger.info("Call distantUser on " + provider.name)
+              provider.getUser.map { providerUser =>
+                if (providerUser.isDefined) {
+                  Logger.info("User has id in " + provider.name + " = " + providerUser.get.id)
+                  UserDao.findByIdProvider(provider.name, providerUser.get.id).map { optionUser =>
+                    if (optionUser.isDefined) {
+                      Logger.info("User has id of " + provider.name + " in DB = " + optionUser.get.accounts.last.id)
+                      request.session + ("id" -> optionUser.get.accounts.last.id)
+                      val user = optionUser.get
+                      UserDao.update(User(
+                        user.accounts :+ Account(idUser, new Date()),
+                        user.distants,
+                        user.unifiedRequests))
+                    } else {
+                      Logger.info("User hasn't id of " + provider.name + " in DB createIt")
+                      UserDao.add(User(
+                        Seq(Account(idUser, new Date())),
+                        Some(Seq(providerUser.get))))
+                    }
+                  }
+                } else {
+                  Logger.info("User hasn't id in " + provider.name + " ! WTF ?")
+                }
+              }
+            } else {
+              Logger.info("User hasn't token for " + provider.name)
+            }
+          }
         }
       }
-      
+
       // TODO RM : find when kill actor
       //. onDone {
       //  self ! Dead
@@ -83,53 +89,6 @@ class UserInfosActor(idUser: String)(implicit request: RequestHeader) extends Ac
       context.stop(self)
     }
     case e: Exception => throw new UnexpectedException(Some("Incorrect message receive"), Some(e))
-  }
-
-//  def findUser() = {
-//    val byId = UserDao.findOneById(idUser)
-//    val byIdProvider = findByIdProviders(endpoints)
-//    val create = UserDao.add(User(idUser))
-//    
-//    val anyQuote = byId fallbackTo byIdProvider fallbackTo create
-//    anyQuote onSuccess { 
-//      case u => println("FINISH "+u) 
-//    }
-//    
-//  }
-//  
-//  def findByIdProviders(endpoints: => Seq[Endpoint]) = {
-//    @tailrec
-//    def findByIdProviders_(endpoints:Seq[Endpoint]):Future[Option[User]] = {
-//      if(endpoints.size == 0) {
-//        println("NONE FIND USER !!!")
-//        Future(None)
-//      } else {
-//        val maybeUser = findByIdProvider(endpoints.head)
-//        val v = for { user <- maybeUser } yield {
-//          println("FIND USER BY ID PROVIDER "+endpoints.head.provider.name+" !!!")
-//          if(user.isDefined) {
-//            println("FIND USER BY ID PROVIDER MAP "+endpoints.head.provider.name+" !!!")
-//            user
-//          } else {
-//            println("RECURSION USER !!!")
-//            None
-//          }
-//        }
-//        findByIdProviders_(endpoints.splitAt(1)._2)
-//      }
-//    }
-//    findByIdProviders_(endpoints)
-//  }
-  
-  def findByIdProvider(provider:GenericProvider):Future[Option[User]] = {
-    provider.getUser.flatMap { providerUser =>
-      println("FIND DISTANT USER !!!;"+providerUser.get)
-      if(providerUser.isDefined) {
-        UserDao.findByIdProvider(provider.name, providerUser.get.id)
-      } else {
-        Future(None)
-      }
-    }
   }
 
 }

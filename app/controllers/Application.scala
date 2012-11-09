@@ -17,12 +17,13 @@ import services.security.AuthenticatedAction._
 import play.api.Logger
 import models._
 import services.endpoints.JsonRequest._
+import java.util.Date
 
 object Application extends Controller {
 
   def index = Action { implicit request =>
     request.session.get("id").map(userId => {
-      //UserInfosActor(userId)//RM : decomment this if you want to test bd retreive
+      UserInfosActor(userId)//RM : decomment this if you want to test bd retreive
       Ok(views.html.unified())
     }).getOrElse(Ok(views.html.index(Service.list)))
   }
@@ -33,15 +34,16 @@ object Application extends Controller {
   }
   
   def logout() = Authenticated { action =>
-    Logger.info("Aplication.scala :: KillMyActors :: " + action.user.id)
-    ProviderActor.killActorsForUser(action.user.id)
+    Logger.info("Aplication.scala :: KillMyActors :: " + action.user.accounts.last.id)
+    ProviderActor.killActorsForUser(action.user.accounts.last.id)
     //TODO remove session id and redirect to index.html
     Ok("ok")
   }
   
   def testUnifiedRequest() = Action { 
     import play.api.libs.concurrent.execution.defaultContext
-    UserDao.add(User("test2", 
+    UserDao.add(User(
+        Seq[Account](Account("test", new Date()), Account("test2", new Date())), 
         Some(Seq[ProviderUser](ProviderUser("test",None,None,"test"),ProviderUser("test2",None,None,"test2"))), 
         Some(Seq[UnifiedRequest](UnifiedRequest("test", Some(Map[String, String](("gg" -> "gg"), ("ggbb" -> "ggbb")))),
             UnifiedRequest("test18", Some(Map[String, String](("cc" -> "vvvv"), ("fdg" -> "ggbb"))))))

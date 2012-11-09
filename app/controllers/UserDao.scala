@@ -20,14 +20,9 @@ object UserDao {
   val db = ReactiveMongoPlugin.db
   val collection = db("users2")
     
-  def add(user: models.User)(implicit context:scala.concurrent.ExecutionContext):Future[User] = {
+  def add(user: models.User)(implicit context:scala.concurrent.ExecutionContext) = {
     implicit val writer = User.UserBSONWriter
     collection.insert(user)
-    findOneById(user.id).map { user =>
-      user.getOrElse { 
-        throw new UnexpectedException(Some("Add user fail"))
-      }
-    }
   }
 
   def findAll()(implicit context:scala.concurrent.ExecutionContext):Future[List[User]] = {
@@ -39,51 +34,22 @@ object UserDao {
 
   def findOneById(id: String)(implicit context:scala.concurrent.ExecutionContext):Future[Option[User]] = {
     implicit val reader = User.UserBSONReader
-    val query = BSONDocument("id" -> new BSONString(id))
+    val query = BSONDocument("accounts.id" -> new BSONString(id))
     collection.find(query).headOption()
   }
   
-  def findOneById(id: String, f:(Option[User]) => Any)(implicit context:scala.concurrent.ExecutionContext) = {
-    implicit val reader = User.UserBSONReader
-    val query = BSONDocument("id" -> new BSONString(id))
-    collection.find(query).headOption().map {
-      user => f(user)
-    }
-  }
-  
-  def findOrCreate(id: String)(implicit context:scala.concurrent.ExecutionContext):Future[User] = {
-    findOneById(id).map { user =>
-      user.getOrElse { 
-        return add(User(id))
-      }
-    }
-  }
-  
   def update(user:models.User)(implicit context:scala.concurrent.ExecutionContext) = {
-    collection.update(BSONDocument("id" -> new BSONString(user.id)), user)
-  }
-  
-  def findByIdProvider(provider:String, id:String, f:(Option[User]) => Any)(implicit context:scala.concurrent.ExecutionContext) = {
-    implicit val reader = User.UserBSONReader
-    val query = BSONDocument()
-    query += "$query" -> BSONDocument(
-      "distants.social" -> new BSONString(provider), 
-      "distants.id" -> new BSONString(id))
-    collection.find(query).headOption().map {
-      user => f(user)
-    }
+    val query = BSONDocument("accounts.id" -> new BSONString(user.accounts.head.id))
+    collection.update(query, user)
   }
   
   def findByIdProvider(provider:String, id:String):Future[Option[User]] = {
     implicit val reader = User.UserBSONReader
     import scala.concurrent.ExecutionContext.Implicits.global
-    val query = /*BSONDocument()
-    query += "$query" -> */BSONDocument(
+    val query = BSONDocument(
       "distants.social" -> new BSONString(provider), 
       "distants.id" -> new BSONString(id))
-    println("DaoUSER :: "+query)
-    val db = ReactiveMongoPlugin.db
-    val res = db("users2").find(query).headOption()
+    val res = collection.find(query).headOption()
     for { r <- res } yield println("FOUND IN DB :: "+r)
     res
   }

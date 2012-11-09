@@ -22,8 +22,11 @@ object WebSocket extends Controller {
     // Log events to the console
     val in = Iteratee.foreach[JsValue]{ cmd =>
       Logger.info("Command from client : "+cmd)
-      val unifiedRequests = Endpoints.listEndpointsFromJson(cmd)
-      ProviderActor.create(channelClient, userId, unifiedRequests)
+//      val unifiedRequests = Endpoints.listEndpointsFromJson(cmd)
+//      ProviderActor.create(channelClient, userId, unifiedRequests)
+      
+      ProviderActor.launchAll(channelClient, userId)
+      
     }.mapDone { _ =>
       println("Disconnected")
       ProviderActor.killActorsForUser(userId)
