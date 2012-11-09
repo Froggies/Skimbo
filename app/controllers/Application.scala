@@ -36,8 +36,8 @@ object Application extends Controller {
   def logout() = Authenticated { action =>
     Logger.info("Aplication.scala :: KillMyActors :: " + action.user.accounts.last.id)
     ProviderActor.killActorsForUser(action.user.accounts.last.id)
-    //TODO remove session id and redirect to index.html
-    Ok("ok")
+    //TODO remove session id
+    Ok(views.html.index(Service.list(action.request)))
   }
   
   def testUnifiedRequest() = Action { 
