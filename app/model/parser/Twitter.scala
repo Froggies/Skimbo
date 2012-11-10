@@ -6,6 +6,11 @@ import org.joda.time._
 import play.api.libs.json.util._
 import play.api.libs.json._
 import play.api.libs.json.Reads._
+import org.joda.time.format._
+import java.util.Locale
+import play.data.validation.ValidationError
+import org.joda.time.tz.UTCProvider
+import java.text.SimpleDateFormat
 
 case class Tweet(
   id: Long,
@@ -18,13 +23,13 @@ case class Tweet(
   retweets: Int,
   authorName: String,
   screenName: String,
-  createdAt: String)
+  createdAt: DateTime)
 
 case class TwitterTag(text: String, indices: List[Int])
 case class TwitterUrl(shortUrl: String, url: String, indices: List[Int])
 case class TwitterMention(authorName: String, authorScreenName: String, indices: List[Int])
 
-object Tweets extends GenericParser[Tweet] {
+object TwitterHomeTimeLine extends GenericParser[Tweet] {
   
   val tweetDetailUrl = "http://twitter.com/%s/status/%s"; 
 
@@ -33,7 +38,7 @@ object Tweets extends GenericParser[Tweet] {
       tweet.authorName,
       tweet.screenName,
       tweet.text,
-      new DateTime(), //FIXME: when json is parsed correctly
+      tweet.createdAt,
       Nil, //TODO: Find out how to this, we obviously need to search
       // tweet where in_reply_to_status_id == tweet.id
       // but where ?
@@ -66,9 +71,22 @@ object TwitterMention {
 }
 
 object Tweet {
+  val twitterDatePattern = "EEE MMM dd HH:mm:ss Z yyyy";
 
-  //TODO: find out how to use custom joda time parser
-  //to specify twitter pattern
+  val twitterDateReader = new Reads[org.joda.time.DateTime] {
+	  def reads(json: JsValue): JsResult[DateTime] = {
+	    json match {
+		    case JsNumber(d) => JsSuccess(new DateTime(d.toLong))
+		    case JsString(s) => {		      
+			    val sf = new SimpleDateFormat(twitterDatePattern, Locale.ENGLISH)
+			    sf.setLenient(true)
+			    JsSuccess(new DateTime(sf.parse(s)))
+		    }
+	        case _ => JsError("Error while parsing date")
+	    }
+	  }
+  }
+  
   implicit val tweetReader: Reads[Tweet] = (
     (__ \ "id").read[Long] and
     (__ \ "text").read[String] and
@@ -80,5 +98,6 @@ object Tweet {
     (__ \ "retweet_count").read[Int] and
     (__ \ "user" \ "name").read[String] and
     (__ \ "user" \ "screen_name").read[String] and
-    (__ \ "created_at").read[String])(Tweet.apply _)
+    (__ \ "created_at").read[DateTime](twitterDateReader)
+  )(Tweet.apply _)
 }
