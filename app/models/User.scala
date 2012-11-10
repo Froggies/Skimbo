@@ -21,7 +21,7 @@ case class Account(
   id: String,
   lastUse: Date)
 
-//keep has Option rules username, name, desctription and avatar for condition's providers 
+//keep has Option rules username, name, desctription and avatar for condition's providers
 case class ProviderUser(
   id: String,
   username: Option[String] = None,

@@ -24,7 +24,7 @@ object LinkedIn extends OAuthProvider {
   // Override fetch method : define json format by default
   override def fetch(url: String)(implicit request: RequestHeader) =
     super.fetch(url).withHeaders("x-li-format" -> "json")
-    
+
   override def distantUserToSkimboUser(ident: String, response: play.api.libs.ws.Response): Option[ProviderUser] = {
     try {
       val me = response.json
@@ -41,6 +41,6 @@ object LinkedIn extends OAuthProvider {
       }
     }
   }
-    
+
 }
 

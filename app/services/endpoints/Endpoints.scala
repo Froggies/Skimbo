@@ -10,23 +10,31 @@ object Endpoints {
 
   // Activated endpoints
   val endpoints = Map[String, EndpointConfig](
-      "twitter.wall" -> Configuration.Twitter.wall,
-      "twitter.hashtag" -> Configuration.Twitter.hashtag,
-      "twitter.user" -> Configuration.Twitter.user,
-      "facebook.wall" -> Configuration.Facebook.wall
+      "twitter.wall"          -> Configuration.Twitter.wall,
+      "twitter.hashtag"       -> Configuration.Twitter.hashtag,
+      "twitter.user"          -> Configuration.Twitter.user,
+      "facebook.wall"         -> Configuration.Facebook.wall,
+      "facebook.user"         -> Configuration.Facebook.user,
+      "facebook.group"        -> Configuration.Facebook.group,
+      "viadeo.wall"           -> Configuration.Viadeo.wall,
+      "linkedin.wall"         -> Configuration.Linkedin.wall,
+      "googleplus.wall"       -> Configuration.GooglePlus.wall,
+      "github.notifications"  -> Configuration.Github.notifications,
+      "trello.notifications"  -> Configuration.Trello.notifications,
+      "scoopit.notifications" -> Configuration.Scoopit.notifications
   )
-  
+
   def getProvider(endpoint:String): Option[GenericProvider] = {
     endpoints.get(endpoint).map { config =>
       config.provider
     }.orElse(None)
   }
-  
+
   def getConfig(endpoint:String): Option[EndpointConfig] = {
     endpoints.get(endpoint)
   }
 
-  def genererUrl(endpoint: String, param: Map[String, String], sinceOpt: Option[String]) : Option[String] = {
+  def genererUrl(endpoint: String, param: Map[String, String], sinceOpt: Option[String]): Option[String] = {
     endpoints.get(endpoint).map { config =>
       val isRequestValid = config.requiredParams.forall(param.get(_).isDefined) // Check if all required params are defined
       if (!isRequestValid) {
@@ -35,20 +43,20 @@ object Endpoints {
         Logger.warn("Expected : " + config.requiredParams)
         None
       }
-      
+
       val baseUrl = param.foldLeft(config.url)((url, param) => url.replace(":" + param._1, param._2)) // Generate url with params
       val completeUrl = sinceOpt.map(since => baseUrl.replace(":since", since)).getOrElse(baseUrl) // And "since" element to Url
       completeUrl
     }
   }
-  
-  def listEndpointsFromRequest(req: Request[AnyContent]) = {
-    req.body.asJson.map(json => 
+
+  def listEndpointsFromRequest(req: Request[AnyContent]): List[UnifiedRequest] = {
+    req.body.asJson.map(json =>
       listEndpointsFromJson(json)
     ).getOrElse(List.empty)
   }
-  
-  def listEndpointsFromJson(json: JsValue) = {
+
+  def listEndpointsFromJson(json: JsValue): List[UnifiedRequest] = {
     (json \("channels")).as[List[UnifiedRequest]]
   }
 

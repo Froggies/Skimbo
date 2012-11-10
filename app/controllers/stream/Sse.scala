@@ -16,17 +16,17 @@ object Sse extends Controller {
     ProviderActor.ping(action.user.accounts.last.id)
     Ok("ok")
   }
-  
+
   def connect() = Authenticated { action =>
     implicit val request = action.request
 
     val channels = Endpoints.listEndpointsFromRequest(request)
     val (out, channelClient) = ProviderActor.create(action.user.accounts.last.id, channels)
-    // -> to Skimbo 
+    // -> to Skimbo
     // -> trier par date
     // -> filter en fonction des déjà vus
     // -> to Json
     Ok.stream(out &> EventSource()).as(play.api.http.ContentTypes.EVENT_STREAM)
   }
-  
+
 }

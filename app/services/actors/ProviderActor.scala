@@ -44,7 +44,7 @@ object ProviderActor {
       }
     }
   }
-  
+
   val endpoints = Map[GenericProvider, String](
       (Twitter ->"http://dev.studio-dev.fr/test-ws-json.php?nom=twitter"),
       (GitHub -> "http://dev.studio-dev.fr/test-ws-json.php?nom=github"),
