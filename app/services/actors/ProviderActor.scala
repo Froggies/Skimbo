@@ -30,32 +30,38 @@ object ProviderActor {
   }
 
   def create(channel: Concurrent.Channel[JsValue], userId: String, unifiedRequests: Seq[UnifiedRequest])(implicit request: RequestHeader) {
-    unifiedRequests.foreach { unifiedRequest: UnifiedRequest =>
-      val provider = Endpoints.getProvider(unifiedRequest.service)
-      val url = Endpoints.genererUrl(unifiedRequest.service, unifiedRequest.args.getOrElse(Map.empty), None)
-      val time = Endpoints.getConfig(unifiedRequest.service).map(_.delay)
-      if (provider.isDefined && url.isDefined && time.isDefined) {
-        Logger.info("Provider : " + provider.get.name + " every " + time.get + " seconds")
-        val actor = system.actorOf(Props(new ProviderActor(channel, provider.get, url.get, time.get, userId, false)))
-        system.eventStream.subscribe(actor, classOf[Dead])
-        system.eventStream.subscribe(actor, classOf[Ping])
-      } else {
-        Logger.error("Provider or Url not found for " + unifiedRequest.service + " :: args = " + unifiedRequest.args)
+    unifiedRequests.foreach { unifiedRequest =>
+      val endpoint = for (
+        provider <- Endpoints.getProvider(unifiedRequest.service);
+        url <- Endpoints.genererUrl(unifiedRequest.service, unifiedRequest.args.getOrElse(Map.empty), None);
+        time <- Endpoints.getConfig(unifiedRequest.service).map(_.delay)
+      ) yield (provider, url, time)
+
+      endpoint match {
+        case Some((provider, url, time)) => {
+          Logger.info("Provider : " + provider.name + " every " + time + " seconds")
+          val actor = system.actorOf(Props(new ProviderActor(channel, provider, url, time, userId, false)))
+          system.eventStream.subscribe(actor, classOf[Dead])
+          system.eventStream.subscribe(actor, classOf[Ping])
+        }
+        case _ => Logger.error("Provider or Url not found for " + unifiedRequest.service + " :: args = " + unifiedRequest.args)
       }
+
     }
   }
 
   val endpoints = Map[GenericProvider, String](
-      (Twitter ->"http://dev.studio-dev.fr/test-ws-json.php?nom=twitter"),
-      (GitHub -> "http://dev.studio-dev.fr/test-ws-json.php?nom=github"),
-      (Facebook -> "http://dev.studio-dev.fr/test-ws-json.php?nom=facebook"),
-      (GooglePlus -> "http://dev.studio-dev.fr/test-ws-json.php?nom=googlePlus"),
-      (LinkedIn -> "http://dev.studio-dev.fr/test-ws-json.php?nom=linkedIn"),
-      (Scoopit -> "http://dev.studio-dev.fr/test-ws-json.php?nom=scoopit"),
-      (StackExchange -> "http://dev.studio-dev.fr/test-ws-json.php?nom=stackExchange"),
-      (Trello -> "http://dev.studio-dev.fr/test-ws-json.php?nom=trello"),
-      (Viadeo -> "http://dev.studio-dev.fr/test-ws-json.php?nom=viadeo"))
-  def launchAll(channel: Concurrent.Channel[JsValue], userId: String)(implicit request:RequestHeader) = {
+    (Twitter -> "http://dev.studio-dev.fr/test-ws-json.php?nom=twitter"),
+    (GitHub -> "http://dev.studio-dev.fr/test-ws-json.php?nom=github"),
+    (Facebook -> "http://dev.studio-dev.fr/test-ws-json.php?nom=facebook"),
+    (GooglePlus -> "http://dev.studio-dev.fr/test-ws-json.php?nom=googlePlus"),
+    (LinkedIn -> "http://dev.studio-dev.fr/test-ws-json.php?nom=linkedIn"),
+    (Scoopit -> "http://dev.studio-dev.fr/test-ws-json.php?nom=scoopit"),
+    (StackExchange -> "http://dev.studio-dev.fr/test-ws-json.php?nom=stackExchange"),
+    (Trello -> "http://dev.studio-dev.fr/test-ws-json.php?nom=trello"),
+    (Viadeo -> "http://dev.studio-dev.fr/test-ws-json.php?nom=viadeo"))
+
+  def launchAll(channel: Concurrent.Channel[JsValue], userId: String)(implicit request: RequestHeader) = {
     endpoints.foreach { endpoint =>
       val actor = system.actorOf(Props(new ProviderActor(channel, endpoint._1, endpoint._2, 6, userId, false)))
       system.eventStream.subscribe(actor, classOf[Dead])
