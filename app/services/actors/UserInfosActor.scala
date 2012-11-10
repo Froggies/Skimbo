@@ -61,7 +61,7 @@ class UserInfosActor(idUser: String)(implicit request: RequestHeader) extends Ac
                       UserDao.update(User(
                         user.accounts :+ Account(idUser, new Date()),
                         user.distants,
-                        user.unifiedRequests))
+                        user.columns))
                     } else {
                       Logger.info("User hasn't id of " + provider.name + " in DB createIt")
                       UserDao.add(User(

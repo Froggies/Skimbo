@@ -120,7 +120,7 @@ object User {
           asString(a, "id"),
           lastUse)
       })
-      val providers = tableTo[ProviderUser](document, "accounts", { d =>
+      val providers = tableTo[ProviderUser](document, "distants", { d =>
         ProviderUser(
           asString(d, "id"),
           None, //d.getAs[BSONString]("login").get.value,
@@ -131,7 +131,7 @@ object User {
           )
       })
       val columns = tableTo[Column](document, "columns", { c =>
-        val unifiedRequests = tableTo[UnifiedRequest](document, "unifiedRequests", { r =>
+        val unifiedRequests = tableTo[UnifiedRequest](c, "unifiedRequests", { r =>
           val requestArgs = r.getAs[BSONDocument]("args").get.toTraversable.bsonIterator
           val args = for (requestArg <- requestArgs) yield {
             (requestArg.name, r.getAs[BSONDocument]("args").get.toTraversable.getAs[BSONString](requestArg.name).get.value)
