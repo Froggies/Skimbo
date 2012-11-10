@@ -23,7 +23,7 @@ object Application extends Controller {
 
   def index = Action { implicit request =>
     request.session.get("id").map(userId => {
-      UserInfosActor(userId)//RM : decomment this if you want to test bd retreive
+      UserInfosActor(userId)//TODO RM : decomment this if you want to test bd retreive
       Ok(views.html.unified())
     }).getOrElse(Ok(views.html.index(Service.list)))
   }

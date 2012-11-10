@@ -13,7 +13,7 @@ object AuthenticatedAction extends Results {
   def Authenticated[A](p: BodyParser[A])(f: AuthenticatedRequest[A] => Result) = {
     Action(p) { request =>
       request.session.get("id").map {id => 
-        //just for common use, not really needed
+        //just for common use in AuthenticatedAction, not really needed
         f(AuthenticatedRequest(User.create(id), request))
       }.getOrElse(Redirect(controllers.routes.Application.index))
     }

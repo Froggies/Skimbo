@@ -104,44 +104,51 @@ object User {
    * From bd, keep comment for condition's providers
    */
   implicit object UserBSONReader extends BSONReader[User] {
-    def fromBSON(document: BSONDocument): User = {
+    def tableTo[Obj](document: BSONDocument, key:String, transform:(TraversableBSONDocument) => Obj):Seq[Obj] = {
       val doc = document.toTraversable
-      val accounts = doc.getAs[BSONArray]("accounts").getOrElse(BSONArray()).toTraversable.bsonIterator
-      val seqAccounts = for (account <- accounts) yield {
-        val a = account.value.asInstanceOf[BSONDocument].toTraversable
+      val objs = doc.getAs[BSONArray](key).getOrElse(BSONArray()).toTraversable.bsonIterator
+      val seqObjs = for (obj <- objs) yield {
+        val a = obj.value.asInstanceOf[BSONDocument].toTraversable
+        transform(a)
+      }
+      seqObjs.toList
+    }
+    
+    def asString(doc:TraversableBSONDocument, key:String):String = {
+      doc.getAs[BSONString](key).get.value
+    }
+    
+    def fromBSON(document: BSONDocument): User = {
+      val accounts = tableTo[Account](document, "accounts", { a =>
         val lastUse = new Date()
         lastUse.setTime(a.getAs[BSONDateTime]("lastUse").get.value)
         Account(
-          a.getAs[BSONString]("id").get.value,
+          asString(a, "id"),
           lastUse)
-      }
-      val distants = doc.getAs[BSONArray]("distants").getOrElse(BSONArray()).toTraversable.bsonIterator
-      val seqProviders = for (dist <- distants) yield {
-        val d = dist.value.asInstanceOf[BSONDocument].toTraversable
+      })
+      val providers = tableTo[ProviderUser](document, "accounts", { d =>
         ProviderUser(
-          d.getAs[BSONString]("id").get.value,
+          asString(d, "id"),
           None, //d.getAs[BSONString]("login").get.value,
           None, //d.getAs[BSONString]("name").get.value,
-          d.getAs[BSONString]("social").get.value,
+          asString(d, "social"),
           None, //Some(d.getAs[BSONString]("desc").get.value),
           None //Some(d.getAs[BSONString]("avatar").get.value)
           )
-      }
-      val unifiedRequests = doc.getAs[BSONArray]("unifiedRequests").getOrElse(BSONArray()).toTraversable.bsonIterator
-      val seqUnifiedRequests = for (request <- unifiedRequests) yield {
-        val r = request.value.asInstanceOf[BSONDocument].toTraversable
+      })
+      val unifiedRequests = tableTo[UnifiedRequest](document, "unifiedRequests", { r =>
         val requestArgs = r.getAs[BSONDocument]("args").get.toTraversable.bsonIterator
         val args = for (requestArg <- requestArgs) yield {
           (requestArg.name, r.getAs[BSONDocument]("args").get.toTraversable.getAs[BSONString](requestArg.name).get.value)
         }
         UnifiedRequest(
-          r.getAs[BSONString]("service").get.value,
+          asString(r, "service"),
           Some(args.toMap))
-      }
+      })
       User(
-        seqAccounts.toList,
-        Some(seqProviders.toList),
-        Some(seqUnifiedRequests.toList))
+        accounts,
+        Some(providers),
+        Some(unifiedRequests))
     }
   }
 
@@ -149,24 +156,26 @@ object User {
    * To bd, keep comment for condition's providers
    */
   implicit object UserBSONWriter extends BSONWriter[User] {
+    def toArray[Obj](objs:Seq[Obj], transform:(Obj) => BSONDocument):BSONArray = {
+      val res = BSONArray().toAppendable
+      for (obj <- objs) yield {
+        res.append(transform(obj))
+      }
+      res
+    }
+    
     def toBSON(user: User) = {
-      val accounts = BSONArray().toAppendable
-      for (account <- user.accounts) yield {
-        accounts.append(BSONDocument(
+      val accounts = toArray[Account](user.accounts, { account =>
+        BSONDocument( 
           "id" -> BSONString(account.id),
-          "lastUse" -> BSONDateTime(account.lastUse.getTime())))
-      }
+          "lastUse" -> BSONDateTime(account.lastUse.getTime()))
+      })
 
-      val distants = BSONArray().toAppendable
-      for (distant <- user.distants.getOrElse(Seq())) yield {
-        distants.append(BSONDocument(
+      val distants = toArray[ProviderUser](user.distants.getOrElse(Seq()), { distant =>
+        BSONDocument(
           "id" -> BSONString(distant.id),
-          //"login" -> BSONString(distant.username),
-          //"name" -> BSONString(distant.name),
-          "social" -> BSONString(distant.socialType) //"desc" -> BSONString(distant.description.getOrElse("")),
-          //"avatar" -> BSONString(distant.avatar.getOrElse(""))
-          ))
-      }
+          "social" -> BSONString(distant.socialType))
+      })
 
       val unifiedRequests = BSONArray().toAppendable
       for (unifiedRequest <- user.unifiedRequests.getOrElse(Seq())) yield {
