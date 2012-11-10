@@ -51,14 +51,11 @@ object UserDao {
     val query = BSONDocument(
       "distants.social" -> new BSONString(provider),
       "distants.id" -> new BSONString(id))
-    val res = collection.find(query).headOption()
-    for { r <- res } yield println("FOUND IN DB :: "+r)
-    res
+    collection.find(query).headOption()
   }
   
   def deleteColumn(user:models.User, columnTitle:String)(implicit context:scala.concurrent.ExecutionContext) = {
     val index = user.columns.getOrElse(Seq[Column]()).indexOf(Column(columnTitle, Seq[UnifiedRequest]()))
-    println("LAAAAA = "+index)
     val query = BSONDocument("accounts.id" -> new BSONString(user.accounts.head.id))
     val update = BSONDocument("$unset" -> BSONDocument("columns."+index -> new BSONInteger(1)))
     collection.update(query, update)
