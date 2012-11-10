@@ -25,9 +25,7 @@ object Endpoints {
   )
 
   def getProvider(endpoint:String): Option[GenericProvider] = {
-    endpoints.get(endpoint).map { config =>
-      config.provider
-    }.orElse(None)
+    endpoints.get(endpoint).map(_.provider)
   }
 
   def getConfig(endpoint:String): Option[EndpointConfig] = {
