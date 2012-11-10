@@ -10,5 +10,5 @@ object Providers extends Controller {
   def listAll = Action { implicit req =>
     Ok(generate(Service.list))
   }
-  
+
 }

@@ -78,7 +78,7 @@ trait OAuth2Provider extends GenericProvider {
    * Check authentification code and fetch accessToken from provider WS
    */
   private def retrieveAccessToken(code: String, redirectRoute: Call)(implicit request: RequestHeader) = {
-    
+
     // Check if CSRF fields are ok
     val sess_csrf = request.session.get(fieldCsrf)
     val verif_csrf = request.getQueryString("state")

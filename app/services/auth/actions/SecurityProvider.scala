@@ -15,7 +15,7 @@ trait SecurityProvider {
    */
   def getToken(implicit request: RequestHeader): Option[Any]
 
- 
+
   /**
    * Assign unique ID to client after authentification
    */
@@ -27,5 +27,5 @@ trait SecurityProvider {
    * Has the client a token on this service
    */
   def hasToken(implicit request: RequestHeader) = getToken.isDefined
-  
+
 }

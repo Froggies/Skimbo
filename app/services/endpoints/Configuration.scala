@@ -5,7 +5,7 @@ import services.auth.providers
 
 object Configuration {
 
-  object Twitter { 
+  object Twitter {
 
     object wall extends EndpointConfig {
       override val url = withLimit("https://api.twitter.com/1.1/statuses/home_timeline.json?count=:limit")
@@ -93,7 +93,7 @@ object Configuration {
     }
   }
 
-  object StackOverflow {  
+  object StackOverflow {
 
   }
 
@@ -115,6 +115,6 @@ trait EndpointConfig {
   val requiredParams : List[String] = List.empty
   val limit = 50
   val manualNextResults = false
-  
+
   def withLimit(url: String) = url.replace(":limit", limit.toString);
 }

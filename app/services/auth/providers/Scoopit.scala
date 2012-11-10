@@ -9,7 +9,7 @@ object Scoopit extends OAuthProvider {
 
   override val name = "scoopit"
   override val namespace = "sc"
-    
+
   override def distantUserToSkimboUser(ident: String, response: play.api.libs.ws.Response): Option[ProviderUser] = {
     try {
       val me = response.json \ "user"
@@ -26,5 +26,5 @@ object Scoopit extends OAuthProvider {
       }
     }
   }
-  
+
 }

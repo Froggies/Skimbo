@@ -26,6 +26,6 @@ object Trello extends OAuthProvider {
       }
     }
   }
-    
+
 }
 

@@ -32,19 +32,19 @@ object Application extends Controller {
     ProviderDispatcher(providerName).map(provider =>
       provider.auth(routes.Application.index)).getOrElse(BadRequest)
   }
-  
+
   def logout() = Authenticated { action =>
     Logger.info("Aplication.scala :: KillMyActors :: " + action.user.accounts.last.id)
     ProviderActor.killActorsForUser(action.user.accounts.last.id)
     //TODO remove session id
     Ok(views.html.index(Service.list(action.request)))
   }
-  
-  def testUnifiedRequest() = Action { 
+
+  def testUnifiedRequest() = Action {
     import play.api.libs.concurrent.execution.defaultContext
     UserDao.add(User(
-        Seq[Account](Account("test", new Date()), Account("test2", new Date())), 
-        Some(Seq[ProviderUser](ProviderUser("test",None,None,"test"),ProviderUser("test2",None,None,"test2"))), 
+        Seq[Account](Account("test", new Date()), Account("test2", new Date())),
+        Some(Seq[ProviderUser](ProviderUser("test",None,None,"test"),ProviderUser("test2",None,None,"test2"))),
         Some(Seq[UnifiedRequest](UnifiedRequest("test", Some(Map[String, String](("gg" -> "gg"), ("ggbb" -> "ggbb")))),
             UnifiedRequest("test18", Some(Map[String, String](("cc" -> "vvvv"), ("fdg" -> "ggbb"))))))
     ))

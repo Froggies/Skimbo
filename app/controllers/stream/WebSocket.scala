@@ -13,20 +13,20 @@ import services.endpoints.JsonRequest._
 
 object WebSocket extends Controller {
 
-  def connect() = play.api.mvc.WebSocket.using[JsValue] { implicit request => 
+  def connect() = play.api.mvc.WebSocket.using[JsValue] { implicit request =>
     //TODO : JL Authenticated in WebSocket ??
     val userId = request.session.get("id").get
-    
+
     val (out, channelClient) = ProviderActor.create(userId, Seq[UnifiedRequest]())//endpoints)
-    
+
     // Log events to the console
     val in = Iteratee.foreach[JsValue]{ cmd =>
       Logger.info("Command from client : "+cmd)
 //      val unifiedRequests = Endpoints.listEndpointsFromJson(cmd)
 //      ProviderActor.create(channelClient, userId, unifiedRequests)
-      
+
       ProviderActor.launchAll(channelClient, userId)
-      
+
     }.mapDone { _ =>
       println("Disconnected")
       ProviderActor.killActorsForUser(userId)
@@ -34,5 +34,5 @@ object WebSocket extends Controller {
 
     (in, out)
   }
-  
+
 }

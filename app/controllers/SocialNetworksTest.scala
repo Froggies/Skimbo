@@ -76,7 +76,7 @@ object SocialNetworksTest extends Controller {
     def getUsersInfos =
       GitHub.fetch("https://api.github.com/user").get.map(_.json)
 
-    def getEvents(login: String) = // DOC http://developer.github.com/v3/events/#list-events-that-a-user-has-received 
+    def getEvents(login: String) = // DOC http://developer.github.com/v3/events/#list-events-that-a-user-has-received
       GitHub.fetch("https://api.github.com/users/"+login+"/received_events").get.map(_.json)
 
     GitHub.getToken match {

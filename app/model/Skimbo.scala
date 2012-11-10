@@ -7,7 +7,7 @@ import SocialNetwork._
 * Common format between socials network
 */
 case class Skimbo(
-	authorName: String, 
+	authorName: String,
 	authorScreenName: String,
 	message: String,
 	createdAt: DateTime,

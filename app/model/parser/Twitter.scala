@@ -19,7 +19,7 @@ case class Tweet(
   authorName: String,
   screenName: String,
   createdAt: String)
-  
+
 case class TwitterTag(text: String, indices: List[Int])
 case class TwitterUrl(shortUrl: String, url: String, indices: List[Int])
 case class TwitterMention(authorName: String, authorScreenName: String, indices: List[Int])
