@@ -15,7 +15,7 @@ import java.util.Date
 case class User(
   accounts: Seq[Account],
   distants: Option[Seq[ProviderUser]] = None,
-  unifiedRequests: Option[Seq[UnifiedRequest]] = None)
+  columns: Option[Seq[Column]] = None)
 
 case class Account(
   id: String,
@@ -29,6 +29,10 @@ case class ProviderUser(
   socialType: String,
   description: Option[String] = None,
   avatar: Option[String] = None)
+  
+case class Column(
+  title: String,
+  unifiedRequests:Seq[UnifiedRequest])
 
 object User {
 
@@ -36,34 +40,14 @@ object User {
     User(Seq[Account](Account(id, new Date())))
   }
 
-  def fromJson(json: JsValue): Option[User] = {
-    val jsonAccounts: Seq[JsValue] = (json \ "accounts").as[Seq[JsValue]]
-    val accounts = jsonAccounts.map { account =>
-      Account((account \ "id").as[String],
-        (account \ "lastUse").as[Date])
-    }.toList
-    val jsonDistants: Option[Seq[JsValue]] = (json \ "distants").asOpt[Seq[JsValue]]
-    val distants = jsonDistants.map { d =>
-      for (distant <- d) yield {
-        ProviderUser((distant \ "id").as[String],
-          (distant \ "login").asOpt[String],
-          (distant \ "name").asOpt[String],
-          (distant \ "social").as[String],
-          (distant \ "desc").asOpt[String],
-          (distant \ "avatar").asOpt[String])
-      }
-    }
-    Some(User(accounts, distants))
-  }
-
   def toJson(user: User): JsValue = {
     val accounts = user.accounts
     val distants = user.distants.getOrElse { Seq() }
-    val unifiedRequests = user.unifiedRequests.getOrElse { Seq() }
+    val columns = user.columns.getOrElse { Seq() }
     JsObject(Seq(
       "accounts" -> JsArray(toJsonA(accounts)),
       "distants" -> JsArray(toJsonPU(distants)),
-      "unifiedRequests" -> JsArray(toJsonU(unifiedRequests))))
+      "columns" -> JsArray(toJsonC(columns))))
   }
 
   def toJsonA(accounts: Seq[Account]): Seq[JsObject] = {
@@ -88,6 +72,16 @@ object User {
     }
   }
 
+  def toJsonC(columns: Seq[Column]): Seq[JsObject] = {
+    columns.map { column =>
+      val unifiedRequests = toJsonU(column.unifiedRequests)
+      JsObject(
+        Seq(
+          "title" -> JsString(column.title),
+          "unifiedRequests" -> JsArray(unifiedRequests)))
+    }
+  }
+  
   def toJsonU(unifiedRequests: Seq[UnifiedRequest]): Seq[JsObject] = {
     unifiedRequests.map { unifiedRequest =>
       val args = unifiedRequest.args.getOrElse(Seq()).map { m =>
@@ -126,7 +120,7 @@ object User {
           asString(a, "id"),
           lastUse)
       })
-      val providers = tableTo[ProviderUser](document, "accounts", { d =>
+      val providers = tableTo[ProviderUser](document, "distants", { d =>
         ProviderUser(
           asString(d, "id"),
           None, //d.getAs[BSONString]("login").get.value,
@@ -136,19 +130,22 @@ object User {
           None //Some(d.getAs[BSONString]("avatar").get.value)
           )
       })
-      val unifiedRequests = tableTo[UnifiedRequest](document, "unifiedRequests", { r =>
-        val requestArgs = r.getAs[BSONDocument]("args").get.toTraversable.bsonIterator
-        val args = for (requestArg <- requestArgs) yield {
-          (requestArg.name, r.getAs[BSONDocument]("args").get.toTraversable.getAs[BSONString](requestArg.name).get.value)
-        }
-        UnifiedRequest(
-          asString(r, "service"),
-          Some(args.toMap))
+      val columns = tableTo[Column](document, "columns", { c =>
+        val unifiedRequests = tableTo[UnifiedRequest](c, "unifiedRequests", { r =>
+          val requestArgs = r.getAs[BSONDocument]("args").get.toTraversable.bsonIterator
+          val args = for (requestArg <- requestArgs) yield {
+            (requestArg.name, r.getAs[BSONDocument]("args").get.toTraversable.getAs[BSONString](requestArg.name).get.value)
+          }
+          UnifiedRequest(
+            asString(r, "service"),
+            Some(args.toMap))
+        })
+        Column(asString(c, "title"), unifiedRequests)
       })
       User(
         accounts,
         Some(providers),
-        Some(unifiedRequests))
+        Some(columns))
     }
   }
 
@@ -177,21 +174,26 @@ object User {
           "social" -> BSONString(distant.socialType))
       })
 
-      val unifiedRequests = BSONArray().toAppendable
-      for (unifiedRequest <- user.unifiedRequests.getOrElse(Seq())) yield {
-        val args = BSONDocument().toAppendable
-        for ((argKey, argValue) <- unifiedRequest.args.getOrElse(Map.empty)) yield {
-          args.append(argKey -> BSONString(argValue))
+      val columns = toArray[Column](user.columns.getOrElse(Seq()), { column =>
+        val unifiedRequests = BSONArray().toAppendable
+        for (unifiedRequest <- column.unifiedRequests) yield {
+          val args = BSONDocument().toAppendable
+          for ((argKey, argValue) <- unifiedRequest.args.getOrElse(Map.empty)) yield {
+            args.append(argKey -> BSONString(argValue))
+          }
+          unifiedRequests.append(BSONDocument(
+            "service" -> BSONString(unifiedRequest.service),
+            "args" -> args))
         }
-        unifiedRequests.append(BSONDocument(
-          "service" -> BSONString(unifiedRequest.service),
-          "args" -> args))
-      }
+        BSONDocument(
+            "title" -> BSONString(column.title),
+            "unifiedRequests" -> unifiedRequests)
+      })
 
       BSONDocument(
         "accounts" -> accounts,
         "distants" -> distants,
-        "unifiedRequests" -> unifiedRequests)
+        "columns" -> columns)
     }
   }
 
