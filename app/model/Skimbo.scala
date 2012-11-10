@@ -15,5 +15,5 @@ case class Skimbo(
   from: SocialNetwork,
   shared: Int,
   directLink: String,
-  sinceId: String
+  sinceId: Long
 )

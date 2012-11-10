@@ -25,6 +25,8 @@ case class TwitterUrl(shortUrl: String, url: String, indices: List[Int])
 case class TwitterMention(authorName: String, authorScreenName: String, indices: List[Int])
 
 object Tweets extends GenericParser[Tweet] {
+  
+  val tweetDetailUrl = "http://twitter.com/%s/status/%s"; 
 
   def asSkimbos(tweets: List[Tweet]): List[Skimbo] = {
     for (tweet <- tweets) yield Skimbo(
@@ -36,7 +38,10 @@ object Tweets extends GenericParser[Tweet] {
       // tweet where in_reply_to_status_id == tweet.id
       // but where ?
       SocialNetwork.Twitter,
-      tweet.retweets)
+      tweet.retweets,
+      tweetDetailUrl.format(tweet.screenName, tweet.id),
+      tweet.id
+    )
   }
 }
 
