@@ -22,6 +22,20 @@ publicApp.controller('ColumnsCtrl', function($scope, $http) {
           { "service": "twitter.user", "args": {"username": "studiodev"} }
         ]
       }
+      /*json = {"cmd":"allColumns"}
+      json = {
+        "cmd":"addColumn", 
+        "body":{
+          "title":"title2", 
+          "unifiedRequests":[
+            {"service":"twitter.wall","args":{}},
+            {"service":"twitter.user", "args":{"username":"RmManeschi"}},
+            {"service":"twitter.hashtag", "args":{"hashtag":"skimbo"}}
+          ]
+        }
+      }
+      //json = {"cmd":"allUnifiedRequests"}
+      //json = {"cmd":"delColumn", "body":{"title": "title2"}}*/
       socket.send(JSON.stringify(json));
     }
     socket.onclose = function() { console.log('socket fermée'); }

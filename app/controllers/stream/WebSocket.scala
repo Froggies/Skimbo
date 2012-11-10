@@ -10,22 +10,28 @@ import play.api.libs.json.JsValue
 import play.api.Logger
 import services.endpoints.Endpoints
 import services.endpoints.JsonRequest._
+import services.actors.UserInfosActor
+import play.api.libs.iteratee.Concurrent
+import services.commands.Commands
 
 object WebSocket extends Controller {
 
   def connect() = play.api.mvc.WebSocket.using[JsValue] { implicit request =>
+    import play.api.libs.concurrent.execution.defaultContext
+    
     //TODO : JL Authenticated in WebSocket ??
     val userId = request.session.get("id").get
 
-    val (out, channelClient) = ProviderActor.create(userId, Seq[UnifiedRequest]())//endpoints)
-
+    val (out, channelClient) = Concurrent.broadcast[JsValue]
+    UserInfosActor.create(userId, channelClient)
     // Log events to the console
     val in = Iteratee.foreach[JsValue]{ cmd =>
       Logger.info("Command from client : "+cmd)
 //      val unifiedRequests = Endpoints.listEndpointsFromJson(cmd)
 //      ProviderActor.create(channelClient, userId, unifiedRequests)
 
-      ProviderActor.launchAll(channelClient, userId)
+//      ProviderActor.launchAll(channelClient, userId)
+      Commands.interpret(userId, cmd)
 
     }.mapDone { _ =>
       println("Disconnected")

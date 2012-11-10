@@ -24,24 +24,36 @@ import services.auth.GenericProvider
 import akka.dispatch.OnSuccess
 import models.Account
 import java.util.Date
+import services.endpoints.JsonRequest._
 
-case class Refresh()
+case object Retreive
+case class Send(userId:String, json:JsValue)
+case class StartProvider(unifiedRequests:Seq[UnifiedRequest])
 
 object UserInfosActor {
 
   val system: ActorSystem = ActorSystem("userInfos");
 
-  def apply(idUser: String)(implicit request: RequestHeader) = {
-    system.actorOf(Props(new UserInfosActor(idUser))) ! Refresh
+  def create(idUser: String, channelOut:Concurrent.Channel[JsValue])(implicit request: RequestHeader) = {
+    val actor = system.actorOf(Props(new UserInfosActor(idUser, channelOut)))
+    system.eventStream.subscribe(actor, Retreive.getClass())
+    system.eventStream.subscribe(actor, classOf[Send])
+    actor ! Retreive
+    actor
   }
+  
+  def sendTo(userId:String, json:JsValue) = {
+    system.eventStream.publish(Send(userId, json))
+  }
+  
 }
 
-class UserInfosActor(idUser: String)(implicit request: RequestHeader) extends Actor {
+class UserInfosActor(idUser: String, channelOut:Concurrent.Channel[JsValue])(implicit request: RequestHeader) extends Actor {
 
   import play.api.libs.concurrent.execution.defaultContext
 
   def receive() = {
-    case Refresh => {
+    case Retreive => {
 
       UserDao.findOneById(idUser).map { optionUser =>
         if (optionUser.isDefined) {
@@ -62,6 +74,9 @@ class UserInfosActor(idUser: String)(implicit request: RequestHeader) extends Ac
                         user.accounts :+ Account(idUser, new Date()),
                         user.distants,
                         user.columns))
+                      user.columns.getOrElse(Seq()).foreach { column =>
+                        self ! StartProvider(column.unifiedRequests)
+                      }
                     } else {
                       Logger.info("User hasn't id of " + provider.name + " in DB createIt")
                       UserDao.add(User(
@@ -84,6 +99,14 @@ class UserInfosActor(idUser: String)(implicit request: RequestHeader) extends Ac
       //. onDone {
       //  self ! Dead
       //}
+    }
+    case StartProvider(unifiedRequests) => {
+      ProviderActor.create(channelOut, idUser, unifiedRequests)
+    }
+    case Send(id:String, json:JsValue) => {
+      if(id == idUser) {
+        channelOut.push(json)
+      }
     }
     case Dead => {
       context.stop(self)

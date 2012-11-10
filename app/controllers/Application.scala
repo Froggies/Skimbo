@@ -23,7 +23,6 @@ object Application extends Controller {
 
   def index = Action { implicit request =>
     request.session.get("id").map(userId => {
-      UserInfosActor(userId)//TODO RM : decomment this if you want to test bd retreive
       Ok(views.html.unified())
     }).getOrElse(Ok(views.html.index(Service.list)))
   }
@@ -40,17 +39,18 @@ object Application extends Controller {
     Ok(views.html.index(Service.list(action.request)))
   }
 
+  //TODO RM : delete this when ok
   def testUnifiedRequest() = Action {
     import play.api.libs.concurrent.execution.defaultContext
-    UserDao.add(User(
-        Seq[Account](Account("test", new Date()), Account("test2", new Date())),
+    UserDao.update(User(
+        Seq[Account](Account("26b706b0-7697-4c0b-8ca2-7f237d971336", new Date())),
         Some(Seq[ProviderUser](ProviderUser("test",None,None,"test"),ProviderUser("test2",None,None,"test2"))),
         Some(Seq[Column](
             Column("test", Seq(UnifiedRequest("test", Some(Map[String, String](("gg" -> "gg"), ("ggbb" -> "ggbb")))))),
             Column("test2", Seq(UnifiedRequest("test18", Some(Map[String, String](("cc" -> "vvvv"), ("fdg" -> "ggbb"))))))))
     ))
     Async {
-      UserDao.findOneById("test2").map { user =>
+      UserDao.findOneById("26b706b0-7697-4c0b-8ca2-7f237d971336").map { user =>
         Ok(User.toJson(user.get))
       }
     }

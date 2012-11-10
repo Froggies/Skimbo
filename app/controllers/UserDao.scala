@@ -14,6 +14,8 @@ import reactivemongo.bson._
 import reactivemongo.bson.handlers.DefaultBSONHandlers._
 import models.ProviderUser
 import reactivemongo.core.protocol.Query
+import models.Column
+import services.endpoints.JsonRequest._
 
 object UserDao {
 
@@ -52,6 +54,14 @@ object UserDao {
     val res = collection.find(query).headOption()
     for { r <- res } yield println("FOUND IN DB :: "+r)
     res
+  }
+  
+  def deleteColumn(user:models.User, columnTitle:String)(implicit context:scala.concurrent.ExecutionContext) = {
+    val index = user.columns.getOrElse(Seq[Column]()).indexOf(Column(columnTitle, Seq[UnifiedRequest]()))
+    println("LAAAAA = "+index)
+    val query = BSONDocument("accounts.id" -> new BSONString(user.accounts.head.id))
+    val update = BSONDocument("$unset" -> BSONDocument("columns."+index -> new BSONInteger(1)))
+    collection.update(query, update)
   }
 
 }

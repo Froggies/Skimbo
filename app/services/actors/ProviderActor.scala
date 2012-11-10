@@ -23,12 +23,6 @@ object ProviderActor {
 
   val system: ActorSystem = ActorSystem("providers");
 
-  def create(userId: String, unifiedRequests: Seq[UnifiedRequest])(implicit request: RequestHeader): (Enumerator[JsValue], Concurrent.Channel[JsValue]) = {
-    val (rawStream, channel) = Concurrent.broadcast[JsValue]
-    create(channel, userId, unifiedRequests)
-    (rawStream, channel)
-  }
-
   def create(channel: Concurrent.Channel[JsValue], userId: String, unifiedRequests: Seq[UnifiedRequest])(implicit request: RequestHeader) {
     unifiedRequests.foreach { unifiedRequest =>
       val endpoint = for (

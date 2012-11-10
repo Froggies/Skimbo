@@ -9,6 +9,9 @@ import services.endpoints.Endpoints
 import play.api.Logger
 import play.api.libs.iteratee.Enumerator
 import services.endpoints.JsonRequest.UnifiedRequest
+import play.api.libs.iteratee.Concurrent
+import play.api.libs.json.JsValue
+import services.actors.UserInfosActor
 
 object Sse extends Controller {
 
@@ -20,8 +23,8 @@ object Sse extends Controller {
   def connect() = Authenticated { action =>
     implicit val request = action.request
 
-    val channels = Endpoints.listEndpointsFromRequest(request)
-    val (out, channelClient) = ProviderActor.create(action.user.accounts.last.id, channels)
+    val (out, channelClient) = Concurrent.broadcast[JsValue]
+    UserInfosActor.create(action.user.accounts.last.id, channelClient)
     // -> to Skimbo
     // -> trier par date
     // -> filter en fonction des déjà vus

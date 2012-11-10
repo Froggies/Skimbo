@@ -32,7 +32,12 @@ case class ProviderUser(
   
 case class Column(
   title: String,
-  unifiedRequests:Seq[UnifiedRequest])
+  unifiedRequests:Seq[UnifiedRequest]) {
+  override def equals(other:Any) = other match {
+    case that:Column => that.title == title
+    case _ => false
+  }
+}
 
 object User {
 
@@ -49,7 +54,7 @@ object User {
       "distants" -> JsArray(toJsonPU(distants)),
       "columns" -> JsArray(toJsonC(columns))))
   }
-
+  
   def toJsonA(accounts: Seq[Account]): Seq[JsObject] = {
     accounts.map { account =>
       JsObject(
@@ -71,7 +76,7 @@ object User {
           "avatar" -> JsString(distant.avatar.getOrElse(""))))
     }
   }
-
+  
   def toJsonC(columns: Seq[Column]): Seq[JsObject] = {
     columns.map { column =>
       val unifiedRequests = toJsonU(column.unifiedRequests)
@@ -79,6 +84,16 @@ object User {
         Seq(
           "title" -> JsString(column.title),
           "unifiedRequests" -> JsArray(unifiedRequests)))
+    }
+  }
+  
+  def fromJsonC(columns:Seq[JsValue]): Seq[Column] = {
+    columns.map { column =>
+      val unifiedRequests = fromJsonU((column \ "unifiedRequests").as[Seq[JsValue]])
+      Column(
+        (column \ "title").as[String],
+        unifiedRequests
+      )
     }
   }
   
@@ -91,6 +106,19 @@ object User {
         Seq(
           "service" -> JsString(unifiedRequest.service),
           "args" -> JsObject(args.toList)))
+    }
+  }
+  
+  def fromJsonU(unifiedRequests:Seq[JsValue]): Seq[UnifiedRequest] = {
+    unifiedRequests.map { unifiedRequest =>
+      val argsJs = (unifiedRequest \ "args").as[JsObject]
+      val args = for(key <- argsJs.keys) yield {
+        (key, (argsJs \ key).as[String])
+      }
+      UnifiedRequest(
+        (unifiedRequest \ "service").as[String],
+         Some(args.toMap)
+      )
     }
   }
 
