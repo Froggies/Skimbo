@@ -24,15 +24,7 @@ case class TwitterTag(text: String, indices: List[Int])
 case class TwitterUrl(shortUrl: String, url: String, indices: List[Int])
 case class TwitterMention(authorName: String, authorScreenName: String, indices: List[Int])
 
-object Tweets {
-
-  def from(json: JsValue): List[Tweet] = {
-    json.as[List[Tweet]]
-  }
-
-  def from(json: String): List[Tweet] = {
-    from(Json.parse(json))
-  }
+object Tweets extends GenericParser[Tweet] {
 
   def asSkimbos(tweets: List[Tweet]): List[Skimbo] = {
     for (tweet <- tweets) yield Skimbo(

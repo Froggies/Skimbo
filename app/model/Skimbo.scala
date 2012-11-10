@@ -4,7 +4,7 @@ import org.joda.time._
 import SocialNetwork._
 
 /**
-* Common format between socials network
+* Common format between social networks
 */
 case class Skimbo(
 	authorName: String,
