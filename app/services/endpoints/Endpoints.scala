@@ -10,10 +10,18 @@ object Endpoints {
 
   // Activated endpoints
   val endpoints = Map[String, EndpointConfig](
-      "twitter.wall" -> Configuration.Twitter.wall,
-      "twitter.hashtag" -> Configuration.Twitter.hashtag,
-      "twitter.user" -> Configuration.Twitter.user,
-      "facebook.wall" -> Configuration.Facebook.wall
+      "twitter.wall"          -> Configuration.Twitter.wall,
+      "twitter.hashtag"       -> Configuration.Twitter.hashtag,
+      "twitter.user"          -> Configuration.Twitter.user,
+      "facebook.wall"         -> Configuration.Facebook.wall,
+      "facebook.user"         -> Configuration.Facebook.user,
+      "facebook.group"        -> Configuration.Facebook.group,
+      "viadeo.wall"           -> Configuration.Viadeo.wall,
+      "linkedin.wall"         -> Configuration.Linkedin.wall,
+      "googleplus.wall"       -> Configuration.GooglePlus.wall,
+      "github.notifications"  -> Configuration.Github.notifications,
+      "trello.notifications"  -> Configuration.Trello.notifications,
+      "scoopit.notifications" -> Configuration.Scoopit.notifications
   )
   
   def getProvider(endpoint:String): Option[GenericProvider] = {
