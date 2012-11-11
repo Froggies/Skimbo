@@ -42,6 +42,11 @@ object FacebookWallParser extends GenericParser[FacebookWallMessage] {
       SocialNetwork.Facebook
     )
   }
+  
+  //FIXME : found better if you can !!!!!!!
+  def transform(json:JsValue):JsValue = {
+    JsArray(asSkimbos(from(json)).map(Skimbo.toJson(_)))
+  }
 
   def generateMessage(e: FacebookWallMessage) = {
     e.message.orElse(e.story)

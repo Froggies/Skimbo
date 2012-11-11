@@ -47,7 +47,7 @@ object TwitterTimelineParser extends GenericParser[Tweet] {
     )
   }
   
-  //TODO : found better if you can !!!!!!!
+  //FIXME : found better if you can !!!!!!!
   def transform(json:JsValue):JsValue = {
     JsArray(asSkimbos(from(json)).map(Skimbo.toJson(_)))
   }

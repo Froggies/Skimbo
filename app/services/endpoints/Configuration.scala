@@ -13,7 +13,7 @@ object Configuration {
       override val since = "&since_id=:since"
       override val delay = 60
       override val provider = providers.Twitter
-      override val parser = Some(TwitterHomeTimeLine)
+      override val parser = Some(TwitterTimelineParser)
     }
     object user extends EndpointConfig {
       override val url = withLimit("https://api.twitter.com/1.1/statuses/user_timeline.json?count=:limit&screen_name=:username")
@@ -37,6 +37,7 @@ object Configuration {
       override val since = "&since=:since"
       override val delay = 30
       override val provider = providers.Facebook
+      override val parser = Some(FacebookWallParser)
     }
     object user extends EndpointConfig {
       override val url = withLimit("https://graph.facebook.com/:username/feed?limit=:limit")
