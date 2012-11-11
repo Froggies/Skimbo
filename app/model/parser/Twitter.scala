@@ -29,9 +29,9 @@ case class TwitterTag(text: String, indices: List[Int])
 case class TwitterUrl(shortUrl: String, url: String, indices: List[Int])
 case class TwitterMention(authorName: String, authorScreenName: String, indices: List[Int])
 
-object TwitterHomeTimeLine extends GenericParser[Tweet] {
-  
-  val tweetDetailUrl = "http://twitter.com/%s/status/%s"; 
+object TwitterTimelineParser extends GenericParser[Tweet] {
+
+  val tweetDetailUrl = "http://twitter.com/%s/status/%s";
 
   def asSkimbos(tweets: List[Tweet]): List[Skimbo] = {
     for (tweet <- tweets) yield Skimbo(
@@ -39,13 +39,11 @@ object TwitterHomeTimeLine extends GenericParser[Tweet] {
       tweet.screenName,
       tweet.text,
       tweet.createdAt,
-      Nil, //TODO: Find out how to this, we obviously need to search
-      // tweet where in_reply_to_status_id == tweet.id
-      // but where ?
-      SocialNetwork.Twitter,
+      Nil,
       tweet.retweets,
-      tweetDetailUrl.format(tweet.screenName, tweet.id),
-      tweet.id
+      Some(tweetDetailUrl.format(tweet.screenName, tweet.id)),
+      tweet.id.toString,
+      SocialNetwork.Twitter
     )
   }
 }
@@ -77,7 +75,7 @@ object Tweet {
 	  def reads(json: JsValue): JsResult[DateTime] = {
 	    json match {
 		    case JsNumber(d) => JsSuccess(new DateTime(d.toLong))
-		    case JsString(s) => {		      
+		    case JsString(s) => {		
 			    val sf = new SimpleDateFormat(twitterDatePattern, Locale.ENGLISH)
 			    sf.setLenient(true)
 			    JsSuccess(new DateTime(sf.parse(s)))
@@ -86,7 +84,7 @@ object Tweet {
 	    }
 	  }
   }
-  
+
   implicit val tweetReader: Reads[Tweet] = (
     (__ \ "id").read[Long] and
     (__ \ "text").read[String] and
