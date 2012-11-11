@@ -48,6 +48,11 @@ object TwitterHomeTimeLine extends GenericParser[Tweet] {
       tweet.id
     )
   }
+  
+  //TODO : found better if you can !!!!!!!
+  def transform(json:JsValue):JsValue = {
+    JsArray(asSkimbos(from(json)).map(Skimbo.toJson(_)))
+  }
 }
 
 object TwitterTag {

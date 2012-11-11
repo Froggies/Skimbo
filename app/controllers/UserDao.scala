@@ -45,9 +45,8 @@ object UserDao {
     collection.update(query, user)
   }
 
-  def findByIdProvider(provider:String, id:String):Future[Option[User]] = {
+  def findByIdProvider(provider:String, id:String)(implicit context:scala.concurrent.ExecutionContext):Future[Option[User]] = {
     implicit val reader = User.UserBSONReader
-    import scala.concurrent.ExecutionContext.Implicits.global
     val query = BSONDocument(
       "distants.social" -> new BSONString(provider),
       "distants.id" -> new BSONString(id))

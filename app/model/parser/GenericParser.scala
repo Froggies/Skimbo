@@ -8,4 +8,6 @@ trait GenericParser[T] {
   def from(json: JsValue)(implicit fjs: Reads[T]): List[T] = json.as[List[T]]
   def from(json: String)(implicit fjs: Reads[T]): List[T] = from(Json.parse(json))
   def asSkimbos(elements: List[T]): List[Skimbo]
+  
+  def transform(json:JsValue):JsValue
 }

@@ -161,12 +161,18 @@ object User {
       val columns = tableTo[Column](document, "columns", { c =>
         val unifiedRequests = tableTo[UnifiedRequest](c, "unifiedRequests", { r =>
           val requestArgs = r.getAs[BSONDocument]("args").get.toTraversable.bsonIterator
-          val args = for (requestArg <- requestArgs) yield {
-            (requestArg.name, r.getAs[BSONDocument]("args").get.toTraversable.getAs[BSONString](requestArg.name).get.value)
+          if(requestArgs.nonEmpty) {
+            val args = for (requestArg <- requestArgs) yield {
+              (requestArg.name, r.getAs[BSONDocument]("args").get.toTraversable.getAs[BSONString](requestArg.name).get.value)
+            }
+            UnifiedRequest(
+              asString(r, "service"),
+              Some(args.toMap))
+          } else {
+            UnifiedRequest(
+              asString(r, "service"),
+              Some(Map.empty[String, String]))
           }
-          UnifiedRequest(
-            asString(r, "service"),
-            Some(args.toMap))
         })
         Column(asString(c, "title"), unifiedRequests)
       })

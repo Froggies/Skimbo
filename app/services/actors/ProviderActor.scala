@@ -15,6 +15,8 @@ import services.endpoints.Endpoints
 import services.endpoints.JsonRequest._
 import services.auth.GenericProvider
 import services.auth.providers._
+import model.parser.GenericParser
+import model.Skimbo
 
 sealed case class Ping(idUser: String)
 sealed case class Dead(idUser: String = "")
@@ -75,7 +77,7 @@ object ProviderActor {
 
 class ProviderActor(channel: Concurrent.Channel[JsValue],
   provider: GenericProvider, url: String, delay: Int,
-  idUser: String, longPolling: Boolean)(implicit request: RequestHeader) extends Actor {
+  idUser: String, longPolling: Boolean, parser:Option[GenericParser[_]]=None)(implicit request: RequestHeader) extends Actor {
 
   val scheduler = Akka.system.scheduler.schedule(0 second, delay second) {
     self ! ReceiveTimeout
@@ -87,7 +89,14 @@ class ProviderActor(channel: Concurrent.Channel[JsValue],
         scheduler.cancel() //need ping to call provider
       }
       if (provider.hasToken(request)) {
-        provider.fetch(url).get.map(response => channel.push(response.json))
+        Logger.info("Fetch provider "+provider.name)
+        provider.fetch(url).get.map(response => {
+          if(parser.isDefined) {
+            channel.push(parser.get.transform(response.json))
+          } else {
+            channel.push(response.json)
+          }
+        })
       } else {
         self ! Dead(idUser)
       }

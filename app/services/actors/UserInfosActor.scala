@@ -50,46 +50,45 @@ object UserInfosActor {
 
 class UserInfosActor(idUser: String, channelOut:Concurrent.Channel[JsValue])(implicit request: RequestHeader) extends Actor {
 
-  import play.api.libs.concurrent.execution.defaultContext
+  val log = Logger(classOf[UserInfosActor])
 
   def receive() = {
     case Retreive => {
-
+      import scala.concurrent.ExecutionContext.Implicits.global
+      log.info("Start retreive")
       UserDao.findOneById(idUser).map { optionUser =>
         if (optionUser.isDefined) {
-          Logger.info("User has id in DB")
+          log.info("User has id in DB")
+          start(optionUser.get)
         } else {
           ProviderDispatcher.listAll.map { provider =>
             if (provider.hasToken(request)) {
-              Logger.info("Call distantUser on " + provider.name)
+              log.info("Call distantUser on " + provider.name)
               provider.getUser.map { providerUser =>
                 if (providerUser.isDefined) {
-                  Logger.info("User has id in " + provider.name + " = " + providerUser.get.id)
+                  log.info("User has id in " + provider.name + " = " + providerUser.get.id)
                   UserDao.findByIdProvider(provider.name, providerUser.get.id).map { optionUser =>
                     if (optionUser.isDefined) {
-                      Logger.info("User has id of " + provider.name + " in DB = " + optionUser.get.accounts.last.id)
-                      request.session + ("id" -> optionUser.get.accounts.last.id)
+                      log.info("User has id of " + provider.name + " in DB = " + optionUser.get.accounts.last.id)
                       val user = optionUser.get
                       UserDao.update(User(
                         user.accounts :+ Account(idUser, new Date()),
                         user.distants,
                         user.columns))
-                      user.columns.getOrElse(Seq()).foreach { column =>
-                        self ! StartProvider(column.unifiedRequests)
-                      }
+                      start(user)
                     } else {
-                      Logger.info("User hasn't id of " + provider.name + " in DB createIt")
+                      log.info("User hasn't id of " + provider.name + " in DB createIt")
                       UserDao.add(User(
                         Seq(Account(idUser, new Date())),
                         Some(Seq(providerUser.get))))
                     }
                   }
                 } else {
-                  Logger.info("User hasn't id in " + provider.name + " ! WTF ?")
+                  log.info("User hasn't id in " + provider.name + " ! WTF ?")
                 }
               }
             } else {
-              Logger.info("User hasn't token for " + provider.name)
+              log.info("User hasn't token for " + provider.name)
             }
           }
         }
@@ -112,6 +111,12 @@ class UserInfosActor(idUser: String, channelOut:Concurrent.Channel[JsValue])(imp
       context.stop(self)
     }
     case e: Exception => throw new UnexpectedException(Some("Incorrect message receive"), Some(e))
+  }
+  
+  def start(user:User) = {
+    user.columns.getOrElse(Seq()).foreach { column =>
+      self ! StartProvider(column.unifiedRequests)
+    }
   }
 
 }

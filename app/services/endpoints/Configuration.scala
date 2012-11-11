@@ -2,6 +2,7 @@ package services.endpoints
 
 import services.auth.GenericProvider
 import services.auth.providers
+import model.parser._
 
 object Configuration {
 
@@ -12,6 +13,7 @@ object Configuration {
       override val since = "&since_id=:since"
       override val delay = 60
       override val provider = providers.Twitter
+      override val parser = Some(TwitterHomeTimeLine)
     }
     object user extends EndpointConfig {
       override val url = withLimit("https://api.twitter.com/1.1/statuses/user_timeline.json?count=:limit&screen_name=:username")
@@ -115,6 +117,7 @@ trait EndpointConfig {
   val requiredParams : List[String] = List.empty
   val limit = 50
   val manualNextResults = false
+  val parser: Option[GenericParser[_]] = None//TODO remove Some(that) or not...
 
   def withLimit(url: String) = url.replace(":limit", limit.toString);
 }
