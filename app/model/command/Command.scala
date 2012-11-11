@@ -14,8 +14,8 @@ case class Command(name: String, body: Option[JsValue] = None) {
 object Command {
 
   implicit val commandReads: Reads[Command] = (
-    (__ \ "name").read[String] and
-    (__ \ "body").read[Option[JsValue]])(Command.apply _)
+    (__ \ "cmd").read[String] and
+    (__ \ "body").readOpt[JsValue])(Command.apply _)
 
   implicit val commandWrites = new Writes[Command] {
     def writes(c: Command): JsValue = {

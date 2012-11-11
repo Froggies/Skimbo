@@ -34,17 +34,15 @@ object Commands {
         }
       }
       case "addColumn" => {
-        log.info("addColumn :: "+cmd.get.body.get)
-        Json.fromJson[Column](cmd.get.body.get).map { newColumn =>
-          UserDao.findOneById(idUser).foreach { user =>
-            if (user.isDefined) {
-              UserDao.update(
-                User(user.get.accounts,
-                  user.get.distants,
-                  Some(user.get.columns.getOrElse(Seq[Column]()) :+ newColumn)))
-              UserInfosActor.startProfiderFor(idUser, newColumn.unifiedRequests)
-              UserInfosActor.sendTo(idUser, Json.toJson(Command(cmd.get.name, Some(JsString("Ok")))))
-            }
+        val newColumn = Json.fromJson[Column](cmd.get.body.get).get
+        UserDao.findOneById(idUser).foreach { user =>
+          if (user.isDefined) {
+            UserDao.update(
+              User(user.get.accounts,
+                user.get.distants,
+                Some(user.get.columns.getOrElse(Seq[Column]()) :+ newColumn)))
+            UserInfosActor.startProfiderFor(idUser, newColumn.unifiedRequests)
+            UserInfosActor.sendTo(idUser, Json.toJson(Command(cmd.get.name, Some(JsString("Ok")))))
           }
         }
       }

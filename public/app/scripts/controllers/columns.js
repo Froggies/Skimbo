@@ -23,19 +23,19 @@ publicApp.controller('ColumnsCtrl', function($scope, $http) {
         ]
       }
       json = {"cmd":"allColumns"}
-      json = {
-        "cmd":"addColumn", 
-        "body":{
-          "title":"title3", 
-          "unifiedRequests":[
-            // {"service":"twitter.wall","args":{}},
-            // {"service":"twitter.user", "args":{"username":"RmManeschi"}},
-            // {"service":"twitter.hashtag", "args":{"hashtag":"skimbo"}}
-            {"service":"facebook.wall","args":{}}
-          ]
-        }
-      }
-      //json = {"cmd":"allUnifiedRequests"}
+      // json = {
+      //   "cmd":"addColumn", 
+      //   "body":{
+      //     "title":"title3", 
+      //     "unifiedRequests":[
+      //       // {"service":"twitter.wall","args":{}},
+      //       // {"service":"twitter.user", "args":{"username":"RmManeschi"}},
+      //       {"service":"twitter.hashtag", "args":{"hashtag":"skimbo"}},
+      //       {"service":"facebook.wall","args":{}}
+      //     ]
+      //   }
+      // }
+      json = {"cmd":"allUnifiedRequests"}
       //json = {"cmd":"delColumn", "body":{"title": "title3"}}
       socket.send(JSON.stringify(json));
     }
