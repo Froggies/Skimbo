@@ -17,6 +17,7 @@ import services.auth.GenericProvider
 import services.auth.providers._
 import model.parser.GenericParser
 import model.Skimbo
+import model.command.TokenInvalid
 
 sealed case class Ping(idUser: String)
 sealed case class Dead(idUser: String = "")
@@ -44,25 +45,6 @@ object ProviderActor {
         case _ => Logger.error("Provider or Url not found for " + unifiedRequest.service + " :: args = " + unifiedRequest.args)
       }
 
-    }
-  }
-
-  val endpoints = Map[GenericProvider, String](
-    (Twitter -> "http://dev.studio-dev.fr/test-ws-json.php?nom=twitter"),
-    (GitHub -> "http://dev.studio-dev.fr/test-ws-json.php?nom=github"),
-    (Facebook -> "http://dev.studio-dev.fr/test-ws-json.php?nom=facebook"),
-    (GooglePlus -> "http://dev.studio-dev.fr/test-ws-json.php?nom=googlePlus"),
-    (LinkedIn -> "http://dev.studio-dev.fr/test-ws-json.php?nom=linkedIn"),
-    (Scoopit -> "http://dev.studio-dev.fr/test-ws-json.php?nom=scoopit"),
-    (StackExchange -> "http://dev.studio-dev.fr/test-ws-json.php?nom=stackExchange"),
-    (Trello -> "http://dev.studio-dev.fr/test-ws-json.php?nom=trello"),
-    (Viadeo -> "http://dev.studio-dev.fr/test-ws-json.php?nom=viadeo"))
-
-  def launchAll(channel: Concurrent.Channel[JsValue], userId: String)(implicit request: RequestHeader) = {
-    endpoints.foreach { endpoint =>
-      val actor = system.actorOf(Props(new ProviderActor(channel, endpoint._1, endpoint._2, 6, userId, false)))
-      system.eventStream.subscribe(actor, classOf[Dead])
-      system.eventStream.subscribe(actor, classOf[Ping])
     }
   }
 
@@ -99,6 +81,7 @@ class ProviderActor(channel: Concurrent.Channel[JsValue],
           }
         })
       } else {
+        channel.push(Json.toJson(TokenInvalid(provider.name)))
         self ! Dead(idUser)
       }
     }

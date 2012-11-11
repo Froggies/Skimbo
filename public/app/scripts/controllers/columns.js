@@ -28,9 +28,10 @@ publicApp.controller('ColumnsCtrl', function($scope, $http) {
         "body":{
           "title":"title3", 
           "unifiedRequests":[
-            {"service":"twitter.wall","args":{}},
-            {"service":"twitter.user", "args":{"username":"RmManeschi"}},
-            {"service":"twitter.hashtag", "args":{"hashtag":"skimbo"}}
+            // {"service":"twitter.wall","args":{}},
+            // {"service":"twitter.user", "args":{"username":"RmManeschi"}},
+            // {"service":"twitter.hashtag", "args":{"hashtag":"skimbo"}}
+            {"service":"facebook.wall","args":{}}
           ]
         }
       }
