@@ -55,7 +55,7 @@ object UserDao {
   def deleteColumn(user: models.User, columnTitle: String)(implicit context: scala.concurrent.ExecutionContext) = {
     val index = user.columns.getOrElse(Seq[Column]()).indexOf(Column(columnTitle, Seq[UnifiedRequest]()))
     val query = BSONDocument("accounts.id" -> new BSONString(user.accounts.head.id))
-    val update = BSONDocument("$unset" -> BSONDocument("columns." + index -> new BSONInteger(1)))
+    val update = BSONDocument("$pull" -> BSONDocument("columns" -> BSONDocument("title" -> new BSONString(columnTitle))))
     collection.update(query, update)
   }
 
