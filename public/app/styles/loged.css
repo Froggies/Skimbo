@@ -241,9 +241,9 @@ header.column-title {
 	padding: 10px;
 	margin-bottom: 3px;
 	border: solid 1px #D2D2D2;
-	-webkit-border-radius: 2em;
-	-moz-border-radius: 2em;
-	border-radius: 2em;
+	-webkit-border-radius: 10px;
+	-moz-border-radius: 10px;
+	border-radius: 10px;
 	-webkit-box-shadow: 0 1px 0px rgba(0, 0, 0, .1);
 	-moz-box-shadow: 0 1px 0px rgba(0,0,0,.1);
 	box-shadow: 0 1px 0px rgba(0, 0, 0, .1);
@@ -261,11 +261,11 @@ header.column-title {
 }
 
 .column-content li img {
-	margin-right: 10px;
+	margin-right: 5px;
 }
 
 .column-content li .message {
-	width: 73%;
+	width: 75%;
 }
 
 .column-content li {
@@ -288,23 +288,37 @@ header.column-title {
 .column-content li .timeline {
 	position: absolute;
 	right: 197px;
-	width: 50px;
+	width: 42px;
 	bottom: 50%;
 	font-size: 12px;
 }
 
 .from-social-network {
 	float: left;
-	margin-right: -15px;
+	text-transform: capitalize;
+}
+
+.facebook {
 	color: #2F549E;
+}
+.rond.facebook {
+	background: #2F549E;
+}
+
+
+.twitter {
+	color: #62d1f5;
+}
+
+.rond.twitter {
+	background: #62d1f5;
 }
 
 .rond {
 	float: right;
 	width:15px;
 	height:15px;
-	background:#2F549E;
-	-webkit-border-radius:8px;
+s	-webkit-border-radius:8px;
 	-moz-border-radius:8px;
 	-o-border-radius:8px;
 	border-radius:8px;

@@ -11,8 +11,8 @@
 			<ul>
 				<li class="element" ng-repeat="m in messages | filter:$parent.query">
 					<div class="timeline">
-						<div class="from-social-network vertical-text">Facebook</div>
-						<div class="rond"></div>
+						<div class="from-social-network vertical-text {{m.from}}">{{m.from}}</div>
+						<div class="rond {{m.from}}"></div>
 					</div>
 					<div class="message-content">
 						<img src="assets/img/brand/Office-Girl-icon.png" title="{{m.authorScreenName}}" width="32" height="32">

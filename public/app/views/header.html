@@ -10,11 +10,10 @@
 	<a id="nom-prenom" href="#" ng-click="showUserInformations=!showUserInformations"><img src="assets/img/skimbo-pieuvre-64.png" width="32" height="32">Nom Prénom ▼</a>
 	<div id="bloc-utilisateur" ng-show="showUserInformations">
 		<div id="reseaux-connectes">Vous êtes connecté sur :
-			<ul ng-repeat="socialNetwork in socialNetworks">
-				<li><a href="#"><!-- <img src="assets/img/brand/"+socialNetwork.endpoint+".png" alt="socialNetwork.endpoint" width="16" height="16"> --> {{socialNetwork.endpoint}}</a><a href="#">✘</a></li>
-				<!-- <li><a href="#"><img src="assets/img/brand/facebook.png" alt="Facebook" width="16" height="16"> NomUtilisateur</a><a href="#">✘</a></li>
+			<ul>
+				<li><a href="#"><img src="assets/img/brand/facebook.png" alt="Facebook" width="16" height="16"> NomUtilisateur</a><a href="#">✘</a></li>
 				<li><a href="#"><img src="assets/img/brand/twitter.png" alt="Twitter" width="16" height="16"> NomUtilisateur</a><a href="#">✘</a></li>
-				<li><a href="#"><img src="assets/img/brand/viadeo.png" alt="Viadeo" width="16" height="16"> NomUtilisateur</a><a href="#">✘</a></li> -->
+				<li><a href="#"><img src="assets/img/brand/viadeo.png" alt="Viadeo" width="16" height="16"> NomUtilisateur</a><a href="#">✘</a></li>
 			</ul>
 		</div>
 		<footer>
