@@ -17,10 +17,10 @@ case class Skimbo(
   message: String,
   createdAt: DateTime,
   comments: List[Skimbo],
-  from: SocialNetwork,
   shared: Int,
-  directLink: String,
-  sinceId: Long
+  directLink: Option[String],
+  sinceId: String,
+  from: SocialNetwork
 )
 
 object Skimbo {//TODO rework with implicit writer
@@ -38,3 +38,4 @@ object Skimbo {//TODO rework with implicit writer
     ))
   }
 }
+
