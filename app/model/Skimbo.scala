@@ -7,6 +7,10 @@ import play.api.libs.json.JsString
 import play.api.libs.json.JsObject
 import play.api.libs.json.JsArray
 import play.api.libs.json.JsObject
+import play.api.libs.json.Writes
+import play.api.libs.json.JsValue
+import play.api.libs.json.Json
+import services.auth.GenericProvider
 
 /**
 * Common format between social networks
@@ -20,22 +24,25 @@ case class Skimbo(
   shared: Int,
   directLink: Option[String],
   sinceId: String,
-  from: SocialNetwork
+  from: GenericProvider
 )
 
-object Skimbo {//TODO rework with implicit writer
-  
-  def toJson(skimbos:Seq[Skimbo]):JsArray = {
-    JsArray(skimbos.map(toJson(_)))
+object Skimbo {
+  implicit val writes = new Writes[Skimbo] {
+    def writes(skimbo: Skimbo): JsValue = {
+      Json.obj(
+        "authorName" -> skimbo.authorName,
+        "authorScreenName" -> skimbo.authorScreenName,
+        "message" -> skimbo.message,
+        "createdAt" -> skimbo.createdAt.toDate().getTime().toString(),
+        //"comments" -> Json.toJson(skimbo.comments),
+        "shared" -> skimbo.shared,
+        "directLink" -> skimbo.directLink,
+        "sinceId" -> skimbo.sinceId,
+        "from" -> skimbo.from.name
+      )
+    }
   }
   
-  def toJson(skimbo:Skimbo):JsObject = {
-    JsObject(Seq(
-      "authorName" -> JsString(skimbo.authorName),
-      "authorScreenName" -> JsString(skimbo.authorScreenName),
-      "message" -> JsString(skimbo.message),
-      "createdAt" -> JsString(skimbo.createdAt.toDate().getTime().toString())
-    ))
-  }
 }
 
