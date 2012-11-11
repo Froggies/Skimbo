@@ -148,30 +148,6 @@ input[type=button] {
     user-select: none;
 }
 
-.col {
-	background-color: pink;
-	display: inline-block;
-	vertical-align: top;
-
-	width:31%;
-	min-width: 200px;
-	max-width: 100%;
-	height: 45%;
-	max-height: 300px;
-
-	padding: 5px;
-	margin: 3px 0 3px 0;
-
-	overflow: auto;
-	overflow-x: hidden;
-
-	word-wrap: break-word;
-	
-	-webkit-resize:horizontal;
-	-moz-resize:horizontal;
-	resize:horizontal;
-}
-
 /**************    Colonnes ****************/
 #content {
 	display: inline-block;
@@ -180,8 +156,6 @@ input[type=button] {
 .column {
 	float:left;
 	width: 250px;
-	height: 550px;
-	overflow: auto;
 	margin: 5px;
 	background: #fafafa;
 	background: #FAFAFA;
@@ -225,6 +199,8 @@ header.column-title {
 
 .column-content {
 	padding:5px;
+	overflow: auto;
+	height: 530px;
 }
 
 .column-content ul {
