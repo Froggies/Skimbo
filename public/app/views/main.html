@@ -1,20 +1,25 @@
-<section id="columns" ng-controller="ColumnsCtrl" >
+<section id="content" ng-controller="ColumnsCtrl" >
 	
-	<div id="column{{i}}" 
-			ng-repeat="i in [0,1,2,3]"
-			class="col" 
-			draggable="true" 
-			ondragstart="dragStart(this,event)" 
-			ondragend="dragEnd(this,event)"
-			ondragenter="dragEnter(this,event)"
-			ondragleave="dragLeave(this,event)"
-			ondragover="dragOver(this,event)"
-			ondrop="drop(this,event)">
-		<ul>
-			<li>{{i}}{{i}}</li>
-			<li class="hero-unit" ng-repeat="d in data | filter:$parent.query">
-				{{d}}
-			</li>
-		</ul>
-	</div>
+	<section id="column{{i}}"
+			 class="column" 			  
+			 ng-repeat="i in [0,1,2,3]">
+		<header class="column-title">
+			<div class="title">Nom du filtre</div>
+			<div class="configure"><a href="#">⚙</a></div>
+		</header>
+		<div class="column-content">
+			<ul>
+				<li class="element" ng-repeat="d in data | filter:$parent.query">
+					<div class="timeline">
+						<div class="from-social-network vertical-text">Facebook</div>
+						<div class="rond"></div>
+					</div>
+					<div class="test">
+						<img src="assets/img/brand/Office-Girl-icon.png" width="32" height="32">
+						<div class="message"> {{d}}</div>
+					</div>
+				</li>
+			</ul>
+		</div>
+	</section>
 </section>
