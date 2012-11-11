@@ -86,6 +86,7 @@ input[type=button] {
 }
 
 #bloc-utilisateur {
+	z-index: 1;
 	line-height: 0;
 	position: absolute;
 	background-color: #FAFAFA;
@@ -179,6 +180,8 @@ input[type=button] {
 .column {
 	float:left;
 	width: 250px;
+	height: 550px;
+	overflow: auto;
 	margin: 5px;
 	background: #fafafa;
 	background: #FAFAFA;
@@ -230,7 +233,7 @@ header.column-title {
 	padding: 0;
 }
 
-.column-content li .test{
+.column-content li .message-content{
 	min-width: 100%;
 	font-size: 12px;
 	box-sizing:border-box;
@@ -268,7 +271,7 @@ header.column-title {
 .column-content li {
 	border-left: 1px solid #C1C1C1;
 	padding-left: 10px;
-	margin-left: 35px;
+	margin-left: 20px;
 	position: relative;
 }
 
@@ -285,7 +288,7 @@ header.column-title {
 .column-content li .timeline {
 	position: absolute;
 	right: 197px;
-	width: 60px;
+	width: 50px;
 	bottom: 50%;
 	font-size: 12px;
 }

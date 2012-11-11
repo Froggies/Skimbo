@@ -9,14 +9,14 @@
 		</header>
 		<div class="column-content">
 			<ul>
-				<li class="element" ng-repeat="d in data | filter:$parent.query">
+				<li class="element" ng-repeat="m in messages | filter:$parent.query">
 					<div class="timeline">
 						<div class="from-social-network vertical-text">Facebook</div>
 						<div class="rond"></div>
 					</div>
-					<div class="test">
-						<img src="assets/img/brand/Office-Girl-icon.png" width="32" height="32">
-						<div class="message"> {{d}}</div>
+					<div class="message-content">
+						<img src="assets/img/brand/Office-Girl-icon.png" title="{{m.authorScreenName}}" width="32" height="32">
+						<div class="message"> {{m.message}}</div>
 					</div>
 				</li>
 			</ul>

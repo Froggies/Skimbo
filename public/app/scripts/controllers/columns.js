@@ -1,89 +1,115 @@
 'use strict';
 
 publicApp.controller('ColumnsCtrl', function($scope, $http) {
-  var wshost = 'ws://127.0.0.1:9000/api/stream/webSocket';
-  var ssehost = 'http://127.0.0.1:9000/api/stream/sse';
-  var sseping = 'http://127.0.0.1:9000/api/stream/ping';
+    var wshost = 'ws://127.0.0.1:9000/api/stream/webSocket';
+    var ssehost = 'http://127.0.0.1:9000/api/stream/sse';
+    var sseping = 'http://127.0.0.1:9000/api/stream/ping';
 
-  if(window.MozWebSocket) {
-    window.WebSocket=window.MozWebSocket;
-  }
-  if(!window.WebSocket) {
-    //alert('Votre navigateur ne supporte pas les webSocket!');
-    return false;
-  } else {
-    var socket = new WebSocket(wshost);
-    socket.onopen = function() { 
-      console.log('socket ouverte'); 
-      var json = { 
-        "channels": [
-          { "service": "twitter.wall" }, 
-          { "service": "twitter.hashtag", "args": { "hashtag": "skimbo" } },
-          { "service": "twitter.user", "args": {"username": "studiodev"} }
-        ]
-      }
-      json = {"cmd":"allColumns"}
-      json = {
-        "cmd":"addColumn", 
-        "body":{
-          "title":"title1", 
-          "unifiedRequests":[
-            {"service":"twitter.wall","args":{}},
-            {"service":"twitter.user", "args":{"username":"RmManeschi"}},
-            {"service":"twitter.hashtag", "args":{"hashtag":"skimbo"}}
-           // {"service":"facebook.wall","args":{}}
-          ]
-        }
-      }
-      //json = {"cmd":"allUnifiedRequests"}
-   //   json = {"cmd":"delColumn", "body":{"title": "title3"}}
-      socket.send(JSON.stringify(json));
+    if(window.MozWebSocket) {
+        window.WebSocket=window.MozWebSocket;
     }
-    socket.onclose = function() { console.log('socket fermée'); }
-    socket.onerror = function() { console.log('Une erreur est survenue'); }
-    socket.onmessage = function(msg){
-      var data;
-      try { //tente de parser data
-        data = JSON.parse(msg.data);
-      } catch(exception) {
-        data = msg.data
-      }      
-      //ici on poura effectuer tout ce que l'on veux sur notre objet data
-      console.log(data);
-      $scope.$apply(function() {
-        if($scope.data == undefined) {
-            $scope.data = [];
+    // if(false) {
+        if(!window.WebSocket) {
+            //alert('Votre navigateur ne supporte pas les webSocket!');
+            return false;
+        } else {
+            var socket = new WebSocket(wshost);
+            socket.onopen = function() { 
+              console.log('socket ouverte'); 
+              var json = { 
+                "channels": [
+                { "service": "twitter.wall" }, 
+                { "service": "twitter.hashtag", "args": { "hashtag": "skimbo" } },
+                { "service": "twitter.user", "args": {"username": "studiodev"} }
+                ]
+            }
+            json = {"cmd":"allColumns"}
+            json = {
+                "cmd":"addColumn", 
+                "body":{
+                  "title":"title1", 
+                  "unifiedRequests":[
+                  {"service":"twitter.wall","args":{}},
+                  {"service":"twitter.user", "args":{"username":"RmManeschi"}},
+                  {"service":"twitter.hashtag", "args":{"hashtag":"skimbo"}}
+                   // {"service":"facebook.wall","args":{}}
+                   ]
+               }
+           }
+           json = {"cmd":"allUnifiedRequests"}
+           //   json = {"cmd":"delColumn", "body":{"title": "title3"}}
+           socket.send(JSON.stringify(json));
+       }
+       socket.onclose = function() { console.log('socket fermée'); }
+       socket.onerror = function() { console.log('Une erreur est survenue'); }
+       socket.onmessage = function(msg){
+          var data;
+              try { //tente de parser data
+                data = JSON.parse(msg.data);
+            } catch(exception) {
+                data = msg.data
+            }      
+              //ici on poura effectuer tout ce que l'on veux sur notre objet data
+              executeCommand(data);
           }
-        $scope.data.unshift(data.cmd);
-      });
+      } 
+
+      if (!window.WebSocket && !!window.EventSource) {
+        var source = new EventSource(ssehost);
+        source.addEventListener('message', function(e) {
+           $scope.$apply(function() {
+              if($scope.data == undefined) {
+                  $scope.data = [];
+              }
+              $scope.data.unshift(JSON.parse(e.data));
+          });
+           console.log("ping");
+           $http.get(sseping);
+       }, false);
+
+        source.addEventListener('open', function(e) {
+              // Connection was opened.
+          }, false);
+
+        source.addEventListener('error', function(e) {
+          if (e.readyState == EventSource.CLOSED) {
+                // Connection was closed.
+            }
+        }, false);
+    // }
+    // else {
+        
+    // }
+}
+
+function executeCommand(data) {
+    console.log(data);
+    if(data.cmd == "allUnifiedRequests") {
+        var socialNetworks = new Array();
+        for (var i = 0; i < data.body.length; i++) {
+            var elementBody = data.body[i];
+            socialNetworks.unshift(elementBody);
+        };
+        $scope.$parent.$parent.socialNetworks = socialNetworks;
     }
-  } 
-
-  if (!window.WebSocket && !!window.EventSource) {
-    var source = new EventSource(ssehost);
-    source.addEventListener('message', function(e) {
-    	$scope.$apply(function() {
-    		if($scope.data == undefined) {
-        		$scope.data = [];
-        	}
-    		$scope.data.unshift(JSON.parse(e.data));
-    	});
-      console.log("ping");
-      $http.get(sseping);
-    }, false);
-
-    source.addEventListener('open', function(e) {
-      // Connection was opened.
-    }, false);
-
-    source.addEventListener('error', function(e) {
-      if (e.readyState == EventSource.CLOSED) {
-        // Connection was closed.
-      }
-    }, false);
-  }
+    if(data.cmd == "msg") {
+        $scope.$apply(function() {
+            if($scope.messages == undefined) {
+                $scope.messages = [];
+            }
+            for (var i = 0; i < data.body.length; i++) {
+                var elementBody = data.body[i];
+                $scope.messages.unshift(elementBody);
+            }
+        });
+    }
+}
 
 });
+
+
+
+
 
 
 function dragOver(target, ev)
