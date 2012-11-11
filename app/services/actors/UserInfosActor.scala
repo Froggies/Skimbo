@@ -28,7 +28,7 @@ import services.endpoints.JsonRequest._
 
 case object Retreive
 case class Send(userId:String, json:JsValue)
-case class StartProvider(unifiedRequests:Seq[UnifiedRequest])
+case class StartProvider(userId:String, unifiedRequests:Seq[UnifiedRequest])
 
 object UserInfosActor {
 
@@ -38,12 +38,17 @@ object UserInfosActor {
     val actor = system.actorOf(Props(new UserInfosActor(idUser, channelOut)))
     system.eventStream.subscribe(actor, Retreive.getClass())
     system.eventStream.subscribe(actor, classOf[Send])
+    system.eventStream.subscribe(actor, classOf[StartProvider])
     actor ! Retreive
     actor
   }
   
   def sendTo(userId:String, json:JsValue) = {
     system.eventStream.publish(Send(userId, json))
+  }
+  
+  def startProfiderFor(userId:String, unifiedRequests:Seq[UnifiedRequest]) = {
+    system.eventStream.publish(StartProvider(userId, unifiedRequests))
   }
   
 }
@@ -99,8 +104,10 @@ class UserInfosActor(idUser: String, channelOut:Concurrent.Channel[JsValue])(imp
       //  self ! Dead
       //}
     }
-    case StartProvider(unifiedRequests) => {
-      ProviderActor.create(channelOut, idUser, unifiedRequests)
+    case StartProvider(id:String, unifiedRequests) => {
+      if(id == idUser) {
+        ProviderActor.create(channelOut, idUser, unifiedRequests)
+      }
     }
     case Send(id:String, json:JsValue) => {
       if(id == idUser) {
@@ -115,7 +122,7 @@ class UserInfosActor(idUser: String, channelOut:Concurrent.Channel[JsValue])(imp
   
   def start(user:User) = {
     user.columns.getOrElse(Seq()).foreach { column =>
-      self ! StartProvider(column.unifiedRequests)
+      self ! StartProvider(idUser, column.unifiedRequests)
     }
   }
 

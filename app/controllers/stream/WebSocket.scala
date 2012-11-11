@@ -16,6 +16,8 @@ import services.commands.Commands
 
 object WebSocket extends Controller {
 
+  val log = Logger(WebSocket.getClass())
+  
   def connect() = play.api.mvc.WebSocket.using[JsValue] { implicit request =>
     import play.api.libs.concurrent.execution.defaultContext
     
@@ -24,15 +26,10 @@ object WebSocket extends Controller {
 
     val (out, channelClient) = Concurrent.broadcast[JsValue]
     UserInfosActor.create(userId, channelClient)
-    // Log events to the console
+
     val in = Iteratee.foreach[JsValue]{ cmd =>
-      Logger.info("Command from client : "+cmd)
-//      val unifiedRequests = Endpoints.listEndpointsFromJson(cmd)
-//      ProviderActor.create(channelClient, userId, unifiedRequests)
-
-//      ProviderActor.launchAll(channelClient, userId)
+      log.info("Command from client : "+cmd)
       Commands.interpret(userId, cmd)
-
     }.mapDone { _ =>
       println("Disconnected")
       ProviderActor.killActorsForUser(userId)
