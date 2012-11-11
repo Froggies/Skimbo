@@ -8,10 +8,10 @@ case class TokenInvalid(providerName:String)
 object TokenInvalid {
   implicit val tokenInvalidWrites = new Writes[TokenInvalid] {
     def writes(t: TokenInvalid): JsValue = {
-      Json.obj(
-        "cmd" -> "tokenInvalid",
-        "name" -> t.providerName
+      val json = Json.obj(
+        "providerName" -> t.providerName
       )
+      Json.toJson(Command("tokenInvalid", Some(json)))
     }
   }
 }
