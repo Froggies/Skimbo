@@ -6,6 +6,7 @@ import play.api.libs.json._
 import play.api.libs.json.Reads._
 import model.Skimbo
 import model.SocialNetwork
+import services.auth.providers.Facebook
 
 
 case class FacebookWallMessage(
@@ -39,13 +40,13 @@ object FacebookWallParser extends GenericParser[FacebookWallMessage] {
       e.nbLikes,
       e.link,
       (e.createdAt.getMillis()/1000).toInt.toString,
-      SocialNetwork.Facebook
+      Facebook
     )
   }
   
   //FIXME : found better if you can !!!!!!!
   def transform(json:JsValue):JsValue = {
-    JsArray(asSkimbos(from(json)).map(Skimbo.toJson(_)))
+    JsArray(asSkimbos(from(json)).map(Json.toJson(_)))
   }
 
   def generateMessage(e: FacebookWallMessage) = {

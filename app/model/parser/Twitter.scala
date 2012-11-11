@@ -11,6 +11,7 @@ import java.util.Locale
 import play.data.validation.ValidationError
 import org.joda.time.tz.UTCProvider
 import java.text.SimpleDateFormat
+import services.auth.providers.Twitter
 
 case class Tweet(
   id: Long,
@@ -43,13 +44,13 @@ object TwitterTimelineParser extends GenericParser[Tweet] {
       tweet.retweets,
       Some(tweetDetailUrl.format(tweet.screenName, tweet.id)),
       tweet.id.toString,
-      SocialNetwork.Twitter
+      Twitter
     )
   }
   
   //FIXME : found better if you can !!!!!!!
   def transform(json:JsValue):JsValue = {
-    JsArray(asSkimbos(from(json)).map(Skimbo.toJson(_)))
+    JsArray(asSkimbos(from(json)).map(Json.toJson(_)))
   }
 }
 
