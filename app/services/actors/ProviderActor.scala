@@ -18,6 +18,8 @@ import services.auth.providers._
 import model.parser.GenericParser
 import model.Skimbo
 import model.command.TokenInvalid
+import model.command.Command
+import play.api.libs.json.JsString
 
 sealed case class Ping(idUser: String)
 sealed case class Dead(idUser: String = "")
@@ -62,6 +64,8 @@ class ProviderActor(channel: Concurrent.Channel[JsValue],
   provider: GenericProvider, url: String, delay: Int,
   idUser: String, longPolling: Boolean, parser:Option[GenericParser[_]]=None)(implicit request: RequestHeader) extends Actor {
 
+  val log = Logger(ProviderActor.getClass())
+  
   val scheduler = Akka.system.scheduler.schedule(0 second, delay second) {
     self ! ReceiveTimeout
   }
@@ -75,9 +79,11 @@ class ProviderActor(channel: Concurrent.Channel[JsValue],
         Logger.info("Fetch provider "+provider.name)
         provider.fetch(url).get.map(response => {
           if(parser.isDefined) {
-            channel.push(parser.get.transform(response.json))
+            channel.push(Json.toJson(Command("msg", Some(parser.get.transform(response.json)))))
           } else {
-            channel.push(response.json)
+            log.error("Provider "+provider.name+" havn't parser for "+url)
+            channel.push(Json.toJson(Command("error", Some(JsString("provider havn't parser")))))
+            self ! Dead(idUser)
           }
         })
       } else {
