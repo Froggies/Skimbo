@@ -237,6 +237,8 @@ header.column-title {
 	min-width: 100%;
 	font-size: 12px;
 	box-sizing:border-box;
+	-moz-box-sizing: border-box;
+	-o-box-sizing: border-box;
 	display: inline-block;
 	padding: 10px;
 	margin-bottom: 3px;
