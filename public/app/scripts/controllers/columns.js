@@ -35,7 +35,7 @@ publicApp.controller('ColumnsCtrl', function($scope, $http) {
         }
       }
       //json = {"cmd":"allUnifiedRequests"}
-      //json = {"cmd":"delColumn", "body":{"title": "title2"}}
+      //json = {"cmd":"delColumn", "body":{"title": "title3"}}
       socket.send(JSON.stringify(json));
     }
     socket.onclose = function() { console.log('socket fermée'); }

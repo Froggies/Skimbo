@@ -11,6 +11,7 @@ import play.api.libs.iteratee.Iteratee
 import play.api.libs.iteratee.Enumerator
 import reactivemongo.bson.handlers.{ BSONReader, BSONWriter }
 import java.util.Date
+import play.api.Logger
 
 case class User(
   accounts: Seq[Account],
@@ -41,6 +42,8 @@ case class Column(
 
 object User {
 
+  val log = Logger(classOf[User])
+  
   def create(id: String): User = {
     User(Seq[Account](Account(id, new Date())))
   }
@@ -171,11 +174,12 @@ object User {
           } else {
             UnifiedRequest(
               asString(r, "service"),
-              Some(Map.empty[String, String]))
+              None)
           }
         })
         Column(asString(c, "title"), unifiedRequests)
       })
+      log.info("User = "+accounts+" :: "+providers+" :: "+columns)
       User(
         accounts,
         Some(providers),

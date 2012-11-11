@@ -30,13 +30,14 @@ object ProviderActor {
       val endpoint = for (
         provider <- Endpoints.getProvider(unifiedRequest.service);
         url <- Endpoints.genererUrl(unifiedRequest.service, unifiedRequest.args.getOrElse(Map.empty), None);
-        time <- Endpoints.getConfig(unifiedRequest.service).map(_.delay)
-      ) yield (provider, url, time)
+        time <- Endpoints.getConfig(unifiedRequest.service).map(_.delay);
+        parser <- Endpoints.getConfig(unifiedRequest.service).map(_.parser)
+      ) yield (provider, url, time, parser)
 
       endpoint match {
-        case Some((provider, url, time)) => {
+        case Some((provider, url, time, parser)) => {
           Logger.info("Provider : " + provider.name + " every " + time + " seconds")
-          val actor = system.actorOf(Props(new ProviderActor(channel, provider, url, time, userId, false)))
+          val actor = system.actorOf(Props(new ProviderActor(channel, provider, url, time, userId, false, parser)))
           system.eventStream.subscribe(actor, classOf[Dead])
           system.eventStream.subscribe(actor, classOf[Ping])
         }

@@ -39,6 +39,7 @@ object Commands {
                 user.get.distants, 
                 Some(user.get.columns.getOrElse(Seq[Column]()) ++ newColumn))
               )
+              //TODO RM : start new column providers
               UserInfosActor.sendTo(idUser, buildResponse(cmd.get, JsString("Ok")))
             }
           }
