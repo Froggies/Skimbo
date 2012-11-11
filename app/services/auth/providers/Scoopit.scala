@@ -3,7 +3,7 @@ package services.auth.providers
 import play.api._
 import play.api.mvc._
 import services.auth._
-import models.ProviderUser
+import models.user.ProviderUser
 
 object Scoopit extends OAuthProvider {
 
@@ -18,7 +18,7 @@ object Scoopit extends OAuthProvider {
       val name = (me \ "name").asOpt[String]
       val description = (me \ "bio").asOpt[String]
       val profileImage = (me \ "avatarUrl").asOpt[String]
-      Some(ProviderUser(id, username, name, this.name, description, profileImage))
+      Some(ProviderUser(id, this.name, username, name, description, profileImage))
     } catch {
       case _ => {
         Logger.error("Error during fetching user details")

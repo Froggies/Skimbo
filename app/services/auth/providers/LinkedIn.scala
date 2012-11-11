@@ -4,7 +4,7 @@ import play.api._
 import play.api.mvc._
 import services.auth._
 import play.api.mvc.WithHeaders
-import models.ProviderUser
+import models.user.ProviderUser
 import play.api.libs.concurrent.futureToPlayPromise
 
 object LinkedIn extends OAuthProvider {
@@ -33,7 +33,7 @@ object LinkedIn extends OAuthProvider {
       val name = (me \ "lastname").asOpt[String]
       val description = (me \ "headline").asOpt[String]
       val profileImage = (me \ "picture-url").asOpt[String]
-      Some(ProviderUser(id, username, name, this.name, description, profileImage))
+      Some(ProviderUser(id, this.name, username, name, description, profileImage))
     } catch {
       case _ => {
         Logger.error("Error during fetching user details")

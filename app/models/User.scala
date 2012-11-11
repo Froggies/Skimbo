@@ -12,33 +12,13 @@ import play.api.libs.iteratee.Enumerator
 import reactivemongo.bson.handlers.{ BSONReader, BSONWriter }
 import java.util.Date
 import play.api.Logger
+import models.user.ProviderUser
+import models.user.Column
 
 case class User(
   accounts: Seq[Account],
   distants: Option[Seq[ProviderUser]] = None,
   columns: Option[Seq[Column]] = None)
-
-case class Account(
-  id: String,
-  lastUse: Date)
-
-//keep has Option rules username, name, desctription and avatar for condition's providers
-case class ProviderUser(
-  id: String,
-  username: Option[String] = None,
-  name: Option[String] = None,
-  socialType: String,
-  description: Option[String] = None,
-  avatar: Option[String] = None)
-  
-case class Column(
-  title: String,
-  unifiedRequests:Seq[UnifiedRequest]) {
-  override def equals(other:Any) = other match {
-    case that:Column => that.title == title
-    case _ => false
-  }
-}
 
 object User {
 
@@ -53,78 +33,11 @@ object User {
     val distants = user.distants.getOrElse { Seq() }
     val columns = user.columns.getOrElse { Seq() }
     JsObject(Seq(
-      "accounts" -> JsArray(toJsonA(accounts)),
-      "distants" -> JsArray(toJsonPU(distants)),
-      "columns" -> JsArray(toJsonC(columns))))
+      "accounts" -> Json.toJson(accounts),
+      "distants" -> Json.toJson(distants),
+      "columns" -> Json.toJson(columns)))
   }
   
-  def toJsonA(accounts: Seq[Account]): Seq[JsObject] = {
-    accounts.map { account =>
-      JsObject(
-        Seq(
-          "id" -> JsString(account.id),
-          "lastUse" -> JsString(account.lastUse.getTime().toString())))
-    }
-  }
-
-  def toJsonPU(distants: Seq[ProviderUser]): Seq[JsObject] = {
-    distants.map { distant =>
-      JsObject(
-        Seq(
-          "id" -> JsString(distant.id),
-          "login" -> JsString(distant.username.getOrElse("")),
-          "name" -> JsString(distant.name.getOrElse("")),
-          "social" -> JsString(distant.socialType),
-          "desc" -> JsString(distant.description.getOrElse("")),
-          "avatar" -> JsString(distant.avatar.getOrElse(""))))
-    }
-  }
-  
-  def toJsonC(columns: Seq[Column]): Seq[JsObject] = {
-    columns.map { column =>
-      val unifiedRequests = toJsonU(column.unifiedRequests)
-      JsObject(
-        Seq(
-          "title" -> JsString(column.title),
-          "unifiedRequests" -> JsArray(unifiedRequests)))
-    }
-  }
-  
-  def fromJsonC(columns:Seq[JsValue]): Seq[Column] = {
-    columns.map { column =>
-      val unifiedRequests = fromJsonU((column \ "unifiedRequests").as[Seq[JsValue]])
-      Column(
-        (column \ "title").as[String],
-        unifiedRequests
-      )
-    }
-  }
-  
-  def toJsonU(unifiedRequests: Seq[UnifiedRequest]): Seq[JsObject] = {
-    unifiedRequests.map { unifiedRequest =>
-      val args = unifiedRequest.args.getOrElse(Seq()).map { m =>
-        m._1 -> JsString(m._2)
-      }
-      JsObject(
-        Seq(
-          "service" -> JsString(unifiedRequest.service),
-          "args" -> JsObject(args.toList)))
-    }
-  }
-  
-  def fromJsonU(unifiedRequests:Seq[JsValue]): Seq[UnifiedRequest] = {
-    unifiedRequests.map { unifiedRequest =>
-      val argsJs = (unifiedRequest \ "args").as[JsObject]
-      val args = for(key <- argsJs.keys) yield {
-        (key, (argsJs \ key).as[String])
-      }
-      UnifiedRequest(
-        (unifiedRequest \ "service").as[String],
-         Some(args.toMap)
-      )
-    }
-  }
-
   /**
    * From bd, keep comment for condition's providers
    */
@@ -154,9 +67,9 @@ object User {
       val providers = tableTo[ProviderUser](document, "distants", { d =>
         ProviderUser(
           asString(d, "id"),
+          asString(d, "social"),
           None, //d.getAs[BSONString]("login").get.value,
           None, //d.getAs[BSONString]("name").get.value,
-          asString(d, "social"),
           None, //Some(d.getAs[BSONString]("desc").get.value),
           None //Some(d.getAs[BSONString]("avatar").get.value)
           )

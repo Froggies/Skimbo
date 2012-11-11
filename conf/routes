@@ -4,7 +4,6 @@
 
 # Home page
 GET     /                           controllers.Application.index
-GET     /testBD                     controllers.Application.testUnifiedRequest
 
 # Providers available
 GET     /api/providers/list         controllers.api.Providers.listAll

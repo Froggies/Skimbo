@@ -8,7 +8,7 @@ import models.User
 import play.api.libs.json.JsArray
 import play.api.libs.json.JsObject
 import play.api.libs.json.JsString
-import models.Column
+import models.user.Column
 import models.Service
 import play.api.mvc.RequestHeader
 import play.api.libs.json.Json
@@ -24,26 +24,27 @@ object Commands {
 
   def interpret(idUser: String, json: JsValue)(implicit context: scala.concurrent.ExecutionContext, req: RequestHeader) = {
     val cmd = Json.fromJson[Command](json)
-    cmd.getOrElse(Command("cmd not found")).name match {
+    cmd.getOrElse(Command("_")).name match {
       case "allColumns" => {
         UserDao.findOneById(idUser).foreach { user =>
           if (user.isDefined && user.get.columns.isDefined) {
-            val jsonRes = User.toJsonC(user.get.columns.get)
-            UserInfosActor.sendTo(idUser, Json.toJson(Command(cmd.get.name, Some(JsArray(jsonRes)))))
+            val jsonRes = Json.toJson(user.get.columns.get)
+            UserInfosActor.sendTo(idUser, Json.toJson(Command(cmd.get.name, Some(jsonRes))))
           }
         }
       }
       case "addColumn" => {
         log.info("addColumn :: "+cmd.get.body.get)
-        val newColumn = User.fromJsonC(Seq(cmd.get.body.get))
-        UserDao.findOneById(idUser).foreach { user =>
-          if (user.isDefined) {
-            UserDao.update(
-              User(user.get.accounts,
-                user.get.distants,
-                Some(user.get.columns.getOrElse(Seq[Column]()) ++ newColumn)))
-            UserInfosActor.startProfiderFor(idUser, newColumn.head.unifiedRequests)
-            UserInfosActor.sendTo(idUser, Json.toJson(Command(cmd.get.name, Some(JsString("Ok")))))
+        Json.fromJson[Column](cmd.get.body.get).map { newColumn =>
+          UserDao.findOneById(idUser).foreach { user =>
+            if (user.isDefined) {
+              UserDao.update(
+                User(user.get.accounts,
+                  user.get.distants,
+                  Some(user.get.columns.getOrElse(Seq[Column]()) :+ newColumn)))
+              UserInfosActor.startProfiderFor(idUser, newColumn.unifiedRequests)
+              UserInfosActor.sendTo(idUser, Json.toJson(Command(cmd.get.name, Some(JsString("Ok")))))
+            }
           }
         }
       }

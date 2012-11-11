@@ -3,7 +3,7 @@ package services.auth.providers
 import play.api._
 import play.api.mvc._
 import services.auth._
-import models.ProviderUser
+import models.user.ProviderUser
 
 object Trello extends OAuthProvider {
 
@@ -18,7 +18,7 @@ object Trello extends OAuthProvider {
       val name = (me \ "fullName").asOpt[String]
       val description = (me \ "bio").asOpt[String]
       val profileImage = (me \ "gravatarHash").asOpt[String]
-      Some(ProviderUser(id, username, name, this.name, description, profileImage.map(img => "http://www.gravatar.com/avatar/"+img)))
+      Some(ProviderUser(id, this.name, username, name, description, profileImage.map(img => "http://www.gravatar.com/avatar/"+img)))
     } catch {
       case _ => {
         Logger.error("Error during fetching user details")

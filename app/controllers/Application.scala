@@ -6,18 +6,11 @@ import services.actors.ProviderActor
 import services.auth.ProviderDispatcher
 import services.auth.providers._
 import models.Service
-import play.api.libs.json.JsValue
 import play.api.libs.iteratee._
 import play.api.libs.concurrent._
 import scala.concurrent.util.duration._
-import scala.concurrent.Await
-import java.io.File
-import services.actors.UserInfosActor
 import services.security.AuthenticatedAction._
 import play.api.Logger
-import models._
-import services.endpoints.JsonRequest._
-import java.util.Date
 
 object Application extends Controller {
 
@@ -37,23 +30,6 @@ object Application extends Controller {
     ProviderActor.killActorsForUser(action.user.accounts.last.id)
     //TODO remove session id
     Ok(views.html.index(Service.list(action.request)))
-  }
-
-  //TODO RM : delete this when ok
-  def testUnifiedRequest() = Action {
-    import play.api.libs.concurrent.execution.defaultContext
-    UserDao.update(User(
-        Seq[Account](Account("26b706b0-7697-4c0b-8ca2-7f237d971336", new Date())),
-        Some(Seq[ProviderUser](ProviderUser("test",None,None,"test"),ProviderUser("test2",None,None,"test2"))),
-        Some(Seq[Column](
-            Column("test", Seq(UnifiedRequest("test", Some(Map[String, String](("gg" -> "gg"), ("ggbb" -> "ggbb")))))),
-            Column("test2", Seq(UnifiedRequest("test18", Some(Map[String, String](("cc" -> "vvvv"), ("fdg" -> "ggbb"))))))))
-    ))
-    Async {
-      UserDao.findOneById("26b706b0-7697-4c0b-8ca2-7f237d971336").map { user =>
-        Ok(User.toJson(user.get))
-      }
-    }
   }
 
 }

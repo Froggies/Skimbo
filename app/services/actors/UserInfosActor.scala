@@ -15,7 +15,7 @@ import play.api.libs.iteratee.Iteratee
 import reactivemongo.bson.handlers.DefaultBSONHandlers._
 import reactivemongo.bson._
 import scala.collection.mutable.ListBuffer
-import models.ProviderUser
+import models.user.ProviderUser
 import scala.concurrent._
 import scala.annotation.tailrec
 import akka.util.Duration

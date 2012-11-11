@@ -11,7 +11,6 @@ import play.api.Logger
 import scala.concurrent.Future
 import play.api.libs.concurrent.execution.defaultContext
 import services.auth.actions._
-import models.ProviderUser
 
 trait GenericProvider extends Results with WsProvider with AccountWsProvider with SecurityProvider {
 
