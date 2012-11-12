@@ -38,20 +38,20 @@ object User {
       "columns" -> Json.toJson(columns)))
   }
   
+  def tableTo[Obj](document: BSONDocument, key:String, transform:(TraversableBSONDocument) => Obj):Seq[Obj] = {
+    val doc = document.toTraversable
+    val objs = doc.getAs[BSONArray](key).getOrElse(BSONArray()).toTraversable.bsonIterator
+    val seqObjs = for (obj <- objs) yield {
+      val a = obj.value.asInstanceOf[BSONDocument].toTraversable
+      transform(a)
+    }
+    seqObjs.toList
+  }
+  
   /**
    * From bd, keep comment for condition's providers
    */
   implicit object UserBSONReader extends BSONReader[User] {
-    def tableTo[Obj](document: BSONDocument, key:String, transform:(TraversableBSONDocument) => Obj):Seq[Obj] = {
-      val doc = document.toTraversable
-      val objs = doc.getAs[BSONArray](key).getOrElse(BSONArray()).toTraversable.bsonIterator
-      val seqObjs = for (obj <- objs) yield {
-        val a = obj.value.asInstanceOf[BSONDocument].toTraversable
-        transform(a)
-      }
-      seqObjs.toList
-    }
-    
     def asString(doc:TraversableBSONDocument, key:String):String = {
       doc.getAs[BSONString](key).get.value
     }
@@ -126,19 +126,7 @@ object User {
       })
 
       val columns = toArray[Column](user.columns.getOrElse(Seq()), { column =>
-        val unifiedRequests = BSONArray().toAppendable
-        for (unifiedRequest <- column.unifiedRequests) yield {
-          val args = BSONDocument().toAppendable
-          for ((argKey, argValue) <- unifiedRequest.args.getOrElse(Map.empty)) yield {
-            args.append(argKey -> BSONString(argValue))
-          }
-          unifiedRequests.append(BSONDocument(
-            "service" -> BSONString(unifiedRequest.service),
-            "args" -> args))
-        }
-        BSONDocument(
-            "title" -> BSONString(column.title),
-            "unifiedRequests" -> unifiedRequests)
+        Column.toBSON(column)
       })
 
       BSONDocument(
