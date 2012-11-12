@@ -3,6 +3,10 @@ import java.util.Date
 import play.api.libs.json.Writes
 import play.api.libs.json.Json
 import play.api.libs.json.JsValue
+import reactivemongo.bson.BSONArray
+import reactivemongo.bson.BSONDocument
+import reactivemongo.bson.BSONString
+import reactivemongo.bson.BSONDateTime
 
 case class Account(
   id: String,
@@ -16,5 +20,11 @@ object Account {
         "lastUser" -> a.lastUse
       )
     }
+  }
+  
+  def toBSON(account:Account) = {
+    BSONDocument( 
+      "id" -> BSONString(account.id),
+      "lastUse" -> BSONDateTime(account.lastUse.getTime()))
   }
 }

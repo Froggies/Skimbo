@@ -100,9 +100,6 @@ object User {
     }
   }
 
-  /**
-   * To bd, keep comment for condition's providers
-   */
   implicit object UserBSONWriter extends BSONWriter[User] {
     def toArray[Obj](objs:Seq[Obj], transform:(Obj) => BSONDocument):BSONArray = {
       val res = BSONArray().toAppendable
@@ -114,15 +111,11 @@ object User {
     
     def toBSON(user: User) = {
       val accounts = toArray[Account](user.accounts, { account =>
-        BSONDocument( 
-          "id" -> BSONString(account.id),
-          "lastUse" -> BSONDateTime(account.lastUse.getTime()))
+        Account.toBSON(account)
       })
 
       val distants = toArray[ProviderUser](user.distants.getOrElse(Seq()), { distant =>
-        BSONDocument(
-          "id" -> BSONString(distant.id),
-          "social" -> BSONString(distant.socialType))
+        ProviderUser.toBSON(distant)
       })
 
       val columns = toArray[Column](user.columns.getOrElse(Seq()), { column =>

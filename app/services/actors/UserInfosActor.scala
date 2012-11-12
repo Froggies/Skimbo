@@ -28,15 +28,15 @@ import services.endpoints.JsonRequest._
 import models.user.Column
 
 case object Retreive
-case class Send(userId:String, json:JsValue)
-case class StartProvider(userId:String, column:Column)
-case class KillProvider(userId:String, columnTitle:String)
+case class Send(userId: String, json: JsValue)
+case class StartProvider(userId: String, column: Column)
+case class KillProvider(userId: String, columnTitle: String)
 
 object UserInfosActor {
 
   val system: ActorSystem = ActorSystem("userInfos");
 
-  def create(idUser: String, channelOut:Concurrent.Channel[JsValue])(implicit request: RequestHeader) = {
+  def create(idUser: String, channelOut: Concurrent.Channel[JsValue])(implicit request: RequestHeader) = {
     val actor = system.actorOf(Props(new UserInfosActor(idUser, channelOut)))
     system.eventStream.subscribe(actor, Retreive.getClass())
     system.eventStream.subscribe(actor, classOf[Send])
@@ -45,22 +45,26 @@ object UserInfosActor {
     actor ! Retreive
     actor
   }
-  
-  def sendTo(userId:String, json:JsValue) = {
+
+  def sendTo(userId: String, json: JsValue) = {
     system.eventStream.publish(Send(userId, json))
   }
-  
-  def startProfiderFor(userId:String, column:Column) = {
+
+  def startProfiderFor(userId: String, column: Column) = {
     system.eventStream.publish(StartProvider(userId, column))
   }
-  
-  def killProfiderFor(userId:String, columnTitle:String) = {
+
+  def killProfiderFor(userId: String, columnTitle: String) = {
     system.eventStream.publish(KillProvider(userId, columnTitle))
   }
-  
+
+  def killActorsForUser(userId: String) = {
+    system.eventStream.publish(Dead(userId))
+  }
+
 }
 
-class UserInfosActor(idUser: String, channelOut:Concurrent.Channel[JsValue])(implicit request: RequestHeader) extends Actor {
+class UserInfosActor(idUser: String, channelOut: Concurrent.Channel[JsValue])(implicit request: RequestHeader) extends Actor {
 
   val log = Logger(classOf[UserInfosActor])
 
@@ -105,34 +109,32 @@ class UserInfosActor(idUser: String, channelOut:Concurrent.Channel[JsValue])(imp
           }
         }
       }
-
-      // TODO RM : find when kill actor
-      //. onDone {
-      //  self ! Dead
-      //}
     }
-    case StartProvider(id:String, unifiedRequests) => {
-      if(id == idUser) {
+    case StartProvider(id: String, unifiedRequests) => {
+      if (id == idUser) {
         ProviderActor.create(channelOut, idUser, unifiedRequests)
       }
     }
-    case KillProvider(id:String, columnTitle) => {
-      if(id == idUser) {
+    case KillProvider(id: String, columnTitle) => {
+      if (id == idUser) {
         ProviderActor.killActorsForUserAndColumn(id, columnTitle)
       }
     }
-    case Send(id:String, json:JsValue) => {
-      if(id == idUser) {
+    case Send(id: String, json: JsValue) => {
+      if (id == idUser) {
         channelOut.push(json)
       }
     }
-    case Dead => {
-      context.stop(self)
+    case Dead(id) => {
+      if (idUser == id) {
+        ProviderActor.killActorsForUser(idUser)
+        context.stop(self)
+      }
     }
     case e: Exception => throw new UnexpectedException(Some("Incorrect message receive"), Some(e))
   }
-  
-  def start(user:User) = {
+
+  def start(user: User) = {
     user.columns.getOrElse(Seq()).foreach { column =>
       self ! StartProvider(idUser, column)
     }

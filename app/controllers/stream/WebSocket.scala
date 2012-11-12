@@ -32,7 +32,7 @@ object WebSocket extends Controller {
       Commands.interpret(userId, cmd)
     }.mapDone { _ =>
       println("Disconnected")
-      ProviderActor.killActorsForUser(userId)
+      UserInfosActor.killActorsForUser(userId)
     }
 
     (in, out)

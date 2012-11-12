@@ -63,6 +63,7 @@ object Commands {
         UserDao.findOneById(idUser).foreach { user =>
           if (user.isDefined) {
             UserDao.deleteColumn(user.get, delColumnTitle)
+            UserInfosActor.killProfiderFor(idUser, delColumnTitle)
             UserInfosActor.sendTo(idUser, Json.toJson(Command(cmd.get.name, Some(JsString("Ok")))))
           }
         }

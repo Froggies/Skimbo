@@ -2,6 +2,8 @@ package models.user
 import play.api.libs.json.Writes
 import play.api.libs.json.JsValue
 import play.api.libs.json.Json
+import reactivemongo.bson.BSONString
+import reactivemongo.bson.BSONDocument
 
 //keep has Option rules username, name, desctription and avatar for condition's providers
 case class ProviderUser(
@@ -11,7 +13,7 @@ case class ProviderUser(
   name: Option[String] = None,
   description: Option[String] = None,
   avatar: Option[String] = None)
-  
+
 object ProviderUser {
   implicit val writes = new Writes[ProviderUser] {
     def writes(pu: ProviderUser): JsValue = {
@@ -21,8 +23,13 @@ object ProviderUser {
         "username" -> pu.username,
         "name" -> pu.name,
         "description" -> pu.description,
-        "avatar" -> pu.avatar
-      )
+        "avatar" -> pu.avatar)
     }
+  }
+
+  def toBSON(distant: ProviderUser) = {
+    BSONDocument(
+      "id" -> BSONString(distant.id),
+      "social" -> BSONString(distant.socialType))
   }
 }
