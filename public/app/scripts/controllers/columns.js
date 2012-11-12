@@ -106,10 +106,10 @@ publicApp.controller('ColumnsCtrl', function($scope, $http) {
                 "body":{
                   "title":"title1", 
                   "unifiedRequests":[
-                    // {"service":"twitter.wall","args":{}},
-                    // {"service":"twitter.user", "args":{"username":"RmManeschi"}},
-                    // {"service":"twitter.hashtag", "args":{"hashtag":"skimbo"}}
-                     {"service":"facebook.wall","args":{}}
+                    {"service":"twitter.wall","args":{}},
+                    {"service":"twitter.user", "args":{"username":"RmManeschi"}},
+                    {"service":"twitter.hashtag", "args":{"hashtag":"skimbo"}}
+                    // {"service":"facebook.wall","args":{}}
                   ]
                 }
         };
