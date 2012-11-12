@@ -36,9 +36,10 @@ publicApp.controller('ColumnsCtrl', function($scope, $http) {
                   ]
                }
            }
-           json = {"cmd":"allUnifiedRequests"}
+           json = {"cmd":"allColumns"}
+    //       json = {"cmd":"allUnifiedRequests"}
            //   json = {"cmd":"delColumn", "body":{"title": "title3"}}
-           json = {"cmd":"allProviders"}
+    //       json = {"cmd":"allProviders"}
            socket.send(JSON.stringify(json));
        }
        socket.onclose = function() { console.log('socket fermée'); }
@@ -51,7 +52,7 @@ publicApp.controller('ColumnsCtrl', function($scope, $http) {
                 data = msg.data
             }      
               //ici on poura effectuer tout ce que l'on veux sur notre objet data
-              executeCommand(data);
+              executeCommand(socket, data);
           }
       } 
 
@@ -83,7 +84,7 @@ publicApp.controller('ColumnsCtrl', function($scope, $http) {
     // }
 }
 
-function executeCommand(data) {
+function executeCommand(socket, data) {
     console.log(data);
     if(data.cmd == "allUnifiedRequests") {
         var socialNetworks = new Array();
@@ -103,6 +104,22 @@ function executeCommand(data) {
             for (var i = 0; i < msgs.length; i++) {
                 var element = msgs[i];
                 $scope.messages.push(element);
+            }
+        });
+    }
+    if(data.cmd == "addColumn" && data.body == "Ok") {
+        json = {"cmd":"allColumns"};
+        socket.send(JSON.stringify(json));
+    }
+    if(data.cmd == "allColumns") {
+        $scope.$apply(function() {
+            if($scope.columns == undefined) {
+                $scope.columns = [];
+            }
+            var cols = data.body;
+            for (var i = 0; i < cols.length; i++) {
+                var element = cols[i];
+                $scope.columns.push(element);
             }
         });
     }
