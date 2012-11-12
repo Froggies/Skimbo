@@ -102,7 +102,7 @@ function executeCommand(data) {
             var msgs = data.body.msg;
             for (var i = 0; i < msgs.length; i++) {
                 var element = msgs[i];
-                $scope.messages.unshift(element);
+                $scope.messages.push(element);
             }
         });
     }
