@@ -3,10 +3,11 @@
 	<section class="column" 			  
 			 ng-repeat="c in columns">
 		<header class="column-title">
-			<div class="title">{{c.title}}</div>
-			<div class="configure"><a href="#">⚙</a></div>
+			<div class="title" ng-hide="c.showModifyColumn">{{c.title}}</div>
+			<input type="text" ng-show="c.showModifyColumn" value="{{c.title}}"/>
+			<div class="configure"><a href="#" ng-click="modifyColumn(c)">⚙</a></div>
 		</header>
-		<div class="column-content">
+		<div class="column-content" ng-hide="c.showModifyColumn">
 			<ul>
 				<li class="element" ng-repeat="m in messages | filter:$parent.query">
 					<div class="timeline">
@@ -20,5 +21,15 @@
 				</li>
 			</ul>
 		</div>
+		<div ng-show="c.showModifyColumn">
+			<ul>
+				<li ng-repeat="socialNetwork in socialNetworks">
+					{{socialNetwork.endpoint}}      {{socialNetwork.hasToken}}
+				</li>
+			</ul>
+		</div>
+	</section>
+	<section class="column-new">
+		<a href="#" ng-click="addColumn()">New</a>
 	</section>
 </section>

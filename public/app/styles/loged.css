@@ -64,7 +64,8 @@ input[type=button] {
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#cb091c', endColorstr='#95141b',GradientType=0 ); /* IE6-8 */
 }
 
-.banner a {
+.banner a,
+.column-new a {
 	color: #B6B6B6;
 	background: white;
 	display: inline-block;
@@ -157,8 +158,20 @@ input[type=button] {
 	float:left;
 	width: 250px;
 	margin: 5px;
-	background: #fafafa;
 	background: #FAFAFA;
+	border: 1px solid #C1C1C1;
+	border-bottom-color: #B6B6B6;
+	-webkit-box-shadow: 0 1px 3px #C1C1C1;
+	box-shadow: 0 1px 3px #C1C1C1;
+}
+
+.column-new {
+	float:left;
+	line-height: 567px;
+	text-align: center;
+	width: 250px;
+	height: 567px;
+	margin: 5px;
 	border: 1px solid #C1C1C1;
 	border-bottom-color: #B6B6B6;
 	-webkit-box-shadow: 0 1px 3px #C1C1C1;

@@ -46,6 +46,18 @@ object Commands {
           }
         }
       }
+      case "modColumn" => {
+        val modColumnTitle = ((json \ "body").as[JsValue] \ "title").as[String]
+        val modColumn = Json.fromJson[Column](((json \ "body").as[JsValue] \ "column").as[JsValue]).get
+        UserDao.findOneById(idUser).foreach { user =>
+          if (user.isDefined) {
+            UserDao.updateColumn(user.get, modColumnTitle, modColumn)
+            UserInfosActor.killProfiderFor(idUser, modColumnTitle)
+            UserInfosActor.startProfiderFor(idUser, modColumn)
+            UserInfosActor.sendTo(idUser, Json.toJson(Command(cmd.get.name, Some(JsString("Ok")))))
+          }
+        }
+      }
       case "delColumn" => {
         val delColumnTitle = ((json \ "body").as[JsValue] \ "title").as[String]
         UserDao.findOneById(idUser).foreach { user =>

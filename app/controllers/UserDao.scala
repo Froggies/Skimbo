@@ -43,6 +43,13 @@ object UserDao {
     val query = BSONDocument("accounts.id" -> new BSONString(user.accounts.head.id))
     collection.update(query, user)
   }
+  
+  def updateColumn(user: models.User, title:String, column:Column)(implicit context: scala.concurrent.ExecutionContext) = {
+    deleteColumn(user, title)
+    val query = BSONDocument("accounts.id" -> new BSONString(user.accounts.head.id))
+    val update = BSONDocument("$push" -> BSONDocument("columns" -> Column.toBSON(column)))
+    collection.update(query, update)
+  }
 
   def findByIdProvider(provider: String, id: String)(implicit context: scala.concurrent.ExecutionContext): Future[Option[User]] = {
     implicit val reader = User.UserBSONReader
@@ -53,7 +60,6 @@ object UserDao {
   }
 
   def deleteColumn(user: models.User, columnTitle: String)(implicit context: scala.concurrent.ExecutionContext) = {
-    val index = user.columns.getOrElse(Seq[Column]()).indexOf(Column(columnTitle, Seq[UnifiedRequest]()))
     val query = BSONDocument("accounts.id" -> new BSONString(user.accounts.head.id))
     val update = BSONDocument("$pull" -> BSONDocument("columns" -> BSONDocument("title" -> new BSONString(columnTitle))))
     collection.update(query, update)

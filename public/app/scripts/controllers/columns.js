@@ -4,7 +4,7 @@ publicApp.controller('ColumnsCtrl', function($scope, $http) {
     var wshost = 'ws://127.0.0.1:9000/api/stream/webSocket';
     var ssehost = 'http://127.0.0.1:9000/api/stream/sse';
     var sseping = 'http://127.0.0.1:9000/api/stream/ping';
-
+    var socket;
     if(window.MozWebSocket) {
         window.WebSocket=window.MozWebSocket;
     }
@@ -13,7 +13,7 @@ publicApp.controller('ColumnsCtrl', function($scope, $http) {
             //alert('Votre navigateur ne supporte pas les webSocket!');
             return false;
         } else {
-            var socket = new WebSocket(wshost);
+            socket = new WebSocket(wshost);
             socket.onopen = function() { 
               console.log('socket ouverte'); 
               var json = { 
@@ -36,10 +36,26 @@ publicApp.controller('ColumnsCtrl', function($scope, $http) {
                   ]
                }
            }
-           json = {"cmd":"allColumns"}
-    //       json = {"cmd":"allUnifiedRequests"}
-           //   json = {"cmd":"delColumn", "body":{"title": "title3"}}
-    //       json = {"cmd":"allProviders"}
+
+           // json = {
+           //      "cmd":"modColumn", 
+           //      "body":{
+           //        "title":"title1", 
+           //        "column":{
+           //          "title":"title2",
+           //          "unifiedRequests":[
+           //            {"service":"twitter.wall","args":{}}
+           //            //,
+           //            //{"service":"twitter.user", "args":{"username":"RmManeschi"}},
+           //            //{"service":"twitter.hashtag", "args":{"hashtag":"skimbo"}}
+           //            // {"service":"facebook.wall","args":{}}
+           //          ]
+           //        }
+           //     }
+           // }
+           // json = {"cmd":"delColumn", "body":{"title": "title2"}}
+       //   json = {"cmd":"allProviders"}
+           json = {"cmd":"allColumns"};
            socket.send(JSON.stringify(json));
        }
        socket.onclose = function() { console.log('socket fermée'); }
@@ -56,7 +72,7 @@ publicApp.controller('ColumnsCtrl', function($scope, $http) {
           }
       } 
 
-      if (!window.WebSocket && !!window.EventSource) {
+    if (!window.WebSocket && !!window.EventSource) {
         var source = new EventSource(ssehost);
         source.addEventListener('message', function(e) {
            $scope.$apply(function() {
@@ -82,17 +98,42 @@ publicApp.controller('ColumnsCtrl', function($scope, $http) {
     // else {
         
     // }
-}
+    }
+
+    $scope.addColumn = function() {
+        $scope.lastColumnAdded = {
+                "cmd":"addColumn", 
+                "body":{
+                  "title":"title1", 
+                  "unifiedRequests":[
+                    // {"service":"twitter.wall","args":{}},
+                    // {"service":"twitter.user", "args":{"username":"RmManeschi"}},
+                    // {"service":"twitter.hashtag", "args":{"hashtag":"skimbo"}}
+                     {"service":"facebook.wall","args":{}}
+                  ]
+                }
+        };
+        socket.send(JSON.stringify($scope.lastColumnAdded));
+    };
+
+    $scope.modifyColumn = function(column) {
+        column.showModifyColumn=!(column.showModifyColumn);
+        if (column.showModifyColumn == true) {
+            var json = {"cmd":"allUnifiedRequests"};
+            socket.send(JSON.stringify(json));
+        }
+    };
 
 function executeCommand(socket, data) {
-    console.log(data);
     if(data.cmd == "allUnifiedRequests") {
-        var socialNetworks = new Array();
-        for (var i = 0; i < data.body.length; i++) {
-            var elementBody = data.body[i];
-            socialNetworks.unshift(elementBody);
-        };
-        $scope.$parent.$parent.socialNetworks = socialNetworks;
+        $scope.$apply(function() {
+            var socialNetworks = new Array();
+            for (var i = 0; i < data.body.length; i++) {
+                var elementBody = data.body[i];
+                socialNetworks.unshift(elementBody);
+            }
+            $scope.socialNetworks = socialNetworks;
+        });
     }
     if(data.cmd == "msg") {
         $scope.$apply(function() {
@@ -108,8 +149,13 @@ function executeCommand(socket, data) {
         });
     }
     if(data.cmd == "addColumn" && data.body == "Ok") {
-        json = {"cmd":"allColumns"};
-        socket.send(JSON.stringify(json));
+        $scope.$apply(function() {
+            if($scope.columns == undefined) {
+                $scope.columns = [];
+            }
+            $scope.columns.push($scope.lastColumnAdded.body);
+            $scope.lastColumnAdded = undefined;
+        });
     }
     if(data.cmd == "allColumns") {
         $scope.$apply(function() {
@@ -119,11 +165,14 @@ function executeCommand(socket, data) {
             var cols = data.body;
             for (var i = 0; i < cols.length; i++) {
                 var element = cols[i];
+                element.showModifyColumn = false;
                 $scope.columns.push(element);
             }
         });
     }
 }
+
+
 
 });
 

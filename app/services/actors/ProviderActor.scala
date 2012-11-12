@@ -23,13 +23,14 @@ import play.api.libs.json.JsString
 import models.user.Column
 
 sealed case class Ping(idUser: String)
-sealed case class Dead(idUser: String = "")
+sealed case class Dead(idUser: String)
+sealed case class DeadColumn(idUser: String, columnTitle: String)
 
 object ProviderActor {
 
   val system: ActorSystem = ActorSystem("providers");
 
-  def create(channel: Concurrent.Channel[JsValue], userId: String, column:Column)(implicit request: RequestHeader) {
+  def create(channel: Concurrent.Channel[JsValue], userId: String, column: Column)(implicit request: RequestHeader) {
     column.unifiedRequests.foreach { unifiedRequest =>
       val endpoint = for (
         provider <- Endpoints.getProvider(unifiedRequest.service);
@@ -42,9 +43,9 @@ object ProviderActor {
         case Some((provider, url, time, parser)) => {
           Logger.info("Provider : " + provider.name + " every " + time + " seconds")
           val actor = system.actorOf(Props(
-            new ProviderActor(channel, provider, url, time, userId, false, parser, column)
-          ))
+            new ProviderActor(channel, provider, url, time, userId, false, parser, column)))
           system.eventStream.subscribe(actor, classOf[Dead])
+          system.eventStream.subscribe(actor, classOf[DeadColumn])
           system.eventStream.subscribe(actor, classOf[Ping])
         }
         case _ => Logger.error("Provider or Url not found for " + unifiedRequest.service + " :: args = " + unifiedRequest.args)
@@ -61,15 +62,19 @@ object ProviderActor {
     system.eventStream.publish(Dead(userId))
   }
 
+  def killActorsForUserAndColumn(userId: String, columnTitle: String) = {
+    system.eventStream.publish(DeadColumn(userId, columnTitle))
+  }
+
 }
 
 class ProviderActor(channel: Concurrent.Channel[JsValue],
   provider: GenericProvider, url: String, delay: Int,
-  idUser: String, longPolling: Boolean, 
-  parser:Option[GenericParser[_]]=None, column:Column)(implicit request: RequestHeader) extends Actor {
+  idUser: String, longPolling: Boolean,
+  parser: Option[GenericParser[_]] = None, column: Column)(implicit request: RequestHeader) extends Actor {
 
   val log = Logger(ProviderActor.getClass())
-  
+
   val scheduler = Akka.system.scheduler.schedule(0 second, delay second) {
     self ! ReceiveTimeout
   }
@@ -80,16 +85,15 @@ class ProviderActor(channel: Concurrent.Channel[JsValue],
         scheduler.cancel() //need ping to call provider
       }
       if (provider.hasToken(request)) {
-        Logger.info("Fetch provider "+provider.name)
+        Logger.info("Fetch provider " + provider.name)
         provider.fetch(url).get.map(response => {
-          if(parser.isDefined) {
+          if (parser.isDefined) {
             val msg = Json.obj(
               "column" -> column.title,
-              "msg" -> parser.get.transform(response.json)
-            )
+              "msg" -> parser.get.transform(response.json))
             channel.push(Json.toJson(Command("msg", Some(msg))))
           } else {
-            log.error("Provider "+provider.name+" havn't parser for "+url)
+            log.error("Provider " + provider.name + " havn't parser for " + url)
             channel.push(Json.toJson(Command("error", Some(JsString("provider havn't parser")))))
             self ! Dead(idUser)
           }
@@ -112,7 +116,11 @@ class ProviderActor(channel: Concurrent.Channel[JsValue],
         context.stop(self)
       }
     }
-
+    case DeadColumn(idUser: String, columnTitle: String) => {
+      if (columnTitle == column.title) {
+        self ! Dead(idUser)
+      }
+    }
     case e: Exception => throw new UnexpectedException(Some("Incorrect message receive"), Some(e))
   }
 
