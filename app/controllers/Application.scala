@@ -11,6 +11,7 @@ import play.api.libs.concurrent._
 import scala.concurrent.util.duration._
 import services.security.AuthenticatedAction._
 import play.api.Logger
+import services.actors.UserInfosActor
 
 object Application extends Controller {
 
@@ -27,7 +28,7 @@ object Application extends Controller {
 
   def logout() = Authenticated { action =>
     Logger.info("Aplication.scala :: KillMyActors :: " + action.user.accounts.last.id)
-    ProviderActor.killActorsForUser(action.user.accounts.last.id)
+    UserInfosActor.killActorsForUser(action.user.accounts.last.id)
     //TODO remove session id
     Ok(views.html.index(Service.list(action.request)))
   }
