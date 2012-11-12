@@ -20,6 +20,7 @@ import model.Skimbo
 import model.command.TokenInvalid
 import model.command.Command
 import play.api.libs.json.JsString
+import models.user.Column
 
 sealed case class Ping(idUser: String)
 sealed case class Dead(idUser: String = "")
@@ -28,8 +29,8 @@ object ProviderActor {
 
   val system: ActorSystem = ActorSystem("providers");
 
-  def create(channel: Concurrent.Channel[JsValue], userId: String, unifiedRequests: Seq[UnifiedRequest])(implicit request: RequestHeader) {
-    unifiedRequests.foreach { unifiedRequest =>
+  def create(channel: Concurrent.Channel[JsValue], userId: String, column:Column)(implicit request: RequestHeader) {
+    column.unifiedRequests.foreach { unifiedRequest =>
       val endpoint = for (
         provider <- Endpoints.getProvider(unifiedRequest.service);
         url <- Endpoints.genererUrl(unifiedRequest.service, unifiedRequest.args.getOrElse(Map.empty), None);
@@ -40,7 +41,9 @@ object ProviderActor {
       endpoint match {
         case Some((provider, url, time, parser)) => {
           Logger.info("Provider : " + provider.name + " every " + time + " seconds")
-          val actor = system.actorOf(Props(new ProviderActor(channel, provider, url, time, userId, false, parser)))
+          val actor = system.actorOf(Props(
+            new ProviderActor(channel, provider, url, time, userId, false, parser, column)
+          ))
           system.eventStream.subscribe(actor, classOf[Dead])
           system.eventStream.subscribe(actor, classOf[Ping])
         }
@@ -62,7 +65,8 @@ object ProviderActor {
 
 class ProviderActor(channel: Concurrent.Channel[JsValue],
   provider: GenericProvider, url: String, delay: Int,
-  idUser: String, longPolling: Boolean, parser:Option[GenericParser[_]]=None)(implicit request: RequestHeader) extends Actor {
+  idUser: String, longPolling: Boolean, 
+  parser:Option[GenericParser[_]]=None, column:Column)(implicit request: RequestHeader) extends Actor {
 
   val log = Logger(ProviderActor.getClass())
   
@@ -79,7 +83,11 @@ class ProviderActor(channel: Concurrent.Channel[JsValue],
         Logger.info("Fetch provider "+provider.name)
         provider.fetch(url).get.map(response => {
           if(parser.isDefined) {
-            channel.push(Json.toJson(Command("msg", Some(parser.get.transform(response.json)))))
+            val msg = Json.obj(
+              "column" -> column.title,
+              "msg" -> parser.get.transform(response.json)
+            )
+            channel.push(Json.toJson(Command("msg", Some(msg))))
           } else {
             log.error("Provider "+provider.name+" havn't parser for "+url)
             channel.push(Json.toJson(Command("error", Some(JsString("provider havn't parser")))))

@@ -41,7 +41,7 @@ object Commands {
               User(user.get.accounts,
                 user.get.distants,
                 Some(user.get.columns.getOrElse(Seq[Column]()) :+ newColumn)))
-            UserInfosActor.startProfiderFor(idUser, newColumn.unifiedRequests)
+            UserInfosActor.startProfiderFor(idUser, newColumn)
             UserInfosActor.sendTo(idUser, Json.toJson(Command(cmd.get.name, Some(JsString("Ok")))))
           }
         }

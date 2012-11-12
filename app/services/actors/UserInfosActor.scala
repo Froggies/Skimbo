@@ -25,10 +25,11 @@ import akka.dispatch.OnSuccess
 import models.Account
 import java.util.Date
 import services.endpoints.JsonRequest._
+import models.user.Column
 
 case object Retreive
 case class Send(userId:String, json:JsValue)
-case class StartProvider(userId:String, unifiedRequests:Seq[UnifiedRequest])
+case class StartProvider(userId:String, column:Column)
 
 object UserInfosActor {
 
@@ -47,8 +48,8 @@ object UserInfosActor {
     system.eventStream.publish(Send(userId, json))
   }
   
-  def startProfiderFor(userId:String, unifiedRequests:Seq[UnifiedRequest]) = {
-    system.eventStream.publish(StartProvider(userId, unifiedRequests))
+  def startProfiderFor(userId:String, column:Column) = {
+    system.eventStream.publish(StartProvider(userId, column))
   }
   
 }
@@ -122,7 +123,7 @@ class UserInfosActor(idUser: String, channelOut:Concurrent.Channel[JsValue])(imp
   
   def start(user:User) = {
     user.columns.getOrElse(Seq()).foreach { column =>
-      self ! StartProvider(idUser, column.unifiedRequests)
+      self ! StartProvider(idUser, column)
     }
   }
 

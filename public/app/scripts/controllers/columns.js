@@ -98,9 +98,11 @@ function executeCommand(data) {
             if($scope.messages == undefined) {
                 $scope.messages = [];
             }
-            for (var i = 0; i < data.body.length; i++) {
-                var elementBody = data.body[i];
-                $scope.messages.unshift(elementBody);
+            var columnTitle = data.body.column;
+            var msgs = data.body.msg;
+            for (var i = 0; i < msgs.length; i++) {
+                var element = msgs[i];
+                $scope.messages.unshift(element);
             }
         });
     }
