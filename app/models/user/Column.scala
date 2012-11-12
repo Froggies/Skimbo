@@ -34,17 +34,17 @@ object Column {
   
   def toBSON(column:Column) = {
     val unifiedRequests = BSONArray().toAppendable
-        for (unifiedRequest <- column.unifiedRequests) yield {
-          val args = BSONDocument().toAppendable
-          for ((argKey, argValue) <- unifiedRequest.args.getOrElse(Map.empty)) yield {
-            args.append(argKey -> BSONString(argValue))
-          }
-          unifiedRequests.append(BSONDocument(
-            "service" -> BSONString(unifiedRequest.service),
-            "args" -> args))
-        }
-        BSONDocument(
-            "title" -> BSONString(column.title),
-            "unifiedRequests" -> unifiedRequests)
+    for (unifiedRequest <- column.unifiedRequests) yield {
+      val args = BSONDocument().toAppendable
+      for ((argKey, argValue) <- unifiedRequest.args.getOrElse(Map.empty)) yield {
+        args.append(argKey -> BSONString(argValue))
+      }
+      unifiedRequests.append(BSONDocument(
+        "service" -> BSONString(unifiedRequest.service),
+        "args" -> args))
+    }
+    BSONDocument(
+        "title" -> BSONString(column.title),
+        "unifiedRequests" -> unifiedRequests)
   }
 }
