@@ -29,15 +29,16 @@ publicApp.controller('ColumnsCtrl', function($scope, $http) {
                 "body":{
                   "title":"title1", 
                   "unifiedRequests":[
-                  {"service":"twitter.wall","args":{}},
-                  {"service":"twitter.user", "args":{"username":"RmManeschi"}},
-                  {"service":"twitter.hashtag", "args":{"hashtag":"skimbo"}}
-                   // {"service":"facebook.wall","args":{}}
-                   ]
+                    {"service":"twitter.wall","args":{}},
+                    {"service":"twitter.user", "args":{"username":"RmManeschi"}},
+                    {"service":"twitter.hashtag", "args":{"hashtag":"skimbo"}}
+                     // {"service":"facebook.wall","args":{}}
+                  ]
                }
            }
            json = {"cmd":"allUnifiedRequests"}
            //   json = {"cmd":"delColumn", "body":{"title": "title3"}}
+           json = {"cmd":"allProviders"}
            socket.send(JSON.stringify(json));
        }
        socket.onclose = function() { console.log('socket fermée'); }

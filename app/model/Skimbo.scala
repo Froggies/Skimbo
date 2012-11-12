@@ -35,7 +35,7 @@ object Skimbo {
         "authorScreenName" -> skimbo.authorScreenName,
         "message" -> skimbo.message,
         "createdAt" -> skimbo.createdAt.toDate().getTime().toString(),
-        //"comments" -> Json.toJson(skimbo.comments),
+        //"comments" -> Json.toJson(skimbo.comments),//TODO decomment me when ok
         "shared" -> skimbo.shared,
         "directLink" -> skimbo.directLink,
         "sinceId" -> skimbo.sinceId,

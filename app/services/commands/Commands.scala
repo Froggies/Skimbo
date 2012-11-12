@@ -56,6 +56,9 @@ object Commands {
         }
       }
       case "allUnifiedRequests" => {
+        UserInfosActor.sendTo(idUser, Json.toJson(Command(cmd.get.name, Some(Service.toJsonWithUnifiedRequest))))
+      }
+      case "allProviders" => {
         UserInfosActor.sendTo(idUser, Json.toJson(Command(cmd.get.name, Some(Service.toJson))))
       }
       case _ => {
