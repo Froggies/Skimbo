@@ -53,7 +53,7 @@ publicApp.controller('ColumnsCtrl', function($scope, $http) {
            //        }
            //     }
            // }
-           // json = {"cmd":"delColumn", "body":{"title": "title2"}}
+            json = {"cmd":"delColumn", "body":{"title": "title1"}}
        //   json = {"cmd":"allProviders"}
            json = {"cmd":"allColumns"};
            socket.send(JSON.stringify(json));
@@ -104,12 +104,13 @@ publicApp.controller('ColumnsCtrl', function($scope, $http) {
         $scope.lastColumnAdded = {
                 "cmd":"addColumn", 
                 "body":{
-                  "title":"title1", 
+                  "title":"title2", 
                   "unifiedRequests":[
-                    {"service":"twitter.wall","args":{}},
-                    {"service":"twitter.user", "args":{"username":"RmManeschi"}},
-                    {"service":"twitter.hashtag", "args":{"hashtag":"skimbo"}}
+                    //{"service":"twitter.wall","args":{}},
+                    //{"service":"twitter.user", "args":{"username":"RmManeschi"}},
+                    //{"service":"twitter.hashtag", "args":{"hashtag":"skimbo"}}
                     // {"service":"facebook.wall","args":{}}
+                    {"service":"trello.notifications","args":{}}
                   ]
                 }
         };

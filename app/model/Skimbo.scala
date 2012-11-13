@@ -28,14 +28,14 @@ case class Skimbo(
 )
 
 object Skimbo {
-  implicit val writes = new Writes[Skimbo] {
+  implicit val writes:Writes[Skimbo] = new Writes[Skimbo] {
     def writes(skimbo: Skimbo): JsValue = {
       Json.obj(
         "authorName" -> skimbo.authorName,
         "authorScreenName" -> skimbo.authorScreenName,
         "message" -> skimbo.message,
         "createdAt" -> skimbo.createdAt.toDate().getTime().toString(),
-        //"comments" -> Json.toJson(skimbo.comments),//TODO decomment me when ok
+        "comments" -> skimbo.comments.map(Json.toJson(_)(Skimbo.writes)),
         "shared" -> skimbo.shared,
         "directLink" -> skimbo.directLink,
         "sinceId" -> skimbo.sinceId,

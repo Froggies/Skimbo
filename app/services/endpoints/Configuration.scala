@@ -93,6 +93,7 @@ object Configuration {
       override val url = withLimit("https://api.trello.com/1/members/me/notifications?limit=:limit")
       override val since = "&since=:since" // id
       override val provider = providers.Trello
+      override val parser = Some(TrelloWallParser)
     }
   }
 

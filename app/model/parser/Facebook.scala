@@ -5,7 +5,6 @@ import play.api.libs.json.util._
 import play.api.libs.json._
 import play.api.libs.json.Reads._
 import model.Skimbo
-import model.SocialNetwork
 import services.auth.providers.Facebook
 
 
