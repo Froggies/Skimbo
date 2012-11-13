@@ -19,7 +19,7 @@ import services.endpoints.JsonRequest._
 object UserDao {
 
   val db = ReactiveMongoPlugin.db
-  val collection = db("users2")
+  val collection = db("users")
 
   def add(user: models.User)(implicit context: scala.concurrent.ExecutionContext) = {
     implicit val writer = User.UserBSONWriter
@@ -63,6 +63,10 @@ object UserDao {
     val query = BSONDocument("accounts.id" -> new BSONString(user.accounts.head.id))
     val update = BSONDocument("$pull" -> BSONDocument("columns" -> BSONDocument("title" -> new BSONString(columnTitle))))
     collection.update(query, update)
+  }
+  
+  def delete(user:User)(implicit context: scala.concurrent.ExecutionContext) = {
+    collection.remove(user)
   }
 
 }
