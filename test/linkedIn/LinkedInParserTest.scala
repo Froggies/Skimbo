@@ -18,11 +18,8 @@ object LinkedInParserTest extends Specification {
 
     "Read json from complexe API json" in {
       val messages = LinkedInWallParser.from(LinkedInFixture.timeline)
-      messages.size must beEqualTo(10)
-      messages(4).person must beNone
-      messages(4).companyName.get must beEqualTo("Take a Tea")
-      messages(4).companyPerson must beSome
-      messages(4).companyPerson.get.person.lastName must beEqualTo("Roux")
+      messages.size must beEqualTo(50)
+      messages(4).person must beSome
     }
 
     "Convert LinkedIn message as Skimbo" in {
@@ -30,7 +27,7 @@ object LinkedInParserTest extends Specification {
       val res = LinkedInWallParser.asSkimbos(messages)
       messages.size must beEqualTo(res.size)
       res(0).authorScreenName must beEqualTo(messages(0).person.get.lastName)
-      res(5).message must beEqualTo("Camille")
+      res(5).message must beEqualTo("Connexion : private private")
     }
   }
 

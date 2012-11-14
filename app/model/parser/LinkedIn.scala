@@ -50,9 +50,34 @@ object LinkedInWallParser extends GenericParser[LinkedInWallMessage] {
   
   def generateText(typeLinkedIn:String, e:LinkedInWallMessage) = {
     typeLinkedIn match {
-      case "STAT" => e.person.get.currentStatus.getOrElse("")
-      case "CONN" => e.person.get.firstName
-      case "MSFC" => e.companyName.get
+      case "STAT" => {
+        val p = e.person.get
+        p.firstName + " " + p.lastName + " : " + p.currentStatus.getOrElse("")
+      }
+      case "CONN" => {
+        val p = e.person.get
+        "Connexion : " + p.firstName + " " + p.lastName
+      }
+      case "NCON" => {
+        val p = e.person.get
+        "New connexion : " + p.firstName + " " + p.lastName
+      }
+      case "MSFC" => {
+        val p= e.companyPerson.get.person
+        p.firstName + " " + p.lastName + " follow " + e.companyName.get
+      }
+      case "JGRP" => {
+        val p = e.person.get
+        p.firstName + " " + p.lastName + " join group : TODO ADD NAME GROUP"
+      }
+      case "PICU" => {
+        val p = e.person.get
+        "New avatar : " + p.firstName + " " + p.lastName
+      }
+      case "PROF" => {
+        val p = e.person.get
+        "Modif profil : " + p.firstName + " " + p.lastName
+      }
       case _ => "Type msg not parsed"
     }
   }
