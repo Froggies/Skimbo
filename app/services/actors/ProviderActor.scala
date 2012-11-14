@@ -85,12 +85,13 @@ class ProviderActor(channel: Concurrent.Channel[JsValue],
         scheduler.cancel() //need ping to call provider
       }
       if (provider.hasToken(request)) {
-        Logger.info("Fetch provider " + provider.name)
+        log.info("Fetch provider " + provider.name)
         provider.fetch(url).get.map(response => {
           if (parser.isDefined) {
             val msg = Json.obj(
               "column" -> column.title,
               "msg" -> parser.get.transform(response.json))
+            log.info("Messages : "+msg)
             channel.push(Json.toJson(Command("msg", Some(msg))))
           } else {
             log.error("Provider " + provider.name + " havn't parser for " + url)

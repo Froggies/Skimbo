@@ -31,6 +31,8 @@ case object Retreive
 case class Send(userId: String, json: JsValue)
 case class StartProvider(userId: String, column: Column)
 case class KillProvider(userId: String, columnTitle: String)
+case class CheckAccounts(user: User)
+case class AddInfosUser(user: User, providerUser:ProviderUser)
 
 object UserInfosActor {
 
@@ -66,16 +68,17 @@ object UserInfosActor {
 
 class UserInfosActor(idUser: String, channelOut: Concurrent.Channel[JsValue])(implicit request: RequestHeader) extends Actor {
 
+  import scala.concurrent.ExecutionContext.Implicits.global
   val log = Logger(classOf[UserInfosActor])
 
   def receive() = {
     case Retreive => {
-      import scala.concurrent.ExecutionContext.Implicits.global
       log.info("Start retreive")
       UserDao.findOneById(idUser).map { optionUser =>
         if (optionUser.isDefined) {
           log.info("User has id in DB")
           start(optionUser.get)
+          self ! CheckAccounts(optionUser.get)
         } else {
           ProviderDispatcher.listAll.map { provider =>
             if (provider.hasToken(request)) {
@@ -130,6 +133,25 @@ class UserInfosActor(idUser: String, channelOut: Concurrent.Channel[JsValue])(im
         ProviderActor.killActorsForUser(idUser)
         context.stop(self)
       }
+    }
+    case CheckAccounts(user: User) => {
+      ProviderDispatcher.listAll.map { provider =>
+        if (provider.hasToken(request)) {
+          if (!user.distants.exists { _.exists(_.socialType == provider.name) }) {
+            provider.getUser.map { providerUser =>
+              if (providerUser.isDefined) {
+                self ! AddInfosUser(user, ProviderUser(providerUser.get.id, provider.name))
+              }
+            }
+          }
+        }
+      }
+    }
+    case AddInfosUser(user: User, providerUser:ProviderUser) => {
+      UserDao.update(User(
+        user.accounts,
+        Some(user.distants.getOrElse(Seq[ProviderUser]()) :+ providerUser),
+        user.columns))
     }
     case e: Exception => throw new UnexpectedException(Some("Incorrect message receive"), Some(e))
   }

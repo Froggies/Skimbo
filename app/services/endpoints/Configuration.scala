@@ -68,6 +68,7 @@ object Configuration {
       override val url = withLimit("http://api.linkedin.com/v1/people/~/network/updates?count=:limit")
       override val since = "&after=:since"
       override val provider = providers.LinkedIn
+      override val parser = Some(LinkedInWallParser)
     }
   }
 

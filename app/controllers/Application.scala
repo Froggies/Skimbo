@@ -25,6 +25,15 @@ object Application extends Controller {
     ProviderDispatcher(providerName).map(provider =>
       provider.auth(routes.Application.index)).getOrElse(BadRequest)
   }
+  
+  def testRes(providerName: String) = Action { implicit request =>
+    import scala.concurrent.ExecutionContext.Implicits.global
+    ProviderDispatcher(providerName).map(provider =>
+      Async {
+      provider.fetch("http://api.linkedin.com/v1/people/~/network/updates?count=50").get.map(r => Ok(r.json))
+      }
+    ).getOrElse(BadRequest)
+  }
 
   def logout() = Authenticated { action =>
     Logger.info("Aplication.scala :: KillMyActors :: " + action.user.accounts.last.id)

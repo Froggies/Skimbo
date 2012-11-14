@@ -4,6 +4,7 @@
 
 # Home page
 GET     /                           controllers.Application.index
+GET		/testRes/:provider			controllers.Application.testRes(provider: String)
 
 # Providers available
 GET     /api/providers/list         controllers.api.Providers.listAll
