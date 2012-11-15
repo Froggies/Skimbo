@@ -43,3 +43,76 @@ body,html {
 	background: linear-gradient(to bottom, transparent 0%,rgba(0, 0, 0, 0.3) 50%,transparent 100%);
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00000000', endColorstr='#00000000',GradientType=0 );
 }
+
+
+.twitter {
+	color: #00a0d1;
+}
+
+.facebook {
+	color: #3b5998;
+}
+
+.linkedIn {
+	color: #0e76a8;
+}
+
+.github {
+	color: #4183c4;
+}
+
+.googleplus {
+	color: #db4a39;
+}
+
+.scoopit {
+	color: #90D302;
+}
+
+.viadeo {
+	color: #FFC906;
+}
+
+.stackeschange {
+	color: #C47B07;
+}
+
+.trello {
+	color: #A38F8F;
+}
+
+.rond.twitter {
+	background: #00a0d1;
+}
+
+.rond.facebook {
+	background: #3b5998;
+}
+
+.rond.linkedIn {
+	background: #0e76a8;
+}
+
+.rond.github {
+	background: #4183c4;
+}
+
+.rond.googleplus {
+	background: #db4a39;
+}
+
+.rond.scoopit {
+	background: #90D302;
+}
+
+.rond.viadeo {
+	background: #FFC906;
+}
+
+.rond.stackexchange {
+	background: #C47B07;
+}
+
+.rond.trello {
+	background: #A38F8F;
+}

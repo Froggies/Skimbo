@@ -289,22 +289,6 @@ header.column-title {
 	text-transform: capitalize;
 }
 
-.facebook {
-	color: #2F549E;
-}
-.rond.facebook {
-	background: #2F549E;
-}
-
-
-.twitter {
-	color: #62d1f5;
-}
-
-.rond.twitter {
-	background: #62d1f5;
-}
-
 .rond {
 	float: right;
 	width:15px;
@@ -315,5 +299,16 @@ s	-webkit-border-radius:8px;
 	border-radius:8px;
 	border: 1px solid #C1C1C1;
 }
+
+.social-network-active.true,
+.service-active.true {
+	color: black;
+}
+
+.social-network-active.false, 
+.service-active.false {
+	color: lightgrey;
+}
+
 
 /*******************************************/

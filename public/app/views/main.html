@@ -4,12 +4,12 @@
 			 ng-repeat="c in columns">
 		<header class="column-title">
 			<div class="title" ng-hide="c.showModifyColumn">{{c.title}}</div>
-			<input type="text" ng-show="c.showModifyColumn" value="{{c.title}}"/>
+			<input type="text" ng-model="c.title" ng-show="c.showModifyColumn" value="{{c.title}}"/>
 			<div class="configure"><a href="#" ng-click="modifyColumn(c)">⚙</a></div>
 		</header>
 		<div class="column-content" ng-hide="c.showModifyColumn">
 			<ul>
-				<li class="element" ng-repeat="m in messages | filter:$parent.query">
+				<li class="element" ng-repeat="m in c.messages | filter:$parent.query">
 					<div class="timeline">
 						<div class="from-social-network vertical-text {{m.from}}">{{m.from}}</div>
 						<div class="rond {{m.from}}"></div>
@@ -24,9 +24,14 @@
 		<div ng-show="c.showModifyColumn">
 			<ul>
 				<li ng-repeat="socialNetwork in socialNetworks">
-					{{socialNetwork.endpoint}}      {{socialNetwork.hasToken}}
+					<a href="#" class="social-network-active {{isSocialNetworkActiveForColumn(c,socialNetwork.service)}}">{{socialNetwork.endpoint}}</a>
+					<ul>
+						<li><a href="#" class="service-active {{isSocialNetworkActiveForColumn(c,socialNetwork.service)}}">{{socialNetwork.service}}</a></li>
+					</ul>
 				</li>
 			</ul>
+			<a href="#" ng-click="changeColumn(c)">Change</a>
+			<a href="#" ng-click="deleteColumn(c)">Delete</a>
 		</div>
 	</section>
 	<section class="column-new">

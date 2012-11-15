@@ -106,12 +106,12 @@ publicApp.controller('ColumnsCtrl', function($scope, $http) {
                 "body":{
                   "title":"title2", 
                   "unifiedRequests":[
-                    //{"service":"twitter.wall","args":{}},
-                    //{"service":"twitter.user", "args":{"username":"RmManeschi"}},
-                    //{"service":"twitter.hashtag", "args":{"hashtag":"skimbo"}}
+                    {"service":"twitter.wall","args":{}},
+                    {"service":"twitter.user", "args":{"username":"RmManeschi"}},
+                    {"service":"twitter.hashtag", "args":{"hashtag":"skimbo"}}
                     // {"service":"facebook.wall","args":{}}
                     //{"service":"trello.notifications","args":{}}
-                    {"service":"linkedin.wall","args":{}}
+                    //{"service":"linkedin.wall","args":{}}
                   ]
                 }
         };
@@ -119,12 +119,53 @@ publicApp.controller('ColumnsCtrl', function($scope, $http) {
     };
 
     $scope.modifyColumn = function(column) {
-        column.showModifyColumn=!(column.showModifyColumn);
-        if (column.showModifyColumn == true) {
-            var json = {"cmd":"allUnifiedRequests"};
-            socket.send(JSON.stringify(json));
-        }
+      column.showModifyColumn=!(column.showModifyColumn);
+      column.oldTitle = column.title;
+      if (column.showModifyColumn == true) {
+          var json = {"cmd":"allUnifiedRequests"};
+          socket.send(JSON.stringify(json));
+      }
     };
+
+    $scope.changeColumn = function(column) {
+      console.log("columnTitle",column.title);
+      var json = {"cmd":"modColumn", 
+                   "body":{
+                     "title": column.oldTitle, 
+                     "column":{
+                       "title":column.title,
+                       "unifiedRequests":[
+                         {"service":"twitter.wall","args":{}},
+                          {"service":"twitter.user", "args":{"username":"RmManeschi"}},
+                          {"service":"twitter.hashtag", "args":{"hashtag":"skimbo"}}
+                       ]
+                     }
+                   }
+                  };
+      socket.send(JSON.stringify(json));
+    }
+
+    $scope.deleteColumn = function(column) {
+      $scope.lastColumnDeleted = {"cmd":"delColumn", "body":{"title": column.title}};
+      socket.send(JSON.stringify($scope.lastColumnDeleted));
+    }
+
+    $scope.isSocialNetworkActiveForColumn = function(column, socialNetworksService) {
+      for (var i = 0; i < column.unifiedRequests.length; i++) {
+        if (column.unifiedRequests[i].service == socialNetworksService) {
+          return true;
+        }
+      }
+      return false;
+    };
+
+function getColumnByName(name) {
+    for (var i = 0; i < $scope.columns.length; i++) {
+        if ($scope.columns[i].title == name) {
+            return $scope.columns[i];
+        }
+    }
+}
 
 function executeCommand(socket, data) {
     if(data.cmd == "allUnifiedRequests") {
@@ -138,15 +179,16 @@ function executeCommand(socket, data) {
         });
     }
     if(data.cmd == "msg") {
+        var columnTitle = data.body.column;
+        var column = getColumnByName(columnTitle);
         $scope.$apply(function() {
-            if($scope.messages == undefined) {
-                $scope.messages = [];
+            if(column.messages == undefined) {
+                column.messages = [];
             }
-            var columnTitle = data.body.column;
             var msgs = data.body.msg;
             for (var i = 0; i < msgs.length; i++) {
                 var element = msgs[i];
-                $scope.messages.push(element);
+                column.messages.push(element);
             }
         });
     }
@@ -161,9 +203,9 @@ function executeCommand(socket, data) {
     }
     if(data.cmd == "allColumns") {
         $scope.$apply(function() {
-            if($scope.columns == undefined) {
+            // if($scope.columns == undefined) {
                 $scope.columns = [];
-            }
+            // }
             var cols = data.body;
             for (var i = 0; i < cols.length; i++) {
                 var element = cols[i];
@@ -172,10 +214,30 @@ function executeCommand(socket, data) {
             }
         });
     }
+    if(data.cmd == "delColumn" && data.body == "Ok") {
+      $scope.$apply(function() {
+        var title = $scope.lastColumnDeleted.title;
+        var columnIndice = 0;
+        var columnFind = false;
+        for (var i = 0; i < $scope.columns.length; i++) {
+          if($scope.columns[i].title == title) {
+            columnIndice = i;
+            columnFind = true;
+            break;
+          }
+        }
+        if(columnFind == true) {
+          $scope.columns.splice(columnIndice,1);
+        }
+      });
+      var json = {"cmd":"allColumns"};
+      socket.send(JSON.stringify(json));
+    }
+    if(data.cmd == "modColumn" && data.body == "Ok") {
+      var json = {"cmd":"allColumns"};
+      socket.send(JSON.stringify(json));
+    }
 }
-
-
-
 });
 
 
