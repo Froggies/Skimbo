@@ -91,7 +91,7 @@ class ProviderActor(channel: Concurrent.Channel[JsValue],
             val msg = Json.obj(
               "column" -> column.title,
               "msg" -> parser.get.transform(response.json))
-            log.info("Messages : "+msg)
+            //log.info("Messages : "+msg)
             channel.push(Json.toJson(Command("msg", Some(msg))))
           } else {
             log.error("Provider " + provider.name + " havn't parser for " + url)
