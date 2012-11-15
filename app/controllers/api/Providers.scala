@@ -2,13 +2,14 @@ package controllers.api
 
 import play.api.mvc._
 import services.auth.ProviderDispatcher
-import com.codahale.jerkson.Json.generate
 import models.Service
+import play.api.libs.json.Json
+import play.api.libs.json.JsArray
 
 object Providers extends Controller {
 
   def listAll = Action { implicit req =>
-    Ok(generate(Service.list))
+    Ok(Service.toJson())
   }
 
 }

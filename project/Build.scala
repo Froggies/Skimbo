@@ -8,8 +8,8 @@ object ApplicationBuild extends Build {
     val appVersion      = "0.1-SNAPSHOT"
 
 	val appDependencies = Seq(
-	    "reactivemongo" %% "reactivemongo" % "0.1-SNAPSHOT",
-      "play.modules.reactivemongo" %% "play2-reactivemongo" % "0.1-SNAPSHOT"
+	    "reactivemongo" %% "reactivemongo" % "0.1-SNAPSHOT" changing(),
+      "play.modules.reactivemongo" %% "play2-reactivemongo" % "0.1-SNAPSHOT" changing()
 	)
 	
 	val main = PlayProject(appName, appVersion, appDependencies, mainLang = SCALA).settings(

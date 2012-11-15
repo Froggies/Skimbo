@@ -18,7 +18,7 @@ object Unified extends Controller {
     // What is done ?
     val endpoints = channels.flatMap{channel =>
       val urlOpt = Endpoints.genererUrl(channel.service, channel.args.getOrElse(Map.empty), None)
-      val statut = Endpoints.endpoints.get(channel.service).get.provider.getToken.map(_ => "Connecté").getOrElse("Non Connecté")
+      val statut = Endpoints.getConfig(channel.service).get.provider.getToken.map(_ => "Connecté").getOrElse("Non Connecté")
       urlOpt.map(url => url + " / Statut : " + statut)
     }
 
