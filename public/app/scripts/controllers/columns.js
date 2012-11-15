@@ -150,7 +150,7 @@ publicApp.controller('ColumnsCtrl', function($scope, $http) {
       socket.send(JSON.stringify($scope.lastColumnDeleted));
     }
 
-    $scope.isSocialNetworkActiveForColumn = function(column, socialNetworksService) {
+    $scope.isServiceActiveForColumn = function(column, socialNetworksService) {
       for (var i = 0; i < column.unifiedRequests.length; i++) {
         if (column.unifiedRequests[i].service == socialNetworksService) {
           return true;
@@ -158,6 +158,16 @@ publicApp.controller('ColumnsCtrl', function($scope, $http) {
       }
       return false;
     };
+
+    $scope.isSocialNetworkActiveForColumn = function(column, socialNetwork) {
+      for (var i = 0; i < column.unifiedRequests.length; i++) {
+        var socialNetworkFromColumn = column.unifiedRequests[i].service.split(".")[0];
+        if (socialNetworkFromColumn == socialNetwork) {
+          return true;
+        }
+      };
+      return false;
+    }
 
 function getColumnByName(name) {
     for (var i = 0; i < $scope.columns.length; i++) {

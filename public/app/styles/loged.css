@@ -303,11 +303,13 @@ s	-webkit-border-radius:8px;
 .social-network-active.true,
 .service-active.true {
 	color: black;
+	text-transform: capitalize;
 }
 
 .social-network-active.false, 
 .service-active.false {
 	color: lightgrey;
+	text-transform: capitalize;
 }
 
 

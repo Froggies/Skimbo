@@ -24,9 +24,11 @@
 		<div ng-show="c.showModifyColumn">
 			<ul>
 				<li ng-repeat="socialNetwork in socialNetworks">
-					<a href="#" class="social-network-active {{isSocialNetworkActiveForColumn(c,socialNetwork.service)}}">{{socialNetwork.endpoint}}</a>
+					<a href="#" class="social-network-active {{isSocialNetworkActiveForColumn(c,socialNetwork.endpoint)}}">{{socialNetwork.endpoint}}</a>
 					<ul>
-						<li><a href="#" class="service-active {{isSocialNetworkActiveForColumn(c,socialNetwork.service)}}">{{socialNetwork.service}}</a></li>
+						<li ng-repeat="socialNetworkService in socialNetwork.services">
+							<a href="#" class="service-active {{isServiceActiveForColumn(c,socialNetworkService.name)}}">{{socialNetworkService.name}}</a>
+						</li>
 					</ul>
 				</li>
 			</ul>
