@@ -56,7 +56,7 @@ publicApp.controller('ColumnsCtrl', function($scope, $http) {
             //json = {"cmd":"delColumn", "body":{"title": "title1"}}
        //   json = {"cmd":"allProviders"}
            json = {"cmd":"allColumns"};
-           socket.send(JSON.stringify(json));
+           //socket.send(JSON.stringify(json));
        }
        socket.onclose = function() { console.log('socket fermée'); }
        socket.onerror = function() { console.log('Une erreur est survenue'); }

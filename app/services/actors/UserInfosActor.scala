@@ -24,13 +24,15 @@ import models.Account
 import java.util.Date
 import services.endpoints.JsonRequest._
 import models.user.Column
+import services.commands.Commands
+import model.command.Command
 
 case object Retreive
 case class Send(userId: String, json: JsValue)
 case class StartProvider(userId: String, column: Column)
 case class KillProvider(userId: String, columnTitle: String)
 case class CheckAccounts(user: User)
-case class AddInfosUser(user: User, providerUser:ProviderUser)
+case class AddInfosUser(user: User, providerUser: ProviderUser)
 
 object UserInfosActor {
 
@@ -96,9 +98,11 @@ class UserInfosActor(idUser: String, channelOut: Concurrent.Channel[JsValue])(im
                       start(user)
                     } else {
                       log.info("User hasn't id of " + provider.name + " in DB createIt")
-                      UserDao.add(User(
+                      val user = User(
                         Seq(Account(idUser, new Date())),
-                        Some(Seq(providerUser.get))))
+                        Some(Seq(providerUser.get)))
+                      UserDao.add(user)
+                      start(user)
                     }
                   }
                 } else {
@@ -146,7 +150,7 @@ class UserInfosActor(idUser: String, channelOut: Concurrent.Channel[JsValue])(im
         }
       }
     }
-    case AddInfosUser(user: User, providerUser:ProviderUser) => {
+    case AddInfosUser(user: User, providerUser: ProviderUser) => {
       UserDao.update(User(
         user.accounts,
         Some(user.distants.getOrElse(Seq[ProviderUser]()) :+ providerUser),
@@ -159,6 +163,7 @@ class UserInfosActor(idUser: String, channelOut: Concurrent.Channel[JsValue])(im
     user.columns.getOrElse(Seq()).foreach { column =>
       self ! StartProvider(idUser, column)
     }
+    Commands.interpretCmd(idUser, Command("allColumns"))
   }
 
 }
