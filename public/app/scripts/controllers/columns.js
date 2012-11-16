@@ -4,100 +4,48 @@ publicApp.controller('ColumnsCtrl', function($scope, $http) {
     var wshost = 'ws://127.0.0.1:9000/api/stream/webSocket';
     var ssehost = 'http://127.0.0.1:9000/api/stream/sse';
     var sseping = 'http://127.0.0.1:9000/api/stream/ping';
+    
     var socket;
     if(window.MozWebSocket) {
         window.WebSocket=window.MozWebSocket;
     }
-    // if(false) {
-        if(!window.WebSocket) {
-            //alert('Votre navigateur ne supporte pas les webSocket!');
-            return false;
-        } else {
-            socket = new WebSocket(wshost);
-            socket.onopen = function() { 
-              console.log('socket ouverte'); 
-              var json = { 
-                "channels": [
-                { "service": "twitter.wall" }, 
-                { "service": "twitter.hashtag", "args": { "hashtag": "skimbo" } },
-                { "service": "twitter.user", "args": {"username": "studiodev"} }
-                ]
-            }
-            json = {"cmd":"allColumns"}
-            json = {
-                "cmd":"addColumn", 
-                "body":{
-                  "title":"title1", 
-                  "unifiedRequests":[
-                    {"service":"twitter.wall","args":{}},
-                    {"service":"twitter.user", "args":{"username":"RmManeschi"}},
-                    {"service":"twitter.hashtag", "args":{"hashtag":"skimbo"}}
-                     // {"service":"facebook.wall","args":{}}
-                  ]
-               }
-           }
-
-           // json = {
-           //      "cmd":"modColumn", 
-           //      "body":{
-           //        "title":"title1", 
-           //        "column":{
-           //          "title":"title2",
-           //          "unifiedRequests":[
-           //            {"service":"twitter.wall","args":{}}
-           //            //,
-           //            //{"service":"twitter.user", "args":{"username":"RmManeschi"}},
-           //            //{"service":"twitter.hashtag", "args":{"hashtag":"skimbo"}}
-           //            // {"service":"facebook.wall","args":{}}
-           //          ]
-           //        }
-           //     }
-           // }
-            //json = {"cmd":"delColumn", "body":{"title": "title1"}}
-       //   json = {"cmd":"allProviders"}
-           json = {"cmd":"allColumns"};
-           //socket.send(JSON.stringify(json));
-       }
-       socket.onclose = function() { console.log('socket fermée'); }
-       socket.onerror = function() { console.log('Une erreur est survenue'); }
-       socket.onmessage = function(msg){
-          var data;
-              try { //tente de parser data
+    if(!window.WebSocket) {
+        alert('Votre navigateur ne supporte pas les webSocket !');
+        return false;
+    } else {
+        socket = new WebSocket(wshost);
+        socket.onopen = function() { console.log('socket ouverte'); }
+        socket.onclose = function() { console.log('socket fermée'); }
+        socket.onerror = function() { console.log('Une erreur est survenue'); }
+        socket.onmessage = function(msg){
+            var data;
+            try { //tente de parser data
                 data = JSON.parse(msg.data);
             } catch(exception) {
                 data = msg.data
             }      
-              //ici on poura effectuer tout ce que l'on veux sur notre objet data
-              executeCommand(socket, data);
-          }
-      } 
+            //ici on poura effectuer tout ce que l'on veux sur notre objet data
+            executeCommand(socket, data);
+        }
+    } 
 
     if (!window.WebSocket && !!window.EventSource) {
         var source = new EventSource(ssehost);
-        source.addEventListener('message', function(e) {
-           $scope.$apply(function() {
-              if($scope.data == undefined) {
-                  $scope.data = [];
-              }
-              $scope.data.unshift(JSON.parse(e.data));
-          });
-           console.log("ping");
-           $http.get(sseping);
-       }, false);
-
-        source.addEventListener('open', function(e) {
-              // Connection was opened.
-          }, false);
-
-        source.addEventListener('error', function(e) {
-          if (e.readyState == EventSource.CLOSED) {
-                // Connection was closed.
-            }
+        source.addEventListener('message', function(msg) {
+            var data;
+            try { //tente de parser data
+                data = JSON.parse(msg.data);
+            } catch(exception) {
+                data = msg.data
+            }      
+            //ici on poura effectuer tout ce que l'on veux sur notre objet data
+            executeCommand(socket, data);
+            console.log("ping");
+            $http.get(sseping);
         }, false);
-    // }
-    // else {
-        
-    // }
+
+        source.addEventListener('open', function(e) {console.log('socket ouverte');}, false);
+        source.addEventListener('error', function(e) {console.log('Une erreur est survenue');}, false);
     }
 
     $scope.addColumn = function() {
