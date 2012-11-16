@@ -226,7 +226,7 @@ function executeCommand(socket, data) {
     }
     if(data.cmd == "delColumn" && data.body == "Ok") {
       $scope.$apply(function() {
-        var title = $scope.lastColumnDeleted.title;
+        var title = $scope.lastColumnDeleted.body.title;
         var columnIndice = 0;
         var columnFind = false;
         for (var i = 0; i < $scope.columns.length; i++) {
@@ -236,16 +236,11 @@ function executeCommand(socket, data) {
             break;
           }
         }
-        if(columnFind == true) {
+        if(columnFind) {
           $scope.columns.splice(columnIndice,1);
         }
+        $scope.lastColumnDeleted = undefined;
       });
-      var json = {"cmd":"allColumns"};
-      socket.send(JSON.stringify(json));
-    }
-    if(data.cmd == "modColumn" && data.body == "Ok") {
-      var json = {"cmd":"allColumns"};
-      socket.send(JSON.stringify(json));
     }
 }
 });
