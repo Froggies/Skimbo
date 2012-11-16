@@ -12,8 +12,6 @@ import play.api.Logger
 import controllers.UserDao
 import models.User
 import play.api.libs.iteratee.Iteratee
-import reactivemongo.bson.handlers.DefaultBSONHandlers._
-import reactivemongo.bson._
 import scala.collection.mutable.ListBuffer
 import models.user.ProviderUser
 import scala.concurrent._
@@ -44,6 +42,7 @@ object UserInfosActor {
     system.eventStream.subscribe(actor, classOf[Send])
     system.eventStream.subscribe(actor, classOf[StartProvider])
     system.eventStream.subscribe(actor, classOf[KillProvider])
+    system.eventStream.subscribe(actor, classOf[Dead])
     actor ! Retreive
     actor
   }
