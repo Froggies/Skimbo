@@ -139,15 +139,12 @@ function executeCommand(socket, data) {
     if(data.cmd == "msg") {
         var columnTitle = data.body.column;
         var column = getColumnByName(columnTitle);
+        console.log(data.body.column);
         $scope.$apply(function() {
             if(column.messages == undefined) {
                 column.messages = [];
             }
-            var msgs = data.body.msg;
-            for (var i = 0; i < msgs.length; i++) {
-                var element = msgs[i];
-                column.messages.push(element);
-            }
+            column.messages.push(data.body.msg);
         });
     }
     if(data.cmd == "addColumn" && data.body == "Ok") {

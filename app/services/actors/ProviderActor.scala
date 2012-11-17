@@ -93,7 +93,7 @@ class ProviderActor(channel: Concurrent.Channel[JsValue],
           val ite = Iteratee.foreach { jsonMsg:JsValue =>
             val msg = Json.obj(
               "column" -> column.title,
-              "msg" -> JsArray(Seq(parser.get.transform(jsonMsg))))
+              "msg" -> parser.get.transform(jsonMsg))
             //log.info("Messages : "+msg)
             channel.push(Json.toJson(Command("msg", Some(msg))))
           }
