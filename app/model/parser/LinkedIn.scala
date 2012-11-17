@@ -24,19 +24,22 @@ case class PersonLinkedIn(
   lastName: String,
   pictureUrl: Option[String],
   directLink: Option[String])
-  
+
 case class CompanyPersonLinkedIn(
   code: String,
-  person: PersonLinkedIn
-)
+  person: PersonLinkedIn)
 
 object LinkedInWallParser extends GenericParser[LinkedInWallMessage] {
 
   override def from(json: JsValue)(implicit fjs: Reads[LinkedInWallMessage]): List[LinkedInWallMessage] =
     (json \ "values").as[List[LinkedInWallMessage]]
-  
+
   override def asSkimbos(elements: List[LinkedInWallMessage]): List[Skimbo] = {
-    for (e <- elements) yield Skimbo(
+    for (e <- elements) yield asSkimbo(e).get
+  }
+
+  override def asSkimbo(e: LinkedInWallMessage): Option[Skimbo] = {
+    Some(Skimbo(
       e.person.getOrElse(e.companyPerson.get.person).firstName,
       e.person.getOrElse(e.companyPerson.get.person).lastName,
       generateText(e.updateType, e),
@@ -45,10 +48,10 @@ object LinkedInWallParser extends GenericParser[LinkedInWallMessage] {
       e.numLikes.getOrElse(-1),
       e.person.getOrElse(e.companyPerson.get.person).directLink,
       e.timestamp.toString(),
-      LinkedIn)
+      LinkedIn))
   }
-  
-  def generateText(typeLinkedIn:String, e:LinkedInWallMessage) = {
+
+  def generateText(typeLinkedIn: String, e: LinkedInWallMessage) = {
     typeLinkedIn match {
       case "STAT" => {
         val p = e.person.get
@@ -63,7 +66,7 @@ object LinkedInWallParser extends GenericParser[LinkedInWallMessage] {
         "New connexion : " + p.firstName + " " + p.lastName
       }
       case "MSFC" => {
-        val p= e.companyPerson.get.person
+        val p = e.companyPerson.get.person
         p.firstName + " " + p.lastName + " follow " + e.companyName.get
       }
       case "JGRP" => {
@@ -82,9 +85,13 @@ object LinkedInWallParser extends GenericParser[LinkedInWallMessage] {
     }
   }
 
+  override def cut(json: JsValue): List[JsValue] = {
+    (json \ "values").as[List[JsValue]]
+  }
+
   //FIXME : found better if you can !!!!!!!
-  def transform(json: JsValue): JsValue = {
-    JsArray(asSkimbos(from(json)).map(Json.toJson(_)))
+  override def transform(json: JsValue): JsValue = {
+    Json.toJson(asSkimbo(Json.fromJson[LinkedInWallMessage](json).get))
   }
 
 }
@@ -102,7 +109,7 @@ object PersonLinkedIn {
 
 object CompanyPersonLinkedIn {
   implicit val linkedInReader: Reads[CompanyPersonLinkedIn] = (
-    (__ \ "action" \ "code").read[String] and  
+    (__ \ "action" \ "code").read[String] and
     (__ \ "person").read[PersonLinkedIn])(CompanyPersonLinkedIn.apply _)
 }
 
@@ -114,6 +121,5 @@ object LinkedInWallMessage {
     (__ \ "updateKey").read[String] and
     (__ \ "updateContent" \ "person").readOpt[PersonLinkedIn] and
     (__ \ "updateContent" \ "company" \ "name").readOpt[String] and
-    (__ \ "updateContent" \ "companyPersonUpdate").readOpt[CompanyPersonLinkedIn]
-    )(LinkedInWallMessage.apply _)
+    (__ \ "updateContent" \ "companyPersonUpdate").readOpt[CompanyPersonLinkedIn])(LinkedInWallMessage.apply _)
 }

@@ -40,7 +40,11 @@ case class MemberCreatorTrello(
 object TrelloWallParser extends GenericParser[TrelloWallMessage] {
 
   override def asSkimbos(elements: List[TrelloWallMessage]): List[Skimbo] = {
-    for (e <- elements) yield Skimbo(
+    for (e <- elements) yield asSkimbo(e).get
+  }
+
+  override def asSkimbo(e: TrelloWallMessage): Option[Skimbo] = {
+    Some(Skimbo(
       e.memberCreator.fullName,
       e.memberCreator.username,
       generateText(e.trelloType, e.data.text),
@@ -49,20 +53,24 @@ object TrelloWallParser extends GenericParser[TrelloWallMessage] {
       0,
       generateLink(e.id),
       e.date.toString(),
-      Trello)
+      Trello))
   }
-  
-  def generateText(trelloType:String, text:Option[String]) = {
+
+  def generateText(trelloType: String, text: Option[String]) = {
     text.getOrElse(trelloType)
   }
-  
-  def generateLink(id:String) = {
+
+  def generateLink(id: String) = {
     Some(id)
+  }
+
+  override def cut(json: JsValue): List[JsValue] = {
+    json.as[List[JsValue]]
   }
 
   //FIXME : found better if you can !!!!!!!
   def transform(json: JsValue): JsValue = {
-    JsArray(asSkimbos(from(json)).map(Json.toJson(_)))
+    Json.toJson(asSkimbo(Json.fromJson[TrelloWallMessage](json).get))
   }
 
 }

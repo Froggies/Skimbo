@@ -7,20 +7,18 @@ import play.api.libs.json.Reads._
 import model.Skimbo
 import services.auth.providers.Facebook
 
-
 case class FacebookWallMessage(
-    id: String,
-    fromName: String,
-    fromId: Long,
-    msgType : String,
-    statusType : Option[String],
-    nbLikes: Int,
-    nbComments: Int,
-    createdAt: DateTime,
-    link: Option[String],
-    message: Option[String],
-    story: Option[String]
-)
+  id: String,
+  fromName: String,
+  fromId: Long,
+  msgType: String,
+  statusType: Option[String],
+  nbLikes: Int,
+  nbComments: Int,
+  createdAt: DateTime,
+  link: Option[String],
+  message: Option[String],
+  story: Option[String])
 
 object FacebookWallParser extends GenericParser[FacebookWallMessage] {
 
@@ -30,22 +28,33 @@ object FacebookWallParser extends GenericParser[FacebookWallMessage] {
   override def from(json: String)(implicit fjs: Reads[FacebookWallMessage]) = from(Json.parse(json))
 
   override def asSkimbos(elements: List[FacebookWallMessage]): List[Skimbo] = {
-    for (e <- elements if (e.message.isDefined || e.story.isDefined)) yield Skimbo(
-      e.fromName,
-      e.fromName,
-      generateMessage(e).get,
-      e.createdAt,
-      Nil,
-      e.nbLikes,
-      e.link,
-      (e.createdAt.getMillis()/1000).toInt.toString,
-      Facebook
-    )
+    for (e <- elements if (e.message.isDefined || e.story.isDefined)) yield asSkimbo(e).get
   }
-  
+
+  override def asSkimbo(e: FacebookWallMessage): Option[Skimbo] = {
+    if (e.message.isDefined || e.story.isDefined) {
+      Some(Skimbo(
+        e.fromName,
+        e.fromName,
+        generateMessage(e).get,
+        e.createdAt,
+        Nil,
+        e.nbLikes,
+        e.link,
+        (e.createdAt.getMillis() / 1000).toInt.toString,
+        Facebook))
+    } else {
+      None
+    }
+  }
+
+  override def cut(json: JsValue): List[JsValue] = {
+    (json \ "data").as[List[JsValue]]
+  }
+
   //FIXME : found better if you can !!!!!!!
-  def transform(json:JsValue):JsValue = {
-    JsArray(asSkimbos(from(json)).map(Json.toJson(_)))
+  override def transform(json: JsValue): JsValue = {
+    Json.toJson(asSkimbo(Json.fromJson[FacebookWallMessage](json).get))
   }
 
   def generateMessage(e: FacebookWallMessage) = {
@@ -65,7 +74,7 @@ object FacebookWallMessage {
     (__ \ "likes" \ "count").readOpt[Int].map(e => e.getOrElse(0)) and
     (__ \ "comments" \ "count").readOpt[Int].map(e => e.getOrElse(0)) and
     (__ \ "created_time").read[DateTime](Reads.jodaDateReads("yyyy-MM-dd'T'HH:mm:ssZZ")) and
-    ((__ \"actions")(0) \\"link").readOpt[String] and
+    ((__ \ "actions")(0) \\ "link").readOpt[String] and
     (__ \ "message").readOpt[String] and
     (__ \ "story").readOpt[String])(FacebookWallMessage.apply _)
 }

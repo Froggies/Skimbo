@@ -21,6 +21,8 @@ import model.command.TokenInvalid
 import model.command.Command
 import play.api.libs.json.JsString
 import models.user.Column
+import play.api.libs.iteratee.Iteratee
+import play.api.libs.json.JsArray
 
 sealed case class Ping(idUser: String)
 sealed case class Dead(idUser: String)
@@ -84,23 +86,28 @@ class ProviderActor(channel: Concurrent.Channel[JsValue],
       if (longPolling) {
         scheduler.cancel() //need ping to call provider
       }
-      if (provider.hasToken(request)) {
+      if (provider.hasToken(request) && parser.isDefined) {
         log.info("Fetch provider " + provider.name)
         provider.fetch(url).get.map(response => {
-          if (parser.isDefined) {
+          val messages = Enumerator.enumerate(parser.get.cut(response.json))
+          val ite = Iteratee.foreach { jsonMsg:JsValue =>
             val msg = Json.obj(
               "column" -> column.title,
-              "msg" -> parser.get.transform(response.json))
+              "msg" -> JsArray(Seq(parser.get.transform(jsonMsg))))
             //log.info("Messages : "+msg)
             channel.push(Json.toJson(Command("msg", Some(msg))))
-          } else {
-            log.error("Provider " + provider.name + " havn't parser for " + url)
-            channel.push(Json.toJson(Command("error", Some(JsString("provider havn't parser")))))
-            self ! Dead(idUser)
+          }
+          messages(ite).onComplete { e =>
+            log.info("ite finish")
+            e 
           }
         })
-      } else {
+      } else if(!provider.hasToken(request)) {
         channel.push(Json.toJson(TokenInvalid(provider.name)))
+        self ! Dead(idUser)
+      } else {
+        log.error("Provider " + provider.name + " havn't parser for " + url)
+        channel.push(Json.toJson(Command("error", Some(JsString("provider havn't parser")))))
         self ! Dead(idUser)
       }
     }

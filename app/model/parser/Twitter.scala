@@ -35,7 +35,11 @@ object TwitterTimelineParser extends GenericParser[Tweet] {
   val tweetDetailUrl = "http://twitter.com/%s/status/%s";
 
   def asSkimbos(tweets: List[Tweet]): List[Skimbo] = {
-    for (tweet <- tweets) yield Skimbo(
+    for (tweet <- tweets) yield asSkimbo(tweet).get
+  }
+
+  override def asSkimbo(tweet: Tweet): Option[Skimbo] = {
+    Some(Skimbo(
       tweet.authorName,
       tweet.screenName,
       tweet.text,
@@ -44,13 +48,16 @@ object TwitterTimelineParser extends GenericParser[Tweet] {
       tweet.retweets,
       Some(tweetDetailUrl.format(tweet.screenName, tweet.id)),
       tweet.id.toString,
-      Twitter
-    )
+      Twitter))
   }
-  
+
+  override def cut(json: JsValue): List[JsValue] = {
+    json.as[List[JsValue]]
+  }
+
   //FIXME : found better if you can !!!!!!!
-  def transform(json:JsValue):JsValue = {
-    JsArray(asSkimbos(from(json)).map(Json.toJson(_)))
+  override def transform(json: JsValue): JsValue = {
+    Json.toJson(asSkimbo(Json.fromJson[Tweet](json).get))
   }
 }
 
@@ -78,17 +85,17 @@ object Tweet {
   val twitterDatePattern = "EEE MMM dd HH:mm:ss Z yyyy";
 
   val twitterDateReader = new Reads[org.joda.time.DateTime] {
-	  def reads(json: JsValue): JsResult[DateTime] = {
-	    json match {
-		    case JsNumber(d) => JsSuccess(new DateTime(d.toLong))
-		    case JsString(s) => {		
-			    val sf = new SimpleDateFormat(twitterDatePattern, Locale.ENGLISH)
-			    sf.setLenient(true)
-			    JsSuccess(new DateTime(sf.parse(s)))
-		    }
-	        case _ => JsError("Error while parsing date")
-	    }
-	  }
+    def reads(json: JsValue): JsResult[DateTime] = {
+      json match {
+        case JsNumber(d) => JsSuccess(new DateTime(d.toLong))
+        case JsString(s) => {
+          val sf = new SimpleDateFormat(twitterDatePattern, Locale.ENGLISH)
+          sf.setLenient(true)
+          JsSuccess(new DateTime(sf.parse(s)))
+        }
+        case _ => JsError("Error while parsing date")
+      }
+    }
   }
 
   implicit val tweetReader: Reads[Tweet] = (
@@ -102,6 +109,5 @@ object Tweet {
     (__ \ "retweet_count").read[Int] and
     (__ \ "user" \ "name").read[String] and
     (__ \ "user" \ "screen_name").read[String] and
-    (__ \ "created_at").read[DateTime](twitterDateReader)
-  )(Tweet.apply _)
+    (__ \ "created_at").read[DateTime](twitterDateReader))(Tweet.apply _)
 }
