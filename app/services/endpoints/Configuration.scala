@@ -57,9 +57,11 @@ object Configuration {
 
   object Viadeo {
     object wall extends EndpointConfig {
+      override val limit = 30
       override val url = withLimit("https://api.viadeo.com/me/smart_news.json?limit=:limit")
       override val since = "&since=:since"
       override val provider = providers.Viadeo
+      override val parser = Some(ViadeoWallParser)
     }
   }
 

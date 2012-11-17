@@ -12,6 +12,8 @@ import scala.concurrent.util.duration._
 import services.security.AuthenticatedAction._
 import play.api.Logger
 import services.actors.UserInfosActor
+import org.codehaus.jackson.map.ObjectMapper
+import org.codehaus.jackson.PrettyPrinter
 
 object Application extends Controller {
 
@@ -25,14 +27,16 @@ object Application extends Controller {
     ProviderDispatcher(providerName).map(provider =>
       provider.auth(routes.Application.index)).getOrElse(BadRequest)
   }
-  
+
   def testRes(providerName: String) = Action { implicit request =>
     import scala.concurrent.ExecutionContext.Implicits.global
     ProviderDispatcher(providerName).map(provider =>
       Async {
-      provider.fetch("http://api.linkedin.com/v1/people/~/network/updates?count=50").get.map(r => Ok(r.json))
-      }
-    ).getOrElse(BadRequest)
+        provider.fetch("https://api.viadeo.com/me/smart_news.json?limit=50").get.map { r =>
+          val mapper = new ObjectMapper();
+          Ok(r.json)
+        }
+      }).getOrElse(BadRequest)
   }
 
   def logout() = Authenticated { action =>

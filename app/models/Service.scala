@@ -31,7 +31,7 @@ object Service {
         "services" -> JsArray(
           endpoint.services.map { service =>
             Json.obj(
-              "name" -> service.service,
+              "service" -> service.service,
               "args" -> service.configuration.requiredParams
             )
           }
