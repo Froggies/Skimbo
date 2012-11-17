@@ -117,6 +117,14 @@ publicApp.controller('ColumnsCtrl', function($scope, $http) {
       return false;
     }
 
+    $scope.activeService = function(columnName, socialNetworkService) {
+      var column = getColumnByName(columnName);
+      console.log("column",column);
+      var service = {"service":socialNetworkService,"args":{}};
+      column.unifiedRequests.push(socialNetworkService);
+      console.log("column after",column);
+    }
+
 function getColumnByName(name) {
     for (var i = 0; i < $scope.columns.length; i++) {
         if ($scope.columns[i].title == name) {
@@ -139,7 +147,6 @@ function executeCommand(socket, data) {
     if(data.cmd == "msg") {
         var columnTitle = data.body.column;
         var column = getColumnByName(columnTitle);
-        console.log(data.body.column);
         $scope.$apply(function() {
             if(column.messages == undefined) {
                 column.messages = [];
