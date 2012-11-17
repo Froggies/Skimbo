@@ -39,10 +39,6 @@ case class MemberCreatorTrello(
 
 object TrelloWallParser extends GenericParser[TrelloWallMessage] {
 
-  override def asSkimbos(elements: List[TrelloWallMessage]): List[Skimbo] = {
-    for (e <- elements) yield asSkimbo(e).get
-  }
-
   override def asSkimbo(e: TrelloWallMessage): Option[Skimbo] = {
     Some(Skimbo(
       e.memberCreator.fullName,

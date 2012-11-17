@@ -22,15 +22,6 @@ case class FacebookWallMessage(
 
 object FacebookWallParser extends GenericParser[FacebookWallMessage] {
 
-  override def from(json: JsValue)(implicit fjs: Reads[FacebookWallMessage]): List[FacebookWallMessage] =
-    (json \ "data").as[List[FacebookWallMessage]]
-
-  override def from(json: String)(implicit fjs: Reads[FacebookWallMessage]) = from(Json.parse(json))
-
-  override def asSkimbos(elements: List[FacebookWallMessage]): List[Skimbo] = {
-    for (e <- elements if (e.message.isDefined || e.story.isDefined)) yield asSkimbo(e).get
-  }
-
   override def asSkimbo(e: FacebookWallMessage): Option[Skimbo] = {
     if (e.message.isDefined || e.story.isDefined) {
       Some(Skimbo(

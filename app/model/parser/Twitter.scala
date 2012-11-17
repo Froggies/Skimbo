@@ -34,10 +34,6 @@ object TwitterTimelineParser extends GenericParser[Tweet] {
 
   val tweetDetailUrl = "http://twitter.com/%s/status/%s";
 
-  def asSkimbos(tweets: List[Tweet]): List[Skimbo] = {
-    for (tweet <- tweets) yield asSkimbo(tweet).get
-  }
-
   override def asSkimbo(tweet: Tweet): Option[Skimbo] = {
     Some(Skimbo(
       tweet.authorName,

@@ -31,13 +31,6 @@ case class CompanyPersonLinkedIn(
 
 object LinkedInWallParser extends GenericParser[LinkedInWallMessage] {
 
-  override def from(json: JsValue)(implicit fjs: Reads[LinkedInWallMessage]): List[LinkedInWallMessage] =
-    (json \ "values").as[List[LinkedInWallMessage]]
-
-  override def asSkimbos(elements: List[LinkedInWallMessage]): List[Skimbo] = {
-    for (e <- elements) yield asSkimbo(e).get
-  }
-
   override def asSkimbo(e: LinkedInWallMessage): Option[Skimbo] = {
     Some(Skimbo(
       e.person.getOrElse(e.companyPerson.get.person).firstName,
