@@ -28,6 +28,11 @@
 					<ul>
 						<li ng-repeat="socialNetworkService in socialNetwork.services">
 							<a href="#" class="service-active {{isServiceActiveForColumn(c,socialNetworkService.service)}}" ng-click="activeService(c.title,socialNetworkService)">{{socialNetworkService.service}}</a>
+							<ul ng-show="isServiceActiveForColumn(c,socialNetworkService.service)">
+								<li ng-repeat="(key, value) in socialNetworkService.args">
+									{{key}} = <input type="text" ng-model="socialNetworkService.args[key]" value="{{socialNetworkService.args[key]}}"/>
+								</li>
+							</ul>
 						</li>
 					</ul>
 				</li>

@@ -18,6 +18,7 @@ import services.endpoints.JsonRequest._
 
 object UserDao {
 
+  val log = Logger(UserDao.getClass())
   val db = ReactiveMongoPlugin.db
   val collection = db("users")
 

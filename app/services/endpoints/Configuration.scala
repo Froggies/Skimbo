@@ -88,6 +88,7 @@ object Configuration {
       override val manualNextResults = true // Fuck too (http://developer.github.com/v3/#conditional-requests)
       override val provider = providers.GitHub
       override val requiredParams = List("username")
+      override val parser = Some(GithubWallParser)
     }
   }
 

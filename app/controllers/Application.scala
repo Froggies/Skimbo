@@ -32,7 +32,7 @@ object Application extends Controller {
     import scala.concurrent.ExecutionContext.Implicits.global
     ProviderDispatcher(providerName).map(provider =>
       Async {
-        provider.fetch("https://api.viadeo.com/me").get.map { r =>
+        provider.fetch("https://api.github.com/users/manland/received_events").get.map { r =>
           val mapper = new ObjectMapper();
           Ok(r.json)
         }

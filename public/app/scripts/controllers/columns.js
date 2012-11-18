@@ -130,7 +130,12 @@ publicApp.controller('ColumnsCtrl', function($scope, $http) {
         console.log("Pas connecté");
         openPopup(socialNetworkName);
       }
-      socialNetworkService.args = {};
+      var args = {};
+      for (var h = 0; h < socialNetworkService.args.length; h++) {
+        var key = socialNetworkService.args[h];
+        args[key] = "";
+      }
+      socialNetworkService.args = args;
       column.unifiedRequests.push(socialNetworkService);
     }
 
