@@ -83,11 +83,7 @@ publicApp.controller('ColumnsCtrl', function($scope, $http) {
                      "title": column.oldTitle, 
                      "column":{
                        "title":column.title,
-                       "unifiedRequests":[
-                         {"service":"twitter.wall","args":{}},
-                          {"service":"twitter.user", "args":{"username":"RmManeschi"}},
-                          {"service":"twitter.hashtag", "args":{"hashtag":"skimbo"}}
-                       ]
+                       "unifiedRequests": column.unifiedRequests
                      }
                    }
                   };
@@ -118,6 +114,26 @@ publicApp.controller('ColumnsCtrl', function($scope, $http) {
       return false;
     }
 
+    $scope.activeService = function(columnName, socialNetworkService) {
+      var column = getColumnByName(columnName);
+      var socialNetworkName = socialNetworkService.service.split(".")[0];
+      var isConnected = false;
+      for (var i = 0; i < $scope.socialNetworks.length; i++) {
+        if($scope.socialNetworks[i].endpoint == socialNetworkName) {
+          if($scope.socialNetworks[i].hasToken) {
+            isConnected = true;
+            break;
+          }
+        }
+      }
+      if(!isConnected) {
+        console.log("Pas connecté");
+        openPopup(socialNetworkName);
+      }
+      socialNetworkService.args = {};
+      column.unifiedRequests.push(socialNetworkService);
+    }
+
 function getColumnByName(name) {
     for (var i = 0; i < $scope.columns.length; i++) {
         if ($scope.columns[i].title == name) {
@@ -140,12 +156,27 @@ function executeCommand(socket, data) {
     if(data.cmd == "msg") {
         var columnTitle = data.body.column;
         var column = getColumnByName(columnTitle);
-        console.log(data.body.column);
         $scope.$apply(function() {
             if(column.messages == undefined) {
                 column.messages = [];
             }
             column.messages.push(data.body.msg);
+
+            var insertSort = function(sortMe) {
+              for(var i=0, j, tmp; i<sortMe.length; ++i ) {
+                tmp = sortMe[i];
+                for(j=i-1; j>=0 && sortMe[j].createdAt > tmp.createdAt; --j) {
+                  sortMe[j+1] = sortMe[j];
+                }
+                sortMe[j+1] = tmp;
+              }
+            }
+
+            // column.messages = column.messages.sort(function(a,b) {
+            //   return a.createdAt - b.createdAt;
+            // });
+            insertSort(column.messages);
+            console.log(data.body.msg.from,data.body.msg.createdAt);
         });
     }
     if(data.cmd == "addColumn" && data.body == "Ok") {
@@ -188,6 +219,12 @@ function executeCommand(socket, data) {
         $scope.lastColumnDeleted = undefined;
       });
     }
+}
+
+function openPopup(socialNetworkName) {
+  newwindow=window.open("/auth/"+socialNetworkName,'name','max-height=600,max-width=600');
+  if (window.focus) {newwindow.focus()}
+  return false;
 }
 });
 
