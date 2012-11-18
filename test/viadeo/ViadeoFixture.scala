@@ -63,7 +63,14 @@ object ViadeoFixture {
     """
     
   def timeline = """
-    {"id":"","type":"USER SMARTNEWS","name":"Romain Maneschi","link":"","count":60,"paging":{"previous":"","next":"https://api.viadeo.com/abioDpIEgadzlhjurdlaDIEyjk/smart_news.json?limit=50&page=2&access_token=b937103201c9c92df44b07a60fb9cb8e"},"updated_time":"2012-11-17T15:56:17+0100","count_string":"60","data":[
+    {"id":"",
+    "type":"USER SMARTNEWS",
+    "name":"Romain Maneschi",
+    "link":"",
+    "count":60,
+    "paging":{"previous":"","next":"https://api.viadeo.com/abioDpIEgadzlhjurdlaDIEyjk/smart_news.json?limit=50&page=2&access_token=b937103201c9c92df44b07a60fb9cb8e"},
+    "updated_time":"2012-11-17T15:56:17+0100",
+    "count_string":"60","data":[
     {"id":"VruohkDlennxkrmfjnDyEhmilk",
     "type":"NEWS ITEM",
     "name":"",

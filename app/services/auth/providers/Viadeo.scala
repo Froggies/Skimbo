@@ -3,6 +3,7 @@ package services.auth.providers
 import play.api._
 import play.api.mvc._
 import services.auth._
+import models.user.ProviderUser
 
 object Viadeo extends OAuth2Provider {
 
@@ -10,7 +11,24 @@ object Viadeo extends OAuth2Provider {
   override val namespace = "vi"
   override val method = Post
 
-  override def processToken(response: play.api.libs.ws.Response) =
+  override def processToken(response: play.api.libs.ws.Response) = 
     Token((response.json \ "access_token").asOpt[String], None)
+    
+  override def distantUserToSkimboUser(ident: String, response: play.api.libs.ws.Response): Option[ProviderUser] = {
+    try {
+      val me = response.json
+      val id = (me \ "id").as[String]
+      val username = (me \ "nickname").asOpt[String]
+      val name = (me \ "name").asOpt[String]
+      val description = (me \ "interests").asOpt[String]
+      val profileImage = (me \ "picture_medium").asOpt[String]
+      Some(ProviderUser(id, this.name, username, name, description, profileImage))
+    } catch {
+      case _ => {
+        Logger.error("Error during fetching user details")
+        None
+      }
+    }
+  }
 
 }
