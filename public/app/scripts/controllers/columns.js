@@ -157,8 +157,7 @@ function executeCommand(socket, data) {
             }
             $scope.socialNetworks = socialNetworks;
         });
-    }
-    if(data.cmd == "msg") {
+    } else if(data.cmd == "msg") {
         var columnTitle = data.body.column;
         var column = getColumnByName(columnTitle);
         $scope.$apply(function() {
@@ -183,8 +182,7 @@ function executeCommand(socket, data) {
             insertSort(column.messages);
             console.log(data.body.msg.from,data.body.msg.createdAt);
         });
-    }
-    if(data.cmd == "addColumn" && data.body == "Ok") {
+    } else if(data.cmd == "addColumn" && data.body == "Ok") {
         $scope.$apply(function() {
             if($scope.columns == undefined) {
                 $scope.columns = [];
@@ -192,8 +190,7 @@ function executeCommand(socket, data) {
             $scope.columns.push($scope.lastColumnAdded.body);
             $scope.lastColumnAdded = undefined;
         });
-    }
-    if(data.cmd == "allColumns") {
+    } else if(data.cmd == "allColumns") {
         $scope.$apply(function() {
             // if($scope.columns == undefined) {
                 $scope.columns = [];
@@ -205,8 +202,7 @@ function executeCommand(socket, data) {
                 $scope.columns.push(element);
             }
         });
-    }
-    if(data.cmd == "delColumn" && data.body == "Ok") {
+    } else if(data.cmd == "delColumn" && data.body == "Ok") {
       $scope.$apply(function() {
         var title = $scope.lastColumnDeleted.body.title;
         var columnIndice = 0;
@@ -223,6 +219,8 @@ function executeCommand(socket, data) {
         }
         $scope.lastColumnDeleted = undefined;
       });
+    } else {
+      console.error("cmd not found : ", data);
     }
 }
 

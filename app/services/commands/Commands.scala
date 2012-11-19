@@ -18,10 +18,6 @@ object Commands {
 
   val log = Logger(Commands.getClass())
   
-  def buildResponse(cmd: String, jsonRes: JsValue): JsValue = {
-    JsObject(Seq("cmd" -> JsString(cmd), "res" -> jsonRes))
-  }
-
   def interpret(idUser: String, json: JsValue)(implicit context: scala.concurrent.ExecutionContext, req: RequestHeader):Any = {
     val cmd = Json.fromJson[Command](json).getOrElse(Command("_"))
     interpretCmd(idUser, cmd)

@@ -79,7 +79,6 @@ class UserInfosActor(idUser: String, channelOut: Concurrent.Channel[JsValue])(im
         if (optionUser.isDefined) {
           log.info("User has id in DB")
           start(optionUser.get)
-          self ! CheckAccounts(optionUser.get)
         } else {
           ProviderDispatcher.listAll.map { provider =>
             if (provider.hasToken(request)) {
@@ -106,7 +105,7 @@ class UserInfosActor(idUser: String, channelOut: Concurrent.Channel[JsValue])(im
                     }
                   }
                 } else {
-                  log.info("User hasn't id in " + provider.name + " ! WTF ?")
+                  log.error("User hasn't id in " + provider.name + " ! WTF ?")
                 }
               }
             } else {
@@ -140,11 +139,12 @@ class UserInfosActor(idUser: String, channelOut: Concurrent.Channel[JsValue])(im
     case CheckAccounts(user: User) => {
       ProviderDispatcher.listAll.map { provider =>
         if (provider.hasToken(request)) {
-          if (!user.distants.exists { _.exists(_.socialType == provider.name) }) {
-            provider.getUser.map { providerUser =>
-              if (providerUser.isDefined) {
-                self ! AddInfosUser(user, ProviderUser(providerUser.get.id, provider.name))
-              }
+          provider.getUser.map { providerUser =>
+            if (providerUser.isDefined && !user.distants.exists { _.exists(_.socialType == provider.name) }) {
+              self ! AddInfosUser(user, ProviderUser(providerUser.get.id, provider.name))
+            }
+            if (providerUser.isDefined) {
+              self ! Send(idUser, Json.toJson(Command("userInfos", Some(Json.toJson(providerUser.get)))))
             }
           }
         }
@@ -164,6 +164,7 @@ class UserInfosActor(idUser: String, channelOut: Concurrent.Channel[JsValue])(im
       self ! StartProvider(idUser, column)
     }
     Commands.interpretCmd(idUser, Command("allColumns"))
+    self ! CheckAccounts(user)
   }
 
 }
