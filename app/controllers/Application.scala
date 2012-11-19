@@ -14,6 +14,11 @@ import play.api.Logger
 import services.actors.UserInfosActor
 import org.codehaus.jackson.map.ObjectMapper
 import org.codehaus.jackson.PrettyPrinter
+import play.api.libs.json.JsValue
+import java.io.BufferedReader
+import java.io.InputStreamReader
+import java.util.zip.GZIPInputStream
+import play.api.libs.json.Json
 
 object Application extends Controller {
 
@@ -32,13 +37,13 @@ object Application extends Controller {
     import scala.concurrent.ExecutionContext.Implicits.global
     ProviderDispatcher(providerName).map(provider =>
       Async {
-        provider.fetch("https://api.github.com/user").get.map { r =>
+        provider.fetch("https://api.stackexchange.com/2.1/me?order=desc&sort=reputation&site=stackoverflow").get.map { r =>
           val mapper = new ObjectMapper();
           Ok(r.json)
         }
       }).getOrElse(BadRequest)
   }
-
+  
   def logout() = Authenticated { action =>
     Logger.info("Aplication.scala :: KillMyActors :: " + action.user.accounts.last.id)
     UserInfosActor.killActorsForUser(action.user.accounts.last.id)

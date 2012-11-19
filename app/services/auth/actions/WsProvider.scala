@@ -2,6 +2,8 @@ package services.auth.actions
 
 import play.api.libs.ws.WS.WSRequestHolder
 import play.api.mvc.RequestHeader
+import play.api.libs.ws.Response
+import play.api.libs.json.JsValue
 
 trait WsProvider {
 
@@ -10,4 +12,6 @@ trait WsProvider {
    */
   def fetch(url: String)(implicit request: RequestHeader): WSRequestHolder
 
+  def resultAsJson(response:Response):JsValue = response.json
+  
 }

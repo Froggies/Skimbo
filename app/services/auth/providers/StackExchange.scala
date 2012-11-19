@@ -3,8 +3,11 @@ package services.auth.providers
 import play.api._
 import play.api.mvc._
 import services.auth._
+import models.user.ProviderUser
+import services.auth.actions.WSGzipJson
+import play.api.libs.json.JsValue
 
-object StackExchange extends OAuth2Provider {
+object StackExchange extends OAuth2Provider with WSGzipJson {
 
   override val name = "stackexchange"
   override val namespace = "se"
@@ -28,6 +31,25 @@ object StackExchange extends OAuth2Provider {
   // Override fetch method : add key to queries
   override def fetch(url: String)(implicit request: RequestHeader) =
     super.fetch(url).withQueryString("key" -> KEY)
-
+    
+  override def resultAsJson(response:play.api.libs.ws.Response):JsValue = parseGzipJson(response)
+    
+  override def distantUserToSkimboUser(ident: String, response: play.api.libs.ws.Response): Option[ProviderUser] = {
+    try {
+      val me = (resultAsJson(response) \ "items")(0)
+      val id = (me \ "user_id").as[Int].toString
+      val username = (me \ "display_name").asOpt[String]
+      val name = (me \ "display_name").asOpt[String]
+      val description = Some("Reputation" + (me \ "reputation").as[Int])
+      val profileImage = (me \ "profile_image").asOpt[String]
+      Some(ProviderUser(id, this.name, username, name, description, profileImage))
+    } catch {
+      case _ => {
+        Logger.error("Error during fetching user details")
+        None
+      }
+    }
+  }
+    
 }
 

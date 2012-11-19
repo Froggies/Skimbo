@@ -89,7 +89,7 @@ class ProviderActor(channel: Concurrent.Channel[JsValue],
       if (provider.hasToken(request) && parser.isDefined) {
         log.info("Fetch provider " + provider.name)
         provider.fetch(url).get.map(response => {
-          val messages = Enumerator.enumerate(parser.get.cut(response.json))
+          val messages = Enumerator.enumerate(parser.get.cut(provider.resultAsJson(response)))
           val ite = Iteratee.foreach { jsonMsg:JsValue =>
             val msg = Json.obj(
               "column" -> column.title,
