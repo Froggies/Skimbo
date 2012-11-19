@@ -116,27 +116,52 @@ publicApp.controller('ColumnsCtrl', function($scope, $http) {
 
     $scope.activeService = function(columnName, socialNetworkService) {
       var column = getColumnByName(columnName);
-      var socialNetworkName = socialNetworkService.service.split(".")[0];
-      var isConnected = false;
-      for (var i = 0; i < $scope.socialNetworks.length; i++) {
-        if($scope.socialNetworks[i].endpoint == socialNetworkName) {
-          if($scope.socialNetworks[i].hasToken) {
-            isConnected = true;
+      console.log(socialNetworkService);
+      var test = false;
+      for (var i = 0; i < column.unifiedRequests.length; i++) {
+        if (column.unifiedRequests[i].service == socialNetworkService.service) {
+          test = true;
+        }
+      }
+      
+      if(!test) {
+        var socialNetworkName = socialNetworkService.service.split(".")[0];
+        var isConnected = false;
+        for (var i = 0; i < $scope.socialNetworks.length; i++) {
+          if($scope.socialNetworks[i].endpoint == socialNetworkName) {
+            if($scope.socialNetworks[i].hasToken) {
+              isConnected = true;
+              break;
+            }
+          }
+        }
+        if(!isConnected) {
+          console.log("Pas connecté");
+          openPopup(socialNetworkName);
+        }
+        var args = {};
+        for (var h = 0; h < socialNetworkService.args.length; h++) {
+          var key = socialNetworkService.args[h];
+          args[key] = "";
+        }
+        socialNetworkService.args = args;
+        column.unifiedRequests.push(socialNetworkService);
+      }
+      else {
+        var isInColumn = false;
+        var index = -1;
+        for (var i = 0; i < column.unifiedRequests.length; i++) {
+          if(column.unifiedRequests[i].service == socialNetworkService.service) {
+            isInColumn = true;
+            index = i;
             break;
           }
         }
+        if(isInColumn && index > 0) {
+          column.unifiedRequests.splice(index, 1);
+        }
       }
-      if(!isConnected) {
-        console.log("Pas connecté");
-        openPopup(socialNetworkName);
-      }
-      var args = {};
-      for (var h = 0; h < socialNetworkService.args.length; h++) {
-        var key = socialNetworkService.args[h];
-        args[key] = "";
-      }
-      socialNetworkService.args = args;
-      column.unifiedRequests.push(socialNetworkService);
+      console.log("column après update",column);
     }
 
 function getColumnByName(name) {
@@ -176,9 +201,6 @@ function executeCommand(socket, data) {
               }
             }
 
-            // column.messages = column.messages.sort(function(a,b) {
-            //   return a.createdAt - b.createdAt;
-            // });
             insertSort(column.messages);
             console.log(data.body.msg.from,data.body.msg.createdAt);
         });
