@@ -16,7 +16,9 @@
 					</div>
 					<div class="message-content">
 						<img src="assets/img/brand/Office-Girl-icon.png" title="{{m.authorScreenName}}" width="32" height="32">
-						<div class="message"> {{m.message}}</div>
+						<a href="{{m.directLink}}" class="author-name">{{m.authorName}}</a>
+						<p class="date-creation">{{m.createdAt | date:'mediumDate'}}</p>
+						<div class="message" title="{{m.message}}"> {{truncateString(m.message)}}</div>
 					</div>
 				</li>
 			</ul>

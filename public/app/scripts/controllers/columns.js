@@ -48,6 +48,15 @@ publicApp.controller('ColumnsCtrl', function($scope, $http) {
         source.addEventListener('error', function(e) {console.log('Une erreur est survenue');}, false);
     }
 
+    $scope.truncateString = function(chaine) {
+      if(chaine.length > 120) { 
+        return String(chaine).substring(0, 120)+"...";
+      }
+      else {
+        return chaine;
+      }
+    }
+
     $scope.addColumn = function() {
         $scope.lastColumnAdded = {
                 "cmd":"addColumn", 
@@ -189,18 +198,18 @@ function executeCommand(socket, data) {
             if(column.messages == undefined) {
                 column.messages = [];
             }
+
             column.messages.push(data.body.msg);
 
             var insertSort = function(sortMe) {
               for(var i=0, j, tmp; i<sortMe.length; ++i ) {
                 tmp = sortMe[i];
-                for(j=i-1; j>=0 && sortMe[j].createdAt > tmp.createdAt; --j) {
+                for(j=i-1; j>=0 && sortMe[j].createdAt < tmp.createdAt; --j) {
                   sortMe[j+1] = sortMe[j];
                 }
                 sortMe[j+1] = tmp;
               }
             }
-
             insertSort(column.messages);
             console.log(data.body.msg.from,data.body.msg.createdAt);
         });
