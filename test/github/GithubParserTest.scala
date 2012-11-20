@@ -32,7 +32,7 @@ class GithubParserTest extends Specification {
         if(msg.asOpt.isDefined) {
           GithubWallParser.asSkimbo(msg.get)
         } else {
-          println("MESSAGE == "+jmsg)
+          println("MESSAGE == "+msg)
         }
       }
     }
