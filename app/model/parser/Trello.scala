@@ -47,7 +47,7 @@ object TrelloWallParser extends GenericParser[TrelloWallMessage] {
     Some(Skimbo(
       e.memberCreator.fullName,
       e.memberCreator.username,
-      generateText(e.trelloType, e.data.text),
+      generateText(e),
       e.date,
       Nil,
       0,
@@ -57,8 +57,20 @@ object TrelloWallParser extends GenericParser[TrelloWallMessage] {
       Trello))
   }
 
-  def generateText(trelloType: String, text: Option[String]) = {
-    text.getOrElse(trelloType)
+  def generateText(e: TrelloWallMessage) = {
+    val sb = new StringBuilder
+    if(e.data.board.isDefined) {
+      sb append "[" append e.data.board.get.name append "] "
+    }
+    if(e.data.card.isDefined) {
+      sb append e.data.card.get.name + " - "
+    }
+    if(e.data.text.isDefined) {
+      sb append e.data.text.get
+    } else {
+      sb append e.trelloType
+    }
+    sb.toString()
   }
 
   def generateLink(e: TrelloWallMessage) = {
