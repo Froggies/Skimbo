@@ -17,7 +17,7 @@ object JsonRequest {
         
   implicit val writes = new Writes[UnifiedRequest] {
     def writes(ur: UnifiedRequest): JsValue = {
-      val args = ur.args.getOrElse(Seq()).map { m =>
+      val args = ur.args.getOrElse(Seq()).map { m => // TODO JLA refactor
         m._1 -> JsString(m._2)
       }
       Json.obj(

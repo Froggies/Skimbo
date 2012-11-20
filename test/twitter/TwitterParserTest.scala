@@ -11,7 +11,7 @@ import model.parser.Tweet
 object TwitterParserTest extends Specification {
 
 	"TwitterParser" should {
-		"Retrieve correct values" in {
+		"parse wall messages" in {
 			val jsonTweet = TwitterTimelineParser.cut(TwitterFixture.fullMessage)
 			val tweet = Json.fromJson[Tweet](jsonTweet.head).get
 			tweet.authorName must equalTo("Yvonnick Esnault")
@@ -24,6 +24,18 @@ object TwitterParserTest extends Specification {
 			
 			skimbo.sinceId must equalTo(expectedId)
 			skimbo.directLink.get must equalTo("http://twitter.com/yesnault/status/261219035964915700")
+		}
+		
+		"parse hashtag messages" in {
+		  // Parse one message
+		  val jsonTweet = TwitterHashtagParser.cut(TwitterHashTagFixture.short)
+		  val tweet = Json.fromJson[Tweet](jsonTweet.head).get
+		  tweet.authorName must equalTo("Nathan Outlaw")
+		  
+		  // Transform all messages
+		  val allTweets = TwitterHashtagParser.cut(TwitterHashTagFixture.full)
+		  val skimbos = allTweets.map(tweet => TwitterHashtagParser.transform(tweet))
+		  skimbos.size must equalTo(7)
 		}
 	}
 	

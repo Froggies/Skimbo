@@ -28,6 +28,7 @@ object Configuration {
       override val delay = 30
       override val provider = providers.Twitter
       override val requiredParams = List("hashtag")
+      override val parser = Some(TwitterHashtagParser)
     }
   }
 

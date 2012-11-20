@@ -49,14 +49,19 @@ object TwitterTimelineParser extends GenericParser[Tweet] {
       Twitter))
   }
 
-  override def cut(json: JsValue): List[JsValue] = {
-    json.as[List[JsValue]]
-  }
+  override def cut(json: JsValue): List[JsValue] = json.as[List[JsValue]]
 
   //FIXME : found better if you can !!!!!!!
-  override def transform(json: JsValue): JsValue = {
-    Json.toJson(asSkimbo(Json.fromJson[Tweet](json).get))
-  }
+  override def transform(json: JsValue): JsValue = Json.toJson(asSkimbo(Json.fromJson[Tweet](json).get))
+}
+
+object TwitterHashtagParser extends GenericParser[Tweet] {
+  
+  val tweetDetailUrl = TwitterTimelineParser.tweetDetailUrl
+  
+  override def asSkimbo(tweet: Tweet): Option[Skimbo] = TwitterTimelineParser.asSkimbo(tweet)
+  override def cut(json: JsValue): List[JsValue] = json.\("statuses").as[List[JsValue]]
+  override def transform(json: JsValue): JsValue = TwitterTimelineParser.transform(json)
 }
 
 object TwitterTag {
