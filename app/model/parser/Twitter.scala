@@ -1,7 +1,6 @@
 package model.parser
 
 import model._
-import SocialNetwork._
 import org.joda.time._
 import play.api.libs.json.util._
 import play.api.libs.json._
@@ -60,7 +59,7 @@ object TwitterHashtagParser extends GenericParser[Tweet] {
   val tweetDetailUrl = TwitterTimelineParser.tweetDetailUrl
   
   override def asSkimbo(tweet: Tweet): Option[Skimbo] = TwitterTimelineParser.asSkimbo(tweet)
-  override def cut(json: JsValue): List[JsValue] = json.\("statuses").as[List[JsValue]]
+  override def cut(json: JsValue): List[JsValue] = (json \ "statuses").as[List[JsValue]]
   override def transform(json: JsValue): JsValue = TwitterTimelineParser.transform(json)
 }
 

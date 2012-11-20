@@ -1,7 +1,6 @@
 package model
 
 import org.joda.time._
-import SocialNetwork._
 import scala.util.parsing.json.JSONObject
 import play.api.libs.json.JsString
 import play.api.libs.json.JsObject

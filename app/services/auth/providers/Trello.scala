@@ -21,7 +21,7 @@ object Trello extends OAuthProvider {
       Some(ProviderUser(id, this.name, username, name, description, profileImage.map(img => "http://www.gravatar.com/avatar/"+img)))
     } catch {
       case _ => {
-        Logger.error("Error during fetching user details")
+        Logger.error("Error during fetching user details TRELLO")
         None
       }
     }

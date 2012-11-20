@@ -22,7 +22,7 @@ object Twitter extends OAuthProvider {
       Some(ProviderUser(id, this.name, username, name, description, profileImage))
     } catch {
       case _ => {
-        Logger.error("Error during fetching user details")
+        Logger.error("Error during fetching user details TWITTER")
         None
       }
     }

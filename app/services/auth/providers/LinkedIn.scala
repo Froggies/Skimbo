@@ -17,10 +17,6 @@ object LinkedIn extends OAuthProvider {
     "rw_nus")         // Get Network activities
   override val permissionsSep = "+"
 
-  def authenticate = Action { implicit request =>
-    auth(controllers.routes.SocialNetworksTest.linkedin)
-  }
-
   // Override fetch method : define json format by default
   override def fetch(url: String)(implicit request: RequestHeader) =
     super.fetch(url).withHeaders("x-li-format" -> "json")
@@ -36,7 +32,7 @@ object LinkedIn extends OAuthProvider {
       Some(ProviderUser(id, this.name, username, name, description, profileImage))
     } catch {
       case _ => {
-        Logger.error("Error during fetching user details")
+        Logger.error("Error during fetching user details LINKEDIN")
         None
       }
     }
