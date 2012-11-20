@@ -31,6 +31,7 @@ object ViadeoWallParser extends GenericParser[ViadeoWallMessage] {
       e.likeCount,
       e.infeedLink,
       e.updatedTime.toString(),
+      e.pictureUrl,
       Viadeo))
   }
   

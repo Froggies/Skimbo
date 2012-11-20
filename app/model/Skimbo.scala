@@ -24,6 +24,7 @@ case class Skimbo(
   shared: Int,
   directLink: Option[String],
   sinceId: String,
+  authorAvatar:Option[String],
   from: GenericProvider
 )
 
@@ -39,6 +40,7 @@ object Skimbo {
         "shared" -> skimbo.shared,
         "directLink" -> skimbo.directLink,
         "sinceId" -> skimbo.sinceId,
+        "authorAvatar" -> skimbo.authorAvatar,
         "from" -> skimbo.from.name
       )
     }

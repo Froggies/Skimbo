@@ -15,6 +15,7 @@ case class GithubWallMessage(
   push: Option[Seq[GithubPushEvent]],
   createdAt: DateTime,
   url: String,
+  avatarUser: Option[String],
   download: Option[GithubDownloadEvent])
 
 case class GithubForkeEvent(
@@ -41,6 +42,7 @@ object GithubWallParser extends GenericParser[GithubWallMessage] {
       -1,
       Some(e.url),
       e.createdAt.toString(),
+      e.avatarUser,
       GitHub))
   }
 
@@ -91,5 +93,6 @@ object GithubWallMessage {
     (__ \ "payload" \ "commits").readOpt[List[GithubPushEvent]] and
     (__ \ "created_at").read[DateTime](Reads.jodaDateReads("yyyy-MM-dd'T'HH:mm:ss'Z'")) and
     (__ \ "actor" \ "url").read[String] and
+    (__ \ "actor" \ "avatar_url").readOpt[String] and
     (__ \ "payload" \ "download").readOpt[GithubDownloadEvent])(GithubWallMessage.apply _)
 }

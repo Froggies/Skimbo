@@ -18,7 +18,8 @@ case class FacebookWallMessage(
   createdAt: DateTime,
   link: Option[String],
   message: Option[String],
-  story: Option[String])
+  story: Option[String],
+  picture: Option[String])
 
 object FacebookWallParser extends GenericParser[FacebookWallMessage] {
 
@@ -33,6 +34,7 @@ object FacebookWallParser extends GenericParser[FacebookWallMessage] {
         e.nbLikes,
         e.link,
         (e.createdAt.getMillis() / 1000).toInt.toString,
+        e.picture,
         Facebook))
     } else {
       None
@@ -67,5 +69,6 @@ object FacebookWallMessage {
     (__ \ "created_time").read[DateTime](Reads.jodaDateReads("yyyy-MM-dd'T'HH:mm:ssZZ")) and
     ((__ \ "actions")(0) \\ "link").readOpt[String] and
     (__ \ "message").readOpt[String] and
-    (__ \ "story").readOpt[String])(FacebookWallMessage.apply _)
+    (__ \ "story").readOpt[String] and
+    (__ \ "picture").readOpt[String])(FacebookWallMessage.apply _)
 }

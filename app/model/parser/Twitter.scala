@@ -24,6 +24,7 @@ case class Tweet(
   retweets: Int,
   authorName: String,
   screenName: String,
+  profileImageUrl : Option[String],
   createdAt: DateTime)
 
 case class TwitterTag(text: String, indices: List[Int])
@@ -44,6 +45,7 @@ object TwitterTimelineParser extends GenericParser[Tweet] {
       tweet.retweets,
       Some(tweetDetailUrl.format(tweet.screenName, tweet.id)),
       tweet.id.toString,
+      tweet.profileImageUrl,
       Twitter))
   }
 
@@ -105,5 +107,6 @@ object Tweet {
     (__ \ "retweet_count").read[Int] and
     (__ \ "user" \ "name").read[String] and
     (__ \ "user" \ "screen_name").read[String] and
+    (__ \ "user" \ "profile_image_url").readOpt[String] and
     (__ \ "created_at").read[DateTime](twitterDateReader))(Tweet.apply _)
 }

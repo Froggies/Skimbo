@@ -41,6 +41,7 @@ object LinkedInWallParser extends GenericParser[LinkedInWallMessage] {
       e.numLikes.getOrElse(-1),
       e.person.getOrElse(e.companyPerson.get.person).directLink,
       e.timestamp.toString(),
+      e.person.getOrElse(e.companyPerson.get.person).pictureUrl,
       LinkedIn))
   }
 

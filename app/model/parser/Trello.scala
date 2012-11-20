@@ -39,6 +39,8 @@ case class MemberCreatorTrello(
 
 object TrelloWallParser extends GenericParser[TrelloWallMessage] {
 
+  val avatarUrl = "https://trello-avatars.s3.amazonaws.com/%s/30.png"
+  
   override def asSkimbo(e: TrelloWallMessage): Option[Skimbo] = {
     Some(Skimbo(
       e.memberCreator.fullName,
@@ -49,6 +51,7 @@ object TrelloWallParser extends GenericParser[TrelloWallMessage] {
       0,
       generateLink(e.id),
       e.date.toString(),
+      generateAvatarUrl(e),
       Trello))
   }
 
@@ -58,6 +61,14 @@ object TrelloWallParser extends GenericParser[TrelloWallMessage] {
 
   def generateLink(id: String) = {
     Some(id)
+  }
+  
+  def generateAvatarUrl(e:TrelloWallMessage) = {
+    if(e.memberCreator.avatarHash.isDefined) {
+      Some(avatarUrl.format(e.memberCreator.avatarHash.get))
+    } else {
+      None
+    }
   }
 
   override def cut(json: JsValue): List[JsValue] = {
