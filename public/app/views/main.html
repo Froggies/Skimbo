@@ -28,7 +28,8 @@
 			<ul class="services-proposes">
 				<li ng-repeat="service in serviceProposes">
 					<div class="social-network-link">
-						<a href="#" ng-click="addService(service, c)"><img class="social-network-active {{service.socialNetworkToken}}" src="assets/img/brand/{{service.socialNetwork}}.png" alt="{{service.socialNetwork}}" width="32" height="32"></a>
+						<a href="#" ng-click="addService(service, c)" title="{{service.typeService}}">
+							<img class="social-network-active {{service.socialNetworkToken}}" src="assets/img/brand/{{service.socialNetwork}}.png" alt="{{service.socialNetwork}}" width="32" height="32"></a>
 						<span class="social-network-char {{service.socialNetwork}} social-network-active {{service.socialNetworkToken}}">{{service.typeServiceChar}}</span>
 					</div>
 				</li>
@@ -48,7 +49,7 @@
 					</div>
 					<div ng-show="!hasArguments(service)">
 						<img src="assets/img/brand/{{socialNetworkByServiceName(service.service)}}.png" alt="{{socialNetworkByServiceName(service.service)}}" width="24" height="24">
-						You are receving TYPE
+						You are receving {{getTypeByService(service.service)}}
 						<a href="#" 
 							class="{{socialNetworkByServiceName(service.service)}}"
 							ng-click="deleteService(service,c)"
@@ -58,11 +59,14 @@
 			</ul>
 
 
-			<div class="controls-modify">
+			<div class="controls-modify"ng-hide="c.newColumn" >
 				<input type="button" ng-click="changeColumn(c); c.showModifyColumn=!c.showModifyColumn; " value="Change"/>
 				<br/>
 				<br/>
 				<a href="#" class="delete-link" ng-click="deleteColumn(c)">Delete</a>
+			</div>
+			<div ng-show="c.newColumn"> 
+				<input type="button" ng-click="changeColumn(c); c.showModifyColumn=!c.showModifyColumn; " value="Create !"/>
 			</div>
 		</div>
 	</section>
