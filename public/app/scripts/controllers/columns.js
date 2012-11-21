@@ -62,14 +62,9 @@ publicApp.controller('ColumnsCtrl', function($scope, $http) {
                 "cmd":"addColumn", 
                 "body":{
                   "title":"title2", 
-                  "unifiedRequests":[
-                     {"service":"twitter.wall","args":{}}
-                    // {"service":"twitter.user", "args":{"username":"RmManeschi"}},
-                    // {"service":"twitter.hashtag", "args":{"hashtag":"skimbo"}}
-                    // {"service":"facebook.wall","args":{}}
-                    //{"service":"trello.notifications","args":{}}
-                    //{"service":"linkedin.wall","args":{}}
-                    //{"service":"viadeo.wall","args":{}}
+                  "showModifyColumn":"true",
+                  "newColumn":"true",
+                  "unifiedRequests":[                    
                   ]
                 }
         };
@@ -156,7 +151,6 @@ publicApp.controller('ColumnsCtrl', function($scope, $http) {
     $scope.typeServiceCharByService = function(service) {
       var socialNetworkName = $scope.socialNetworkByServiceName(service);
       var typeService = service.split(".")[1];
-      
         if(typeService == "group") {
           return "ഹ";
         }
