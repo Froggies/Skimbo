@@ -123,6 +123,38 @@ publicApp.controller('ColumnsCtrl', function($scope, $http) {
       return false;
     }
 
+    $scope.hasArguments = function(service) {
+      if(Object.keys(service.args).length > 0) {
+        return true;
+      }
+      return false;
+    }
+
+    $scope.socialNetworkByServiceName = function(service) {
+      return service.split(".")[0];
+    }
+
+    $scope.typeServiceCharByService = function(service) {
+      var socialNetworkName = $scope.socialNetworkByServiceName(service);
+      var typeService = service.substring(socialNetworkName.length+1, service.length);
+        if(typeService == "group") {
+          return "ഹ";
+        }
+        else if(typeService == "user") {
+          if(socialNetworkName == "twitter") {
+            return "@";
+          }
+          else {
+            return "😊";
+          }
+        }
+        else if (typeService == "hashtag") {
+          return "#";
+        }
+        return "";
+    }
+
+
     $scope.activeService = function(columnName, socialNetworkService) {
       var column = getColumnByName(columnName);
       console.log(socialNetworkService);
@@ -184,6 +216,22 @@ function getColumnByName(name) {
 function executeCommand(socket, data) {
     if(data.cmd == "allUnifiedRequests") {
         $scope.$apply(function() {
+            var serviceProposes = new Array();
+            for (var i = 0; i < data.body.length; i++) {
+                var elementBodySocialNetwork = data.body[i];
+                var services = elementBodySocialNetwork.services;
+                for (var j = 0; j < services.length; j++) {
+                  var service = {socialNetwork:elementBodySocialNetwork.endpoint,
+                                  socialNetworkToken:elementBodySocialNetwork.hasToken, 
+                                  typeServiceChar:""};
+                  
+                  service.typeServiceChar = $scope.typeServiceCharByService(services[j].service);
+
+                  serviceProposes.push(service);
+                }
+            };
+            $scope.serviceProposes = serviceProposes;
+
             var socialNetworks = new Array();
             for (var i = 0; i < data.body.length; i++) {
                 var elementBody = data.body[i];

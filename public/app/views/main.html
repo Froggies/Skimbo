@@ -39,6 +39,31 @@
 					</ul>
 				</li>
 			</ul>
+
+			<ul class="services-proposes">
+				<li ng-repeat="service in serviceProposes">
+					<div class="social-network-link">
+						<img src="assets/img/brand/{{service.socialNetwork}}.png" alt="{{service.socialNetwork}}" width="	32" height="32">
+						<span class="social-network-char {{service.socialNetwork}}">{{service.typeServiceChar}}</span>
+					</div>
+				</li>
+			</ul>
+			<ul class="services-actives">
+				<li ng-repeat="service in c.unifiedRequests">
+					<div class="input-service" ng-show="hasArguments(service)" ng-repeat="(key, value) in service.args ">
+						<img class="img-service" src="assets/img/brand/{{socialNetworkByServiceName(service.service)}}.png" alt="{{socialNetworkByServiceName(service.service)}}" width="32" height="32">
+						<span class="type-service {{socialNetworkByServiceName(service.service)}}">{{typeServiceCharByService(service.service)}}</span>
+						<input class="arg-service" type="text" value="{{service.args[key]}}"/>
+					</div>
+					<div ng-show="!hasArguments(service)">
+						<img src="assets/img/brand/{{socialNetworkByServiceName(service.service)}}.png" alt="{{socialNetworkByServiceName(service.service)}}" width="24" height="24">
+						You are receving TYPE
+					</div>
+				</li>
+			</ul>
+
+
+
 			<a href="#" ng-click="changeColumn(c); c.showModifyColumn=!c.showModifyColumn; " >Change</a>
 			<a href="#" ng-click="deleteColumn(c)">Delete</a>
 		</div>
