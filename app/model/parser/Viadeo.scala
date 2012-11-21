@@ -5,6 +5,8 @@ import play.api.libs.json._
 import play.api.libs.functional.syntax._
 import model.Skimbo
 import services.auth.providers.Viadeo
+import org.joda.time.format.DateTimeParser
+import org.joda.time.format.DateTimeFormat
 
 case class ViadeoWallMessage(
   id:String,
@@ -30,7 +32,7 @@ object ViadeoWallParser extends GenericParser {
       Nil,
       e.likeCount,
       e.infeedLink,
-      e.updatedTime.toString(),
+      e.updatedTime.toString(ViadeoWallMessage.datePattern),
       e.pictureUrl,
       Viadeo))
   }
@@ -38,10 +40,28 @@ object ViadeoWallParser extends GenericParser {
   override def cut(json: JsValue): List[JsValue] = {
     (json \ "data").as[List[JsValue]]
   }
+  
+  override def nextSinceId(sinceId:String, sinceId2:String): String = {
+    val date = DateTime.parse(sinceId, DateTimeFormat.forPattern(ViadeoWallMessage.datePattern))
+    if(sinceId2.isEmpty()) {
+      date.plusSeconds(1).toString(ViadeoWallMessage.datePattern)
+    } else {
+      val date1 = DateTime.parse(sinceId2, DateTimeFormat.forPattern(ViadeoWallMessage.datePattern))
+      println("!! parse date ok")
+      if(date.isAfter(date1)) {
+        date.plusSeconds(1).toString(ViadeoWallMessage.datePattern)
+      } else {
+        date1.plusSeconds(1).toString(ViadeoWallMessage.datePattern)
+      }
+    }
+  }
 
 }
 
 object ViadeoWallMessage {
+  
+  val datePattern = "yyyy-MM-dd'T'HH:mm:ssZZ"
+  
   implicit val viadeoReader: Reads[ViadeoWallMessage] = (
     (__ \ "id").read[String] and
     (__ \ "type").read[String] and
@@ -50,6 +70,6 @@ object ViadeoWallMessage {
     (__ \ "like_count").read[Int] and
     (__ \ "message").readOpt[String] and
     (__ \ "picture").readOpt[String] and
-    (__ \ "updated_time").read[DateTime](Reads.jodaDateReads("yyyy-MM-dd'T'HH:mm:ssZZ")) and
+    (__ \ "updated_time").read[DateTime](Reads.jodaDateReads(datePattern)) and
     (__ \ "infeed_link").readOpt[String])(ViadeoWallMessage.apply _)
 }

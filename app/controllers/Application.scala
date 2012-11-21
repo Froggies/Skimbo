@@ -20,6 +20,16 @@ object Application extends Controller {
     ProviderDispatcher(providerName).map(provider =>
       provider.auth(routes.Application.index)).getOrElse(BadRequest)
   }
+  
+  def testRes(since:String) = Action { implicit request =>
+    import scala.concurrent.ExecutionContext.Implicits.global
+      Async {
+        Trello.fetch("https://api.trello.com/1/members/me/notifications?since="+since).get.map { r =>
+          val mapper = new ObjectMapper();
+          Ok(r.json)
+        }
+      }
+  }
 
   def logout() = Authenticated { action =>
     Logger.info("Aplication.scala :: KillMyActors :: " + action.user.accounts.last.id)

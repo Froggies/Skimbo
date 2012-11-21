@@ -3,6 +3,7 @@ package services.endpoints
 import services.auth.GenericProvider
 import services.auth.providers
 import model.parser._
+import org.joda.time.format.DateTimeFormat
 
 object Configuration {
 
@@ -61,7 +62,7 @@ object Configuration {
     object wall extends EndpointConfig {
       override val limit = 30
       override val url = withLimit("https://api.viadeo.com/me/smart_news.json?limit=:limit")
-      override val since = "&since=:since"
+      override val since = "&since=:since"//date = ISO-8601 [YYYY-MM-DD'T'HH:MM:SSZZ]
       override val provider = providers.Viadeo
       override val parser = Some(ViadeoWallParser)
     }
@@ -70,7 +71,7 @@ object Configuration {
   object Linkedin {
     object wall extends EndpointConfig {
       override val url = withLimit("http://api.linkedin.com/v1/people/~/network/updates?count=:limit")
-      override val since = "&after=:since"
+      override val since = "&after=:since"//timestamp = milliseconds since the epoch
       override val provider = providers.LinkedIn
       override val parser = Some(LinkedInWallParser)
     }
@@ -127,5 +128,5 @@ trait EndpointConfig {
   val manualNextResults = false
   val parser: Option[GenericParser] = None//TODO remove Some(that) or not...
 
-  def withLimit(url: String) = url.replace(":limit", limit.toString);
+  def withLimit(url: String) = url.replace(":limit", limit.toString)
 }
