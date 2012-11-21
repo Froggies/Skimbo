@@ -61,11 +61,11 @@ publicApp.controller('ColumnsCtrl', function($scope, $http) {
         $scope.lastColumnAdded = {
                 "cmd":"addColumn", 
                 "body":{
-                  "title":"title", 
+                  "title":"title",
+                  "oldTitle":"title",
                   "showModifyColumn":"true",
                   "newColumn":"true",
-                  "unifiedRequests":[                    
-                  ]
+                  "unifiedRequests":[]
                 }
         };
         socket.send(JSON.stringify($scope.lastColumnAdded));
