@@ -16,31 +16,54 @@
 					</div>
 					<div class="message-content">
 						<img src="{{m.authorAvatar}}" title="{{m.authorScreenName}}" width="32" height="32">
-						<a href="{{m.directLink}}" class="author-name" target="_blank">{{m.authorName}}</a>
+						<a href="{{m.directLink}}" class="author-name {{m.from}}" target="_blank">{{m.authorName}}</a>
 						<p class="date-creation">{{m.createdAt | date:'mediumDate'}}</p>
 						<div class="message" title="{{m.message}}"> {{truncateString(m.message)}}</div>
 					</div>
 				</li>
 			</ul>
 		</div>
-		<div ng-show="c.showModifyColumn">
-			<ul>
-				<li ng-repeat="socialNetwork in socialNetworks">
-					<a href="#" class="social-network-active {{isSocialNetworkActiveForColumn(c,socialNetwork.endpoint)}}">{{socialNetwork.endpoint}}</a>
-					<ul>
-						<li ng-repeat="socialNetworkService in socialNetwork.services">
-							<a href="#" class="service-active {{isServiceActiveForColumn(c,socialNetworkService.service)}}" ng-click="activeService(c.title,socialNetworkService)">{{socialNetworkService.service}}</a>
-							<ul ng-show="isServiceActiveForColumn(c,socialNetworkService.service)">
-								<li ng-repeat="(key, value) in socialNetworkService.args">
-									{{key}} = <input type="text" ng-model="socialNetworkService.args[key]" value="{{socialNetworkService.args[key]}}"/>
-								</li>
-							</ul>
-						</li>
-					</ul>
+		<div class="modify-column" ng-show="c.showModifyColumn">
+			<span class="add-service">Add...</span>
+			<ul class="services-proposes">
+				<li ng-repeat="service in serviceProposes">
+					<div class="social-network-link">
+						<a href="#" ng-click="addService(service, c)"><img class="social-network-active {{service.socialNetworkToken}}" src="assets/img/brand/{{service.socialNetwork}}.png" alt="{{service.socialNetwork}}" width="32" height="32"></a>
+						<span class="social-network-char {{service.socialNetwork}} social-network-active {{service.socialNetworkToken}}">{{service.typeServiceChar}}</span>
+					</div>
 				</li>
 			</ul>
-			<a href="#" ng-click="changeColumn(c); c.showModifyColumn=!c.showModifyColumn; " >Change</a>
-			<a href="#" ng-click="deleteColumn(c)">Delete</a>
+			<ul class="services-actives">
+				<li ng-repeat="service in c.unifiedRequests">
+					<div class="input-service" ng-show="hasArguments(service)" ng-repeat="(key, value) in service.args ">
+						<img class="img-service" src="assets/img/brand/{{socialNetworkByServiceName(service.service)}}.png" alt="{{socialNetworkByServiceName(service.service)}}" width="32" height="32">
+						<span class="type-service {{socialNetworkByServiceName(service.service)}}">
+							{{typeServiceCharByService(service.service)}}
+						</span>
+						<input class="arg-service" type="text" ng-model="service.args[key]" value="{{service.args[key]}}"/>
+						<a href="#" 
+							class="delete-service {{socialNetworkByServiceName(service.service)}}"
+							ng-click="deleteService(service,c)"
+						>✘</a>
+					</div>
+					<div ng-show="!hasArguments(service)">
+						<img src="assets/img/brand/{{socialNetworkByServiceName(service.service)}}.png" alt="{{socialNetworkByServiceName(service.service)}}" width="24" height="24">
+						You are receving TYPE
+						<a href="#" 
+							class="{{socialNetworkByServiceName(service.service)}}"
+							ng-click="deleteService(service,c)"
+						>✘</a>
+					</div>
+				</li>
+			</ul>
+
+
+			<div class="controls-modify">
+				<input type="button" ng-click="changeColumn(c); c.showModifyColumn=!c.showModifyColumn; " value="Change"/>
+				<br/>
+				<br/>
+				<a href="#" class="delete-link" ng-click="deleteColumn(c)">Delete</a>
+			</div>
 		</div>
 	</section>
 	<section class="column-new">
