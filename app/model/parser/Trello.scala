@@ -53,7 +53,7 @@ object TrelloWallParser extends GenericParser {
       Nil,
       0,
       generateLink(e),
-      e.date.toString(),
+      e.id,
       generateAvatarUrl(e),
       Trello))
   }

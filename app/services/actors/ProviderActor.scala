@@ -93,24 +93,25 @@ class ProviderActor(channel: Concurrent.Channel[JsValue],
         }
         val url = Endpoints.genererUrl(unifiedRequest.service, unifiedRequest.args.getOrElse(Map.empty), optSinceId);
         if (url.isDefined) {
-          log.info("Fetch provider " + provider.name + " url="+url)
+          log.info("Fetch provider " + provider.name + " url=" + url)
           provider.fetch(url.get).get.map(response => {
             val messages = Enumerator.enumerate(parser.get.cut(provider.resultAsJson(response)))
             val ite = Iteratee.foreach { jsonMsg: JsValue =>
-              val skimboMsg = parser.get.asSkimbo(jsonMsg).get
-              val msg = Json.obj(
-                "column" -> column.title,
-                "msg" -> Json.toJson(skimboMsg))
-              //log.info("Messages : "+msg)
-              log.info(unifiedRequest.service + " local sinceId " + sinceId.toString())
-              log.info(unifiedRequest.service + " distant sinceId " + skimboMsg.sinceId)
-              log.info(unifiedRequest.service + (skimboMsg.sinceId.compareTo(sinceId.toString()) > 1))
-              if (skimboMsg.sinceId.compareTo(sinceId.toString()) > 1) {
+              val skimboMsg = parser.get.asSkimbo(jsonMsg)
+              if(skimboMsg.isDefined) {
+                val msg = Json.obj(
+                  "column" -> column.title,
+                  "msg" -> Json.toJson(skimboMsg.get))
+                //log.info("Messages : "+msg)
+                val config = Endpoints.getConfig(unifiedRequest.service).get
+                val temp = sinceId.toString()
                 sinceId.clear();
-                sinceId append skimboMsg.sinceId
+                sinceId append parser.get.nextSinceId(skimboMsg.get.sinceId, temp)
                 log.info("sinceId for " + unifiedRequest.service + " is " + sinceId.toString())
+                channel.push(Json.toJson(Command("msg", Some(msg))))
+              } else {
+                log.error("Msg unsuported ! Service="+provider.name+" msg="+skimboMsg)
               }
-              channel.push(Json.toJson(Command("msg", Some(msg))))
             }
             messages(ite).onComplete { e =>
               log.info("ite finish for " + unifiedRequest.service + " with " + parser.get.cut(provider.resultAsJson(response)).size + " messages")
