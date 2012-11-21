@@ -138,6 +138,10 @@ publicApp.controller('ColumnsCtrl', function($scope, $http) {
       return false;
     }
 
+    $scope.getTypeByService = function(service) {
+      return service.split(".")[1];
+    }
+
     $scope.serviceHasTypeChar = function(service) {
       if(service.typeServiceChar != "") {
         return true;
@@ -151,7 +155,8 @@ publicApp.controller('ColumnsCtrl', function($scope, $http) {
 
     $scope.typeServiceCharByService = function(service) {
       var socialNetworkName = $scope.socialNetworkByServiceName(service);
-      var typeService = service.substring(socialNetworkName.length+1, service.length);
+      var typeService = service.split(".")[1];
+      
         if(typeService == "group") {
           return "ഹ";
         }
