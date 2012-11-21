@@ -10,7 +10,7 @@ object Configuration {
 
     object wall extends EndpointConfig {
       override val url = withLimit("https://api.twitter.com/1.1/statuses/home_timeline.json?count=:limit")
-      override val since = "&since_id=:since"
+      override val since = "&since_id=:since"//ID
       override val delay = 60
       override val provider = providers.Twitter
       override val parser = Some(TwitterTimelineParser)
