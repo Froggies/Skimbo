@@ -61,11 +61,11 @@ publicApp.controller('ColumnsCtrl', function($scope, $http) {
         $scope.lastColumnAdded = {
                 "cmd":"addColumn", 
                 "body":{
-                  "title":"title2", 
+                  "title":"title",
+                  "oldTitle":"title",
                   "showModifyColumn":"true",
                   "newColumn":"true",
-                  "unifiedRequests":[                    
-                  ]
+                  "unifiedRequests":[]
                 }
         };
         socket.send(JSON.stringify($scope.lastColumnAdded));
@@ -118,6 +118,7 @@ publicApp.controller('ColumnsCtrl', function($scope, $http) {
                      }
                    }
                   };
+      console.log(json);
       socket.send(JSON.stringify(json));
     }
 
@@ -230,6 +231,10 @@ function executeCommand(socket, data) {
         });
     } else if(data.cmd == "addColumn" && data.body == "Ok") {
         $scope.$apply(function() {
+            if($scope.serviceProposes == undefined) {
+              var json = {"cmd":"allUnifiedRequests"};
+              socket.send(JSON.stringify(json));
+            }
             if($scope.columns == undefined) {
                 $scope.columns = [];
             }
