@@ -93,7 +93,7 @@ class ProviderActor(channel: Concurrent.Channel[JsValue],
         }
         val url = Endpoints.genererUrl(unifiedRequest.service, unifiedRequest.args.getOrElse(Map.empty), optSinceId);
         if (url.isDefined) {
-          log.info("Fetch provider " + provider.name)
+          log.info("Fetch provider " + provider.name + " url="+url)
           provider.fetch(url.get).get.map(response => {
             val messages = Enumerator.enumerate(parser.get.cut(provider.resultAsJson(response)))
             val ite = Iteratee.foreach { jsonMsg: JsValue =>
@@ -104,8 +104,8 @@ class ProviderActor(channel: Concurrent.Channel[JsValue],
               //log.info("Messages : "+msg)
               log.info(unifiedRequest.service + " local sinceId " + sinceId.toString())
               log.info(unifiedRequest.service + " distant sinceId " + skimboMsg.sinceId)
-              log.info(unifiedRequest.service + (skimboMsg.sinceId > sinceId.toString()))
-              if (skimboMsg.sinceId > sinceId.toString()) {
+              log.info(unifiedRequest.service + (skimboMsg.sinceId.compareTo(sinceId.toString()) > 1))
+              if (skimboMsg.sinceId.compareTo(sinceId.toString()) > 1) {
                 sinceId.clear();
                 sinceId append skimboMsg.sinceId
                 log.info("sinceId for " + unifiedRequest.service + " is " + sinceId.toString())
