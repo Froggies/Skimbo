@@ -59,11 +59,14 @@
 			</ul>
 
 
-			<div class="controls-modify">
+			<div class="controls-modify"ng-hide="c.newColumn" >
 				<input type="button" ng-click="changeColumn(c); c.showModifyColumn=!c.showModifyColumn; " value="Change"/>
 				<br/>
 				<br/>
 				<a href="#" class="delete-link" ng-click="deleteColumn(c)">Delete</a>
+			</div>
+			<div ng-show="c.newColumn"> 
+				<input type="button" ng-click="changeColumn(c); c.showModifyColumn=!c.showModifyColumn; " value="Create !"/>
 			</div>
 		</div>
 	</section>

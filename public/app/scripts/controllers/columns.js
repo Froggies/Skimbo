@@ -70,6 +70,9 @@ publicApp.controller('ColumnsCtrl', function($scope, $http) {
                     //{"service":"trello.notifications","args":{}}
                     //{"service":"linkedin.wall","args":{}}
                     {"service":"viadeo.wall","args":{}}
+                  ],
+                  "showModifyColumn":"true",
+                  "newColumn":"true"
                   ]
                 }
         };
@@ -156,7 +159,6 @@ publicApp.controller('ColumnsCtrl', function($scope, $http) {
     $scope.typeServiceCharByService = function(service) {
       var socialNetworkName = $scope.socialNetworkByServiceName(service);
       var typeService = service.split(".")[1];
-      
         if(typeService == "group") {
           return "ഹ";
         }
