@@ -33,17 +33,6 @@ object Application extends Controller {
       provider.auth(routes.Application.index)).getOrElse(BadRequest)
   }
 
-  def testRes(providerName: String) = Action { implicit request =>
-    import scala.concurrent.ExecutionContext.Implicits.global
-    ProviderDispatcher(providerName).map(provider =>
-      Async {
-        provider.fetch("https://api.stackexchange.com/2.1/me?order=desc&sort=reputation&site=stackoverflow").get.map { r =>
-          val mapper = new ObjectMapper();
-          Ok(r.json)
-        }
-      }).getOrElse(BadRequest)
-  }
-  
   def logout() = Authenticated { action =>
     Logger.info("Aplication.scala :: KillMyActors :: " + action.user.accounts.last.id)
     UserInfosActor.killActorsForUser(action.user.accounts.last.id)

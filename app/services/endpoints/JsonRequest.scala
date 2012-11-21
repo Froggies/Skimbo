@@ -16,13 +16,11 @@ object JsonRequest {
         (__ \ "args").readOpt[Map[String, String]])(UnifiedRequest.apply _)
         
   implicit val writes = new Writes[UnifiedRequest] {
-    def writes(ur: UnifiedRequest): JsValue = {
-      val args = ur.args.getOrElse(Seq()).map { m => // TODO JLA refactor
-        m._1 -> JsString(m._2)
-      }
+    def writes(unifiedRequest: UnifiedRequest): JsValue = {
+      val args = unifiedRequest.args.map(_.mapValues(JsString(_)).toSeq)
       Json.obj(
-        "service" -> ur.service,
-        "args" -> JsObject(args.toList)
+        "service" -> unifiedRequest.service,
+        "args" -> JsObject(args.getOrElse(Seq.empty))
       )
     }
   }

@@ -21,9 +21,10 @@ case class FacebookWallMessage(
   story: Option[String],
   picture: Option[String])
 
-object FacebookWallParser extends GenericParser[FacebookWallMessage] {
+object FacebookWallParser extends GenericParser {
 
-  override def asSkimbo(e: FacebookWallMessage): Option[Skimbo] = {
+  override def asSkimbo(json:JsValue): Option[Skimbo] = {
+    val e = Json.fromJson[FacebookWallMessage](json).get
     if (e.message.isDefined || e.story.isDefined) {
       Some(Skimbo(
         e.fromName,
@@ -43,11 +44,6 @@ object FacebookWallParser extends GenericParser[FacebookWallMessage] {
 
   override def cut(json: JsValue): List[JsValue] = {
     (json \ "data").as[List[JsValue]]
-  }
-
-  //FIXME : found better if you can !!!!!!!
-  override def transform(json: JsValue): JsValue = {
-    Json.toJson(asSkimbo(Json.fromJson[FacebookWallMessage](json).get))
   }
 
   def generateMessage(e: FacebookWallMessage) = {

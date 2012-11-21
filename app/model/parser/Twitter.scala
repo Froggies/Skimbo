@@ -1,7 +1,6 @@
 package model.parser
 
 import model._
-import SocialNetwork._
 import org.joda.time._
 import play.api.libs.json.util._
 import play.api.libs.json._
@@ -24,7 +23,7 @@ case class Tweet(
   retweets: Int,
   authorName: String,
   screenName: String,
-  profileImageUrl : Option[String],
+  profileImageUrl: Option[String],
   createdAt: DateTime)
 
 case class TwitterTag(text: String, indices: List[Int])
@@ -53,9 +52,7 @@ object TwitterTimelineParser extends GenericParser {
 }
 
 object TwitterHashtagParser extends GenericParser {
-  
   val tweetDetailUrl = TwitterTimelineParser.tweetDetailUrl
-  
   override def asSkimbo(json: JsValue): Option[Skimbo] = TwitterTimelineParser.asSkimbo(json)
   override def cut(json: JsValue): List[JsValue] = json.\("statuses").as[List[JsValue]]
 }

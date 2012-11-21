@@ -4,11 +4,9 @@
 
 # Home page
 GET     /                           controllers.Application.index
-GET		/testRes/:provider			controllers.Application.testRes(provider: String)
 
 # Providers available
 GET     /api/providers/list         controllers.api.Providers.listAll
-POST    /api/unified                controllers.api.Unified.stream
 
 # Streams
 GET     /api/logout           		controllers.Application.logout
@@ -20,17 +18,6 @@ GET     /api/stream/ping       		controllers.stream.Sse.ping
        
 # Authentificate to providers
 GET     /auth/:provider             controllers.Application.authenticate(provider: String)
-
-# Exemples
-GET     /ex/twitter                 controllers.SocialNetworksTest.twitter
-GET     /ex/facebook                controllers.SocialNetworksTest.facebook
-GET     /ex/googleplus              controllers.SocialNetworksTest.googleplus
-GET     /ex/viadeo                  controllers.SocialNetworksTest.viadeo
-GET     /ex/linkedin                controllers.SocialNetworksTest.linkedin
-GET     /ex/github                  controllers.SocialNetworksTest.github
-GET     /ex/stackexchange           controllers.SocialNetworksTest.stackexchange
-GET     /ex/trello                  controllers.SocialNetworksTest.trello
-GET     /ex/scoopit                 controllers.SocialNetworksTest.scoopit
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)

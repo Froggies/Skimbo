@@ -37,13 +37,14 @@ case class MemberCreatorTrello(
   initials: String,
   username: String)
 
-object TrelloWallParser extends GenericParser[TrelloWallMessage] {
+object TrelloWallParser extends GenericParser {
 
   val avatarUrl = "https://trello-avatars.s3.amazonaws.com/%s/30.png"
     val urlBoard = "https://trello.com/board/%s"
     val urlCard = "https://trello.com/card/%s/%s"
   
-  override def asSkimbo(e: TrelloWallMessage): Option[Skimbo] = {
+  override def asSkimbo(json: JsValue): Option[Skimbo] = {
+    val e = Json.fromJson[TrelloWallMessage](json).get
     Some(Skimbo(
       e.memberCreator.fullName,
       e.memberCreator.username,
@@ -87,15 +88,6 @@ object TrelloWallParser extends GenericParser[TrelloWallMessage] {
     } else {
       None
     }
-  }
-
-  override def cut(json: JsValue): List[JsValue] = {
-    json.as[List[JsValue]]
-  }
-
-  //FIXME : found better if you can !!!!!!!
-  def transform(json: JsValue): JsValue = {
-    Json.toJson(asSkimbo(Json.fromJson[TrelloWallMessage](json).get))
   }
 
 }

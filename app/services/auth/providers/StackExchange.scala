@@ -45,7 +45,7 @@ object StackExchange extends OAuth2Provider with WSGzipJson {
       Some(ProviderUser(id, this.name, username, name, description, profileImage))
     } catch {
       case _ => {
-        Logger.error("Error during fetching user details")
+        Logger.error("Error during fetching user details STACKEXCHANGE")
         None
       }
     }

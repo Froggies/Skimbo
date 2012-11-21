@@ -33,9 +33,10 @@ case class GithubDownloadEvent(
   description: String,
   url: String)
 
-object GithubWallParser extends GenericParser[GithubWallMessage] {
+object GithubWallParser extends GenericParser {
 
-  override def asSkimbo(e: GithubWallMessage): Option[Skimbo] = {
+  override def asSkimbo(json: JsValue): Option[Skimbo] = {
+    val e = Json.fromJson[GithubWallMessage](json).get
     Some(Skimbo(
       e.actorLogin,
       e.actorLogin,
@@ -79,15 +80,6 @@ object GithubWallParser extends GenericParser[GithubWallMessage] {
       case "DownloadEvent" => Some(e.download.get.url)
       case _ => None
     }
-  }
-
-  override def cut(json: JsValue): List[JsValue] = {
-    json.as[List[JsValue]]
-  }
-
-  //FIXME : found better if you can !!!!!!!
-  def transform(json: JsValue): JsValue = {
-    Json.toJson(asSkimbo(Json.fromJson[GithubWallMessage](json).get))
   }
 
 }

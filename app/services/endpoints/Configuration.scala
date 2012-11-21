@@ -21,6 +21,7 @@ object Configuration {
       override val delay = 30
       override val provider = providers.Twitter
       override val requiredParams = List("username")
+      override val parser = Some(TwitterTimelineParser)
     }
     object hashtag extends EndpointConfig {
       override val url = withLimit("https://api.twitter.com/1.1/search/tweets.json?count=:limit&result_type=mixed&q=%23:hashtag")
@@ -124,7 +125,7 @@ trait EndpointConfig {
   val requiredParams : List[String] = List.empty
   val limit = 50
   val manualNextResults = false
-  val parser: Option[GenericParser[_]] = None//TODO remove Some(that) or not...
+  val parser: Option[GenericParser] = None//TODO remove Some(that) or not...
 
   def withLimit(url: String) = url.replace(":limit", limit.toString);
 }

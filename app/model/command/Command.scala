@@ -19,14 +19,10 @@ object Command {
 
   implicit val commandWrites = new Writes[Command] {
     def writes(c: Command): JsValue = {
-      if (c.body.isDefined) {
-        Json.obj(
-          "cmd" -> c.name,
-          "body" -> c.body.get)
-      } else {
-        Json.obj(
-          "cmd" -> c.name)
-      }
+      c.body.map(_ => 
+        Json.obj("cmd" -> c.name, "body" -> c.body.get))
+      .getOrElse(
+        Json.obj("cmd" -> c.name))
     }
   }
 }

@@ -29,9 +29,10 @@ case class CompanyPersonLinkedIn(
   code: String,
   person: PersonLinkedIn)
 
-object LinkedInWallParser extends GenericParser[LinkedInWallMessage] {
+object LinkedInWallParser extends GenericParser {
 
-  override def asSkimbo(e: LinkedInWallMessage): Option[Skimbo] = {
+  override def asSkimbo(json: JsValue): Option[Skimbo] = {
+    val e = Json.fromJson[LinkedInWallMessage](json).get
     Some(Skimbo(
       e.person.getOrElse(e.companyPerson.get.person).firstName,
       e.person.getOrElse(e.companyPerson.get.person).lastName,
@@ -81,11 +82,6 @@ object LinkedInWallParser extends GenericParser[LinkedInWallMessage] {
 
   override def cut(json: JsValue): List[JsValue] = {
     (json \ "values").as[List[JsValue]]
-  }
-
-  //FIXME : found better if you can !!!!!!!
-  override def transform(json: JsValue): JsValue = {
-    Json.toJson(asSkimbo(Json.fromJson[LinkedInWallMessage](json).get))
   }
 
 }

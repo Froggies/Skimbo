@@ -19,9 +19,10 @@ case class ViadeoWallMessage(
   infeedLink:Option[String]
 )
     
-object ViadeoWallParser extends GenericParser[ViadeoWallMessage] {
+object ViadeoWallParser extends GenericParser {
 
-  override def asSkimbo(e: ViadeoWallMessage): Option[Skimbo] = {
+  override def asSkimbo(json: JsValue): Option[Skimbo] = {
+    val e = Json.fromJson[ViadeoWallMessage](json).get
     Some(Skimbo(
       e.fromName,
       e.fromName,
@@ -37,11 +38,6 @@ object ViadeoWallParser extends GenericParser[ViadeoWallMessage] {
   
   override def cut(json: JsValue): List[JsValue] = {
     (json \ "data").as[List[JsValue]]
-  }
-
-  //FIXME : found better if you can !!!!!!!
-  def transform(json: JsValue): JsValue = {
-    Json.toJson(asSkimbo(Json.fromJson[ViadeoWallMessage](json).get))
   }
 
 }

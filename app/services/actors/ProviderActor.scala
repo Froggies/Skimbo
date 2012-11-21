@@ -72,7 +72,7 @@ object ProviderActor {
 class ProviderActor(channel: Concurrent.Channel[JsValue],
   provider: GenericProvider, unifiedRequest: UnifiedRequest, delay: Int,
   idUser: String, longPolling: Boolean,
-  parser: Option[GenericParser[_]] = None, column: Column)(implicit request: RequestHeader) extends Actor {
+  parser: Option[GenericParser] = None, column: Column)(implicit request: RequestHeader) extends Actor {
 
   val log = Logger(ProviderActor.getClass())
   val sinceId = new StringBuilder();
@@ -97,17 +97,17 @@ class ProviderActor(channel: Concurrent.Channel[JsValue],
           provider.fetch(url.get).get.map(response => {
             val messages = Enumerator.enumerate(parser.get.cut(provider.resultAsJson(response)))
             val ite = Iteratee.foreach { jsonMsg: JsValue =>
-              val skimboJson = parser.get.transform(jsonMsg)
+              val skimboMsg = parser.get.asSkimbo(jsonMsg).get
               val msg = Json.obj(
                 "column" -> column.title,
-                "msg" -> skimboJson)
+                "msg" -> Json.toJson(skimboMsg))
               //log.info("Messages : "+msg)
               log.info(unifiedRequest.service + " local sinceId " + sinceId.toString())
-              log.info(unifiedRequest.service + " distant sinceId " + (skimboJson \ "sinceId").as[String])
-              log.info(unifiedRequest.service + ((skimboJson \ "sinceId").as[String] > sinceId.toString()))
-              if ((skimboJson \ "sinceId").as[String] > sinceId.toString()) {
+              log.info(unifiedRequest.service + " distant sinceId " + skimboMsg.sinceId)
+              log.info(unifiedRequest.service + (skimboMsg.sinceId > sinceId.toString()))
+              if (skimboMsg.sinceId > sinceId.toString()) {
                 sinceId.clear();
-                sinceId append (skimboJson \ "sinceId").as[String]
+                sinceId append skimboMsg.sinceId
                 log.info("sinceId for " + unifiedRequest.service + " is " + sinceId.toString())
               }
               channel.push(Json.toJson(Command("msg", Some(msg))))
