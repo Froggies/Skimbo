@@ -46,6 +46,18 @@ object TwitterTimelineParser extends GenericParser {
       tweet.profileImageUrl,
       Twitter))
   }
+  
+  override def nextSinceId(sinceId:String, sinceId2:String): String = {
+    if(sinceId2.isEmpty()) {
+      sinceId
+    } else {
+      if(sinceId.toLong > sinceId2.toLong) {
+        sinceId
+      } else {
+        sinceId2
+      }
+    }
+  }
 
 }
 

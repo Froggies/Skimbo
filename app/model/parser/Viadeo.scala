@@ -47,7 +47,6 @@ object ViadeoWallParser extends GenericParser {
       date.plusSeconds(1).toString(ViadeoWallMessage.datePattern)
     } else {
       val date1 = DateTime.parse(sinceId2, DateTimeFormat.forPattern(ViadeoWallMessage.datePattern))
-      println("!! parse date ok")
       if(date.isAfter(date1)) {
         date.plusSeconds(1).toString(ViadeoWallMessage.datePattern)
       } else {

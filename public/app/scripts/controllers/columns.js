@@ -63,7 +63,7 @@ publicApp.controller('ColumnsCtrl', function($scope, $http) {
                 "body":{
                   "title":"title2", 
                   "unifiedRequests":[
-                    // {"service":"twitter.wall","args":{}}
+                     {"service":"twitter.wall","args":{}}
                     // {"service":"twitter.user", "args":{"username":"RmManeschi"}},
                     // {"service":"twitter.hashtag", "args":{"hashtag":"skimbo"}}
                     // {"service":"facebook.wall","args":{}}
@@ -73,7 +73,6 @@ publicApp.controller('ColumnsCtrl', function($scope, $http) {
                   ],
                   "showModifyColumn":"true",
                   "newColumn":"true"
-                  ]
                 }
         };
         socket.send(JSON.stringify($scope.lastColumnAdded));

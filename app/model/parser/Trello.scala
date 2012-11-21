@@ -88,6 +88,18 @@ object TrelloWallParser extends GenericParser {
       None
     }
   }
+  
+  override def nextSinceId(sinceId:String, sinceId2:String): String = {
+    if(sinceId2.isEmpty()) {
+      sinceId
+    } else {
+      if((sinceId compareTo sinceId2) > 1) {
+        sinceId
+      } else {
+        sinceId2
+      }
+    }
+  }
 
 }
 
