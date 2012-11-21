@@ -36,16 +36,15 @@ object ProviderActor {
     column.unifiedRequests.foreach { unifiedRequest =>
       val endpoint = for (
         provider <- Endpoints.getProvider(unifiedRequest.service);
-        url <- Endpoints.genererUrl(unifiedRequest.service, unifiedRequest.args.getOrElse(Map.empty), None);
         time <- Endpoints.getConfig(unifiedRequest.service).map(_.delay);
         parser <- Endpoints.getConfig(unifiedRequest.service).map(_.parser)
-      ) yield (provider, url, time, parser)
+      ) yield (provider, time, parser)
 
       endpoint match {
-        case Some((provider, url, time, parser)) => {
+        case Some((provider, time, parser)) => {
           Logger.info("Provider : " + provider.name + " every " + time + " seconds")
           val actor = system.actorOf(Props(
-            new ProviderActor(channel, provider, url, time, userId, false, parser, column)))
+            new ProviderActor(channel, provider, unifiedRequest, time, userId, false, parser, column)))
           system.eventStream.subscribe(actor, classOf[Dead])
           system.eventStream.subscribe(actor, classOf[DeadColumn])
           system.eventStream.subscribe(actor, classOf[Ping])
@@ -71,11 +70,12 @@ object ProviderActor {
 }
 
 class ProviderActor(channel: Concurrent.Channel[JsValue],
-  provider: GenericProvider, url: String, delay: Int,
+  provider: GenericProvider, unifiedRequest: UnifiedRequest, delay: Int,
   idUser: String, longPolling: Boolean,
   parser: Option[GenericParser[_]] = None, column: Column)(implicit request: RequestHeader) extends Actor {
 
   val log = Logger(ProviderActor.getClass())
+  val sinceId = new StringBuilder();
 
   val scheduler = Akka.system.scheduler.schedule(0 second, delay second) {
     self ! ReceiveTimeout
@@ -87,26 +87,42 @@ class ProviderActor(channel: Concurrent.Channel[JsValue],
         scheduler.cancel() //need ping to call provider
       }
       if (provider.hasToken(request) && parser.isDefined) {
-        log.info("Fetch provider " + provider.name)
-        provider.fetch(url).get.map(response => {
-          val messages = Enumerator.enumerate(parser.get.cut(provider.resultAsJson(response)))
-          val ite = Iteratee.foreach { jsonMsg:JsValue =>
-            val msg = Json.obj(
-              "column" -> column.title,
-              "msg" -> parser.get.transform(jsonMsg))
-            //log.info("Messages : "+msg)
-            channel.push(Json.toJson(Command("msg", Some(msg))))
-          }
-          messages(ite).onComplete { e =>
-            log.info("ite finish")
-            e 
-          }
-        })
-      } else if(!provider.hasToken(request)) {
+        val optSinceId = sinceId.isEmpty match {
+          case true => None
+          case false => Some(sinceId.toString())
+        }
+        val url = Endpoints.genererUrl(unifiedRequest.service, unifiedRequest.args.getOrElse(Map.empty), optSinceId);
+        if (url.isDefined) {
+          log.info("Fetch provider " + provider.name)
+          provider.fetch(url.get).get.map(response => {
+            val messages = Enumerator.enumerate(parser.get.cut(provider.resultAsJson(response)))
+            val ite = Iteratee.foreach { jsonMsg: JsValue =>
+              val skimboJson = parser.get.transform(jsonMsg)
+              val msg = Json.obj(
+                "column" -> column.title,
+                "msg" -> skimboJson)
+              //log.info("Messages : "+msg)
+              log.info(unifiedRequest.service + " local sinceId " + sinceId.toString())
+              log.info(unifiedRequest.service + " distant sinceId " + (skimboJson \ "sinceId").as[String])
+              log.info(unifiedRequest.service + ((skimboJson \ "sinceId").as[String] > sinceId.toString()))
+              if ((skimboJson \ "sinceId").as[String] > sinceId.toString()) {
+                sinceId.clear();
+                sinceId append (skimboJson \ "sinceId").as[String]
+                log.info("sinceId for " + unifiedRequest.service + " is " + sinceId.toString())
+              }
+              channel.push(Json.toJson(Command("msg", Some(msg))))
+            }
+            messages(ite).onComplete { e =>
+              log.info("ite finish for " + unifiedRequest.service + " with " + parser.get.cut(provider.resultAsJson(response)).size + " messages")
+              e
+            }
+          })
+        }
+      } else if (!provider.hasToken(request)) {
         channel.push(Json.toJson(TokenInvalid(provider.name)))
         self ! Dead(idUser)
       } else {
-        log.error("Provider " + provider.name + " havn't parser for " + url)
+        log.error("Provider " + provider.name + " havn't parser for " + unifiedRequest.service)
         channel.push(Json.toJson(Command("error", Some(JsString("provider havn't parser")))))
         self ! Dead(idUser)
       }

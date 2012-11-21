@@ -72,8 +72,11 @@ object Endpoints {
       }
 
       val baseUrl = param.foldLeft(config.url)((url, param) => url.replace(":" + param._1, param._2)) // Generate url with params
-      val completeUrl = sinceOpt.map(since => baseUrl.replace(":since", since)).getOrElse(baseUrl) // And "since" element to Url
-      completeUrl
+      if(!config.manualNextResults) {
+        sinceOpt.map(since => baseUrl.replace(":since", since)).getOrElse(baseUrl) // And "since" element to Url
+      } else {
+        baseUrl
+      }
     }
   }
 

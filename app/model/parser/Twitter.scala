@@ -31,11 +31,12 @@ case class TwitterTag(text: String, indices: List[Int])
 case class TwitterUrl(shortUrl: String, url: String, indices: List[Int])
 case class TwitterMention(authorName: String, authorScreenName: String, indices: List[Int])
 
-object TwitterTimelineParser extends GenericParser[Tweet] {
+object TwitterTimelineParser extends GenericParser {
 
   val tweetDetailUrl = "http://twitter.com/%s/status/%s";
 
-  override def asSkimbo(tweet: Tweet): Option[Skimbo] = {
+  override def asSkimbo(json: JsValue): Option[Skimbo] = {
+    val tweet = Json.fromJson[Tweet](json).get
     Some(Skimbo(
       tweet.authorName,
       tweet.screenName,
@@ -49,19 +50,14 @@ object TwitterTimelineParser extends GenericParser[Tweet] {
       Twitter))
   }
 
-  override def cut(json: JsValue): List[JsValue] = json.as[List[JsValue]]
-
-  //FIXME : found better if you can !!!!!!!
-  override def transform(json: JsValue): JsValue = Json.toJson(asSkimbo(Json.fromJson[Tweet](json).get))
 }
 
-object TwitterHashtagParser extends GenericParser[Tweet] {
+object TwitterHashtagParser extends GenericParser {
   
   val tweetDetailUrl = TwitterTimelineParser.tweetDetailUrl
   
-  override def asSkimbo(tweet: Tweet): Option[Skimbo] = TwitterTimelineParser.asSkimbo(tweet)
+  override def asSkimbo(json: JsValue): Option[Skimbo] = TwitterTimelineParser.asSkimbo(json)
   override def cut(json: JsValue): List[JsValue] = json.\("statuses").as[List[JsValue]]
-  override def transform(json: JsValue): JsValue = TwitterTimelineParser.transform(json)
 }
 
 object TwitterTag {
