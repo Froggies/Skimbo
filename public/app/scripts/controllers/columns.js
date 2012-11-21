@@ -61,18 +61,11 @@ publicApp.controller('ColumnsCtrl', function($scope, $http) {
         $scope.lastColumnAdded = {
                 "cmd":"addColumn", 
                 "body":{
-                  "title":"title2", 
-                  "unifiedRequests":[
-                     {"service":"twitter.wall","args":{}}
-                    // {"service":"twitter.user", "args":{"username":"RmManeschi"}},
-                    // {"service":"twitter.hashtag", "args":{"hashtag":"skimbo"}}
-                    // {"service":"facebook.wall","args":{}}
-                    //{"service":"trello.notifications","args":{}}
-                    //{"service":"linkedin.wall","args":{}}
-                    {"service":"viadeo.wall","args":{}}
-                  ],
+                  "title":"title", 
                   "showModifyColumn":"true",
-                  "newColumn":"true"
+                  "newColumn":"true",
+                  "unifiedRequests":[                    
+                  ]
                 }
         };
         socket.send(JSON.stringify($scope.lastColumnAdded));
@@ -125,6 +118,7 @@ publicApp.controller('ColumnsCtrl', function($scope, $http) {
                      }
                    }
                   };
+      console.log(json);
       socket.send(JSON.stringify(json));
     }
 
@@ -237,6 +231,10 @@ function executeCommand(socket, data) {
         });
     } else if(data.cmd == "addColumn" && data.body == "Ok") {
         $scope.$apply(function() {
+            if($scope.serviceProposes == undefined) {
+              var json = {"cmd":"allUnifiedRequests"};
+              socket.send(JSON.stringify(json));
+            }
             if($scope.columns == undefined) {
                 $scope.columns = [];
             }
