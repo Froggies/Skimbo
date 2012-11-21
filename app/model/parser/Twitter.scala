@@ -2,12 +2,10 @@ package model.parser
 
 import model._
 import org.joda.time._
-import play.api.libs.json.util._
 import play.api.libs.json._
-import play.api.libs.json.Reads._
+import play.api.libs.functional.syntax._
 import org.joda.time.format._
 import java.util.Locale
-import play.data.validation.ValidationError
 import org.joda.time.tz.UTCProvider
 import java.text.SimpleDateFormat
 import services.auth.providers.Twitter

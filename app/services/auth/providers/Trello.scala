@@ -20,7 +20,7 @@ object Trello extends OAuthProvider {
       val profileImage = (me \ "gravatarHash").asOpt[String]
       Some(ProviderUser(id, this.name, username, name, description, profileImage.map(img => "http://www.gravatar.com/avatar/"+img)))
     } catch {
-      case _ => {
+      case _ : Throwable => {
         Logger.error("Error during fetching user details TRELLO")
         None
       }

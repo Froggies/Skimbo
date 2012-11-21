@@ -1,24 +1,12 @@
 package controllers
 
-import play.api.libs.EventSource
-import play.api.mvc._
-import services.actors.ProviderActor
-import services.auth.ProviderDispatcher
-import services.auth.providers._
 import models.Service
-import play.api.libs.iteratee._
-import play.api.libs.concurrent._
-import scala.concurrent.util.duration._
-import services.security.AuthenticatedAction._
 import play.api.Logger
+import play.api.mvc._
 import services.actors.UserInfosActor
-import org.codehaus.jackson.map.ObjectMapper
-import org.codehaus.jackson.PrettyPrinter
-import play.api.libs.json.JsValue
-import java.io.BufferedReader
-import java.io.InputStreamReader
-import java.util.zip.GZIPInputStream
-import play.api.libs.json.Json
+import services.auth.ProviderDispatcher
+import services.security.AuthenticatedAction.Authenticated
+import views.html._
 
 object Application extends Controller {
 

@@ -1,17 +1,11 @@
 package controllers.stream
 
-import services.security.AuthenticatedAction._
-import services.actors.ProviderActor
-import services.auth.providers._
-import play.api.libs.EventSource
-import play.api.mvc.Controller
-import services.endpoints.Endpoints
-import play.api.Logger
-import play.api.libs.iteratee.Enumerator
-import services.endpoints.JsonRequest.UnifiedRequest
 import play.api.libs.iteratee.Concurrent
 import play.api.libs.json.JsValue
-import services.actors.UserInfosActor
+import play.api.mvc.Controller
+import services.actors._
+import services.security.AuthenticatedAction.Authenticated
+import play.api.libs.EventSource
 
 object Sse extends Controller {
 

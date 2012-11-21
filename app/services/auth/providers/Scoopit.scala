@@ -20,7 +20,7 @@ object Scoopit extends OAuthProvider {
       val profileImage = (me \ "avatarUrl").asOpt[String]
       Some(ProviderUser(id, this.name, username, name, description, profileImage))
     } catch {
-      case _ => {
+      case _ : Throwable => {
         Logger.error("Error during fetching user details SCOOPIT")
         None
       }

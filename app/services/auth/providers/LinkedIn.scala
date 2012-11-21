@@ -31,7 +31,7 @@ object LinkedIn extends OAuthProvider {
       val profileImage = (me \ "picture-url").asOpt[String]
       Some(ProviderUser(id, this.name, username, name, description, profileImage))
     } catch {
-      case _ => {
+      case _ : Throwable => {
         Logger.error("Error during fetching user details LINKEDIN")
         None
       }

@@ -1,15 +1,7 @@
 package services.auth
 
-import providers._
-import play.api.mvc._
 import play.api.Play.current
-import play.api.libs.ws.WS.WSRequestHolder
-import java.util.UUID
-import models.User
-import play.api.libs.concurrent.futureToPlayPromise
-import play.api.Logger
-import scala.concurrent.Future
-import play.api.libs.concurrent.execution.defaultContext
+import play.api.mvc._
 import services.auth.actions._
 
 trait GenericProvider extends Results with WsProvider with AccountWsProvider with SecurityProvider {
