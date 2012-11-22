@@ -1,6 +1,5 @@
-package model.parser
+package json.parser
 
-import model._
 import org.joda.time._
 import play.api.libs.json._
 import play.api.libs.functional.syntax._
@@ -9,6 +8,7 @@ import java.util.Locale
 import org.joda.time.tz.UTCProvider
 import java.text.SimpleDateFormat
 import services.auth.providers.Twitter
+import json.Skimbo
 
 case class Tweet(
   id: Long,

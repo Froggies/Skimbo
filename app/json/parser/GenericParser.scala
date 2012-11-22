@@ -1,6 +1,6 @@
-package model.parser
+package json.parser
 
-import model.Skimbo
+import json.Skimbo
 import play.api.libs.json._
 
 trait GenericParser {

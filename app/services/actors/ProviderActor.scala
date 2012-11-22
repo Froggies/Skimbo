@@ -1,29 +1,21 @@
 package services.actors;
 
-import play.api.libs.iteratee.{ Concurrent, Enumerator }
-import play.api.libs.json.{ JsValue, Json }
+
+import scala.concurrent.duration._
+import org.joda.time.DateTime
+import akka.actor._
+import json.parser.GenericParser
+import models.command._
+import models.user.Column
+import play.api._
+import play.api.libs.concurrent.Execution.Implicits._
+import play.api.libs.iteratee._
+import play.api.libs.json._
 import play.api.mvc.RequestHeader
 import play.libs.Akka
-import play.api.PlayException
-import play.api.UnexpectedException
-import play.api.Logger
-import services.endpoints.Endpoints
-import services.endpoints.JsonRequest._
 import services.auth.GenericProvider
-import services.auth.providers._
-import model.parser.GenericParser
-import model.Skimbo
-import model.command.TokenInvalid
-import model.command.Command
-import play.api.libs.json.JsString
-import models.user.Column
-import play.api.libs.iteratee.Iteratee
-import play.api.libs.json.JsArray
-import org.joda.time.DateTime
-import play.api.libs.concurrent.Execution.Implicits._
-import scala.concurrent.duration._
-import akka.actor._
-
+import services.endpoints.Endpoints
+import services.endpoints.JsonRequest.UnifiedRequest
 
 sealed case class Ping(idUser: String)
 sealed case class Dead(idUser: String)

@@ -1,9 +1,9 @@
-package model.parser
+package json.parser
 
 import org.joda.time.DateTime
 import play.api.libs.json._
 import play.api.libs.functional.syntax._
-import model.Skimbo
+import json.Skimbo
 import services.auth.providers.LinkedIn
 
 case class LinkedInWallMessage(

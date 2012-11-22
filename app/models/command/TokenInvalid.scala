@@ -1,4 +1,5 @@
-package model.command
+package models.command
+
 import play.api.libs.json.Writes
 import play.api.libs.json.JsValue
 import play.api.libs.json.Json

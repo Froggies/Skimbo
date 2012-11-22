@@ -6,7 +6,7 @@ import scala.concurrent.ExecutionContext.Implicits._
 
 import akka.actor._
 import controllers.UserDao
-import model.command.Command
+import models.command.Command
 import models.User
 import models.user._
 import play.api.Logger
