@@ -16,20 +16,17 @@ case class Column(
 }
 
 object Column {
-  implicit val reader: Reads[Column] = (
-    (__ \ "title").read[String] and
-    (__ \ "unifiedRequests").read[Seq[UnifiedRequest]]
-  )(Column.apply _)
-        
-  implicit val writes = new Writes[Column] {
-    def writes(c: Column): JsValue = {
-      Json.obj(
-        "title" -> c.title,
-        "unifiedRequests" -> Json.toJson(c.unifiedRequests)
-      )
-    }
-  }
   
+  implicit val reader = (
+      (__ \ "title").read[String] and
+      (__ \ "unifiedRequests").read[Seq[UnifiedRequest]]
+    )(Column.apply _)
+  
+  implicit val writer = (
+	  (__ \ "title").write[String] and
+	  (__ \ "unifiedRequests").write[Seq[UnifiedRequest]]
+	)(unlift(Column.unapply))
+	
   def toBSON(column:Column) = {
     val unifiedRequests = BSONArray().toAppendable
     for (unifiedRequest <- column.unifiedRequests) yield {

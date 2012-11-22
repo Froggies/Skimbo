@@ -23,7 +23,7 @@ case class Skimbo(
 
 object Skimbo {
   implicit val writes:Writes[Skimbo] = new Writes[Skimbo] {
-    def writes(skimbo: Skimbo): JsValue = {
+    def writes(skimbo: Skimbo): JsValue = { // TODO JLA : rewrite
       Json.obj(
         "authorName" -> skimbo.authorName,
         "authorScreenName" -> skimbo.authorScreenName,

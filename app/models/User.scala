@@ -26,13 +26,10 @@ object User {
   }
 
   def toJson(user: User): JsValue = {
-    val accounts = user.accounts
-    val distants = user.distants.getOrElse { Seq() }
-    val columns = user.columns.getOrElse { Seq() }
-    JsObject(Seq(
-      "accounts" -> Json.toJson(accounts),
-      "distants" -> Json.toJson(distants),
-      "columns" -> Json.toJson(columns)))
+    Json.obj(
+      "accounts" -> Json.toJson(user.accounts),
+      "distants" -> Json.toJson(user.distants.getOrElse(Seq.empty)),
+      "columns" -> Json.toJson(user.columns.getOrElse(Seq.empty)))
   }
   
   def tableTo[Obj](document: BSONDocument, key:String, transform:(TraversableBSONDocument) => Obj):Seq[Obj] = {
@@ -57,9 +54,7 @@ object User {
       val accounts = tableTo[Account](document, "accounts", { a =>
         val lastUse = new Date()
         lastUse.setTime(a.getAs[BSONDateTime]("lastUse").get.value)
-        Account(
-          asString(a, "id"),
-          lastUse)
+        Account(asString(a, "id"), lastUse)
       })
       val providers = tableTo[ProviderUser](document, "distants", { d =>
         ProviderUser(
@@ -74,35 +69,26 @@ object User {
       val columns = tableTo[Column](document, "columns", { c =>
         val unifiedRequests = tableTo[UnifiedRequest](c, "unifiedRequests", { r =>
           val requestArgs = r.getAs[BSONDocument]("args").get.toTraversable.iterator
-          if(requestArgs.nonEmpty) {
+          if (requestArgs.nonEmpty) {
             val args = for (requestArg <- requestArgs) yield {
               (requestArg.name, r.getAs[BSONDocument]("args").get.toTraversable.getAs[BSONString](requestArg.name).get.value)
             }
-            UnifiedRequest(
-              asString(r, "service"),
-              Some(args.toMap))
+            UnifiedRequest(asString(r, "service"), Some(args.toMap))
           } else {
-            UnifiedRequest(
-              asString(r, "service"),
-              None)
+            UnifiedRequest(asString(r, "service"), None)
           }
         })
         Column(asString(c, "title"), unifiedRequests)
       })
       Logger.info("User = "+accounts+" :: "+providers+" :: "+columns)
-      User(
-        accounts,
-        Some(providers),
-        Some(columns))
+      User(accounts, Some(providers), Some(columns))
     }
   }
 
   implicit object UserBSONWriter extends BSONWriter[User] {
     def toArray[Obj](objs:Seq[Obj], transform:(Obj) => BSONDocument):BSONArray = {
-      val res = BSONArray().toAppendable
-      for (obj <- objs) yield {
-        res.append(transform(obj))
-      }
+      val res = BSONArray().toAppendable // TODO JLA > More fonctional
+      objs.foreach(obj => res.append(transform(obj)))
       res
     }
     

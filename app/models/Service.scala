@@ -14,32 +14,28 @@ object Service {
       Service(provider.name, provider.hasToken))
   }
   
-  def toJson()(implicit req: RequestHeader):JsValue = {
-    val json = list.map { service =>
+  def toJson()(implicit req: RequestHeader): JsValue = {
+    val services = list.map { service =>
       Json.obj(
         "name" -> JsString(service.name),
         "connected" -> JsBoolean(service.connected)
       )
     }
-    JsArray(json)
+    Json.arr(services)
   }
   
-  def toJsonWithUnifiedRequest()(implicit req: RequestHeader):JsValue = {
+  def toJsonWithUnifiedRequest()(implicit req: RequestHeader): JsValue = {
     val jsonUnifiedRequests = Endpoints.getAll.map { endpoint =>
       Json.obj(
         "endpoint" -> endpoint.provider.name,
-        "services" -> JsArray(
-          endpoint.services.map { service =>
-            Json.obj(
-              "service" -> service.service,
-              "args" -> service.configuration.requiredParams
-            )
-          }
-        ),
+        "services" -> endpoint.services.map(service => Json.obj(
+          "service" -> service.service,
+          "args" -> service.configuration.requiredParams
+        )),
         "hasToken" -> endpoint.provider.hasToken
       )
     }
-    JsArray(jsonUnifiedRequests.toList)
+    Json.arr(jsonUnifiedRequests)
   }
   
 }
