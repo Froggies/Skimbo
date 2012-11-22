@@ -21,6 +21,7 @@ publicApp.controller('ColumnsCtrl', function($scope, $http) {
             var data;
             try { //tente de parser data
                 data = JSON.parse(msg.data);
+                console.log(data);
             } catch(exception) {
                 data = msg.data
             }      

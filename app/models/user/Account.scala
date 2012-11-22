@@ -11,15 +11,11 @@ case class Account(
   
 object Account {
   
-  implicit val writes = new Writes[Account] {
-    def writes(a: Account): JsValue = {
-      Json.obj(
-        "id" -> a.id,
-        "lastUser" -> a.lastUse
-      )
-    }
-  }
-  
+  implicit val writer = (
+	  (__ \ "id").write[String] and
+	  (__ \ "lastUse").write[Date]
+	)(unlift(Account.unapply))
+	
   def toBSON(account:Account) = {
     BSONDocument( 
       "id" -> BSONString(account.id),
