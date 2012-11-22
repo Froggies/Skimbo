@@ -6,6 +6,7 @@ import play.api.libs.json._
 import play.api.libs.json.Reads._
 import model.Skimbo
 import services.auth.providers.GitHub
+import org.joda.time.format.DateTimeFormat
 
 case class GithubWallMessage(
   id: String,
@@ -45,7 +46,7 @@ object GithubWallParser extends GenericParser {
       Nil,
       -1,
       buildLink(e),
-      e.createdAt.toString(),
+      e.createdAt.toString(GithubWallMessage.datePattern),
       e.avatarUser,
       GitHub))
   }
@@ -81,6 +82,20 @@ object GithubWallParser extends GenericParser {
       case _ => None
     }
   }
+  
+  override def nextSinceId(sinceId:String, sinceId2:String): String = {
+    val date = DateTime.parse(sinceId, DateTimeFormat.forPattern(GithubWallMessage.datePattern))
+    if(sinceId2.isEmpty()) {
+      date.plusSeconds(1).toString(GithubWallMessage.datePattern)
+    } else {
+      val date1 = DateTime.parse(sinceId2, DateTimeFormat.forPattern(GithubWallMessage.datePattern))
+      if(date.isAfter(date1)) {
+        date.plusSeconds(1).toString(GithubWallMessage.datePattern)
+      } else {
+        date1.plusSeconds(1).toString(GithubWallMessage.datePattern)
+      }
+    }
+  }
 
 }
 
@@ -105,6 +120,9 @@ object GithubDownloadEvent {
 }
 
 object GithubWallMessage {
+  
+  val datePattern = "yyyy-MM-dd'T'HH:mm:ss'Z'"
+  
   implicit val githubReader: Reads[GithubWallMessage] = (
     (__ \ "id").read[String] and
     (__ \ "actor" \ "login").read[String] and
@@ -112,7 +130,7 @@ object GithubWallMessage {
     (__).readOpt[GithubForkeEvent] and
     (__ \ "payload" \ "head").readOpt[String] and
     (__ \ "payload" \ "commits").readOpt[List[GithubPushEvent]] and
-    (__ \ "created_at").read[DateTime](Reads.jodaDateReads("yyyy-MM-dd'T'HH:mm:ss'Z'")) and
+    (__ \ "created_at").read[DateTime](Reads.jodaDateReads(datePattern)) and
     (__ \ "actor" \ "avatar_url").readOpt[String] and
     (__ \ "repo" \ "name").read[String] and
     (__ \ "payload" \ "download").readOpt[GithubDownloadEvent])(GithubWallMessage.apply _)
