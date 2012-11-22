@@ -1,6 +1,6 @@
 import sbt._
 import Keys._
-import PlayProject._
+import play.Project._
 
 object ApplicationBuild extends Build {
 
@@ -8,11 +8,11 @@ object ApplicationBuild extends Build {
     val appVersion      = "0.1-SNAPSHOT"
 
 	val appDependencies = Seq(
-	    "reactivemongo" %% "reactivemongo" % "0.1-SNAPSHOT",// changing(),
-      "play.modules.reactivemongo" %% "play2-reactivemongo" % "0.1-SNAPSHOT"// changing()
+	    "reactivemongo" %% "reactivemongo" % "0.1-SNAPSHOT" cross CrossVersion.full,
+	    "play.modules.reactivemongo" %% "play2-reactivemongo" % "0.1-SNAPSHOT" cross CrossVersion.full
 	)
 	
-	val main = PlayProject(appName, appVersion, appDependencies, mainLang = SCALA).settings(
+	val main = play.Project(appName, appVersion, appDependencies).settings(
 	    resolvers += "sgodbillon" at "https://bitbucket.org/sgodbillon/repository/raw/master/snapshots/"
 	)
 

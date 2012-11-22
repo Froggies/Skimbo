@@ -21,7 +21,7 @@ object Twitter extends OAuthProvider {
       val profileImage = (me \ "profile_image_url").asOpt[String]
       Some(ProviderUser(id, this.name, username, name, description, profileImage))
     } catch {
-      case _ => {
+      case _ : Throwable => {
         Logger.error("Error during fetching user details TWITTER")
         None
       }

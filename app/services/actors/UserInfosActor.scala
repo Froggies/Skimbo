@@ -1,31 +1,21 @@
 package services.actors
 
-import akka.actor._
-import akka.util.duration.intToDurationInt
-import play.api.libs.concurrent.futureToPlayPromise
-import play.api.libs.iteratee.{ Concurrent, Enumerator }
-import play.api.libs.json.{ JsValue, Json }
-import play.api.mvc.RequestHeader
-import play.libs.Akka
-import play.api.UnexpectedException
-import play.api.Logger
-import controllers.UserDao
-import models.User
-import play.api.libs.iteratee.Iteratee
-import scala.collection.mutable.ListBuffer
-import models.user.ProviderUser
-import scala.concurrent._
-import scala.annotation.tailrec
-import akka.util.Duration
-import services.auth.ProviderDispatcher
-import services.auth.GenericProvider
-import akka.dispatch.OnSuccess
-import models.Account
 import java.util.Date
-import services.endpoints.JsonRequest._
-import models.user.Column
-import services.commands.Commands
+
+import scala.concurrent.ExecutionContext.Implicits._
+
+import akka.actor._
+import controllers.UserDao
 import model.command.Command
+import models.User
+import models.user._
+import play.api.Logger
+import play.api.UnexpectedException
+import play.api.libs.iteratee.Concurrent
+import play.api.libs.json._
+import play.api.mvc.RequestHeader
+import services.auth.ProviderDispatcher
+import services.commands.Commands
 
 case object Retreive
 case class Send(userId: String, json: JsValue)

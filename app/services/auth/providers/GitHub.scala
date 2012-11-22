@@ -25,7 +25,7 @@ object GitHub extends OAuth2Provider {
       val profileImage = (me \ "avatar_url").asOpt[String]
       Some(ProviderUser(id, this.name, username, name, description, profileImage))
     } catch {
-      case _ => {
+      case _ : Throwable => {
         Logger.error("Error during fetching user details GITHUB")
         None
       }

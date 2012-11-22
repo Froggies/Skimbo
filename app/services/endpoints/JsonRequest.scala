@@ -1,8 +1,7 @@
 package services.endpoints
 
-import play.api.libs.json.util._
 import play.api.libs.json._
-import play.api.libs.json.Reads._
+import play.api.libs.functional.syntax._
 
 object JsonRequest {
 
@@ -13,7 +12,7 @@ object JsonRequest {
 
   implicit val unifiedRequestReader: Reads[UnifiedRequest] = (
         (__ \ "service").read[String] and
-        (__ \ "args").readOpt[Map[String, String]])(UnifiedRequest.apply _)
+        (__ \ "args").readOpt[Map[String, String]])(UnifiedRequest)
         
   implicit val writes = new Writes[UnifiedRequest] {
     def writes(unifiedRequest: UnifiedRequest): JsValue = {

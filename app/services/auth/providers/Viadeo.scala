@@ -24,7 +24,7 @@ object Viadeo extends OAuth2Provider {
       val profileImage = (me \ "picture_medium").asOpt[String]
       Some(ProviderUser(id, this.name, username, name, description, profileImage))
     } catch {
-      case _ => {
+      case _ : Throwable => {
         Logger.error("Error during fetching user details VIADEO")
         None
       }

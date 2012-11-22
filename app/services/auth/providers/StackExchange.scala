@@ -44,7 +44,7 @@ object StackExchange extends OAuth2Provider with WSGzipJson {
       val profileImage = (me \ "profile_image").asOpt[String]
       Some(ProviderUser(id, this.name, username, name, description, profileImage))
     } catch {
-      case _ => {
+      case _ : Throwable => {
         Logger.error("Error during fetching user details STACKEXCHANGE")
         None
       }

@@ -2,13 +2,7 @@ package model
 
 import org.joda.time._
 import scala.util.parsing.json.JSONObject
-import play.api.libs.json.JsString
-import play.api.libs.json.JsObject
-import play.api.libs.json.JsArray
-import play.api.libs.json.JsObject
-import play.api.libs.json.Writes
-import play.api.libs.json.JsValue
-import play.api.libs.json.Json
+import play.api.libs.json._
 import services.auth.GenericProvider
 
 /**

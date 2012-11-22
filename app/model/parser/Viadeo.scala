@@ -1,9 +1,8 @@
 package model.parser
 
 import org.joda.time.DateTime
-import play.api.libs.json.util._
 import play.api.libs.json._
-import play.api.libs.json.Reads._
+import play.api.libs.functional.syntax._
 import model.Skimbo
 import services.auth.providers.Viadeo
 import org.joda.time.format.DateTimeParser

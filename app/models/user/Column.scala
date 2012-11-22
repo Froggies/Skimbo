@@ -1,16 +1,14 @@
 package models.user
 
-import play.api.libs.json.util._
 import play.api.libs.json._
-import play.api.libs.json.Reads._
+import play.api.libs.functional.syntax._
 import services.endpoints.JsonRequest._
-import reactivemongo.bson.BSONArray
-import reactivemongo.bson.BSONDocument
-import reactivemongo.bson.BSONString
+import reactivemongo.bson._
 
 case class Column(
   title: String,
-  unifiedRequests:Seq[UnifiedRequest]) {
+  unifiedRequests: Seq[UnifiedRequest]) {
+
   override def equals(other:Any) = other match {
     case that:Column => that.title == title
     case _ => false

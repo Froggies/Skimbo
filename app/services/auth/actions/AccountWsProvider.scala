@@ -5,7 +5,7 @@ import scala.concurrent.Future
 import models.user.ProviderUser
 import play.api.Configuration
 import play.api.Logger
-import play.api.libs.concurrent.execution.defaultContext
+import play.api.libs.concurrent.Execution.Implicits._
 
 trait AccountWsProvider extends WsProvider {
 

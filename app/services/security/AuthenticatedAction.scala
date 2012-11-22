@@ -3,7 +3,7 @@ package services.security
 import play.api.mvc._
 import models.User
 import controllers.UserDao
-import models.Account
+import models.user.Account
 import java.util.Date
 
 object AuthenticatedAction extends Results {

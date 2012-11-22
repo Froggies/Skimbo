@@ -7,13 +7,12 @@ import scala.collection.Map
 import play.api.libs.json.JsValue
 import services.actors.UserInfosActor
 import services.endpoints.JsonRequest._
-import play.api.libs.iteratee.Iteratee
-import play.api.libs.iteratee.Enumerator
+import play.api.libs.iteratee._
 import reactivemongo.bson.handlers.{ BSONReader, BSONWriter }
+import reactivemongo.bson.handlers.DefaultBSONHandlers._
 import java.util.Date
 import play.api.Logger
-import models.user.ProviderUser
-import models.user.Column
+import models.user._
 
 case class User(
   accounts: Seq[Account],
@@ -21,8 +20,6 @@ case class User(
   columns: Option[Seq[Column]] = None)
 
 object User {
-
-  val log = Logger(classOf[User])
   
   def create(id: String): User = {
     User(Seq[Account](Account(id, new Date())))
@@ -40,7 +37,7 @@ object User {
   
   def tableTo[Obj](document: BSONDocument, key:String, transform:(TraversableBSONDocument) => Obj):Seq[Obj] = {
     val doc = document.toTraversable
-    val objs = doc.getAs[BSONArray](key).getOrElse(BSONArray()).toTraversable.bsonIterator
+    val objs = doc.getAs[BSONArray](key).getOrElse(BSONArray()).toTraversable.iterator
     val seqObjs = for (obj <- objs) yield {
       val a = obj.value.asInstanceOf[BSONDocument].toTraversable
       transform(a)
@@ -76,7 +73,7 @@ object User {
       })
       val columns = tableTo[Column](document, "columns", { c =>
         val unifiedRequests = tableTo[UnifiedRequest](c, "unifiedRequests", { r =>
-          val requestArgs = r.getAs[BSONDocument]("args").get.toTraversable.bsonIterator
+          val requestArgs = r.getAs[BSONDocument]("args").get.toTraversable.iterator
           if(requestArgs.nonEmpty) {
             val args = for (requestArg <- requestArgs) yield {
               (requestArg.name, r.getAs[BSONDocument]("args").get.toTraversable.getAs[BSONString](requestArg.name).get.value)
@@ -92,7 +89,7 @@ object User {
         })
         Column(asString(c, "title"), unifiedRequests)
       })
-      log.info("User = "+accounts+" :: "+providers+" :: "+columns)
+      Logger.info("User = "+accounts+" :: "+providers+" :: "+columns)
       User(
         accounts,
         Some(providers),

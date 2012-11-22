@@ -1,8 +1,7 @@
 package model.command
 
-import play.api.libs.json.util._
 import play.api.libs.json._
-import play.api.libs.json.Reads._
+import play.api.libs.functional.syntax._
 
 case class Command(name: String, body: Option[JsValue] = None) {
   override def equals(other: Any) = other match {
