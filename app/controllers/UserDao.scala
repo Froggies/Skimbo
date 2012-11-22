@@ -23,7 +23,6 @@ object UserDao {
   val collection = db("users")
 
   def add(user: models.User) = {
-    implicit val writer = models.User.UserBSONWriter
     collection.insert(user)
   }
 

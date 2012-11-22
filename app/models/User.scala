@@ -37,9 +37,9 @@ object User {
   
   def tableTo[Obj](document: BSONDocument, key:String, transform:(TraversableBSONDocument) => Obj):Seq[Obj] = {
     val doc = document.toTraversable
-    val objs = doc.getAs[BSONArray](key).getOrElse(BSONArray()).toTraversable.iterator
+    val objs = doc.getAs[BSONArray](key).getOrElse(BSONArray()).toTraversable.toList
     val seqObjs = for (obj <- objs) yield {
-      val a = obj.value.asInstanceOf[BSONDocument].toTraversable
+      val a = obj.asInstanceOf[BSONDocument].toTraversable
       transform(a)
     }
     seqObjs.toList
@@ -73,14 +73,12 @@ object User {
       })
       val columns = tableTo[Column](document, "columns", { c =>
         val unifiedRequests = tableTo[UnifiedRequest](c, "unifiedRequests", { r =>
-          val requestArgs = r.getAs[BSONDocument]("args").get.toTraversable.iterator
-          if(requestArgs.nonEmpty) {
-            val args = for (requestArg <- requestArgs) yield {
-              (requestArg.name, r.getAs[BSONDocument]("args").get.toTraversable.getAs[BSONString](requestArg.name).get.value)
+          val requestArgs = r.getAs[BSONDocument]("args").get.toTraversable
+            val args = requestArgs.mapped.map { requestArg =>
+              (requestArg._1, requestArgs.getAs[BSONString](requestArg._1).get.value)
             }
-            UnifiedRequest(
-              asString(r, "service"),
-              Some(args.toMap))
+          if (args.nonEmpty) {
+            UnifiedRequest(asString(r, "service"), Some(args.toMap))
           } else {
             UnifiedRequest(
               asString(r, "service"),
@@ -99,14 +97,16 @@ object User {
 
   implicit object UserBSONWriter extends BSONWriter[User] {
     def toArray[Obj](objs:Seq[Obj], transform:(Obj) => BSONDocument):BSONArray = {
-      val res = BSONArray().toAppendable
-      for (obj <- objs) yield {
-        res.append(transform(obj))
+      // TODO JLA > More fonctional
+      val array = objs.map {obj => 
+        println("user toArray "+obj)
+        transform(obj)
       }
-      res
+      BSONArray(array : _*)
     }
     
     def toBSON(user: User) = {
+      println("user toBson accounts"+user.accounts)
       val accounts = toArray[Account](user.accounts, { account =>
         Account.toBSON(account)
       })
@@ -119,6 +119,8 @@ object User {
         Column.toBSON(column)
       })
 
+      println("user accounts"+accounts.toTraversable.toList.size)
+      
       BSONDocument(
         "accounts" -> accounts,
         "distants" -> distants,
