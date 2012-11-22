@@ -82,20 +82,6 @@ object GithubWallParser extends GenericParser {
     }
   }
   
-  override def nextSinceId(sinceId:String, sinceId2:String): String = {
-    val date = DateTime.parse(sinceId, DateTimeFormat.forPattern(GithubWallMessage.datePattern))
-    if(sinceId2.isEmpty()) {
-      date.plusSeconds(1).toString(GithubWallMessage.datePattern)
-    } else {
-      val date1 = DateTime.parse(sinceId2, DateTimeFormat.forPattern(GithubWallMessage.datePattern))
-      if(date.isAfter(date1)) {
-        date.plusSeconds(1).toString(GithubWallMessage.datePattern)
-      } else {
-        date1.plusSeconds(1).toString(GithubWallMessage.datePattern)
-      }
-    }
-  }
-
 }
 
 object GithubForkeEvent {
