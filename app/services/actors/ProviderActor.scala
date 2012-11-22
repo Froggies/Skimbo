@@ -22,6 +22,7 @@ import play.api.libs.json.JsArray
 import play.api.libs.concurrent.Execution.Implicits._
 import scala.concurrent.duration._
 import akka.actor._
+import org.joda.time.DateTime
 
 sealed case class Ping(idUser: String)
 sealed case class Dead(idUser: String)
@@ -75,6 +76,7 @@ class ProviderActor(channel: Concurrent.Channel[JsValue],
 
   val log = Logger(ProviderActor.getClass())
   val sinceId = new StringBuilder();
+  var sinceDate = new DateTime().minusYears(1);
 
   val scheduler = Akka.system.scheduler.schedule(0 second, delay second) {
     self ! ReceiveTimeout
@@ -91,10 +93,20 @@ class ProviderActor(channel: Concurrent.Channel[JsValue],
           case false => Some(sinceId.toString())
         }
         val url = Endpoints.genererUrl(unifiedRequest.service, unifiedRequest.args.getOrElse(Map.empty), optSinceId);
+        val config = Endpoints.getConfig(unifiedRequest.service).get
         if (url.isDefined) {
           log.info("Fetch provider " + provider.name + " url=" + url)
           provider.fetch(url.get).get.map(response => {
-            val messages = Enumerator.enumerate(parser.get.cut(provider.resultAsJson(response)))
+            val listJson = if(config.manualNextResults) {
+              parser.get.cut(provider.resultAsJson(response)).sort { (js1, js2) =>
+                val skimboMsg = parser.get.asSkimbo(js1)
+                val skimboMsg2 = parser.get.asSkimbo(js2)
+                skimboMsg.get.createdAt.isBefore(skimboMsg2.get.createdAt)
+              }
+            } else {
+              parser.get.cut(provider.resultAsJson(response))
+            }
+            val messages = Enumerator.enumerate(listJson)
             val ite = Iteratee.foreach { jsonMsg: JsValue =>
               val skimboMsg = parser.get.asSkimbo(jsonMsg)
               if(skimboMsg.isDefined) {
@@ -102,12 +114,20 @@ class ProviderActor(channel: Concurrent.Channel[JsValue],
                   "column" -> column.title,
                   "msg" -> Json.toJson(skimboMsg.get))
                 //log.info("Messages : "+msg)
-                val config = Endpoints.getConfig(unifiedRequest.service).get
-                val temp = sinceId.toString()
-                sinceId.clear();
-                sinceId append parser.get.nextSinceId(skimboMsg.get.sinceId, temp)
-                log.info("sinceId for " + unifiedRequest.service + " is " + sinceId.toString())
-                channel.push(Json.toJson(Command("msg", Some(msg))))
+                if(config.manualNextResults) {
+                  if(skimboMsg.get.createdAt.isAfter(sinceDate)) {
+                    channel.push(Json.toJson(Command("msg", Some(msg))))
+                    sinceDate = skimboMsg.get.createdAt
+                  } else {
+                    log.info("old msg !!!!")
+                  }
+                } else {
+                  val temp = sinceId.toString()
+                  sinceId.clear();
+                  sinceId append parser.get.nextSinceId(skimboMsg.get.sinceId, temp)
+                  log.info("sinceId for " + unifiedRequest.service + " is " + sinceId.toString())
+                  channel.push(Json.toJson(Command("msg", Some(msg))))
+                }
               } else {
                 log.error("Msg unsuported ! Service="+provider.name+" msg="+skimboMsg)
               }
