@@ -1,12 +1,9 @@
 package services.actors;
 
-import play.api.libs.iteratee.{ Concurrent, Enumerator }
-import play.api.libs.json.{ JsValue, Json }
+import play.api.libs.iteratee._
 import play.api.mvc.RequestHeader
 import play.libs.Akka
-import play.api.PlayException
-import play.api.UnexpectedException
-import play.api.Logger
+import play.api._
 import services.endpoints.Endpoints
 import services.endpoints.JsonRequest._
 import services.auth.GenericProvider
@@ -15,14 +12,13 @@ import model.parser.GenericParser
 import model.Skimbo
 import model.command.TokenInvalid
 import model.command.Command
-import play.api.libs.json.JsString
 import models.user.Column
-import play.api.libs.iteratee.Iteratee
-import play.api.libs.json.JsArray
 import play.api.libs.concurrent.Execution.Implicits._
 import scala.concurrent.duration._
 import akka.actor._
 import org.joda.time.DateTime
+import play.api.libs.json._
+import play.api.libs.functional.syntax._
 
 sealed case class Ping(idUser: String)
 sealed case class Dead(idUser: String)
@@ -97,8 +93,8 @@ class ProviderActor(channel: Concurrent.Channel[JsValue],
         if (url.isDefined) {
           log.info("Fetch provider " + provider.name + " url=" + url)
           provider.fetch(url.get).get.map(response => {
-            val listJson = if(config.manualNextResults) {
-              parser.get.cut(provider.resultAsJson(response)).sort { (js1, js2) =>
+            val listJson = if (config.manualNextResults) {
+              parser.get.cut(provider.resultAsJson(response)).sortWith{ (js1, js2) =>
                 val skimboMsg = parser.get.asSkimbo(js1)
                 val skimboMsg2 = parser.get.asSkimbo(js2)
                 skimboMsg.get.createdAt.isBefore(skimboMsg2.get.createdAt)

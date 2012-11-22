@@ -23,12 +23,13 @@ object Application extends Controller {
   
   def testRes(since:String) = Action { implicit request =>
     import scala.concurrent.ExecutionContext.Implicits.global
-      Async {
+      /*Async {
         GooglePlus.fetch("https://www.googleapis.com/plus/v1/people/me/activities/public?maxResults=30").get.map { r =>
           val mapper = new ObjectMapper();
           Ok(r.json)
         }
-      }
+      }*/
+    Ok("todo")
   }
 
   def logout() = Authenticated { action =>
