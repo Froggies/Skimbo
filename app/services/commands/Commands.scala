@@ -1,10 +1,9 @@
 package services.commands
 
 import controllers.UserDao
-import model.command.Command
-import models.Service
-import models.User
-import models.user.Column
+import models.command.Command
+import models._
+import models.user._
 import models.user.Column._
 import play.api.Logger
 import play.api.libs.json._

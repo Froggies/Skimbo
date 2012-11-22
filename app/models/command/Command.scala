@@ -1,4 +1,4 @@
-package model.command
+package models.command
 
 import play.api.libs.json._
 import play.api.libs.functional.syntax._
