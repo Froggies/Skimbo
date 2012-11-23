@@ -7,6 +7,7 @@ import services.actors.UserInfosActor
 import services.auth.ProviderDispatcher
 import services.security.AuthenticatedAction.Authenticated
 import views.html._
+import services.auth.providers.GooglePlus
 
 object Application extends Controller {
 
@@ -20,16 +21,14 @@ object Application extends Controller {
     ProviderDispatcher(providerName).map(provider =>
       provider.auth(routes.Application.index)).getOrElse(BadRequest)
   }
-  
-  def testRes(since:String) = Action { implicit request =>
+
+  def testRes(since: String) = Action { implicit request =>
     import scala.concurrent.ExecutionContext.Implicits.global
-      /*Async {
-        GooglePlus.fetch("https://www.googleapis.com/plus/v1/people/me/activities/public?maxResults=30").get.map { r =>
-          val mapper = new ObjectMapper();
-          Ok(r.json)
-        }
-      }*/
-      Ok("todo")
+    Async {
+      GooglePlus.fetch("https://www.googleapis.com/plus/v1/people/me/activities/public?maxResults=30").get.map { r =>
+        Ok(r.json)
+      }
+    }
   }
 
   def logout() = Authenticated { action =>

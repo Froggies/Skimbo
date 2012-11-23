@@ -29,7 +29,7 @@ class GithubParserTest extends Specification {
       jsonMsg.size must beEqualTo(21)
     }
 
-    "Convert Viadeo message as Skimbo" in {
+    "Convert Github message as Skimbo" in {
       val jsonMsg = GithubWallParser.cut(GithubFixture.miniTimeLineForkEvent)
       val msg = Json.fromJson[GithubWallMessage](jsonMsg(0)).get
       val res = GithubWallParser.asSkimbo(jsonMsg(0))
