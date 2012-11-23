@@ -134,8 +134,9 @@ publicApp.controller('ColumnsCtrl', function($scope, $http) {
         }
         else {
           column.showErrorTitleAlreadyExist = false;
-          socket.send(JSON.stringify(json));
+          column.messages = [];
           column.showModifyColumn= !column.showModifyColumn;
+          socket.send(JSON.stringify(json));
         }
       }
     }
