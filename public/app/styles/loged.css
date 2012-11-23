@@ -357,7 +357,7 @@ header.column-title {
 
 .add-service {
 	color: #C1C1C1;
-	margin-left: 10px;
+	margin: 15px;
 }
 
 .social-network-link{
@@ -498,5 +498,7 @@ header.column-title {
 .controls-new {
 	text-align: center;
 }
+
+
 
 /*******************************************/

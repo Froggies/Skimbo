@@ -61,8 +61,8 @@ publicApp.controller('ColumnsCtrl', function($scope, $http) {
         $scope.lastColumnAdded = {
                 "cmd":"addColumn", 
                 "body":{
-                  "title":"title",
-                  "oldTitle":"title",
+                  "title":"",
+                  "oldTitle":"",
                   "showModifyColumn":"true",
                   "newColumn":"true",
                   "unifiedRequests":[]
@@ -108,7 +108,8 @@ publicApp.controller('ColumnsCtrl', function($scope, $http) {
     }
 
     $scope.changeColumn = function(column) {
-      console.log("columnTitle",column.title);
+      column.showErrorTitleAlreadyExist = false;
+      column.showErrorTitleRequired = false;
       var json = {"cmd":"modColumn", 
                    "body":{
                      "title": column.oldTitle, 
@@ -118,8 +119,27 @@ publicApp.controller('ColumnsCtrl', function($scope, $http) {
                      }
                    }
                   };
-      console.log(json);
-      socket.send(JSON.stringify(json));
+
+      if(column.title =="") {
+        column.showErrorTitleRequired = true;
+      }
+      else {
+        column.showErrorTitleRequired = false;
+        var nombreName = 0;
+        for (var i = 0; i < $scope.columns.length; i++) {
+          if($scope.columns[i].title == column.title) {
+            nombreName++;
+          }
+        };
+        if(nombreName > 1) {
+          column.showErrorTitleAlreadyExist = true;
+        }
+        else {
+          column.showErrorTitleAlreadyExist = false;
+          socket.send(JSON.stringify(json));
+          column.showModifyColumn= !column.showModifyColumn;
+        }
+      }
     }
 
     $scope.deleteColumn = function(column) {

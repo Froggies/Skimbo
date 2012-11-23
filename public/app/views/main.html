@@ -4,7 +4,7 @@
 			 ng-repeat="c in columns">
 		<header class="column-title">
 			<div class="title" ng-hide="c.showModifyColumn">{{c.title}}</div>
-			<input type="text" ng-model="c.title" ng-show="c.showModifyColumn" value="{{c.title}}"/>
+			<input class="error {{c.showErrorTitleAlreadyExist}} {{c.showErrorTitleRequired}}" type="text" ng-model="c.title" ng-show="c.showModifyColumn" value="{{c.title}}"/>
 			<div class="configure"><a href="#" ng-click="modifyColumn(c)">⚙</a></div>
 		</header>
 		<div class="column-content" ng-hide="c.showModifyColumn">
@@ -24,7 +24,13 @@
 			</ul>
 		</div>
 		<div class="modify-column" ng-show="c.showModifyColumn">
-			<span class="add-service">Add...</span>
+			<div class="error-div">
+				<span class="error-message" ng-show="c.showErrorTitleRequired">The title is required !</span> 
+				<br ng-show="c.showErrorTitleRequired"/>
+				<span class="error-message" ng-show="c.showErrorTitleAlreadyExist">This title already exist</span> 
+				<br ng-show="c.showErrorTitleAlreadyExist"/>
+			</div>
+			<div class="add-service">Add...</div>
 			<ul class="services-proposes">
 				<li ng-repeat="service in serviceProposes">
 					<div class="social-network-link">
@@ -60,7 +66,7 @@
 
 
 			<div class="controls-modify"ng-hide="c.newColumn" >
-				<input type="button" ng-click="changeColumn(c); c.showModifyColumn=!c.showModifyColumn; " value="Change"/>
+				<input type="button" ng-click="changeColumn(c);" value="Change"/>
 				<br/>
 				<br/>
 				<a href="#" class="delete-link" ng-click="deleteColumn(c)">Delete</a>
