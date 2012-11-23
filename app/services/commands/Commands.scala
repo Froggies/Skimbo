@@ -12,12 +12,12 @@ import services.actors.UserInfosActor
 
 object Commands {
 
-  def interpret(idUser: String, json: JsValue)(implicit context: scala.concurrent.ExecutionContext, req: RequestHeader) : Unit = {
+  def interpret(idUser: String, json: JsValue)(implicit context: scala.concurrent.ExecutionContext, req: RequestHeader): Unit = {
     val cmd = Json.fromJson[Command](json).getOrElse(Command("_"))
     interpretCmd(idUser, cmd)
   }
-  
-  def interpretCmd(idUser: String, cmd: Command)(implicit context: scala.concurrent.ExecutionContext, req: RequestHeader) : Unit = {
+
+  def interpretCmd(idUser: String, cmd: Command)(implicit context: scala.concurrent.ExecutionContext, req: RequestHeader): Unit = {
     println(idUser)
     cmd.name match {
       case "allColumns" => {
@@ -41,6 +41,7 @@ object Commands {
         val modColumn = Json.fromJson[Column]((cmd.body.get \ "column").as[JsValue]).get
         UserDao.findOneById(idUser).map(_.map { user =>
           UserDao.updateColumn(user, modColumnTitle, modColumn)
+          //UserInfosActor.modifProfiderFor(idUser, modColumnTitle, modColumn)
           UserInfosActor.killProfiderFor(idUser, modColumnTitle)
           UserInfosActor.startProfiderFor(idUser, modColumn)
           UserInfosActor.sendTo(idUser, Json.toJson(Command(cmd.name, Some(JsString("Ok")))))

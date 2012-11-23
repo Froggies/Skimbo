@@ -8,7 +8,7 @@ import models.user.Column
 import services.endpoints.JsonRequest._
 
 import play.modules.reactivemongo._
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{ ExecutionContext, Future }
 
 import reactivemongo.api._
 import reactivemongo.bson._
@@ -19,7 +19,7 @@ object UserDao {
 
   import play.api.libs.concurrent.Execution.Implicits._
   import models.User._
-  
+
   val db = ReactiveMongoPlugin.db
   val collection = db("users")
 
@@ -37,27 +37,26 @@ object UserDao {
     collection.find(query).headOption()
   }
 
-  def addAccount(user: models.User, account:models.user.Account) {
+  def addAccount(user: models.User, account: models.user.Account) {
     val query = BSONDocument("accounts.id" -> new BSONString(user.accounts.head.id))
     val update = BSONDocument("$push" -> BSONDocument("accounts" -> models.user.Account.toBSON(account)))
     collection.update(query, update)
   }
-  
-  def addColumn(user: models.User, column:models.user.Column) {
+
+  def addColumn(user: models.User, column: models.user.Column) {
     val query = BSONDocument("accounts.id" -> new BSONString(user.accounts.head.id))
     val update = BSONDocument("$push" -> BSONDocument("columns" -> models.user.Column.toBSON(column)))
     collection.update(query, update)
   }
-  
-  def addProviderUser(user: models.User, providerUser:models.user.ProviderUser) {
+
+  def addProviderUser(user: models.User, providerUser: models.user.ProviderUser) {
     val query = BSONDocument("accounts.id" -> new BSONString(user.accounts.head.id))
     val update = BSONDocument(
-      "$push" -> BSONDocument("ProviderUser" -> models.user.ProviderUser.toBSON(providerUser))
-    )
+      "$push" -> BSONDocument("ProviderUser" -> models.user.ProviderUser.toBSON(providerUser)))
     collection.update(query, update)
   }
-  
-  def updateColumn(user: models.User, title:String, column:Column) = {
+
+  def updateColumn(user: models.User, title: String, column: Column) = {
     deleteColumn(user, title)
     val query = BSONDocument("accounts.id" -> new BSONString(user.accounts.head.id))
     val update = BSONDocument("$push" -> BSONDocument("columns" -> Column.toBSON(column)))
@@ -76,7 +75,7 @@ object UserDao {
     val update = BSONDocument("$pull" -> BSONDocument("columns" -> BSONDocument("title" -> new BSONString(columnTitle))))
     collection.update(query, update)
   }
-  
+
   def delete(user: models.User) = {
     collection.remove(user)
   }

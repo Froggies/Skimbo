@@ -20,19 +20,21 @@ import services.commands.Commands
 case object Retreive
 case class Send(userId: String, json: JsValue)
 case class StartProvider(userId: String, column: Column)
+case class ModifProvider(userId: String, columnTitle: String, column: Column)
 case class KillProvider(userId: String, columnTitle: String)
 case class CheckAccounts(user: User)
 case class AddInfosUser(user: User, providerUser: ProviderUser)
 
 object UserInfosActor {
 
-  val system: ActorSystem = ActorSystem("userInfos");
+  private val system: ActorSystem = ActorSystem("userInfos");
 
   def create(idUser: String, channelOut: Concurrent.Channel[JsValue])(implicit request: RequestHeader) = {
     val actor = system.actorOf(Props(new UserInfosActor(idUser, channelOut)))
     system.eventStream.subscribe(actor, Retreive.getClass())
     system.eventStream.subscribe(actor, classOf[Send])
     system.eventStream.subscribe(actor, classOf[StartProvider])
+    system.eventStream.subscribe(actor, classOf[ModifProvider])
     system.eventStream.subscribe(actor, classOf[KillProvider])
     system.eventStream.subscribe(actor, classOf[Dead])
     actor ! Retreive
@@ -49,6 +51,10 @@ object UserInfosActor {
 
   def killProfiderFor(userId: String, columnTitle: String) = {
     system.eventStream.publish(KillProvider(userId, columnTitle))
+  }
+  
+  def modifProfiderFor(userId: String, columnTitle: String, column: Column) = {
+    system.eventStream.publish(ModifProvider(userId, columnTitle, column: Column))
   }
 
   def killActorsForUser(userId: String) = {
@@ -105,6 +111,11 @@ class UserInfosActor(idUser: String, channelOut: Concurrent.Channel[JsValue])(im
     case StartProvider(id: String, unifiedRequests) => {
       if (id == idUser) {
         ProviderActor.create(channelOut, idUser, unifiedRequests)
+      }
+    }
+    case ModifProvider(id: String, columnTitle, column) => {
+      if (id == idUser) {
+        ProviderActor.modifActorsForUserAndColumn(id, columnTitle, column)
       }
     }
     case KillProvider(id: String, columnTitle) => {

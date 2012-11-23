@@ -23,7 +23,7 @@ sealed case class DeadColumn(idUser: String, columnTitle: String)
 
 object ProviderActor {
 
-  val system: ActorSystem = ActorSystem("providers");
+  private val system: ActorSystem = ActorSystem("providers");
 
   def create(channel: Concurrent.Channel[JsValue], userId: String, column: Column)(implicit request: RequestHeader) {
     column.unifiedRequests.foreach { unifiedRequest =>
@@ -50,6 +50,10 @@ object ProviderActor {
 
   def ping(userId: String) = {
     system.eventStream.publish(Ping(userId))
+  }
+  
+  def modifActorsForUserAndColumn(userId: String, columnTitle:String, column:Column) = {
+    system.eventStream.publish(ModifProvider(userId, columnTitle, column))
   }
 
   def killActorsForUser(userId: String) = {
@@ -144,6 +148,24 @@ class ProviderActor(channel: Concurrent.Channel[JsValue],
       if (id == idUser) {
         Akka.system.scheduler.scheduleOnce(delay second) {
           self ! ReceiveTimeout
+        }
+      }
+    }
+    case ModifProvider(id: String, columnTitle, columnModif) => {
+      //TODO RM : add old column instead columnTitle for this
+      if (id == idUser && columnTitle == column.title) {
+        val isMe = columnModif.unifiedRequests.exists { ur =>
+          val argExist = if(ur.args.isDefined) {
+            ur.args.get.forall { a =>
+              unifiedRequest.args.getOrElse(Map.empty).get(a._1) == a._2
+            }
+          } else {
+            !unifiedRequest.args.isDefined
+          }
+          ur.service == unifiedRequest.service && argExist
+        }
+        if(isMe) {
+          
         }
       }
     }
