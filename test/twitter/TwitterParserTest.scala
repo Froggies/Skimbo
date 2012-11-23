@@ -6,7 +6,6 @@ import play.api.test.Helpers._
 import json.parser._
 import json.Skimbo
 import play.api.libs.json.Json
-import model.parser.Tweet
 
 object TwitterParserTest extends Specification {
 
@@ -19,7 +18,7 @@ object TwitterParserTest extends Specification {
 			tweet.mentions.last.authorScreenName must equalTo("ybonnel")
 			tweet.createdAt.toString("MM-dd-yyyy") must equalTo("10-24-2012")
 			
-			val skimbo = TwitterTimelineParser.asSkimbo(tweet).get
+			val skimbo = TwitterTimelineParser.asSkimbo(jsonTweet(0)).get
 			val expectedId = "261219035964915700"
 			
 			skimbo.sinceId must equalTo(expectedId)
@@ -34,7 +33,7 @@ object TwitterParserTest extends Specification {
 		  
 		  // Transform all messages
 		  val allTweets = TwitterHashtagParser.cut(TwitterHashTagFixture.full)
-		  val skimbos = allTweets.map(tweet => TwitterHashtagParser.transform(tweet))
+		  val skimbos = allTweets.map(tweet => TwitterTimelineParser.asSkimbo(tweet))
 		  skimbos.size must equalTo(7)
 		}
 	}

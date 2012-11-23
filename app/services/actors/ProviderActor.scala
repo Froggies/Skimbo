@@ -71,7 +71,7 @@ class ProviderActor(channel: Concurrent.Channel[JsValue],
   idUser: String, longPolling: Boolean,
   parser: Option[GenericParser] = None, column: Column)(implicit request: RequestHeader) extends Actor {
 
-  val log = Logger(ProviderActor.getClass())
+  val log = Logger(ProviderActor.getClass()) // TODO JLA : Changer log
   val sinceId = new StringBuilder();
   var sinceDate = new DateTime().minusYears(1);
 
@@ -110,7 +110,6 @@ class ProviderActor(channel: Concurrent.Channel[JsValue],
                 val msg = Json.obj(
                   "column" -> column.title,
                   "msg" -> Json.toJson(skimboMsg.get))
-                //log.info("Messages : "+msg)
                 if(config.manualNextResults) {
                   if(skimboMsg.get.createdAt.isAfter(sinceDate)) {
                     channel.push(Json.toJson(Command("msg", Some(msg))))
@@ -122,7 +121,6 @@ class ProviderActor(channel: Concurrent.Channel[JsValue],
                   val temp = sinceId.toString()
                   sinceId.clear();
                   sinceId append parser.get.nextSinceId(skimboMsg.get.sinceId, temp)
-                  log.info("sinceId for " + unifiedRequest.service + " is " + sinceId.toString())
                   channel.push(Json.toJson(Command("msg", Some(msg))))
                 }
               } else {
@@ -144,6 +142,7 @@ class ProviderActor(channel: Concurrent.Channel[JsValue],
         self ! Dead(idUser)
       }
     }
+
     case Ping(id) => {
       if (id == idUser) {
         Akka.system.scheduler.scheduleOnce(delay second) {
@@ -151,6 +150,7 @@ class ProviderActor(channel: Concurrent.Channel[JsValue],
         }
       }
     }
+
     case ModifProvider(id: String, columnTitle, columnModif) => {
       //TODO RM : add old column instead columnTitle for this
       if (id == idUser && columnTitle == column.title) {
@@ -175,6 +175,7 @@ class ProviderActor(channel: Concurrent.Channel[JsValue],
         context.stop(self)
       }
     }
+
     case DeadColumn(idUser: String, columnTitle: String) => {
       if (columnTitle == column.title) {
         self ! Dead(idUser)

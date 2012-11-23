@@ -26,7 +26,7 @@ object FacebookParserTest extends Specification {
     "Convert Facebook message as Skimbo" in {
       val jsonMsg = FacebookWallParser.cut(FacebookFixture.timeline)
       val msg = Json.fromJson[FacebookWallMessage](jsonMsg(0)).get
-      val res = FacebookWallParser.asSkimbo(msg)
+      val res = FacebookWallParser.asSkimbo(jsonMsg(0))
       res must beSome
       res.get.directLink must beEqualTo(msg.link)
       res.get.message must beEqualTo(msg.message.get)

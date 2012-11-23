@@ -40,7 +40,6 @@ publicApp.controller('ColumnsCtrl', function($scope, $http) {
             }      
             //ici on poura effectuer tout ce que l'on veux sur notre objet data
             executeCommand(socket, data);
-            console.log("ping");
             $http.get(sseping);
         }, false);
 
@@ -119,7 +118,6 @@ publicApp.controller('ColumnsCtrl', function($scope, $http) {
                      }
                    }
                   };
-
       if(column.title =="") {
         column.showErrorTitleRequired = true;
       }
@@ -247,7 +245,6 @@ function executeCommand(socket, data) {
               }
             }
             insertSort(column.messages);
-            console.log(data.body.msg.from,data.body.msg.createdAt);
         });
     } else if(data.cmd == "addColumn" && data.body == "Ok") {
         $scope.$apply(function() {

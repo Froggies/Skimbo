@@ -78,8 +78,8 @@ object DaoUserSimpleFind extends Specification {
     Await.result(UserDao.add(user), Duration("10 seconds"))
     //modif user
     val id2 = "test2.1"
-    val userMod = User(Seq[Account](UtilTest.makeAccount(id), UtilTest.makeAccount(id2)))
-    Await.result(UserDao.update(userMod), Duration("10 seconds"))
+    Await.result(UserDao.addAccount(user, UtilTest.makeAccount(id)), Duration("10 seconds"))
+    Await.result(UserDao.addAccount(user, UtilTest.makeAccount(id2)), Duration("10 seconds"))
     //Find user
     val optionUser2: Option[User] = Await.result(UserDao.findOneById(id2), Duration("10 seconds"))
     optionUser2 must not be beNone
@@ -99,8 +99,7 @@ object DaoUserSimpleFind extends Specification {
     Await.result(UserDao.add(user), Duration("10 seconds"))
     //modif user
     val column = UtilTest.makeColumn("test", "test", "t", "t")
-    val user2 = User(user.accounts, None, Some(Seq(column)))
-    Await.result(UserDao.update(user2), Duration("10 seconds"))
+    Await.result(UserDao.addColumn(user, column), Duration("10 seconds"))
     //Find user
     val optionUser3: Option[User] = Await.result(UserDao.findOneById(id), Duration("10 seconds"))
     optionUser3 must beSome
@@ -125,10 +124,9 @@ object DaoUserSimpleFind extends Specification {
     Await.result(UserDao.add(user), Duration("10 seconds"))
     //modif user
     val column = UtilTest.makeColumn("test", "test", "t", "t")
-    val user2 = User(user.accounts, None, Some(Seq(column)))
-    Await.result(UserDao.update(user2), Duration("10 seconds"))
+    Await.result(UserDao.addColumn(user, column), Duration("10 seconds"))
     //modif user
-    Await.result(UserDao.deleteColumn(user2, "test"), Duration("10 seconds"))
+    Await.result(UserDao.deleteColumn(user, "test"), Duration("10 seconds"))
     //Find user
     val optionUser3: Option[User] = Await.result(UserDao.findOneById(id), Duration("10 seconds"))
     optionUser3 must beSome
@@ -147,11 +145,10 @@ object DaoUserSimpleFind extends Specification {
     Await.result(UserDao.add(user), Duration("10 seconds"))
     //modif user
     val column = UtilTest.makeColumn("test", "test", "t", "t")
-    val user2 = User(user.accounts, None, Some(Seq(column)))
-    Await.result(UserDao.update(user2), Duration("10 seconds"))
+    Await.result(UserDao.addColumn(user, column), Duration("10 seconds"))
     //modif user
     val column2 = UtilTest.makeColumn("test2", "test2", "t2", "t2")
-    Await.result(UserDao.updateColumn(user2, "test", column2), Duration("10 seconds"))
+    Await.result(UserDao.updateColumn(user, "test", column2), Duration("10 seconds"))
     //Find user
     val optionUser3: Option[User] = Await.result(UserDao.findOneById(id), Duration("10 seconds"))
     optionUser3 must beSome
@@ -176,8 +173,7 @@ object DaoUserSimpleFind extends Specification {
     Await.result(UserDao.add(user), Duration("10 seconds"))
     //modif user
     val provider = ProviderUser("p1", "p1", Some("p1"), Some("p1"), Some("p1"), Some("p1"))
-    val user2 = User(user.accounts, Some(Seq(provider)), None)
-    Await.result(UserDao.update(user2), Duration("10 seconds"))
+    Await.result(UserDao.addProviderUser(user, provider), Duration("10 seconds"))
     //Find user
     val optionUser3: Option[User] = Await.result(UserDao.findByIdProvider("p1", "p1"), Duration("10 seconds"))
     optionUser3 must beSome

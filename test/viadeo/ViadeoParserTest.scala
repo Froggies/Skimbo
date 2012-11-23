@@ -21,20 +21,12 @@ class ViadeoParserTest extends Specification {
     "Read json from complexe API json" in {
       val jsonMsg = ViadeoWallParser.cut(ViadeoFixture.timeline)
       jsonMsg.size must beEqualTo(17)
-      val viadeoMsg = jsonMsg.map{ jmsg => 
-        val msg = Json.fromJson[ViadeoWallMessage](jmsg)
-        if(msg.asOpt.isDefined) {
-          ViadeoWallParser.asSkimbo(msg.get)
-        } else {
-          //println("MESSAGE == "+jmsg)
-        }
-      }
     }
 
     "Convert Viadeo message as Skimbo" in {
       val jsonMsg = ViadeoWallParser.cut(ViadeoFixture.miniTimeline)
       val msg = Json.fromJson[ViadeoWallMessage](jsonMsg(0)).get
-      val res = ViadeoWallParser.asSkimbo(msg)
+      val res = ViadeoWallParser.asSkimbo(jsonMsg(0))
       res.get.authorScreenName must beEqualTo(msg.fromName)
     }
   }

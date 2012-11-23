@@ -87,16 +87,11 @@ object User {
 
   implicit object UserBSONWriter extends BSONWriter[User] {
     def toArray[Obj](objs:Seq[Obj], transform:(Obj) => BSONDocument):BSONArray = {
-      // TODO JLA > More fonctional
-      val array = objs.map {obj => 
-        println("user toArray "+obj)
-        transform(obj)
-      }
+      val array = objs.map(transform(_))
       BSONArray(array : _*)
     }
     
     def toBSON(user: User) = {
-      println("user toBson accounts"+user.accounts)
       val accounts = toArray[Account](user.accounts, { account =>
         Account.toBSON(account)
       })
@@ -109,8 +104,6 @@ object User {
         Column.toBSON(column)
       })
 
-      println("user accounts"+accounts.toTraversable.toList.size)
-      
       BSONDocument(
         "accounts" -> accounts,
         "distants" -> distants,

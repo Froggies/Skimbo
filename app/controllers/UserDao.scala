@@ -6,14 +6,13 @@ import play.api.libs.json._
 import play.api.Play.current
 import models.user.Column
 import services.endpoints.JsonRequest._
-
 import play.modules.reactivemongo._
 import scala.concurrent.{ ExecutionContext, Future }
-
 import reactivemongo.api._
 import reactivemongo.bson._
 import reactivemongo.bson.handlers.DefaultBSONHandlers.DefaultBSONDocumentWriter
 import reactivemongo.bson.handlers.DefaultBSONHandlers.DefaultBSONReaderHandler
+import reactivemongo.core.commands.LastError
 
 object UserDao {
 
@@ -37,19 +36,19 @@ object UserDao {
     collection.find(query).headOption()
   }
 
-  def addAccount(user: models.User, account: models.user.Account) {
+  def addAccount(user: models.User, account: models.user.Account) = {
     val query = BSONDocument("accounts.id" -> new BSONString(user.accounts.head.id))
     val update = BSONDocument("$push" -> BSONDocument("accounts" -> models.user.Account.toBSON(account)))
     collection.update(query, update)
   }
 
-  def addColumn(user: models.User, column: models.user.Column) {
+  def addColumn(user: models.User, column: models.user.Column) = {
     val query = BSONDocument("accounts.id" -> new BSONString(user.accounts.head.id))
     val update = BSONDocument("$push" -> BSONDocument("columns" -> models.user.Column.toBSON(column)))
     collection.update(query, update)
   }
 
-  def addProviderUser(user: models.User, providerUser: models.user.ProviderUser) {
+  def addProviderUser(user: models.User, providerUser: models.user.ProviderUser) = {
     val query = BSONDocument("accounts.id" -> new BSONString(user.accounts.head.id))
     val update = BSONDocument(
       "$push" -> BSONDocument("ProviderUser" -> models.user.ProviderUser.toBSON(providerUser)))
