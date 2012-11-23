@@ -26,7 +26,7 @@ object TrelloParserTest extends Specification {
     "Convert Trello message as Skimbo" in {
       val jsonMsg = TrelloWallParser.cut(TrelloFixture.miniTimeline)
       val msg = Json.fromJson[TrelloWallMessage](jsonMsg(0)).get
-      val res = TrelloWallParser.asSkimbo(msg)
+      val res = TrelloWallParser.asSkimbo(jsonMsg(0))
       res.get.authorScreenName must beEqualTo(msg.memberCreator.username)
     }
   }
