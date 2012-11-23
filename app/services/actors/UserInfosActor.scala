@@ -66,7 +66,7 @@ object UserInfosActor {
 class UserInfosActor(idUser: String, channelOut: Concurrent.Channel[JsValue])(implicit request: RequestHeader) extends Actor {
 
   import scala.concurrent.ExecutionContext.Implicits.global
-  val log = Logger(classOf[UserInfosActor])
+  val log = Logger(classOf[UserInfosActor]) // TODO JLA : Logger autrement
 
   def receive() = {
     case Retreive => {

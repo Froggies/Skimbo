@@ -18,7 +18,6 @@ object Commands {
   }
 
   def interpretCmd(idUser: String, cmd: Command)(implicit context: scala.concurrent.ExecutionContext, req: RequestHeader): Unit = {
-    println(idUser)
     cmd.name match {
       case "allColumns" => {
         UserDao.findOneById(idUser).map(_.map { user =>
@@ -63,8 +62,6 @@ object Commands {
       }
       case _ => {
         Logger.error("Command not found " + cmd)
-        Command("error", Some(JsString("Command not found " + cmd)))
-        //TODO RM : return to client ?
       }
     }
   }

@@ -124,9 +124,9 @@ trait EndpointConfig {
   val delay: Int = 60
   val provider: GenericProvider
   val requiredParams : List[String] = List.empty
-  val limit = 50
+  val limit = 20
   val manualNextResults = false
-  val parser: Option[GenericParser] = None//TODO remove Some(that) or not...
+  val parser: Option[GenericParser] = None
 
   def withLimit(url: String) = url.replace(":limit", limit.toString)
 }
