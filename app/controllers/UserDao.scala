@@ -37,9 +37,24 @@ object UserDao {
     collection.find(query).headOption()
   }
 
-  def update(user: models.User) = {
+  def addAccount(user: models.User, account:models.user.Account) {
     val query = BSONDocument("accounts.id" -> new BSONString(user.accounts.head.id))
-    collection.update(query, user)
+    val update = BSONDocument("$push" -> BSONDocument("accounts" -> models.user.Account.toBSON(account)))
+    collection.update(query, update)
+  }
+  
+  def addColumn(user: models.User, column:models.user.Column) {
+    val query = BSONDocument("accounts.id" -> new BSONString(user.accounts.head.id))
+    val update = BSONDocument("$push" -> BSONDocument("columns" -> models.user.Column.toBSON(column)))
+    collection.update(query, update)
+  }
+  
+  def addProviderUser(user: models.User, providerUser:models.user.ProviderUser) {
+    val query = BSONDocument("accounts.id" -> new BSONString(user.accounts.head.id))
+    val update = BSONDocument(
+      "$push" -> BSONDocument("ProviderUser" -> models.user.ProviderUser.toBSON(providerUser))
+    )
+    collection.update(query, update)
   }
   
   def updateColumn(user: models.User, title:String, column:Column) = {

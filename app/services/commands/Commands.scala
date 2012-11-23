@@ -31,10 +31,7 @@ object Commands {
       case "addColumn" => {
         val newColumn = Json.fromJson[Column](cmd.body.get).get
         UserDao.findOneById(idUser).map(_.map { user =>
-          UserDao.update(
-            User(user.accounts,
-              user.distants,
-              Some(user.columns.getOrElse(Seq[Column]()) :+ newColumn)))
+          UserDao.addColumn(user, newColumn)
           UserInfosActor.startProfiderFor(idUser, newColumn)
           UserInfosActor.sendTo(idUser, Json.toJson(Command(cmd.name, Some(JsString("Ok")))))
         })

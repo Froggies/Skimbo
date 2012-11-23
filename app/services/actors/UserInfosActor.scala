@@ -80,10 +80,7 @@ class UserInfosActor(idUser: String, channelOut: Concurrent.Channel[JsValue])(im
                     if (optionUser.isDefined) {
                       log.info("User has id of " + provider.name + " in DB = " + optionUser.get.accounts.last.id)
                       val user = optionUser.get
-                      UserDao.update(User(
-                        user.accounts :+ Account(idUser, new Date()),
-                        user.distants,
-                        user.columns))
+                      UserDao.addAccount(user, Account(idUser, new Date()))
                       start(user)
                     } else {
                       log.info("User hasn't id of " + provider.name + " in DB createIt")
@@ -141,16 +138,13 @@ class UserInfosActor(idUser: String, channelOut: Concurrent.Channel[JsValue])(im
       }
     }
     case AddInfosUser(user: User, providerUser: ProviderUser) => {
-      UserDao.update(User(
-        user.accounts,
-        Some(user.distants.getOrElse(Seq[ProviderUser]()) :+ providerUser),
-        user.columns))
+      UserDao.addProviderUser(user, providerUser)
     }
     case e: Exception => throw new UnexpectedException(Some("Incorrect message receive"), Some(e))
   }
 
   def start(user: User) = {
-    println("userInfosActor "+user.columns)
+    println("START USER userInfosActor "+user.columns)
     user.columns.getOrElse(Seq()).foreach { column =>
       self ! StartProvider(idUser, column)
     }
