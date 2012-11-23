@@ -158,7 +158,7 @@ input[type=button] {
 .column {
 	float:left;
 	width: 250px;
-	min-height: 567px;
+	height: 567px;
 	margin: 5px;
 	background: #FAFAFA;
 	border: 1px solid #C1C1C1;
@@ -352,12 +352,15 @@ header.column-title {
 }
 
 .modify-column {
-	margin-top: 10px;
+	overflow: auto;
+	overflow-y: auto;
+	overflow-x: hidden;
+	height: 537px;
 }
 
 .add-service {
 	color: #C1C1C1;
-	margin: 15px;
+	margin: 15px 15px 0 15px;
 }
 
 .social-network-link{
@@ -376,7 +379,7 @@ header.column-title {
 
 .services-proposes {
 	margin: 0;
-	padding: 15px;
+	padding: 0px 10px 0px 10px;
 	border-bottom: 1px solid #C1C1C1;
 }
 
