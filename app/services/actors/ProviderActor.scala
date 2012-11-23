@@ -114,8 +114,6 @@ class ProviderActor(channel: Concurrent.Channel[JsValue],
                   if(skimboMsg.get.createdAt.isAfter(sinceDate)) {
                     channel.push(Json.toJson(Command("msg", Some(msg))))
                     sinceDate = skimboMsg.get.createdAt
-                  } else {
-                    log.info("old msg !!!!")
                   }
                 } else {
                   val temp = sinceId.toString()
