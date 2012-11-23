@@ -3,8 +3,8 @@ package linkedIn
 import org.specs2.mutable._
 import play.api.test._
 import play.api.test.Helpers._
-import model.parser._
-import model.Skimbo
+import json.parser._
+import json.Skimbo
 import play.api.libs.json.Json
 
 object LinkedInParserTest extends Specification {

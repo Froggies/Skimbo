@@ -11,9 +11,9 @@ import views.html._
 object Application extends Controller {
 
   def index = Action { implicit request =>
-    request.session.get("id").map(userId => {
-      Ok(views.html.unified())
-    }).getOrElse(Ok(views.html.index(Service.list)))
+    request.session.get("id")
+      .map(_ => Ok(views.html.unified()))
+      .getOrElse(Ok(views.html.index(Service.list)))
   }
 
   def authenticate(providerName: String) = Action { implicit request =>

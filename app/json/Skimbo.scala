@@ -1,4 +1,4 @@
-package model
+package json
 
 import org.joda.time._
 import scala.util.parsing.json.JSONObject

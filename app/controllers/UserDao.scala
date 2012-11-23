@@ -17,8 +17,9 @@ import reactivemongo.bson.handlers.DefaultBSONHandlers.DefaultBSONReaderHandler
 
 object UserDao {
 
-  import scala.concurrent.ExecutionContext.Implicits.global
-
+  import play.api.libs.concurrent.Execution.Implicits._
+  import models.User._
+  
   val db = ReactiveMongoPlugin.db
   val collection = db("users")
 
@@ -27,14 +28,11 @@ object UserDao {
   }
 
   def findAll(): Future[List[models.User]] = {
-    implicit val reader = models.User.UserBSONReader
     val query = BSONDocument()
-    val found = collection.find(query)
-    found.toList
+    collection.find(query).toList
   }
 
   def findOneById(id: String): Future[Option[models.User]] = {
-    implicit val reader = models.User.UserBSONReader
     val query = BSONDocument("accounts.id" -> new BSONString(id))
     collection.find(query).headOption()
   }
@@ -52,7 +50,6 @@ object UserDao {
   }
 
   def findByIdProvider(provider: String, id: String): Future[Option[models.User]] = {
-    implicit val reader = models.User.UserBSONReader
     val query = BSONDocument(
       "distants.social" -> new BSONString(provider),
       "distants.id" -> new BSONString(id))

@@ -2,7 +2,7 @@ package services.endpoints
 
 import services.auth.GenericProvider
 import services.auth.providers
-import model.parser._
+import json.parser._
 import org.joda.time.format.DateTimeFormat
 
 object Configuration {

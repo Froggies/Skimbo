@@ -26,13 +26,10 @@ object User {
   }
 
   def toJson(user: User): JsValue = {
-    val accounts = user.accounts
-    val distants = user.distants.getOrElse { Seq() }
-    val columns = user.columns.getOrElse { Seq() }
-    JsObject(Seq(
-      "accounts" -> Json.toJson(accounts),
-      "distants" -> Json.toJson(distants),
-      "columns" -> Json.toJson(columns)))
+    Json.obj(
+      "accounts" -> Json.toJson(user.accounts),
+      "distants" -> Json.toJson(user.distants.getOrElse(Seq.empty)),
+      "columns" -> Json.toJson(user.columns.getOrElse(Seq.empty)))
   }
   
   def tableTo[Obj](document: BSONDocument, key:String, transform:(TraversableBSONDocument) => Obj):Seq[Obj] = {
@@ -57,9 +54,7 @@ object User {
       val accounts = tableTo[Account](document, "accounts", { a =>
         val lastUse = new Date()
         lastUse.setTime(a.getAs[BSONDateTime]("lastUse").get.value)
-        Account(
-          asString(a, "id"),
-          lastUse)
+        Account(asString(a, "id"), lastUse)
       })
       val providers = tableTo[ProviderUser](document, "distants", { d =>
         ProviderUser(
@@ -80,18 +75,13 @@ object User {
           if (args.nonEmpty) {
             UnifiedRequest(asString(r, "service"), Some(args.toMap))
           } else {
-            UnifiedRequest(
-              asString(r, "service"),
-              None)
+            UnifiedRequest(asString(r, "service"), None)
           }
         })
         Column(asString(c, "title"), unifiedRequests)
       })
       Logger.info("User = "+accounts+" :: "+providers+" :: "+columns)
-      User(
-        accounts,
-        Some(providers),
-        Some(columns))
+      User(accounts, Some(providers), Some(columns))
     }
   }
 
