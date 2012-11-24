@@ -382,7 +382,6 @@ function executeCommand(data) {
     clientUnifiedRequest.args = []
     for (var key in unifiedRequest.args) {
       var value = unifiedRequest.args[key];
-      console.log("value", value);
       clientUnifiedRequest.args.push({"key":key,"value":value});
     };
     clientUnifiedRequest.hasArguments = clientUnifiedRequest.args.length > 0;
