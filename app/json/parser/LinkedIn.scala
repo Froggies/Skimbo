@@ -22,20 +22,29 @@ case class PersonLinkedIn(
   id: String,
   lastName: String,
   pictureUrl: Option[String],
-  directLink: Option[String])
+  directLink: Option[String],
+  connections: List[ConnectionLinkedIn])
 
 case class CompanyPersonLinkedIn(
   code: String,
   person: PersonLinkedIn)
+  
+case class ConnectionLinkedIn(
+  firstName: String,
+  lastName: String,
+  headLine: Option[String]
+)
 
 object LinkedInWallParser extends GenericParser {
 
   override def asSkimbo(json: JsValue): Option[Skimbo] = {
     val e = Json.fromJson[LinkedInWallMessage](json).get
+    if (mustBeIgnored(e)) None
+
     Some(Skimbo(
       e.person.getOrElse(e.companyPerson.get.person).firstName,
       e.person.getOrElse(e.companyPerson.get.person).lastName,
-      generateText(e.updateType, e),
+      generateText(e),
       e.timestamp,
       Nil,
       e.numLikes.getOrElse(-1),
@@ -45,15 +54,22 @@ object LinkedInWallParser extends GenericParser {
       LinkedIn))
   }
 
-  def generateText(typeLinkedIn: String, e: LinkedInWallMessage) = {
-    typeLinkedIn match {
+  def mustBeIgnored(msg: LinkedInWallMessage) = {
+    msg.updateType == "CONN" && msg.person.get.connections.head.firstName == "private"
+    // || other conditions here
+  }
+
+  def generateText(e: LinkedInWallMessage) = {
+    e.updateType match {
       case "STAT" => {
         val p = e.person.get
         p.firstName + " " + p.lastName + " : " + p.currentStatus.getOrElse("")
       }
       case "CONN" => {
-        val p = e.person.get
-        "Connexion : " + p.firstName + " " + p.lastName
+        e.person.get.connections.headOption.map(friend => 
+          "Connection with " + friend.firstName +" "+ friend.lastName + 
+          friend.headLine.map(" "+_))
+        .getOrElse("New connection")
       }
       case "NCON" => {
         val p = e.person.get
@@ -105,7 +121,8 @@ object PersonLinkedIn {
     (__ \ "id").read[String] and
     (__ \ "lastName").read[String] and
     (__ \ "pictureUrl").readOpt[String] and
-    (__ \ "siteStandardProfileRequest" \ "url").readOpt[String])(PersonLinkedIn.apply _)
+    (__ \ "siteStandardProfileRequest" \ "url").readOpt[String] and
+    (__ \ "connections" \ "values").readOpt[List[ConnectionLinkedIn]].map(_.getOrElse(List.empty)))(PersonLinkedIn.apply _)
 }
 
 object CompanyPersonLinkedIn {
@@ -123,4 +140,11 @@ object LinkedInWallMessage {
     (__ \ "updateContent" \ "person").readOpt[PersonLinkedIn] and
     (__ \ "updateContent" \ "company" \ "name").readOpt[String] and
     (__ \ "updateContent" \ "companyPersonUpdate").readOpt[CompanyPersonLinkedIn])(LinkedInWallMessage.apply _)
+}
+
+object ConnectionLinkedIn {
+  implicit val connectionLinkedInReader: Reads[ConnectionLinkedIn] = (
+    (__ \ "firstName").read[String] and
+    (__ \ "lastName").read[String] and
+    (__ \ "headline").readOpt[String])(ConnectionLinkedIn.apply _) 
 }

@@ -26,6 +26,7 @@ object LinkedInParserTest extends Specification {
     "Convert LinkedIn message as Skimbo" in {
       val jsonMsg = LinkedInWallParser.cut(LinkedInFixture.timeline)
       val msg = Json.fromJson[LinkedInWallMessage](jsonMsg(0)).get
+      msg.person.get.connections.head.firstName must beEqualTo("Andrea")
       val res = LinkedInWallParser.asSkimbo(jsonMsg(0))
       res must beSome
       res.get.authorScreenName must beEqualTo(msg.person.get.lastName)
