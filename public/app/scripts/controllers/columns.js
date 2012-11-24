@@ -73,7 +73,6 @@ publicApp.controller('ColumnsCtrl', function($scope, $http) {
 
     $scope.modifyColumn = function(column) {
       column.showModifyColumn= !column.showModifyColumn;
-      console.log($scope.serviceProposes);
       if (column.showModifyColumn == true) {
         if($scope.serviceProposes == undefined) {
           var json = {"cmd":"allUnifiedRequests"};
@@ -293,20 +292,13 @@ function executeCommand(data) {
             serviceProposes.push(service);
           }
       };
-      var socialNetworks = new Array();
-      for (var i = 0; i < data.body.length; i++) {
-          var elementBody = data.body[i];
-          socialNetworks.unshift(elementBody);
-      }
       if(!$scope.$$phase) {
         $scope.$apply(function() {
           $scope.serviceProposes = serviceProposes;
-          $scope.socialNetworks = socialNetworks;
         });
       }
       else {
         $scope.serviceProposes = serviceProposes;
-        $scope.socialNetworks = socialNetworks;
       }
     } else if(data.cmd == "msg") {
         var columnTitle = data.body.column;
@@ -315,9 +307,7 @@ function executeCommand(data) {
             if(column.messages == undefined) {
                 column.messages = [];
             }
-
             column.messages.push(data.body.msg);
-
             var insertSort = function(sortMe) {
               for(var i=0, j, tmp; i<sortMe.length; ++i ) {
                 tmp = sortMe[i];
