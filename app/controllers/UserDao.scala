@@ -23,7 +23,7 @@ object UserDao {
   val collection = db("users")
 
   def add(user: models.User) = {
-    collection.insert(user)
+    collection.insert(models.User.toBSON(user))
   }
 
   def findAll(): Future[List[models.User]] = {
@@ -76,7 +76,7 @@ object UserDao {
   }
 
   def delete(user: models.User) = {
-    collection.remove(user)
+    collection.remove(models.User.toBSON(user))
   }
 
 }
