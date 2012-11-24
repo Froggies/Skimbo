@@ -25,7 +25,7 @@ publicApp.controller('ColumnsCtrl', function($scope, $http) {
                 data = msg.data
             }      
             //ici on poura effectuer tout ce que l'on veux sur notre objet data
-            executeCommand(socket, data);
+            executeCommand(data);
         }
     } 
 
@@ -39,7 +39,7 @@ publicApp.controller('ColumnsCtrl', function($scope, $http) {
                 data = msg.data
             }      
             //ici on poura effectuer tout ce que l'on veux sur notre objet data
-            executeCommand(socket, data);
+            executeCommand(data);
             $http.get(sseping);
         }, false);
 
@@ -93,7 +93,7 @@ publicApp.controller('ColumnsCtrl', function($scope, $http) {
         column.unifiedRequests.push(serviceJson);
       }
       else {
-        openPopup(socket, service.socialNetwork);
+        $scope.openPopup(service.socialNetwork);
       }
     }
 
@@ -207,7 +207,31 @@ publicApp.controller('ColumnsCtrl', function($scope, $http) {
         return "";
     }
 
+    $scope.openPopup = function(socialNetworkName) {
+      var newwindow = window.open("/auth/"+socialNetworkName, 'Connexion', 'height=500,width=500');
 
+      if (newwindow !== undefined) {
+        if (window.focus) newwindow.focus();
+        
+        newwindow.onclose = function() {
+          console.log("in 1");
+          // var json = {"cmd":"allUnifiedRequests"};
+          // socket.send(JSON.stringify(json));
+          $http.get("/api/providers/services").success(function(data) {
+            executeCommand({"cmd":"allUnifiedRequests","body":data});
+          });
+        };
+        newwindow.onbeforeunload = function() {
+          console.log("in 2");
+          // var json = {"cmd":"allUnifiedRequests"};
+          // socket.send(JSON.stringify(json));
+          $http.get("/api/providers/services").success(function(data) {
+            executeCommand({"cmd":"allUnifiedRequests","body":data});
+          });
+        };
+      }
+      return false;
+    }
 
 function getColumnByName(name) {
     for (var i = 0; i < $scope.columns.length; i++) {
@@ -216,6 +240,7 @@ function getColumnByName(name) {
         }
     }
 }
+
 
 function fillExplainService(typeService, socialNetwork) {
   console.log(typeService, socialNetwork);
@@ -239,38 +264,36 @@ function fillExplainService(typeService, socialNetwork) {
 }
 
 
-function executeCommand(socket, data) {
+function executeCommand(data) {
     if(data.cmd == "allUnifiedRequests") {
-        $scope.$apply(function() {
-            var serviceProposes = new Array();
-            for (var i = 0; i < data.body.length; i++) {
-                var elementBodySocialNetwork = data.body[i];
-                var services = elementBodySocialNetwork.services;
-                for (var j = 0; j < services.length; j++) {
-                  var service = {socialNetwork:elementBodySocialNetwork.endpoint,
-                                  socialNetworkToken:elementBodySocialNetwork.hasToken,
-                                  typeService:services[j].service.split(".")[1],
-                                  typeServiceChar:"",
-                                  explainService:"",
-                                  args:{}
-                                };
-                  service.explainService = fillExplainService(service.typeService, service.socialNetwork);
-                  service.typeServiceChar = $scope.typeServiceCharByService(services[j].service);
-                  for (var k = 0; k < services[j].args.length; k++) {
-                    service.args[services[j].args[k]] = "";
-                  };
-                  serviceProposes.push(service);
-                }
+      var serviceProposes = new Array();
+      for (var i = 0; i < data.body.length; i++) {
+          var elementBodySocialNetwork = data.body[i];
+          var services = elementBodySocialNetwork.services;
+          for (var j = 0; j < services.length; j++) {
+            var service = {socialNetwork:elementBodySocialNetwork.endpoint,
+                            socialNetworkToken:elementBodySocialNetwork.hasToken,
+                            typeService:services[j].service.split(".")[1],
+                            typeServiceChar:"",
+                            explainService:"",
+                            args:{}
+                          };
+            service.explainService = fillExplainService(service.typeService, service.socialNetwork);
+            service.typeServiceChar = $scope.typeServiceCharByService(services[j].service);
+            for (var k = 0; k < services[j].args.length; k++) {
+              service.args[services[j].args[k]] = "";
             };
-            $scope.serviceProposes = serviceProposes;
+            serviceProposes.push(service);
+          }
+      };
+      $scope.serviceProposes = serviceProposes;
+      var socialNetworks = new Array();
+      for (var i = 0; i < data.body.length; i++) {
+          var elementBody = data.body[i];
+          socialNetworks.unshift(elementBody);
+      }
+      $scope.socialNetworks = socialNetworks;
 
-            var socialNetworks = new Array();
-            for (var i = 0; i < data.body.length; i++) {
-                var elementBody = data.body[i];
-                socialNetworks.unshift(elementBody);
-            }
-            $scope.socialNetworks = socialNetworks;
-        });
     } else if(data.cmd == "msg") {
         var columnTitle = data.body.column;
         var column = getColumnByName(columnTitle);
@@ -322,26 +345,6 @@ function executeCommand(socket, data) {
     } else {
       console.error("cmd not found : ", data);
     }
-}
-
-function openPopup(socket,socialNetworkName) {
-  var newwindow = window.open("/auth/"+socialNetworkName, 'Connexion', 'height=500,width=500');
-
-  if (newwindow !== undefined) {
-    if (window.focus) newwindow.focus();
-    
-    newwindow.onclose = function() {
-      console.log("in 1");
-      var json = {"cmd":"allUnifiedRequests"};
-      socket.send(JSON.stringify(json));
-    };
-    newwindow.onbeforeunload = function() {
-      console.log("in 2");
-      var json = {"cmd":"allUnifiedRequests"};
-      socket.send(JSON.stringify(json));
-    };
-  }
-  return false;
 }
 });
 
