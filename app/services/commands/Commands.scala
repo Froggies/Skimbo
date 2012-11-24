@@ -9,6 +9,7 @@ import play.api.Logger
 import play.api.libs.json._
 import play.api.mvc.RequestHeader
 import services.actors.UserInfosActor
+import services.actors.ProviderActor
 
 object Commands {
 
@@ -59,6 +60,10 @@ object Commands {
       }
       case "allProviders" => {
         UserInfosActor.sendTo(idUser, Json.toJson(Command(cmd.name, Some(Service.toJson))))
+      }
+      case "deleteProvider" => {
+        val providerName = (cmd.body.get \ "provider").as[String]
+        ProviderActor.killProfider(idUser, providerName)
       }
       case _ => {
         Logger.error("Command not found " + cmd)

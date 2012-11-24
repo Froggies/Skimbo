@@ -20,6 +20,7 @@ import services.endpoints.JsonRequest.UnifiedRequest
 sealed case class Ping(idUser: String)
 sealed case class Dead(idUser: String)
 sealed case class DeadColumn(idUser: String, columnTitle: String)
+sealed case class DeadProvider(idUser: String, providerName: String)
 
 object ProviderActor {
 
@@ -41,6 +42,7 @@ object ProviderActor {
           system.eventStream.subscribe(actor, classOf[Dead])
           system.eventStream.subscribe(actor, classOf[DeadColumn])
           system.eventStream.subscribe(actor, classOf[Ping])
+          system.eventStream.subscribe(actor, classOf[DeadProvider])
         }
         case _ => Logger.error("Provider or Url not found for " + unifiedRequest.service + " :: args = " + unifiedRequest.args)
       }
@@ -62,6 +64,10 @@ object ProviderActor {
 
   def killActorsForUserAndColumn(userId: String, columnTitle: String) = {
     system.eventStream.publish(DeadColumn(userId, columnTitle))
+  }
+  
+  def killProfider(idUser:String, providerName:String) = {
+    system.eventStream.publish(DeadProvider(idUser, providerName))
   }
 
 }
@@ -172,9 +178,13 @@ class ProviderActor(channel: Concurrent.Channel[JsValue],
         context.stop(self)
       }
     }
-
     case DeadColumn(idUser: String, columnTitle: String) => {
       if (columnTitle == column.title) {
+        self ! Dead(idUser)
+      }
+    }
+    case DeadProvider(id: String, providerName: String) => {
+      if (providerName == provider.name && id == idUser) {
         self ! Dead(idUser)
       }
     }

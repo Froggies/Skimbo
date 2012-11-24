@@ -60,7 +60,7 @@ object UserInfosActor {
   def killActorsForUser(userId: String) = {
     system.eventStream.publish(Dead(userId))
   }
-
+  
 }
 
 class UserInfosActor(idUser: String, channelOut: Concurrent.Channel[JsValue])(implicit request: RequestHeader) extends Actor {
