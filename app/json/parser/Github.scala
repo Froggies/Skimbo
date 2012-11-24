@@ -17,7 +17,11 @@ case class GithubWallMessage(
   createdAt: DateTime,
   avatarUser: Option[String],
   repoName: String,
-  download: Option[GithubDownloadEvent])
+  issues: Option[GithubIssuesEvent],
+  issueComment: Option[GithubIssueCommentEvent],
+  download: Option[GithubDownloadEvent],
+  refType:Option[String],
+  refName:Option[String])
 
 case class GithubForkeEvent(
   url: Option[String],
@@ -32,6 +36,16 @@ case class GithubDownloadEvent(
   name: String,
   description: String,
   url: String)
+  
+case class GithubIssuesEvent(
+  title: String,
+  state: String,
+  htmlUrl: String,
+  body: String)
+  
+case class GithubIssueCommentEvent(
+  id: Int,
+  body: String)
 
 object GithubWallParser extends GenericParser {
 
@@ -62,13 +76,25 @@ object GithubWallParser extends GenericParser {
         } else {
           "New download : " + e.download.get.name
         }
-
+      }
+      case "IssuesEvent" => {
+        "Issue [" + e.issues.get.title + "] > " + e.issues.get.state + " : " + e.issues.get.body
+      }
+      case "IssueCommentEvent" => {
+        "Issue [" + e.issues.get.title + "] > " + e.issueComment.get.body
+      }
+      case "DeleteEvent" => {
+        "Delete " + e.refType.get + " " + e.refName.get
+      }
+      case "CreateEvent" => {
+        "Create " + e.refType.get + " " + e.refName.get
       }
       case _ => "Undevelopped type on " + e.repoName + " : " + e.typeGithub
     }
   }
 
   val gitPushUrl = "https://github.com/%s/commit/%s"
+  val gitRepoUrl = "https://github.com/%s"
 
   def buildLink(e: GithubWallMessage) = {
     e.typeGithub match {
@@ -78,6 +104,10 @@ object GithubWallParser extends GenericParser {
         Some(gitPushUrl.format(e.repoName, e.head.get))
       }
       case "DownloadEvent" => Some(e.download.get.url)
+      case "IssuesEvent" => Some(e.issues.get.htmlUrl)
+      case "IssueCommentEvent" => Some(e.issues.get.htmlUrl + "#issuecomment-" + e.issueComment.get.id)
+      case "DeleteEvent" => Some(gitRepoUrl.format(e.repoName))
+      case "CreateEvent" => Some(gitRepoUrl.format(e.repoName))
       case _ => None
     }
   }
@@ -104,6 +134,20 @@ object GithubDownloadEvent {
     (__ \ "html_url").read[String])(GithubDownloadEvent.apply _)
 }
 
+object GithubIssuesEvent {
+  implicit val githubReader: Reads[GithubIssuesEvent] = (
+    (__ \ "title").read[String] and
+    (__ \ "state").read[String] and
+    (__ \ "html_url").read[String] and
+    (__ \ "body").read[String])(GithubIssuesEvent.apply _)
+}
+
+object GithubIssueCommentEvent {
+  implicit val githubReader: Reads[GithubIssueCommentEvent] = (
+    (__ \ "id").read[Int] and
+    (__ \ "body").read[String])(GithubIssueCommentEvent.apply _)
+}
+
 object GithubWallMessage {
   
   val datePattern = "yyyy-MM-dd'T'HH:mm:ss'Z'"
@@ -118,5 +162,9 @@ object GithubWallMessage {
     (__ \ "created_at").read[DateTime](Reads.jodaDateReads(datePattern)) and
     (__ \ "actor" \ "avatar_url").readOpt[String] and
     (__ \ "repo" \ "name").read[String] and
-    (__ \ "payload" \ "download").readOpt[GithubDownloadEvent])(GithubWallMessage.apply _)
+    (__ \ "payload" \ "issue").readOpt[GithubIssuesEvent] and
+    (__ \ "payload" \ "comment").readOpt[GithubIssueCommentEvent] and
+    (__ \ "payload" \ "download").readOpt[GithubDownloadEvent] and
+    (__ \ "payload" \ "ref_type").readOpt[String] and
+    (__ \ "payload" \ "ref").readOpt[String])(GithubWallMessage.apply _)
 }

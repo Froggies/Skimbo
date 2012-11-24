@@ -7,7 +7,7 @@ import services.actors.UserInfosActor
 import services.auth.ProviderDispatcher
 import services.security.AuthenticatedAction.Authenticated
 import views.html._
-import services.auth.providers.GooglePlus
+import services.auth.providers._
 
 object Application extends Controller {
 
@@ -25,7 +25,7 @@ object Application extends Controller {
   def testRes(since: String) = Action { implicit request =>
     import scala.concurrent.ExecutionContext.Implicits.global
     Async {
-      GooglePlus.fetch("https://www.googleapis.com/plus/v1/people/me/activities/public?maxResults=30").get.map { r =>
+      Viadeo.fetch("https://api.viadeo.com/me/smart_news.json?limit=30").get.map { r =>
         Ok(r.json)
       }
     }

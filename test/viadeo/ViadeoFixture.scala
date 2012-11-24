@@ -62,6 +62,13 @@ object ViadeoFixture {
   ]}
     """
     
+  def timelineNewJob =
+    """
+  {"data":[
+    {"id":"AbrqpsAogfuAOzijAbfxxqwyAk","type":"NEWS ITEM","name":"","link":"","from":{"id":"ikitrghqhyDDfvqtodwEEbdmxw","type":"USER","name":"Didier Lallemand","link":"http://www.viadeo.com/profile/0022b9beh5emekny","updated_time":"2012-11-24T01:22:34+0100"},"on":{"id":"","type":"NEWS ITEM","name":"","link":"","from":{"id":"sIckVxmOzsfVgzpxADDpyvngyw","type":"USER","name":"Trouveunjob Trouveunjob","link":"http://www.viadeo.com/profile/0021ep7id14oqn1z","updated_time":"2012-10-28T23:02:23+0100"},"label":"","message":"","title":"Offre d'emploi Directeur De Travaux Btp - Chef De Centre - Espace Emplois","description":"Manpower Le Mans BTP recherche pour son client, dynamique société d'excellente notoriété, filiale d'un grand groupe international,...","updated_time":"2012-11-23T20:24:19+0100","infeed_link":"","creation_date":"2012-11-23T20:24:19+0100","comment_count":0,"like_count":1},"category":{"id":"dvAhdetpuEzOnqspEpblgfVqqk","type":"NEWS CATEGORY","name":"Articles viewed","link":"","updated_time":"2012-11-24T11:33:35+0100"},"label":"a consulté ","message":"Offre d'emploi Directeur De Travaux Btp - Chef De Centre - Espace Emplois","title":"Offre d'emploi Directeur De Travaux Btp - Chef De Centre - Espace Emplois","description":"Manpower Le Mans BTP recherche pour son client, dynamique société d'excellente notoriété, filiale d'un grand groupe international,...","language":"fr","updated_time":"2012-11-24T01:24:52+0100","infeed_link":"http://www.viadeo.com/shareit/redirect/?urlSharerId=0021dmhj8obv4bkb","creation_date":"2012-11-24T01:24:52+0100","comment_count":0,"like_count":0,"tags":["btp","cdd","chef de centre","emploi","emploi directeur","espace","interim","job","mission","moteur de recherche","offre","recrutement","stage","travail"]}
+  ]}
+    """
+    
   def timeline = """
     {"id":"",
     "type":"USER SMARTNEWS",
