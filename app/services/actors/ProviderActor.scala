@@ -17,6 +17,7 @@ import services.auth.GenericProvider
 import services.endpoints.Endpoints
 import services.endpoints.JsonRequest.UnifiedRequest
 import json.Skimbo
+import play.api.http.Status
 
 sealed case class Ping(idUser: String)
 sealed case class Dead(idUser: String)
@@ -93,16 +94,28 @@ class ProviderActor(channel: Concurrent.Channel[JsValue],
       if (longPolling) {
         scheduler.cancel() //need ping to call provider
       }
+
+      log.info("["+unifiedRequest.service+"] Fetching")
+
       if (provider.hasToken(request) && parser.isDefined) {
-        
         val optSinceId = if (sinceId.isEmpty) None else Some(sinceId)
         val url = Endpoints.genererUrl(unifiedRequest.service, unifiedRequest.args.getOrElse(Map.empty), optSinceId);
         val config = Endpoints.getConfig(unifiedRequest.service).get
-        
+
+        log.info("["+unifiedRequest.service+"] "+url.get)
+
         if (url.isDefined) {
           provider.fetch(url.get).get.map(response => {
-            val skimboMsgs = parser.get.cut(provider.resultAsJson(response)).map(e => parser.get.asSkimbo(e)).flatten
+            if (response.status != Status.OK) {
+              log.error("["+unifiedRequest.service+"] Error during fetching messages (Invalid Token?)")
+              log.error(response.body.toString)
+              channel.push(Json.toJson(TokenInvalid(provider.name)))
+            }
+            
+            val skimboMsgs = parser.get.cut(provider.resultAsJson(response)).map(jsonMsg => parser.get.asSkimboSafe(jsonMsg)).flatten
             val listJson = if (config.manualNextResults || config.mustBeReordered) reorderMessagesByDate(skimboMsgs) else skimboMsgs
+
+            log.info("["+unifiedRequest.service+"] Messages reçus : "+listJson.size)
 
             val messages = Enumerator.enumerate(listJson)
             val ite = Iteratee.foreach { skimboMsg: Skimbo =>
@@ -117,10 +130,7 @@ class ProviderActor(channel: Concurrent.Channel[JsValue],
 	              channel.push(Json.toJson(Command("msg", Some(msg))))
 	            }
             }
-            messages(ite).onComplete { e =>
-              log.info("ite finish for " + unifiedRequest.service + " with " + parser.get.cut(provider.resultAsJson(response)).size + " messages")
-              e
-            }
+            messages(ite)
           })
         }
       } else if (!provider.hasToken(request)) {
