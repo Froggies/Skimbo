@@ -346,7 +346,16 @@ function executeCommand(data) {
         }
         $scope.lastColumnDeleted = undefined;
       });
-    } else {
+    } else if(data.cmd == "userInfos") {
+      $scope.$apply(function() {
+        if($scope.userInfos == undefined) {
+          $scope.userInfos = [];
+        }
+        $scope.userInfos.push(data.body);
+        console.log($scope.userInfos[0].username);
+      });
+    }
+    else {
       console.error("cmd not found : ", data);
     }
 }
