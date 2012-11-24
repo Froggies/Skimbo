@@ -51,7 +51,7 @@ object UserDao {
   def addProviderUser(user: models.User, providerUser: models.user.ProviderUser) = {
     val query = BSONDocument("accounts.id" -> new BSONString(user.accounts.head.id))
     val update = BSONDocument(
-      "$push" -> BSONDocument("accounts" -> models.user.ProviderUser.toBSON(providerUser)))
+      "$push" -> BSONDocument("distants" -> models.user.ProviderUser.toBSON(providerUser)))
     collection.update(query, update)
   }
 

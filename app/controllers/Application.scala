@@ -26,7 +26,6 @@ object Application extends Controller {
       userOpt.map(_ => provider.auth(routes.Application.closePopup))
       .getOrElse(provider.auth(routes.Application.index)))
     .getOrElse(BadRequest)
-    
   }
 
   def logout() = Authenticated { action =>
