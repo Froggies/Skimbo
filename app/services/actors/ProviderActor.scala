@@ -109,6 +109,7 @@ class ProviderActor(channel: Concurrent.Channel[JsValue],
             if (response.status != Status.OK) {
               log.error("["+unifiedRequest.service+"] Error during fetching messages (Invalid Token?)")
               log.error(response.body.toString)
+              // TODO (in a far future) : parse errors (rate, token...)
               channel.push(Json.toJson(TokenInvalid(provider.name)))
             }
             
@@ -135,6 +136,7 @@ class ProviderActor(channel: Concurrent.Channel[JsValue],
         }
       } else if (!provider.hasToken(request)) {
         channel.push(Json.toJson(TokenInvalid(provider.name)))
+        log.info("["+unifiedRequest.service+"] No Token")
         self ! Dead(idUser)
       } else {
         log.error("Provider " + provider.name + " havn't parser for " + unifiedRequest.service)

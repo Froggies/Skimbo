@@ -23,14 +23,16 @@ object Configuration {
       override val provider = providers.Twitter
       override val requiredParams = List("username")
       override val parser = Some(TwitterTimelineParser)
+      override val mustBeReordered = true
     }
     object hashtag extends EndpointConfig {
       override val url = withLimit("https://api.twitter.com/1.1/search/tweets.json?count=:limit&result_type=mixed&q=%23:hashtag")
       override val since = wall.since
-      override val delay = 30
+      override val delay = 15
       override val provider = providers.Twitter
       override val requiredParams = List("hashtag")
       override val parser = Some(TwitterHashtagParser)
+      override val mustBeReordered = true
     }
   }
 
