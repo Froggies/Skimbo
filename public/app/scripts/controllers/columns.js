@@ -97,16 +97,24 @@ publicApp.controller('ColumnsCtrl', function($scope, $http) {
       }
     }
 
-    $scope.deleteService = function(service, column) {
+    $scope.deleteService = function(service, column, arg) {
       var indexInColumn = -1;
-      for (var i = 0; i < column.unifiedRequests.length; i++) {
-        if(column.unifiedRequests[i].service == service.service) {
-          indexInColumn = i;
-          break;
+      var found = false;
+      for (var i = 0; !found && i < column.unifiedRequests.length; i++) {
+        if(column.unifiedRequests[i].service == service.service && 
+            column.unifiedRequests[i].args.length > 0) {
+          for (var j = 0; !found && j < column.unifiedRequests[i].args.length; j++) {
+            var a = column.unifiedRequests[i].args[j];
+            if(arg.key == a.key && arg.value == a.value) {
+              found = true;
+              column.unifiedRequests.splice(i,1);
+            }
+          }
         }
-      }
-      if(indexInColumn > -1) {
-        column.unifiedRequests.splice(indexInColumn,1);
+        else if(column.unifiedRequests[i].service == service.service && arg === undefined) {
+          found = true;
+          column.unifiedRequests.splice(i,1);
+        }
       }
     }
 
