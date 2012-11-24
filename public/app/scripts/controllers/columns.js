@@ -72,7 +72,6 @@ publicApp.controller('ColumnsCtrl', function($scope, $http) {
     };
 
     $scope.modifyColumn = function(column) {
-      console.log("column", column);
       column.showModifyColumn = !column.showModifyColumn;
       if (column.showModifyColumn == true) {
         if($scope.serviceProposes == undefined) {
@@ -90,7 +89,6 @@ publicApp.controller('ColumnsCtrl', function($scope, $http) {
 
     $scope.addService = function(service, column) {
       if(service.socialNetworkToken) {
-        console.log("service",service);
         var clientUnifiedRequest = serverToUnifiedRequest(service.service);
         column.unifiedRequests.push(clientUnifiedRequest);
       }
@@ -256,6 +254,14 @@ function fillExplainService(typeService, socialNetwork) {
   }
 }
 
+function checkExistingImage(image) {
+  if(image == "" || image == undefined) {
+    return "assets/img/image-default.png";
+  }
+  else {
+    return image;
+  }
+}
 
 function executeCommand(data) {
     if(data.cmd == "allUnifiedRequests") {
@@ -295,6 +301,7 @@ function executeCommand(data) {
             if(column.messages == undefined) {
                 column.messages = [];
             }
+            data.body.msg.authorAvatar = checkExistingImage(data.body.msg.authorAvatar);
             column.messages.push(data.body.msg);
             var insertSort = function(sortMe) {
               for(var i=0, j, tmp; i<sortMe.length; ++i ) {
@@ -308,7 +315,6 @@ function executeCommand(data) {
             insertSort(column.messages);
         });
     } else if(data.cmd == "allColumns") {
-        console.log("columns",data.body);
         $scope.$apply(function() {
             $scope.columns = [];
             var cols = data.body;
@@ -348,8 +354,8 @@ function executeCommand(data) {
         if($scope.userInfos == undefined) {
           $scope.userInfos = [];
         }
+        data.body.avatar = checkExistingImage(data.body.avatar);
         $scope.userInfos.push(data.body);
-        console.log($scope.userInfos[0].username);
       });
     }
     else {
