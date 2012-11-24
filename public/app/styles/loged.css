@@ -20,6 +20,10 @@ header.banner {
 	margin: 0 auto;
 }
 
+#header-general {
+	height: 100%;
+}
+
 header .separateur-gris {
 	float:left;
 	margin-left: 20px;
@@ -72,20 +76,18 @@ input[type=button] {
 }
 
 .banner a {
-	color: #B6B6B6;
 	background: white;
 	display: inline-block;
 	vertical-align: middle;
 	text-decoration: none;
 	line-height: 30px;
-	padding-left: 10px;
-	padding-right: 10px;
+	padding-left: 8px;
+	padding-right: 8px;
 	border: 2px solid #B6B6B6;
 	-webkit-border-radius: 10px;
 	-moz-border-radius: 10px;
 	border-radius: 10px;
 }
-
 
 .column-new a,
 .delete-link {
@@ -110,12 +112,19 @@ input[type=button] {
 }
 
 #bloc-utilisateur {
+	width: 300px;
 	z-index: 1;
 	line-height: 0;
 	position: absolute;
 	background-color: #FAFAFA;
     border-radius: 10px;
     border: 2px solid #B6B6B6;
+    right: 20px;
+	top: 50px;
+}
+
+.connected-on {
+	text-align: left;
 }
 
 #bloc-utilisateur:after {
@@ -149,8 +158,14 @@ input[type=button] {
 	background: #FAFAFA;
 }
 
+#reseaux-connectes a.deconnexion{
+	float: right;
+}
+
 #reseaux-connectes li {
+	width: 90%;
 	list-style-type: none;
+	text-align: left;
 }
 
 #bloc-utilisateur footer {
@@ -161,9 +176,14 @@ input[type=button] {
 }
 
 #bloc-utilisateur footer a {
-	margin: 10px;
+	margin: 5px;
 }
 
+#bloc-utilisateur footer a, 
+#nom-prenom
+ {
+	color: #B6B6B6;
+}
 
 [draggable] {
     -moz-user-select: none;
@@ -325,7 +345,8 @@ header.column-title {
 	height: 537px;
 }
 
-.add-service {
+.add-service,
+.connected-on {
 	color: #C1C1C1;
 	margin: 15px 15px 0 15px;
 }
