@@ -14,7 +14,7 @@
 				<div class="connected-on">You are logged in :</div>
 				<ul>
 					<li ng-repeat="userInfo in userInfos">
-						<a href="#" class="{{userInfo.socialType}}"><img src="assets/img/brand/{{userInfo.socialType}}.png" alt="{{userInfo.socialType}}" width="16" height="16">{{userInfo.username}}</a>
+						<a href="#" class="social-network-connected {{userInfo.socialType}}"><img src="assets/img/brand/{{userInfo.socialType}}.png" alt="{{userInfo.socialType}}" width="16" height="16">{{userInfo.username}}</a>
 						<a href="#" class="deconnexion {{userInfo.socialType}}">✘</a>
 					</li>
 				</ul>

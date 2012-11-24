@@ -148,6 +148,10 @@ input[type=button] {
     border-bottom: 20px solid #B6B6B6;
 }
 
+.social-network-connected img {
+	padding-right: 10px;
+}
+
 #reseaux-connectes {
 	margin: 20px;
 }
