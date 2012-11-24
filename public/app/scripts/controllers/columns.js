@@ -206,19 +206,16 @@ publicApp.controller('ColumnsCtrl', function($scope, $http) {
         newwindow.onclose = function() {
           $http.get("/api/providers/services").success(function(data) {
             executeCommand({"cmd":"allUnifiedRequests","body":data});
-            var serviceJson = {"service":_service.socialNetwork+"."+_service.typeService,
-                            "args":_service.args
-                          };
-            _column.unifiedRequests.push(serviceJson);
+            var clientUnifiedRequest = serverToUnifiedRequest(_service.service);
+            _column.unifiedRequests.push(clientUnifiedRequest);
+
           });
         };
         newwindow.onbeforeunload = function() {
           $http.get("/api/providers/services").success(function(data) {
             executeCommand({"cmd":"allUnifiedRequests","body":data});
-            var serviceJson = {"service":_service.socialNetwork+"."+_service.typeService,
-                            "args":_service.args
-                          };
-            _column.unifiedRequests.push(serviceJson);
+            var clientUnifiedRequest = serverToUnifiedRequest(_service.service);
+            _column.unifiedRequests.push(clientUnifiedRequest);
           });
         };
       }
