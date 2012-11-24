@@ -58,8 +58,9 @@ publicApp.controller('ColumnsCtrl', function($scope, $http) {
 
     $scope.addColumn = function() {
         if($scope.serviceProposes == undefined) {
-          var json = {"cmd":"allUnifiedRequests"};
-          socket.send(JSON.stringify(json));
+          $http.get("/api/providers/services").success(function(data) {
+            executeCommand({"cmd":"allUnifiedRequests","body":data});
+          });
         }
         if($scope.columns == undefined) {
           $scope.columns = [];
@@ -75,8 +76,9 @@ publicApp.controller('ColumnsCtrl', function($scope, $http) {
       column.showModifyColumn = !column.showModifyColumn;
       if (column.showModifyColumn == true) {
         if($scope.serviceProposes == undefined) {
-          var json = {"cmd":"allUnifiedRequests"};
-          socket.send(JSON.stringify(json));
+          $http.get("/api/providers/services").success(function(data) {
+            executeCommand({"cmd":"allUnifiedRequests","body":data});
+          });
         }
       }
       if(column.showModifyColumn == true) {
@@ -214,7 +216,6 @@ publicApp.controller('ColumnsCtrl', function($scope, $http) {
             executeCommand({"cmd":"allUnifiedRequests","body":data});
             var clientUnifiedRequest = serverToUnifiedRequest(_service.service);
             _column.unifiedRequests.push(clientUnifiedRequest);
-
           });
         };
         newwindow.onbeforeunload = function() {
