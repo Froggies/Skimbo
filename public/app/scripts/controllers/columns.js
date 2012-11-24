@@ -77,7 +77,12 @@ publicApp.controller('ColumnsCtrl', function($scope, $http) {
           var json = {"cmd":"allUnifiedRequests"};
           socket.send(JSON.stringify(json));
       }
-      column.oldTitle = column.title;
+      if(column.showModifyColumn) {
+        column.oldTitle = column.title;
+      }
+      else {
+        column.title = column.oldTitle;
+      }
     };
 
     $scope.addService = function(service, column) {
