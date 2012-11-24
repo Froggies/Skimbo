@@ -247,6 +247,10 @@ header.column-title {
 	text-shadow:0px 1px 1px #000000;
 }
 
+.title-input {
+	width: 150px;
+}
+
 .configure {
 	float: right;
 	padding-right: 10px;
