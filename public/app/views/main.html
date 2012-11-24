@@ -15,7 +15,7 @@
 						<div class="rond {{m.from}}"></div>
 					</div>
 					<div class="message-content">
-						<img src="{{m.authorAvatar}}" title="{{m.authorScreenName}}" width="32" height="32">
+						<img ng-src="{{m.authorAvatar}}" title="{{m.authorScreenName}}" width="32" height="32">
 						<a href="{{m.directLink}}" class="author-name {{m.from}}" target="_blank">{{m.authorName}}</a>
 						<p class="date-creation">{{m.createdAt | date:'mediumDate'}}</p>
 						<div class="message" title="{{m.message}}"> {{truncateString(m.message)}}</div>
@@ -35,7 +35,7 @@
 				<li ng-repeat="service in serviceProposes">
 					<div class="social-network-link">
 						<a href="#" ng-click="addService(service, c)" ref="{{service.explainService}}">
-							<img class="social-network-active {{service.socialNetworkToken}}" src="assets/img/brand/{{service.socialNetwork}}.png" alt="{{service.socialNetwork}}" width="32" height="32"></a>
+							<img class="social-network-active {{service.socialNetworkToken}}" ng-src="assets/img/brand/{{service.socialNetwork}}.png" alt="{{service.socialNetwork}}" width="32" height="32"></a>
 						<span class="social-network-char {{service.socialNetwork}} social-network-active {{service.socialNetworkToken}}">{{service.typeServiceChar}}</span>
 					</div>
 				</li>
@@ -43,7 +43,7 @@
 			<ul class="services-actives">
 				<li ng-repeat="service in c.unifiedRequests">
 					<div class="input-service" ng-show="service.hasArguments" ng-repeat="arg in service.args ">
-						<img class="img-service" src="assets/img/brand/{{service.providerName}}.png" alt="{{service.providerName}}" width="32" height="32">
+						<img class="img-service" ng-src="assets/img/brand/{{service.providerName}}.png" alt="{{service.providerName}}" width="32" height="32">
 						<span class="type-service {{service.providerName}}">
 							{{typeServiceCharByService(service.service)}}
 						</span>
@@ -54,7 +54,7 @@
 						>✘</a>
 					</div>
 					<div ng-show="!service.hasArguments">
-						<img src="assets/img/brand/{{service.providerName}}.png" alt="{{service.providerName}}" width="24" height="24">
+						<img ng-src="assets/img/brand/{{service.providerName}}.png" alt="{{service.providerName}}" width="24" height="24">
 						You are receving {{service.serviceName}}
 						<a href="#" 
 							class="{{service.providerName}}"
