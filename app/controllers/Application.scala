@@ -8,6 +8,7 @@ import services.auth.ProviderDispatcher
 import services.security.AuthenticatedAction.Authenticated
 import views.html._
 import services.auth.providers._
+import models.User
 
 object Application extends Controller {
 
@@ -18,24 +19,23 @@ object Application extends Controller {
   }
 
   def authenticate(providerName: String) = Action { implicit request =>
-    ProviderDispatcher(providerName).map(provider =>
-      provider.auth(routes.Application.index)).getOrElse(BadRequest)
-  }
+    val providerOpt  = ProviderDispatcher(providerName);
+    val userOpt = request.session.get("id").map(User.create)
 
-  def testRes(since: String) = Action { implicit request =>
-    import scala.concurrent.ExecutionContext.Implicits.global
-    Async {
-      Viadeo.fetch("https://api.viadeo.com/me/smart_news.json?limit=30").get.map { r =>
-        Ok(r.json)
-      }
-    }
+    providerOpt.map(provider => 
+      userOpt.map(_ => provider.auth(routes.Application.closePopup))
+      .getOrElse(provider.auth(routes.Application.index)))
+    .getOrElse(BadRequest)
+    
   }
 
   def logout() = Authenticated { action =>
-    Logger.info("Aplication.scala :: KillMyActors :: " + action.user.accounts.last.id)
     UserInfosActor.killActorsForUser(action.user.accounts.last.id)
-    //TODO remove session id
-    Ok(views.html.index(Service.list(action.request)))
+    Ok(views.html.index(Service.list(action.request))).withNewSession
+  }
+  
+  def closePopup() = Action {
+    Ok(views.html.popupEndAuthentication())
   }
 
 }

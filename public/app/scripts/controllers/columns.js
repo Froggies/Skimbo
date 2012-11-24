@@ -299,8 +299,22 @@ function executeCommand(socket, data) {
 }
 
 function openPopup(socialNetworkName) {
-  newwindow=window.open("/auth/"+socialNetworkName,'name','max-height=600,max-width=600');
-  if (window.focus) {newwindow.focus()}
+  var newwindow = window.open("/auth/"+socialNetworkName, 'put something here ;)', 'height=500,width=500');
+
+  if (newwindow !== undefined) {
+    if (window.focus) newwindow.focus();
+    
+    newwindow.onclose = function() {
+      console.log("in 1");
+      var json = {"cmd":"allUnifiedRequests"};
+      socket.send(JSON.stringify(json));
+    };
+    newwindow.onbeforeunload = function() {
+      console.log("in 2");
+      var json = {"cmd":"allUnifiedRequests"};
+      socket.send(JSON.stringify(json));
+    };
+  }
   return false;
 }
 });
