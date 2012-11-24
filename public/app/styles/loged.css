@@ -153,6 +153,7 @@ input[type=button] {
 /**************    Colonnes ****************/
 #content {
 	display: inline-block;
+	width: 100%;
 }
 
 .column {
