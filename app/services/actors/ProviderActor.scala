@@ -16,6 +16,7 @@ import play.libs.Akka
 import services.auth.GenericProvider
 import services.endpoints.Endpoints
 import services.endpoints.JsonRequest.UnifiedRequest
+import json.Skimbo
 
 sealed case class Ping(idUser: String)
 sealed case class Dead(idUser: String)
@@ -36,7 +37,6 @@ object ProviderActor {
 
       endpoint match {
         case Some((provider, time, parser)) => {
-          Logger.info("Provider : " + provider.name + " every " + time + " seconds")
           val actor = system.actorOf(Props(
             new ProviderActor(channel, provider, unifiedRequest, time, userId, false, parser, column)))
           system.eventStream.subscribe(actor, classOf[Dead])
@@ -94,41 +94,28 @@ class ProviderActor(channel: Concurrent.Channel[JsValue],
         scheduler.cancel() //need ping to call provider
       }
       if (provider.hasToken(request) && parser.isDefined) {
+        
         val optSinceId = if (sinceId.isEmpty) None else Some(sinceId)
         val url = Endpoints.genererUrl(unifiedRequest.service, unifiedRequest.args.getOrElse(Map.empty), optSinceId);
         val config = Endpoints.getConfig(unifiedRequest.service).get
+        
         if (url.isDefined) {
-          log.info("Fetch provider " + provider.name + " url=" + url)
           provider.fetch(url.get).get.map(response => {
-            val listJson = if(config.manualNextResults) {
-              parser.get.cut(provider.resultAsJson(response)).sortWith { (js1, js2) =>
-                val skimboMsg = parser.get.asSkimbo(js1)
-                val skimboMsg2 = parser.get.asSkimbo(js2)
-                skimboMsg.get.createdAt.isBefore(skimboMsg2.get.createdAt)
-              }
-            } else {
-              parser.get.cut(provider.resultAsJson(response))
-            }
+            val skimboMsgs = parser.get.cut(provider.resultAsJson(response)).map(e => parser.get.asSkimbo(e)).flatten
+            val listJson = if (config.manualNextResults || config.mustBeReordered) reorderMessagesByDate(skimboMsgs) else skimboMsgs
+
             val messages = Enumerator.enumerate(listJson)
-            val ite = Iteratee.foreach { jsonMsg: JsValue =>
-              val skimboMsg = parser.get.asSkimbo(jsonMsg)
-              if(skimboMsg.isDefined) {
-                val msg = Json.obj(
-                  "column" -> column.title,
-                  "msg" -> Json.toJson(skimboMsg.get))
-                if(config.manualNextResults) {
-                  if(skimboMsg.get.createdAt.isAfter(sinceDate)) {
-                    channel.push(Json.toJson(Command("msg", Some(msg))))
-                    sinceDate = skimboMsg.get.createdAt
-                  }
-                } else {
-                  val oldSinceId = sinceId
-                  sinceId = parser.get.nextSinceId(skimboMsg.get.sinceId, oldSinceId)
-                  channel.push(Json.toJson(Command("msg", Some(msg))))
-                }
-              } else {
-                log.error("Msg unsuported ! Service="+provider.name+" msg="+skimboMsg)
-              }
+            val ite = Iteratee.foreach { skimboMsg: Skimbo =>
+	          val msg = Json.obj("column" -> column.title, "msg" -> skimboMsg)
+	            if (config.manualNextResults) {
+	              if (skimboMsg.createdAt.isAfter(sinceDate)) {
+	                channel.push(Json.toJson(Command("msg", Some(msg))))
+	                sinceDate = skimboMsg.createdAt // TODO : utiliser uniquement SinceID (convertir date en string)
+	              }
+	            } else {
+	              sinceId = parser.get.nextSinceId(skimboMsg.sinceId, sinceId)
+	              channel.push(Json.toJson(Command("msg", Some(msg))))
+	            }
             }
             messages(ite).onComplete { e =>
               log.info("ite finish for " + unifiedRequest.service + " with " + parser.get.cut(provider.resultAsJson(response)).size + " messages")
@@ -168,7 +155,7 @@ class ProviderActor(channel: Concurrent.Channel[JsValue],
           ur.service == unifiedRequest.service && argExist
         }
         if(isMe) {
-          
+          // ??
         }
       }
     }
@@ -189,6 +176,10 @@ class ProviderActor(channel: Concurrent.Channel[JsValue],
       }
     }
     case e: Exception => throw new UnexpectedException(Some("Incorrect message receive"), Some(e))
+  }
+  
+  def reorderMessagesByDate(msgs: List[Skimbo]) = {
+    msgs.sortWith((msg1, msg2) => msg1.createdAt.isBefore(msg2.createdAt))
   }
 
 }

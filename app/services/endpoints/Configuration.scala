@@ -41,6 +41,7 @@ object Configuration {
       override val delay = 30
       override val provider = providers.Facebook
       override val parser = Some(FacebookWallParser)
+      override val mustBeReordered = true
     }
     object user extends EndpointConfig {
       override val url = withLimit("https://graph.facebook.com/:username/feed?limit=:limit")
@@ -48,6 +49,7 @@ object Configuration {
       override val delay = 30
       override val provider = providers.Facebook
       override val requiredParams = List("username")
+      override val mustBeReordered = true
     }
     object group extends EndpointConfig {
       override val url = withLimit("https://graph.facebook.com/:groupId/feed?limit=:limit")
@@ -55,6 +57,7 @@ object Configuration {
       override val delay = 30
       override val provider = providers.Facebook
       override val requiredParams = List("groupId")
+      override val mustBeReordered = true
     }
   }
 
@@ -128,6 +131,7 @@ trait EndpointConfig {
   val limit = 20
   val manualNextResults = false
   val parser: Option[GenericParser] = None
+  val mustBeReordered = false
 
   def withLimit(url: String) = url.replace(":limit", limit.toString)
 }
