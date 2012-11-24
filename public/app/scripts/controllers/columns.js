@@ -98,16 +98,14 @@ publicApp.controller('ColumnsCtrl', function($scope, $http) {
     }
 
     $scope.deleteService = function(service, column) {
-      var existInColumn = false;
       var indexInColumn = -1;
       for (var i = 0; i < column.unifiedRequests.length; i++) {
         if(column.unifiedRequests[i].service == service.service) {
-          existInColumn = true;
           indexInColumn = i;
           break;
         }
       }
-      if(existInColumn && indexInColumn > -1) {
+      if(indexInColumn > -1) {
         column.unifiedRequests.splice(indexInColumn,1);
       }
     }
@@ -220,6 +218,17 @@ publicApp.controller('ColumnsCtrl', function($scope, $http) {
         };
       }
       return false;
+    }
+
+    $scope.deleteProvider = function(providerName) {
+      var cmd = {"cmd":"deleteProvider", "body":{"provider": providerName}};
+      socket.send(JSON.stringify(cmd));
+      for (var i = 0; i < $scope.userInfos.length; i++) {
+        if($scope.userInfos[i].socialType == providerName) {
+          $scope.userInfos.splice(i,1);
+          break;
+        }
+      }
     }
 
 function getColumnByName(name) {
