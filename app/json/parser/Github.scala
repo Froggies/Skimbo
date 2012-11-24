@@ -50,18 +50,19 @@ case class GithubIssueCommentEvent(
 object GithubWallParser extends GenericParser {
 
   override def asSkimbo(json: JsValue): Option[Skimbo] = {
-    val e = Json.fromJson[GithubWallMessage](json).get
-    Some(Skimbo(
-      e.actorLogin,
-      e.actorLogin,
-      buildMsg(e),
-      e.createdAt,
-      Nil,
-      -1,
-      buildLink(e),
-      e.createdAt.toString(GithubWallMessage.datePattern),
-      e.avatarUser,
-      GitHub))
+    Json.fromJson[GithubWallMessage](json).fold(
+      error => logParseError(json, error, "ViadeoWallMessage"),
+      e => Some(Skimbo(
+        e.actorLogin,
+        e.actorLogin,
+        buildMsg(e),
+        e.createdAt,
+        Nil,
+        -1,
+        buildLink(e),
+        e.createdAt.toString(GithubWallMessage.datePattern),
+        e.avatarUser,
+        GitHub)))
   }
 
   def buildMsg(e: GithubWallMessage) = {

@@ -33,18 +33,19 @@ object TwitterTimelineParser extends GenericParser {
   val tweetDetailUrl = "http://twitter.com/%s/status/%s";
 
   override def asSkimbo(json: JsValue): Option[Skimbo] = {
-    val tweet = Json.fromJson[Tweet](json).get
-    Some(Skimbo(
-      tweet.authorName,
-      tweet.screenName,
-      tweet.text,
-      tweet.createdAt,
-      Nil,
-      tweet.retweets,
-      Some(tweetDetailUrl.format(tweet.screenName, tweet.id)),
-      tweet.id.toString,
-      tweet.profileImageUrl,
-      Twitter))
+    Json.fromJson[Tweet](json).fold(
+      error => logParseError(json, error, "ViadeoWallMessage"),
+      tweet => Some(Skimbo(
+        tweet.authorName,
+        tweet.screenName,
+        tweet.text,
+        tweet.createdAt,
+        Nil,
+        tweet.retweets,
+        Some(tweetDetailUrl.format(tweet.screenName, tweet.id)),
+        tweet.id.toString,
+        tweet.profileImageUrl,
+        Twitter)))
   }
   
   override def nextSinceId(sinceId:String, sinceId2:String): String = {

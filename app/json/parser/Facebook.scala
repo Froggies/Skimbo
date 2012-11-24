@@ -23,22 +23,24 @@ case class FacebookWallMessage(
 object FacebookWallParser extends GenericParser {
 
   override def asSkimbo(json:JsValue): Option[Skimbo] = {
-    val e = Json.fromJson[FacebookWallMessage](json).get
-    if (e.message.isDefined || e.story.isDefined) {
-      Some(Skimbo(
-        e.fromName,
-        e.fromName,
-        generateMessage(e).get,
-        e.createdAt,
-        Nil,
-        e.nbLikes,
-        e.link,
-        (e.createdAt.getMillis() / 1000).toInt.toString,
-        e.picture,
-        Facebook))
-    } else {
-      None
-    }
+    Json.fromJson[FacebookWallMessage](json).fold(
+      error => logParseError(json, error, "FacebookWallMessage"),
+      e => if (e.message.isDefined || e.story.isDefined) {
+        Some(Skimbo(
+          e.fromName,
+          e.fromName,
+          generateMessage(e).get,
+          e.createdAt,
+          Nil,
+          e.nbLikes,
+          e.link,
+          (e.createdAt.getMillis() / 1000).toInt.toString,
+          e.picture,
+          Facebook))
+      } else {
+        None
+      }
+    )
   }
 
   override def cut(json: JsValue): List[JsValue] = {

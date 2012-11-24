@@ -20,18 +20,19 @@ case class GoogleplusWallMessage(
 object GoogleplusWallParser extends GenericParser {
 
   override def asSkimbo(json: JsValue): Option[Skimbo] = {
-    val e = Json.fromJson[GoogleplusWallMessage](json).get
-    Some(Skimbo(
-      e.displayName,
-      e.displayName,
-      e.title,
-      e.publishedDate,
-      Nil,
-      e.plusoners,
-      e.url,
-      e.publishedDate.toString(GoogleplusWallMessage.datePattern),
-      e.actorImage,
-      GooglePlus))
+    Json.fromJson[GoogleplusWallMessage](json).fold(
+      error => logParseError(json, error, "ViadeoWallMessage"),
+      e => Some(Skimbo(
+        e.displayName,
+        e.displayName,
+        e.title,
+        e.publishedDate,
+        Nil,
+        e.plusoners,
+        e.url,
+        e.publishedDate.toString(GoogleplusWallMessage.datePattern),
+        e.actorImage,
+        GooglePlus)))
   }
   
   override def cut(json: JsValue): List[JsValue] = {

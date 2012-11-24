@@ -38,20 +38,22 @@ case class ConnectionLinkedIn(
 object LinkedInWallParser extends GenericParser {
 
   override def asSkimbo(json: JsValue): Option[Skimbo] = {
-    val e = Json.fromJson[LinkedInWallMessage](json).get
-    if (mustBeIgnored(e)) None
-
-    Some(Skimbo(
-      e.person.getOrElse(e.companyPerson.get.person).firstName,
-      e.person.getOrElse(e.companyPerson.get.person).lastName,
-      generateText(e),
-      e.timestamp,
-      Nil,
-      e.numLikes.getOrElse(-1),
-      e.person.getOrElse(e.companyPerson.get.person).directLink,
-      e.timestamp.toInstant().getMillis().toString(),
-      e.person.getOrElse(e.companyPerson.get.person).pictureUrl,
-      LinkedIn))
+    Json.fromJson[LinkedInWallMessage](json).fold(
+      error => logParseError(json, error, "ViadeoWallMessage"),
+      e => 
+        if (mustBeIgnored(e)) 
+          None
+        else Some(Skimbo(
+          e.person.getOrElse(e.companyPerson.get.person).firstName,
+          e.person.getOrElse(e.companyPerson.get.person).lastName,
+          generateText(e),
+          e.timestamp,
+          Nil,
+          e.numLikes.getOrElse(-1),
+          e.person.getOrElse(e.companyPerson.get.person).directLink,
+          e.timestamp.toInstant().getMillis().toString(),
+          e.person.getOrElse(e.companyPerson.get.person).pictureUrl,
+          LinkedIn)))
   }
 
   def mustBeIgnored(msg: LinkedInWallMessage) = {

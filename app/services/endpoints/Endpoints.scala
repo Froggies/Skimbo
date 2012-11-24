@@ -19,9 +19,10 @@ object Endpoints {
       Service("twitter.hashtag", Configuration.Twitter.hashtag),
       Service("twitter.user", Configuration.Twitter.user))),
     Endpoint(Facebook, Seq(
-      Service("facebook.wall", Configuration.Facebook.wall),
-      Service("facebook.user", Configuration.Facebook.user),
-      Service("facebook.group", Configuration.Facebook.group))),
+      Service("facebook.wall", Configuration.Facebook.wall)
+      //Service("facebook.user", Configuration.Facebook.user),
+      //Service("facebook.group", Configuration.Facebook.group)
+      )),
     Endpoint(Viadeo, Seq(
       Service("viadeo.wall", Configuration.Viadeo.wall))),
     Endpoint(LinkedIn, Seq(

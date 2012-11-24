@@ -43,18 +43,19 @@ object TrelloWallParser extends GenericParser {
     val urlCard = "https://trello.com/card/%s/%s"
   
   override def asSkimbo(json: JsValue): Option[Skimbo] = {
-    val e = Json.fromJson[TrelloWallMessage](json).get
-    Some(Skimbo(
-      e.memberCreator.fullName,
-      e.memberCreator.username,
-      generateText(e),
-      e.date,
-      Nil,
-      0,
-      generateLink(e),
-      e.id,
-      generateAvatarUrl(e),
-      Trello))
+    Json.fromJson[TrelloWallMessage](json).fold(
+      error => logParseError(json, error, "ViadeoWallMessage"),
+      e => Some(Skimbo(
+        e.memberCreator.fullName,
+        e.memberCreator.username,
+        generateText(e),
+        e.date,
+        Nil,
+        0,
+        generateLink(e),
+        e.id,
+        generateAvatarUrl(e),
+        Trello)))
   }
 
   def generateText(e: TrelloWallMessage) = {
