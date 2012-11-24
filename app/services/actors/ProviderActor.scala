@@ -67,13 +67,16 @@ object ProviderActor {
 }
 
 class ProviderActor(channel: Concurrent.Channel[JsValue],
-  provider: GenericProvider, unifiedRequest: UnifiedRequest, delay: Int,
+  provider: GenericProvider, 
+  unifiedRequest: UnifiedRequest, 
+  delay: Int,
   idUser: String, longPolling: Boolean,
-  parser: Option[GenericParser] = None, column: Column)(implicit request: RequestHeader) extends Actor {
+  parser: Option[GenericParser] = None, 
+  column: Column)(implicit request: RequestHeader) extends Actor {
 
-  val log = Logger(ProviderActor.getClass()) // TODO JLA : Changer log
-  val sinceId = new StringBuilder();
-  var sinceDate = new DateTime().minusYears(1);
+  val log = Logger(ProviderActor.getClass())
+  var sinceId = ""
+  var sinceDate = new DateTime().minusYears(1)
 
   val scheduler = Akka.system.scheduler.schedule(0 second, delay second) {
     self ! ReceiveTimeout
@@ -85,10 +88,7 @@ class ProviderActor(channel: Concurrent.Channel[JsValue],
         scheduler.cancel() //need ping to call provider
       }
       if (provider.hasToken(request) && parser.isDefined) {
-        val optSinceId = sinceId.isEmpty match {
-          case true => None
-          case false => Some(sinceId.toString())
-        }
+        val optSinceId = if (sinceId.isEmpty) None else Some(sinceId)
         val url = Endpoints.genererUrl(unifiedRequest.service, unifiedRequest.args.getOrElse(Map.empty), optSinceId);
         val config = Endpoints.getConfig(unifiedRequest.service).get
         if (url.isDefined) {
@@ -116,9 +116,8 @@ class ProviderActor(channel: Concurrent.Channel[JsValue],
                     sinceDate = skimboMsg.get.createdAt
                   }
                 } else {
-                  val temp = sinceId.toString()
-                  sinceId.clear();
-                  sinceId append parser.get.nextSinceId(skimboMsg.get.sinceId, temp)
+                  val oldSinceId = sinceId
+                  sinceId = parser.get.nextSinceId(skimboMsg.get.sinceId, oldSinceId)
                   channel.push(Json.toJson(Command("msg", Some(msg))))
                 }
               } else {
