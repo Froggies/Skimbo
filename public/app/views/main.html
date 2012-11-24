@@ -34,7 +34,7 @@
 			<ul class="services-proposes">
 				<li ng-repeat="service in serviceProposes">
 					<div class="social-network-link">
-						<a href="#" ng-click="addService(service, c)" title="{{service.typeService}}">
+						<a href="#" ng-click="addService(service, c)" ref="{{service.explainService}}">
 							<img class="social-network-active {{service.socialNetworkToken}}" src="assets/img/brand/{{service.socialNetwork}}.png" alt="{{service.socialNetwork}}" width="32" height="32"></a>
 						<span class="social-network-char {{service.socialNetwork}} social-network-active {{service.socialNetworkToken}}">{{service.typeServiceChar}}</span>
 					</div>

@@ -7,6 +7,44 @@ body,html {
 	font-size: 16px;
 }
 
+a:hover {
+	position: relative;
+}
+
+a[ref]:hover:after {
+	  content: attr(ref);
+	  width: 52px;
+	  height: auto;
+	  font-size: 10px;
+	  padding: 4px 8px;
+	  color: #333;
+	  position: absolute;
+	  left: -5px;
+	  top: 100%;
+	  z-index: 20;
+	  -moz-border-radius: 5px;
+	  -webkit-border-radius: 5px;
+	  border-radius: 5px;
+	  -moz-box-shadow: 0px 0px 4px #222;
+	  -webkit-box-shadow: 0px 0px 4px #222;
+	  box-shadow: 0px 0px 4px #222;
+	  background-image: -moz-linear-gradient(top, #eeeeee, #cccccc);
+	  background-image: -webkit-gradient(linear,left top,left bottom,color-stop(0, #eeeeee),color-stop(1, #cccccc));
+	  background-image: -webkit-linear-gradient(top, #eeeeee, #cccccc);
+	  background-image: -moz-linear-gradient(top, #eeeeee, #cccccc);
+	  background-image: -ms-linear-gradient(top, #eeeeee, #cccccc);
+	  background-image: -o-linear-gradient(top, #eeeeee, #cccccc);
+}
+
+a[ref]:hover:before {
+	position: absolute;
+   	top: -20px;
+    right: 20px;
+    border-left: 20px solid transparent;
+    border-right: 20px solid transparent;
+    border-bottom: 20px solid #B6B6B6;
+}
+
 .error-message {
 	padding: 7px 16px;
 	background: #FFA5A5;

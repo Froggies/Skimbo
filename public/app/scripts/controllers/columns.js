@@ -207,6 +207,8 @@ publicApp.controller('ColumnsCtrl', function($scope, $http) {
         return "";
     }
 
+
+
 function getColumnByName(name) {
     for (var i = 0; i < $scope.columns.length; i++) {
         if ($scope.columns[i].title == name) {
@@ -214,6 +216,28 @@ function getColumnByName(name) {
         }
     }
 }
+
+function fillExplainService(typeService, socialNetwork) {
+  console.log(typeService, socialNetwork);
+  if(typeService == "group") {
+    return "Click here to display a specific Facebook group.";
+  }
+  else if(typeService == "user") {
+    if(socialNetwork == "twitter") {
+      return "Click here to display tweets of a specific Twitter user.";
+    }
+    else {
+      return "Click here to display the wall of a specific Facebook user.";
+    }
+  }
+  else if (typeService == "hashtag") {
+    return "Click here to display tweets of a specific Twitter hashtag.";
+  }
+  else {
+    return "Click here to display your "+socialNetwork+" "+typeService+".";
+  }
+}
+
 
 function executeCommand(socket, data) {
     if(data.cmd == "allUnifiedRequests") {
@@ -230,6 +254,7 @@ function executeCommand(socket, data) {
                                   explainService:"",
                                   args:{}
                                 };
+                  service.explainService = fillExplainService(service.typeService, service.socialNetwork);
                   service.typeServiceChar = $scope.typeServiceCharByService(services[j].service);
                   for (var k = 0; k < services[j].args.length; k++) {
                     service.args[services[j].args[k]] = "";
