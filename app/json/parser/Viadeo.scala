@@ -26,18 +26,20 @@ case class ViadeoWallMessage(
 object ViadeoWallParser extends GenericParser {
 
   override def asSkimbo(json: JsValue): Option[Skimbo] = {
-    val e = Json.fromJson[ViadeoWallMessage](json).get
-    Some(Skimbo(
-      e.fromName,
-      e.fromName,
-      generateMsg(e),
-      e.updatedTime,
-      Nil,
-      e.likeCount,
-      e.infeedLink,
-      e.updatedTime.toString(ViadeoWallMessage.datePattern),
-      e.pictureUrl,
-      Viadeo))
+    Json.fromJson[ViadeoWallMessage](json).fold(
+      error => logParseError(json, error, "ViadeoWallMessage"),
+      msg => Some(Skimbo(
+        msg.fromName,
+        msg.fromName,
+        generateMsg(msg),
+        msg.updatedTime,
+        Nil,
+        msg.likeCount,
+        msg.infeedLink,
+        msg.updatedTime.toString(ViadeoWallMessage.datePattern),
+        msg.pictureUrl,
+        Viadeo))
+      )
   }
   
   def generateMsg(e: ViadeoWallMessage) = {
@@ -82,7 +84,7 @@ object ViadeoWallMessage {
   implicit val viadeoReader: Reads[ViadeoWallMessage] = (
     (__ \ "id").read[String] and
     (__ \ "type").read[String] and
-    (__ \ "from" \ "name").read[String] and
+    ((__ \ "from" \ "name").read[String] or (__ \ "on" \ "from" \ "name").read[String]) and
     (__ \ "on" \ "title").readOpt[String] and
     (__ \ "on" \ "message").readOpt[String] and
     (__ \ "like_count").read[Int] and
