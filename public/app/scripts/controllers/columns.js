@@ -72,14 +72,15 @@ publicApp.controller('ColumnsCtrl', function($scope, $http) {
     };
 
     $scope.modifyColumn = function(column) {
-      column.showModifyColumn= !column.showModifyColumn;
+      console.log("column", column);
+      column.showModifyColumn = !column.showModifyColumn;
       if (column.showModifyColumn == true) {
         if($scope.serviceProposes == undefined) {
           var json = {"cmd":"allUnifiedRequests"};
           socket.send(JSON.stringify(json));
         }
       }
-      if(column.showModifyColumn) {
+      if(column.showModifyColumn == true) {
         column.oldTitle = column.title;
       }
       else {
@@ -89,10 +90,9 @@ publicApp.controller('ColumnsCtrl', function($scope, $http) {
 
     $scope.addService = function(service, column) {
       if(service.socialNetworkToken) {
-        var serviceJson = {"service":service.socialNetwork+"."+service.typeService,
-                            "args":service.args
-                          };
-        column.unifiedRequests.push(serviceJson);
+        console.log("service",service);
+        var clientUnifiedRequest = serverToUnifiedRequest(service.service);
+        column.unifiedRequests.push(clientUnifiedRequest);
       }
       else {
         $scope.openPopup(service, column);
@@ -118,24 +118,26 @@ publicApp.controller('ColumnsCtrl', function($scope, $http) {
       column.showErrorTitleAlreadyExist = false;
       column.showErrorTitleRequired = false;
       var json = "";
+      var unifiedRequests = [];
+      for (var i = 0; i < column.unifiedRequests.length; i++) {
+        unifiedRequests.push(clientToServerUnifiedRequest(column.unifiedRequests[i]));
+      };
       if(!column.newColumn) {
-      json = {"cmd":"modColumn", 
-                   "body":{
-                     "title": column.oldTitle, 
-                     "column":{
-                       "title":column.title,
-                       "unifiedRequests": column.unifiedRequests
-                     }
+        json = {"cmd":"modColumn", 
+                 "body":{
+                   "title": column.oldTitle, 
+                   "column":{
+                     "title":column.title,
+                     "unifiedRequests": unifiedRequests
                    }
-                  };
-      }
-      else {
+                 }
+                };
+      } else {
         column.newColumn = false;
-        json = {
-                "cmd":"addColumn", 
+        json = {"cmd":"addColumn", 
                 "body":{
                   "title":column.title,
-                  "unifiedRequests":column.unifiedRequests
+                  "unifiedRequests": unifiedRequests
                 }
               };
       }
@@ -167,17 +169,6 @@ publicApp.controller('ColumnsCtrl', function($scope, $http) {
       socket.send(JSON.stringify($scope.lastColumnDeleted));
     }
 
-    $scope.hasArguments = function(service) {
-      if(Object.keys(service.args).length > 0) {
-        return true;
-      }
-      return false;
-    }
-
-    $scope.getTypeByService = function(service) {
-      return service.split(".")[1];
-    }
-
     $scope.serviceHasTypeChar = function(service) {
       if(service.typeServiceChar != "") {
         return true;
@@ -185,12 +176,8 @@ publicApp.controller('ColumnsCtrl', function($scope, $http) {
       return false;
     }
 
-    $scope.socialNetworkByServiceName = function(service) {
-      return service.split(".")[0];
-    }
-
     $scope.typeServiceCharByService = function(service) {
-      var socialNetworkName = $scope.socialNetworkByServiceName(service);
+      var socialNetworkName = service.split(".")[0];
       var typeService = service.split(".")[1];
         if(typeService == "group") {
           return "ഹ";
@@ -282,7 +269,8 @@ function executeCommand(data) {
                             typeService:services[j].service.split(".")[1],
                             typeServiceChar:"",
                             explainService:"",
-                            args:{}
+                            args:{},
+                            service:services[j]
                           };
             service.explainService = fillExplainService(service.typeService, service.socialNetwork);
             service.typeServiceChar = $scope.typeServiceCharByService(services[j].service);
@@ -320,13 +308,22 @@ function executeCommand(data) {
             insertSort(column.messages);
         });
     } else if(data.cmd == "allColumns") {
+        console.log("columns",data.body);
         $scope.$apply(function() {
             $scope.columns = [];
             var cols = data.body;
             for (var i = 0; i < cols.length; i++) {
-                var element = cols[i];
-                element.showModifyColumn = false;
-                $scope.columns.push(element);
+                var originalColumn = cols[i];
+                var clientColumn = {};
+                clientColumn.title = originalColumn.title;
+                clientColumn.unifiedRequests = [];
+                for (var j = 0; j < originalColumn.unifiedRequests.length; j++) {
+                  var unifiedRequest = originalColumn.unifiedRequests[j];
+                  var clientUnifiedRequest = serverToClientUnifiedRequest(unifiedRequest);
+                  clientColumn.unifiedRequests.push(clientUnifiedRequest);
+                };
+                clientColumn.showModifyColumn = false;
+                $scope.columns.push(clientColumn);
             }
         });
     } else if(data.cmd == "delColumn" && data.body == "Ok") {
@@ -350,6 +347,47 @@ function executeCommand(data) {
       console.error("cmd not found : ", data);
     }
 }
+
+  function serverToUnifiedRequest(unifiedRequest) {
+    var clientUnifiedRequest = {};
+    clientUnifiedRequest.service = unifiedRequest.service;
+    clientUnifiedRequest.providerName = unifiedRequest.service.split(".")[0];
+    clientUnifiedRequest.serviceName = unifiedRequest.service.split(".")[1];
+    clientUnifiedRequest.args = []
+    for (var index in unifiedRequest.args) {
+      var key = unifiedRequest.args[index];
+      clientUnifiedRequest.args.push({"key":key,"value":""});
+    };
+    clientUnifiedRequest.hasArguments = clientUnifiedRequest.args.length > 0;
+    return clientUnifiedRequest;
+  }
+
+  function serverToClientUnifiedRequest(unifiedRequest) {
+    var clientUnifiedRequest = {};
+    clientUnifiedRequest.service = unifiedRequest.service;
+    clientUnifiedRequest.providerName = unifiedRequest.service.split(".")[0];
+    clientUnifiedRequest.serviceName = unifiedRequest.service.split(".")[1];
+    clientUnifiedRequest.args = []
+    for (var key in unifiedRequest.args) {
+      var value = unifiedRequest.args[key];
+      console.log("value", value);
+      clientUnifiedRequest.args.push({"key":key,"value":value});
+    };
+    clientUnifiedRequest.hasArguments = clientUnifiedRequest.args.length > 0;
+    return clientUnifiedRequest;
+  }
+
+  function clientToServerUnifiedRequest(unifiedRequest) {
+    var serverUnifiedRequest = {};
+    serverUnifiedRequest.service = unifiedRequest.providerName+"."+unifiedRequest.serviceName;
+    serverUnifiedRequest.args = {}
+    for (var index in unifiedRequest.args) {
+      var arg = unifiedRequest.args[index];
+      serverUnifiedRequest.args[arg.key] = arg.value;
+    };
+    return serverUnifiedRequest;
+  }
+
 });
 
 
