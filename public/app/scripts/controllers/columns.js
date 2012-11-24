@@ -73,9 +73,12 @@ publicApp.controller('ColumnsCtrl', function($scope, $http) {
 
     $scope.modifyColumn = function(column) {
       column.showModifyColumn= !column.showModifyColumn;
+      console.log($scope.serviceProposes);
       if (column.showModifyColumn == true) {
+        if($scope.serviceProposes == undefined) {
           var json = {"cmd":"allUnifiedRequests"};
           socket.send(JSON.stringify(json));
+        }
       }
       if(column.showModifyColumn) {
         column.oldTitle = column.title;
@@ -248,7 +251,6 @@ function getColumnByName(name) {
 
 
 function fillExplainService(typeService, socialNetwork) {
-  console.log(typeService, socialNetwork);
   if(typeService == "group") {
     return "Click here to display a specific Facebook group.";
   }
@@ -291,14 +293,21 @@ function executeCommand(data) {
             serviceProposes.push(service);
           }
       };
-      $scope.serviceProposes = serviceProposes;
       var socialNetworks = new Array();
       for (var i = 0; i < data.body.length; i++) {
           var elementBody = data.body[i];
           socialNetworks.unshift(elementBody);
       }
-      $scope.socialNetworks = socialNetworks;
-
+      if(!$scope.$$phase) {
+        $scope.$apply(function() {
+          $scope.serviceProposes = serviceProposes;
+          $scope.socialNetworks = socialNetworks;
+        });
+      }
+      else {
+        $scope.serviceProposes = serviceProposes;
+        $scope.socialNetworks = socialNetworks;
+      }
     } else if(data.cmd == "msg") {
         var columnTitle = data.body.column;
         var column = getColumnByName(columnTitle);
