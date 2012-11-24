@@ -93,7 +93,7 @@ publicApp.controller('ColumnsCtrl', function($scope, $http) {
         column.unifiedRequests.push(serviceJson);
       }
       else {
-        openPopup(service.socialNetwork);
+        openPopup(socket, service.socialNetwork);
       }
     }
 
@@ -227,6 +227,7 @@ function executeCommand(socket, data) {
                                   socialNetworkToken:elementBodySocialNetwork.hasToken,
                                   typeService:services[j].service.split(".")[1],
                                   typeServiceChar:"",
+                                  explainService:"",
                                   args:{}
                                 };
                   service.typeServiceChar = $scope.typeServiceCharByService(services[j].service);
@@ -298,8 +299,8 @@ function executeCommand(socket, data) {
     }
 }
 
-function openPopup(socialNetworkName) {
-  var newwindow = window.open("/auth/"+socialNetworkName, 'put something here ;)', 'height=500,width=500');
+function openPopup(socket,socialNetworkName) {
+  var newwindow = window.open("/auth/"+socialNetworkName, 'Connexion', 'height=500,width=500');
 
   if (newwindow !== undefined) {
     if (window.focus) newwindow.focus();
