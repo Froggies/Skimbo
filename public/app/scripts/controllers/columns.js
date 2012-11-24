@@ -57,26 +57,27 @@ publicApp.controller('ColumnsCtrl', function($scope, $http) {
     }
 
     $scope.addColumn = function() {
-        $scope.lastColumnAdded = {
-                "cmd":"addColumn", 
-                "body":{
-                  "title":"",
-                  "oldTitle":"",
-                  "showModifyColumn":"true",
-                  "newColumn":"true",
-                  "unifiedRequests":[]
-                }
-        };
-        socket.send(JSON.stringify($scope.lastColumnAdded));
+        if($scope.serviceProposes == undefined) {
+          var json = {"cmd":"allUnifiedRequests"};
+          socket.send(JSON.stringify(json));
+        }
+        if($scope.columns == undefined) {
+          $scope.columns = [];
+        }
+        $scope.columns.push({"title":"",
+                              "oldTitle":"",
+                              "showModifyColumn":"true",
+                              "newColumn":"true",
+                              "unifiedRequests":[]});
     };
 
     $scope.modifyColumn = function(column) {
-      column.showModifyColumn=!(column.showModifyColumn);
-      column.oldTitle = column.title;
+      column.showModifyColumn= !column.showModifyColumn;
       if (column.showModifyColumn == true) {
           var json = {"cmd":"allUnifiedRequests"};
           socket.send(JSON.stringify(json));
       }
+      column.oldTitle = column.title;
     };
 
     $scope.addService = function(service, column) {
@@ -109,7 +110,9 @@ publicApp.controller('ColumnsCtrl', function($scope, $http) {
     $scope.changeColumn = function(column) {
       column.showErrorTitleAlreadyExist = false;
       column.showErrorTitleRequired = false;
-      var json = {"cmd":"modColumn", 
+      var json = "";
+      if(!column.newColumn) {
+      json = {"cmd":"modColumn", 
                    "body":{
                      "title": column.oldTitle, 
                      "column":{
@@ -118,6 +121,17 @@ publicApp.controller('ColumnsCtrl', function($scope, $http) {
                      }
                    }
                   };
+      }
+      else {
+        column.newColumn = false;
+        json = {
+                "cmd":"addColumn", 
+                "body":{
+                  "title":column.title,
+                  "unifiedRequests":column.unifiedRequests
+                }
+              };
+      }
       if(column.title =="") {
         column.showErrorTitleRequired = true;
       }
@@ -247,23 +261,9 @@ function executeCommand(socket, data) {
             }
             insertSort(column.messages);
         });
-    } else if(data.cmd == "addColumn" && data.body == "Ok") {
-        $scope.$apply(function() {
-            if($scope.serviceProposes == undefined) {
-              var json = {"cmd":"allUnifiedRequests"};
-              socket.send(JSON.stringify(json));
-            }
-            if($scope.columns == undefined) {
-                $scope.columns = [];
-            }
-            $scope.columns.push($scope.lastColumnAdded.body);
-            $scope.lastColumnAdded = undefined;
-        });
     } else if(data.cmd == "allColumns") {
         $scope.$apply(function() {
-            // if($scope.columns == undefined) {
-                $scope.columns = [];
-            // }
+            $scope.columns = [];
             var cols = data.body;
             for (var i = 0; i < cols.length; i++) {
                 var element = cols[i];
