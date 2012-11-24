@@ -12,8 +12,10 @@ case class ViadeoWallMessage(
   id:String,
   typeViadeo:String,
   fromName:String,
+  onTitle: Option[String],
   onMessage:Option[String],
   likeCount:Int,
+  title: Option[String],
   message:Option[String],
   pictureUrl:Option[String],
   updatedTime:DateTime,
@@ -27,7 +29,7 @@ object ViadeoWallParser extends GenericParser {
     Some(Skimbo(
       e.fromName,
       e.fromName,
-      e.onMessage.getOrElse(e.message.getOrElse("??")),
+      generateMsg(e),
       e.updatedTime,
       Nil,
       e.likeCount,
@@ -35,6 +37,21 @@ object ViadeoWallParser extends GenericParser {
       e.updatedTime.toString(ViadeoWallMessage.datePattern),
       e.pictureUrl,
       Viadeo))
+  }
+  
+  def generateMsg(e: ViadeoWallMessage) = {
+    if(e.message.isDefined && !e.message.get.isEmpty()) {
+      e.message.get
+    }
+    else if(e.onMessage.isDefined && !e.onMessage.get.isEmpty()) {
+      e.onMessage.get
+    } else if(e.title.isDefined && !e.title.get.isEmpty()) {
+      e.title.get
+    } else if(e.onTitle.isDefined && !e.onTitle.get.isEmpty()) {
+      e.onTitle.get
+    } else {
+      "Msg not decrypted !"
+    }
   }
   
   override def cut(json: JsValue): List[JsValue] = {
@@ -65,8 +82,10 @@ object ViadeoWallMessage {
     (__ \ "id").read[String] and
     (__ \ "type").read[String] and
     (__ \ "from" \ "name").read[String] and
+    (__ \ "on" \ "title").readOpt[String] and
     (__ \ "on" \ "message").readOpt[String] and
     (__ \ "like_count").read[Int] and
+    (__ \ "title").readOpt[String] and
     (__ \ "message").readOpt[String] and
     (__ \ "picture").readOpt[String] and
     (__ \ "updated_time").read[DateTime](Reads.jodaDateReads(datePattern)) and
