@@ -93,7 +93,7 @@ publicApp.controller('ColumnsCtrl', function($scope, $http) {
         column.unifiedRequests.push(serviceJson);
       }
       else {
-        $scope.openPopup(service.socialNetwork);
+        $scope.openPopup(service, column);
       }
     }
 
@@ -207,26 +207,31 @@ publicApp.controller('ColumnsCtrl', function($scope, $http) {
         return "";
     }
 
-    $scope.openPopup = function(socialNetworkName) {
-      var newwindow = window.open("/auth/"+socialNetworkName, 'Connexion', 'height=500,width=500');
+    $scope.openPopup = function(service, column) {
+      var _service = service;
+      var _column = column;
+      var scope = $scope;
+      var newwindow = window.open("/auth/"+service.socialNetwork, 'Connexion', 'height=500,width=500');
 
       if (newwindow !== undefined) {
         if (window.focus) newwindow.focus();
         
         newwindow.onclose = function() {
-          console.log("in 1");
-          // var json = {"cmd":"allUnifiedRequests"};
-          // socket.send(JSON.stringify(json));
           $http.get("/api/providers/services").success(function(data) {
             executeCommand({"cmd":"allUnifiedRequests","body":data});
+            var serviceJson = {"service":_service.socialNetwork+"."+_service.typeService,
+                            "args":_service.args
+                          };
+            _column.unifiedRequests.push(serviceJson);
           });
         };
         newwindow.onbeforeunload = function() {
-          console.log("in 2");
-          // var json = {"cmd":"allUnifiedRequests"};
-          // socket.send(JSON.stringify(json));
           $http.get("/api/providers/services").success(function(data) {
             executeCommand({"cmd":"allUnifiedRequests","body":data});
+            var serviceJson = {"service":_service.socialNetwork+"."+_service.typeService,
+                            "args":_service.args
+                          };
+            _column.unifiedRequests.push(serviceJson);
           });
         };
       }
