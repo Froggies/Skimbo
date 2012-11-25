@@ -711,22 +711,6 @@ header.column-title {
       0% {margin-left: 25%;margin-right: -25%;}
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 @-webkit-keyframes fadein{
     0% {opacity: 0;}
    80% {opacity: 0;}
