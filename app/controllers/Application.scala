@@ -9,6 +9,8 @@ import services.security.AuthenticatedAction.Authenticated
 import views.html._
 import services.auth.providers._
 import models.User
+import views.html.helper.javascriptRouter
+import play.api.Routes
 
 object Application extends Controller {
 
@@ -35,6 +37,21 @@ object Application extends Controller {
   
   def closePopup() = Action {
     Ok(views.html.popupEndAuthentication())
+  }
+  
+  def jsRouter() = Action { implicit request =>
+    import routes.javascript._
+    import controllers.stream.javascript._
+
+    Ok(
+      Routes.javascriptRouter("jsRoutes")(
+       routes.javascript.Application.index,
+       routes.javascript.Application.authenticate,
+       routes.javascript.Application.logout,
+       stream.routes.javascript.WebSocket.connect,
+       stream.routes.javascript.Sse.connect,
+       stream.routes.javascript.Sse.ping   
+    )).as("text/javascript")
   }
 
 }
