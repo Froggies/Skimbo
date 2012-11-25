@@ -29,7 +29,7 @@ object Column {
 	
   def toBSON(column:Column) = {
     val unifiedRequests:Seq[BSONDocument] = column.unifiedRequests.map { unifiedRequest =>
-      val args:Seq[(String, BSONString)] = unifiedRequest.args.get.mapValues(BSONString(_)).toSeq
+      val args:Seq[(String, BSONString)] = unifiedRequest.args.getOrElse(Map.empty).mapValues(BSONString(_)).toSeq
       BSONDocument(
         "service" -> BSONString(unifiedRequest.service),
         "args" -> BSONDocument(args : _*))

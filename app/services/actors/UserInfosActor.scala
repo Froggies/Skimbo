@@ -22,7 +22,7 @@ case class Send(userId: String, json: JsValue)
 case class StartProvider(userId: String, column: Column)
 case class ModifProvider(userId: String, columnTitle: String, column: Column)
 case class KillProvider(userId: String, columnTitle: String)
-case class CheckAccounts(user: User)
+case class CheckAccounts(idUser: String)
 case class AddInfosUser(user: User, providerUser: ProviderUser)
 
 object UserInfosActor {
@@ -111,6 +111,7 @@ class UserInfosActor(idUser: String, channelOut: Concurrent.Channel[JsValue])(im
     case StartProvider(id: String, unifiedRequests) => {
       if (id == idUser) {
         ProviderActor.create(channelOut, idUser, unifiedRequests)
+        CheckAccounts(id)
       }
     }
     case ModifProvider(id: String, columnTitle, column) => {
@@ -134,21 +135,21 @@ class UserInfosActor(idUser: String, channelOut: Concurrent.Channel[JsValue])(im
         context.stop(self)
       }
     }
-    case CheckAccounts(user: User) => {
-      ProviderDispatcher.listAll.map { provider =>
-        if (provider.hasToken(request)) {
-          provider.getUser.map { providerUser =>
-            if (providerUser.isDefined && !user.distants.exists {_.exists { pu => 
-                pu.socialType == provider.name && pu.id == providerUser.get.id } 
-              }) {
-              self ! AddInfosUser(user, ProviderUser(providerUser.get.id, provider.name, None))//TODO put good token
-            }
-            if (providerUser.isDefined) {
-              self ! Send(idUser, Json.toJson(Command("userInfos", Some(Json.toJson(providerUser.get)))))
+    case CheckAccounts(idUser: String) => {
+      UserDao.findOneById(idUser).map { _.map { user =>
+        ProviderDispatcher.listAll.map { provider =>
+          if (provider.hasToken(request) && 
+              user.distants.getOrElse(Seq()).exists { pu => 
+                pu.socialType == provider.name  && pu.id.isEmpty()}) {
+            provider.getUser.map { providerUser =>
+              if (providerUser.isDefined) {
+                self ! AddInfosUser(user, ProviderUser(providerUser.get.id, provider.name, None))//TODO put good token
+                self ! Send(idUser, Json.toJson(Command("userInfos", Some(Json.toJson(providerUser.get)))))
+              }
             }
           }
         }
-      }
+      }}
     }
     case AddInfosUser(user: User, providerUser: ProviderUser) => {
       UserDao.addProviderUser(user, providerUser)
@@ -161,7 +162,7 @@ class UserInfosActor(idUser: String, channelOut: Concurrent.Channel[JsValue])(im
       self ! StartProvider(idUser, column)
     }
     Commands.interpretCmd(idUser, Command("allColumns"))
-    self ! CheckAccounts(user)
+    self ! CheckAccounts(idUser)
   }
 
 }

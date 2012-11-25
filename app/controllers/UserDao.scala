@@ -53,20 +53,13 @@ object UserDao {
   }
 
   def addProviderUser(user: models.User, providerUser: models.user.ProviderUser) = {
-    if(providerUser.token.isDefined) {
-      val query = BSONDocument("accounts.id" -> new BSONString(user.accounts.head.id))
-      val update = BSONDocument(
-        "$push" -> BSONDocument("distants" -> models.user.ProviderUser.toBSON(providerUser)))
-      collection.update(query, update)
-    } else {
-      getToken(user.accounts.head.id, ProviderDispatcher.get(providerUser.socialType).get).map { token =>
-        if(token.isDefined) {
-          setToken(
-              user.accounts.head.id, 
-              ProviderDispatcher.get(providerUser.socialType).get, 
-              token.get, 
-              Some(providerUser.id))
-        }
+    getToken(user.accounts.head.id, ProviderDispatcher.get(providerUser.socialType).get).map { token =>
+      if(token.isDefined) {
+        setToken(
+            user.accounts.head.id, 
+            ProviderDispatcher.get(providerUser.socialType).get, 
+            token.get, 
+            Some(providerUser.id))
       }
     }
   }
@@ -121,6 +114,7 @@ object UserDao {
   }
   
   def setToken(idUser:String, provider: GenericProvider, token:SkimboToken, distantId: Option[String]=None) = {
+    Logger(UserDao.getClass()).error("SetToken for "+provider.name)
     val query = BSONDocument("accounts.id" -> new BSONString(idUser))
     findOneById(idUser).map { user =>
       val toUpdate =
@@ -138,7 +132,9 @@ object UserDao {
                 }
               }
             } else {
-              Seq(ProviderUser(distantId.getOrElse(""), provider.name, Some(token))) ++ user.get.distants.getOrElse(Seq[ProviderUser]())
+              Seq(ProviderUser(
+                  distantId.getOrElse(""), 
+                  provider.name, Some(token))) ++ user.get.distants.getOrElse(Seq[ProviderUser]())
             }
           models.User(user.get.accounts, Some(providersUser), user.get.columns)
         } else {
