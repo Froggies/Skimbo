@@ -107,7 +107,11 @@ object UserDao {
     }
   }
   
-  def setToken(idUser:String, provider: GenericProvider): Future[Option[SkimboToken]] = {
+  def setToken(idUser:String, provider: GenericProvider, token:SkimboToken) = {
+    val query = BSONDocument("accounts.id" -> new BSONString(idUser))
+    collection.find(query).headOption().map { optUser =>
+      
+    }
     future{None}
   }
   
