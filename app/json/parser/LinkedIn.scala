@@ -57,15 +57,16 @@ object LinkedInWallParser extends GenericParser {
   }
 
   def mustBeIgnored(msg: LinkedInWallMessage) = {
-    msg.updateType == "CONN" && msg.person.get.connections.head.firstName == "private"
-    // || other conditions here
+    (msg.person.isEmpty) || 
+    (!List("STAT", "CONN", "NCON", "MSFC", "JGRP", "PICU", "PROF").contains(msg.updateType))
+    (msg.updateType == "CONN" && msg.person.get.connections.head.firstName == "private") || 
+    (msg.updateType == "STAT" && msg.person.get.currentStatus.isEmpty)
   }
 
   def generateText(e: LinkedInWallMessage) = {
     e.updateType match {
       case "STAT" => {
-        val p = e.person.get
-        p.firstName + " " + p.lastName + " : " + p.currentStatus.getOrElse("")
+        e.person.get.currentStatus.get
       }
       case "CONN" => {
         e.person.get.connections.headOption.map(friend => 
@@ -74,32 +75,22 @@ object LinkedInWallParser extends GenericParser {
           .getOrElse("New connection")
       }
       case "NCON" => {
-        val p = e.person.get
-        "New connexion : " + p.firstName + " " + p.lastName
+        "New connexion" // TODO
       }
       case "MSFC" => {
-        val p = e.companyPerson.get.person
-        p.firstName + " " + p.lastName + " follow " + e.companyName.get
+        "Follow " + e.companyName.get
       }
       case "JGRP" => {
         val p = e.person.get
-        p.firstName + " " + p.lastName + " join group : TODO ADD NAME GROUP"
+        "Join group : TODO ADD NAME GROUP" // TODO
       }
-      case "PICU" => {
-        val p = e.person.get
-        "New avatar : " + p.firstName + " " + p.lastName
+      case "PICU" | "PROF" => {
+        "Profile updated"
       }
-      case "PROF" => {
-        val p = e.person.get
-        "Modif profil : " + p.firstName + " " + p.lastName
-      }
-      case _ => "Type msg not parsed"
     }
   }
 
-  override def cut(json: JsValue): List[JsValue] = {
-    (json \ "values").as[List[JsValue]]
-  }
+  override def cut(json: JsValue): List[JsValue] = super.cut(json \ "values")
   
   override def nextSinceId(sinceId:String, sinceId2:String): String = {
     if(sinceId2.isEmpty()) {

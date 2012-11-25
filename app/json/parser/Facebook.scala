@@ -43,9 +43,7 @@ object FacebookWallParser extends GenericParser {
     )
   }
 
-  override def cut(json: JsValue): List[JsValue] = {
-    (json \ "data").as[List[JsValue]]
-  }
+  override def cut(json: JsValue) = super.cut(json \ "data")
 
   def generateMessage(e: FacebookWallMessage) = {
     e.message.orElse(e.story)

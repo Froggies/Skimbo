@@ -65,7 +65,7 @@ object TwitterTimelineParser extends GenericParser {
 object TwitterHashtagParser extends GenericParser {
   val tweetDetailUrl = TwitterTimelineParser.tweetDetailUrl
   override def asSkimbo(json: JsValue): Option[Skimbo] = TwitterTimelineParser.asSkimbo(json)
-  override def cut(json: JsValue): List[JsValue] = json.\("statuses").as[List[JsValue]]
+  override def cut(json: JsValue): List[JsValue] = super.cut(json \ "statuses")
 }
 
 object TwitterTag {

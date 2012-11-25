@@ -18,6 +18,7 @@ import services.endpoints.Endpoints
 import services.endpoints.JsonRequest.UnifiedRequest
 import json.Skimbo
 import play.api.http.Status
+import scala.util._
 
 sealed case class Ping(idUser: String)
 sealed case class Dead(idUser: String)
@@ -105,34 +106,47 @@ class ProviderActor(channel: Concurrent.Channel[JsValue],
         log.info("["+unifiedRequest.service+"] "+url.get)
 
         if (url.isDefined) {
-          provider.fetch(url.get).get.map(response => {
-            if (response.status != Status.OK) {
-              log.error("["+unifiedRequest.service+"] Error during fetching messages (Invalid Token?)")
-              log.error(response.body.toString)
-              // TODO (in a far future) : parse errors (rate, token...)
-              channel.push(Json.toJson(TokenInvalid(provider.name)))
+          provider.fetch(url.get).withTimeout(30000).get.onComplete{
+            case Success(response) => {
+              
+              if (response.status != Status.OK) {
+                log.error("["+unifiedRequest.service+"] HTTP Error "+response.status)
+                log.info(response.body.toString)
+                channel.push(Json.toJson(TokenInvalid(provider.name)))
+              } else {
+                val explodedMsgs = parser.get.cutSafe(response, provider)
+                if (explodedMsgs.isEmpty) {
+                  log.error("["+unifiedRequest.service+"] Unexpected result")
+                  log.info(response.body.toString)
+                  // channel.push(something???) // TODO
+                } else {
+                  val skimboMsgs = explodedMsgs.get.map(jsonMsg => parser.get.asSkimboSafe(jsonMsg)).flatten
+                  val listJson = if (config.manualNextResults || config.mustBeReordered) reorderMessagesByDate(skimboMsgs) else skimboMsgs
+              
+                  log.info("["+unifiedRequest.service+"] Received messages : "+listJson.size)
+              
+                  val messages = Enumerator.enumerate(listJson)
+                  val ite = Iteratee.foreach { skimboMsg: Skimbo =>
+                  val msg = Json.obj("column" -> column.title, "msg" -> skimboMsg)
+                    if (config.manualNextResults) {
+                      if (skimboMsg.createdAt.isAfter(sinceDate)) {
+                        channel.push(Json.toJson(Command("msg", Some(msg))))
+                        sinceDate = skimboMsg.createdAt // TODO : utiliser uniquement SinceID (convertir date en string)
+                      }
+                    } else {
+                      sinceId = parser.get.nextSinceId(skimboMsg.sinceId, sinceId)
+                      channel.push(Json.toJson(Command("msg", Some(msg))))
+                    }
+                  }
+                  messages(ite)
+                }
+              }
             }
-            
-            val skimboMsgs = parser.get.cut(provider.resultAsJson(response)).map(jsonMsg => parser.get.asSkimboSafe(jsonMsg)).flatten
-            val listJson = if (config.manualNextResults || config.mustBeReordered) reorderMessagesByDate(skimboMsgs) else skimboMsgs
 
-            log.info("["+unifiedRequest.service+"] Messages reçus : "+listJson.size)
-
-            val messages = Enumerator.enumerate(listJson)
-            val ite = Iteratee.foreach { skimboMsg: Skimbo =>
-	          val msg = Json.obj("column" -> column.title, "msg" -> skimboMsg)
-	            if (config.manualNextResults) {
-	              if (skimboMsg.createdAt.isAfter(sinceDate)) {
-	                channel.push(Json.toJson(Command("msg", Some(msg))))
-	                sinceDate = skimboMsg.createdAt // TODO : utiliser uniquement SinceID (convertir date en string)
-	              }
-	            } else {
-	              sinceId = parser.get.nextSinceId(skimboMsg.sinceId, sinceId)
-	              channel.push(Json.toJson(Command("msg", Some(msg))))
-	            }
+            case Failure(error) => {
+              log.error("["+unifiedRequest.service+"] Timeout HTTP", error)
             }
-            messages(ite)
-          })
+          }
         }
       } else if (!provider.hasToken(request)) {
         channel.push(Json.toJson(TokenInvalid(provider.name)))
