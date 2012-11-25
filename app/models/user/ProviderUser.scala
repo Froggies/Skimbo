@@ -28,6 +28,6 @@ object ProviderUser {
     BSONDocument(
       "id" -> BSONString(distant.id),
       "social" -> BSONString(distant.socialType),
-      "token" -> SkimboToken.toBSON(distant.token))
+      "token" -> SkimboToken.toBSON(distant.token.get))
   }
 }

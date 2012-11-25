@@ -5,7 +5,6 @@ import play.api.mvc._
 import play.api.libs.json._
 import play.api.Play.current
 import scala.concurrent.future
-import models.user.Column
 import services.endpoints.JsonRequest._
 import play.modules.reactivemongo._
 import scala.concurrent.{ ExecutionContext, Future }
@@ -15,7 +14,8 @@ import reactivemongo.bson.handlers.DefaultBSONHandlers.DefaultBSONDocumentWriter
 import reactivemongo.bson.handlers.DefaultBSONHandlers.DefaultBSONReaderHandler
 import reactivemongo.core.commands.LastError
 import services.auth.GenericProvider
-import models.user.SkimboToken
+import models.user._
+import java.util.Date
 
 object UserDao {
 
@@ -109,10 +109,25 @@ object UserDao {
   
   def setToken(idUser:String, provider: GenericProvider, token:SkimboToken) = {
     val query = BSONDocument("accounts.id" -> new BSONString(idUser))
-    collection.find(query).headOption().map { optUser =>
-      
+    findOneById(idUser).map { user =>
+      val toUpdate =
+        if(user.isDefined) {
+          val providersUser = user.get.distants.getOrElse(Seq[ProviderUser]()).map { distant =>
+            if(distant.socialType == provider.name) {
+              ProviderUser(distant.id, distant.socialType, Some(token))
+            } else {
+              distant
+            }
+          }
+          models.User(user.get.accounts, Some(providersUser), user.get.columns)
+        } else {
+          models.User(
+              Seq(Account(idUser, new Date())), 
+              Some(Seq(ProviderUser("", provider.name, Some(token)))), 
+              None)
+        }
+      collection.update(query, models.User.toBSON(toUpdate), upsert=true);
     }
-    future{None}
   }
   
   def removeToken(idUser:String, provider: GenericProvider): Future[Option[SkimboToken]] = {
