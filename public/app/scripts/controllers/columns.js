@@ -87,12 +87,19 @@ publicApp.controller('ColumnsCtrl', function($scope, $http) {
       }
       else {
         column.title = column.oldTitle;
+        column.showErrorBlankArg = false;
+        for (var i = column.unifiedRequests.length - 1; i >= 0; i--) {
+          if(column.unifiedRequests[i].fromServer == false) {
+            column.unifiedRequests.splice(i,1);
+          }
+        };
       }
     };
 
     $scope.addService = function(service, column) {
       if(service.socialNetworkToken) {
         var clientUnifiedRequest = serverToUnifiedRequest(service.service);
+        clientUnifiedRequest.fromServer = false;
         column.unifiedRequests.push(clientUnifiedRequest);
       }
       else {
@@ -148,25 +155,39 @@ publicApp.controller('ColumnsCtrl', function($scope, $http) {
                 }
               };
       }
-      if(column.title =="") {
-        column.showErrorTitleRequired = true;
-      }
-      else {
-        column.showErrorTitleRequired = false;
-        var nombreName = 0;
-        for (var i = 0; i < $scope.columns.length; i++) {
-          if($scope.columns[i].title == column.title) {
-            nombreName++;
+
+      column.showErrorBlankArg = false;
+
+      for (var i = 0; i < column.unifiedRequests.length; i++) {
+        for (var j = 0; j < column.unifiedRequests[i].args.length; j++) {
+          if (column.unifiedRequests[i].args[j].value == "") {
+            column.showErrorBlankArg = true;
+            break;
           }
         };
-        if(nombreName > 1) {
-          column.showErrorTitleAlreadyExist = true;
+      };
+     
+      if (!column.showErrorBlankArg) {
+        if(column.title =="") {
+          column.showErrorTitleRequired = true;
         }
         else {
-          column.showErrorTitleAlreadyExist = false;
-          column.messages = [];
-          column.showModifyColumn= !column.showModifyColumn;
-          socket.send(JSON.stringify(json));
+          column.showErrorTitleRequired = false;
+          var nombreName = 0;
+          for (var i = 0; i < $scope.columns.length; i++) {
+            if($scope.columns[i].title == column.title) {
+              nombreName++;
+            }
+          };
+          if(nombreName > 1) {
+            column.showErrorTitleAlreadyExist = true;
+          }
+          else {
+            column.showErrorTitleAlreadyExist = false;
+            column.messages = [];
+            column.showModifyColumn= !column.showModifyColumn;
+            socket.send(JSON.stringify(json));
+          }
         }
       }
     }
@@ -334,6 +355,7 @@ function executeCommand(data) {
                 for (var j = 0; j < originalColumn.unifiedRequests.length; j++) {
                   var unifiedRequest = originalColumn.unifiedRequests[j];
                   var clientUnifiedRequest = serverToClientUnifiedRequest(unifiedRequest);
+                  clientUnifiedRequest.fromServer = true;
                   clientColumn.unifiedRequests.push(clientUnifiedRequest);
                 };
                 clientColumn.showModifyColumn = false;
