@@ -1,5 +1,6 @@
 body {
-height: 100%;
+	width: 100%;
+	height: 100%;
 	background: #e7e7e7; /* Old browsers */
 	/* IE9 SVG, needs conditional override of 'filter' to 'none' */
 	background: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/Pgo8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgdmlld0JveD0iMCAwIDEgMSIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSI+CiAgPGxpbmVhckdyYWRpZW50IGlkPSJncmFkLXVjZ2ctZ2VuZXJhdGVkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjAlIiB5MT0iMCUiIHgyPSIwJSIgeTI9IjEwMCUiPgogICAgPHN0b3Agb2Zmc2V0PSI1MCUiIHN0b3AtY29sb3I9IiNlN2U3ZTciIHN0b3Atb3BhY2l0eT0iMSIvPgogICAgPHN0b3Agb2Zmc2V0PSIxMDAlIiBzdG9wLWNvbG9yPSIjYzhjOGM4IiBzdG9wLW9wYWNpdHk9IjEiLz4KICA8L2xpbmVhckdyYWRpZW50PgogIDxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIGZpbGw9InVybCgjZ3JhZC11Y2dnLWdlbmVyYXRlZCkiIC8+Cjwvc3ZnPg==);
@@ -10,6 +11,11 @@ height: 100%;
 	background: -ms-linear-gradient(top, #e7e7e7 50%,#c8c8c8 100%); /* IE10+ */
 	background: linear-gradient(to bottom, #e7e7e7 50%,#c8c8c8 100%); /* W3C */
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#e7e7e7', endColorstr='#c8c8c8',GradientType=0 ); /* IE6-8 */
+}
+
+div[ng-app]{
+	height: 100%;
+	width: 100%;
 }
 
 header.banner {
@@ -197,26 +203,34 @@ input[type=button] {
 }
 
 /**************    Colonnes ****************/
+.container {
+	height: 92%;
+}
+
 #content {
 	display: inline-block;
 	width: 100%;
+	height: 100%;
 }
 
 .column {
 	float:left;
 	width: 250px;
-	height: 567px;
+	max-height: 100%;
+	height: 100%;
 	margin: 5px;
 	background: #FAFAFA;
 	border: 1px solid #C1C1C1;
 	border-bottom-color: #B6B6B6;
 	-webkit-box-shadow: 0 1px 3px #C1C1C1;
 	box-shadow: 0 1px 3px #C1C1C1;
+	overflow: hidden;
 }
 
 .column-new {
 	float:left;
 	line-height: 567px;
+	height: 100%;
 	text-align: center;
 	width: 250px;
 	margin: 5px;
@@ -265,7 +279,7 @@ header.column-title {
 .column-content {
 	padding:5px;
 	overflow: auto;
-	height: 530px;
+	height: 93.7%;
 }
 
 .column-content ul {
@@ -350,7 +364,7 @@ header.column-title {
 	overflow: auto;
 	overflow-y: auto;
 	overflow-x: hidden;
-	height: 537px;
+	min-height: 537px;
 }
 
 .add-service,
