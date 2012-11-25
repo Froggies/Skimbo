@@ -414,7 +414,16 @@ function executeCommand(data) {
         if($scope.notifications == undefined) {
           $scope.notifications = [];
         }
-        $scope.notifications.push(data.body);
+        var notificationExiste = false;
+        for (var i = 0; i < $scope.notifications.length; i++) {
+          if ($scope.notifications[i].providerName == data.body.providerName) {
+            notificationExiste = true;
+            break;
+          }
+        };
+        if(!notificationExiste) {
+          $scope.notifications.push(data.body);
+        }
       });
     }
     else {
