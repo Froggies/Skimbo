@@ -14,7 +14,11 @@ trait SecurityProvider {
    * Retrieve security token
    */
   def getToken(implicit request: RequestHeader): Option[Any]
-
+  
+  /**
+   * Delete security token
+   */
+  def deleteToken(implicit request: RequestHeader)
 
   /**
    * Assign unique ID to client after authentification
