@@ -86,19 +86,24 @@ object UserDao {
     collection.remove(query)
   }
 
-  def hasToken(user: models.User, provider: GenericProvider): Future[Option[SkimboToken]] = {
+  def hasToken(idUser:String, provider: GenericProvider): Future[Option[SkimboToken]] = {
+    val query = BSONDocument("accounts.id" -> new BSONString(idUser))
+    collection.find(query).headOption().map { optUser =>
+      if(optUser.isDefined) {
+        
+      }
+    }
+  }
+  
+  def getToken(idUser:String, provider: GenericProvider): Future[Option[SkimboToken]] = {
     future{None}
   }
   
-  def getToken(user: models.User, provider: GenericProvider): Future[Option[SkimboToken]] = {
+  def setToken(idUser:String, provider: GenericProvider): Future[Option[SkimboToken]] = {
     future{None}
   }
   
-  def setToken(user: models.User, provider: GenericProvider): Future[Option[SkimboToken]] = {
-    future{None}
-  }
-  
-  def removeToken(user: models.User, provider: GenericProvider): Future[Option[SkimboToken]] = {
+  def removeToken(idUser:String, provider: GenericProvider): Future[Option[SkimboToken]] = {
     future{None}
   }
 
