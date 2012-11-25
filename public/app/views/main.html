@@ -20,7 +20,7 @@
 		</header>
 		<div class="column-content" ng-hide="c.showModifyColumn">
 			<ul>
-				<li class="element" ng-repeat="m in c.messages | filter:$parent.query">
+				<li class="element" ng-repeat="m in c.messages | filter:$parent.$parent.query">
 					<div class="timeline">
 						<div class="from-social-network vertical-text {{m.from}}">{{m.from}}</div>
 						<div class="rond {{m.from}}"></div>
