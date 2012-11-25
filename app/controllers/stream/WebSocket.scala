@@ -24,7 +24,7 @@ object WebSocket extends Controller {
       log.info("Command from client : "+cmd)
       Commands.interpret(userId, cmd)
     }.mapDone { _ =>
-      println("Disconnected")
+      log.info("Disconnected")
       UserInfosActor.killActorsForUser(userId)
     }
 

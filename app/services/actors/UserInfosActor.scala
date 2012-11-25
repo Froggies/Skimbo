@@ -157,7 +157,6 @@ class UserInfosActor(idUser: String, channelOut: Concurrent.Channel[JsValue])(im
   }
 
   def start(user: User) = {
-    println("START USER userInfosActor "+user.columns)
     user.columns.getOrElse(Seq()).foreach { column =>
       self ! StartProvider(idUser, column)
     }

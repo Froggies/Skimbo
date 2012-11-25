@@ -77,7 +77,6 @@ object User {
         })
         Column(asString(c, "title"), unifiedRequests)
       })
-      Logger.info("User = " + accounts + " :: " + providers + " :: " + columns)
       User(accounts, Some(providers), Some(columns))
     }
   }
