@@ -10,7 +10,7 @@ publicApp.controller('ColumnsCtrl', function($scope, $http) {
         window.WebSocket=window.MozWebSocket;
     }
     if(!window.WebSocket) {
-        alert('Votre navigateur ne supporte pas les webSocket !');
+        alert('Your browser doesn\'t support webSocket ! You switch in Sse mode but isn\'t recommended !');
         return false;
     } else {
         socket = new WebSocket(wshost);
@@ -229,17 +229,6 @@ publicApp.controller('ColumnsCtrl', function($scope, $http) {
       return false;
     }
 
-    $scope.deleteProvider = function(providerName) {
-      var cmd = {"cmd":"deleteProvider", "body":{"provider": providerName}};
-      socket.send(JSON.stringify(cmd));
-      for (var i = 0; i < $scope.userInfos.length; i++) {
-        if($scope.userInfos[i].socialType == providerName) {
-          $scope.userInfos.splice(i,1);
-          break;
-        }
-      }
-    }
-
 function getColumnByName(name) {
     for (var i = 0; i < $scope.columns.length; i++) {
         if ($scope.columns[i].title == name) {
@@ -365,12 +354,12 @@ function executeCommand(data) {
         $scope.lastColumnDeleted = undefined;
       });
     } else if(data.cmd == "userInfos") {
-      $scope.$apply(function() {
-        if($scope.userInfos == undefined) {
-          $scope.userInfos = [];
+      $scope.$parent.$parent.$apply(function() {
+        if($scope.$parent.$parent.userInfos == undefined) {
+          $scope.$parent.$parent.userInfos = [];
         }
         data.body.avatar = checkExistingImage(data.body.avatar);
-        $scope.userInfos.push(data.body);
+        $scope.$parent.$parent.userInfos.push(data.body);
       });
     }
     else {
