@@ -18,4 +18,11 @@ object SkimboToken {
       "token" -> BSONString(token.token),
       "secret" -> BSONString(token.secret.getOrElse("")))
   }
+  
+  def fromBSON(document: BSONDocument): Option[SkimboToken] = {
+    Some(SkimboToken(
+      document.toTraversable.getAs[BSONString]("token").get.value,
+      Some(document.toTraversable.getAs[BSONString]("secret").get.value)
+    ))
+  }
 }

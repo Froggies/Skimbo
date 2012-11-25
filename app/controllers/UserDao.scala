@@ -94,7 +94,7 @@ object UserDao {
     collection.find(query).headOption().map { optUser =>
       if(optUser.isDefined) {
         val distant = optUser.get.distants.getOrElse(Seq()).filter { distant =>
-          distant.name == provider.name
+          distant.socialType == provider.name
         }
         if(distant.size == 0) {
           None
@@ -112,13 +112,21 @@ object UserDao {
     findOneById(idUser).map { user =>
       val toUpdate =
         if(user.isDefined) {
-          val providersUser = user.get.distants.getOrElse(Seq[ProviderUser]()).map { distant =>
-            if(distant.socialType == provider.name) {
-              ProviderUser(distant.id, distant.socialType, Some(token))
-            } else {
-              distant
-            }
+          val exist = user.get.distants.getOrElse(Seq[ProviderUser]()).exists {
+            _.socialType == provider.name
           }
+          val providersUser = 
+            if(exist) {
+              user.get.distants.getOrElse(Seq[ProviderUser]()).map { distant =>
+                if(distant.socialType == provider.name) {
+                  ProviderUser(distant.id, distant.socialType, Some(token))
+                } else {
+                  distant
+                }
+              }
+            } else {
+              Seq(ProviderUser("", provider.name, Some(token)))
+            }
           models.User(user.get.accounts, Some(providersUser), user.get.columns)
         } else {
           models.User(
