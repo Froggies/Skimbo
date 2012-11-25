@@ -52,6 +52,10 @@ trait OAuthProvider extends GenericProvider {
       RequestToken(token, secret)
     }
   }
+  
+  override def deleteToken(implicit request: RequestHeader) = {
+    request.session - fieldToken - fieldSecret
+  }
 
   override def fetch(url: String)(implicit request: RequestHeader) = {
     WS.url(url).sign(OAuthCalculator(KEY, getToken.get))

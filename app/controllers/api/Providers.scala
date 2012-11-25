@@ -24,8 +24,10 @@ object Providers extends Controller {
       action.user.accounts.foreach { account =>
         ProviderActor.killProfider(account.id, providerName)
       }
-      Ok(Json.toJson(Command("deleteProvider", Some(JsString("ok"))))).as(play.api.http.ContentTypes.JSON);
-    }.getOrElse(BadRequest)
+      provider.deleteToken(action.request)
+      //Ok(Json.toJson(Command("deleteProvider", Some(JsString("ok"))))).as(play.api.http.ContentTypes.JSON);
+      Ok(views.html.index(Service.list(action.request))).withSession(action.request.session)
+    }.getOrElse(Ok(views.html.index(Service.list(action.request))))
   }
 
 }
