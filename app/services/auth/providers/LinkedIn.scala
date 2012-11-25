@@ -25,11 +25,12 @@ object LinkedIn extends OAuthProvider {
     try {
       val me = response.json
       val id = (me \ "id").as[String]
-      val username = (me \ "firstname").asOpt[String]
-      val name = (me \ "lastname").asOpt[String]
+      val fname = (me \ "firstName").asOpt[String]
+      val lname = (me \ "lastName").asOpt[String]
+      val displayName = Some(fname.getOrElse("") + " " + lname.getOrElse(""))
       val description = (me \ "headline").asOpt[String]
       val profileImage = (me \ "picture-url").asOpt[String]
-      Some(ProviderUser(id, this.name, username, name, description, profileImage))
+      Some(ProviderUser(id, this.name, displayName, displayName, description, profileImage))
     } catch {
       case _ : Throwable => {
         Logger.error("Error during fetching user details LINKEDIN")

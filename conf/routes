@@ -16,5 +16,12 @@ GET     /api/stream/webSocket       	controllers.stream.WebSocket.connect
 GET     /api/stream/sse       			controllers.stream.Sse.connect
 GET     /api/stream/ping       			controllers.stream.Sse.ping
 
+# Dev util
+GET		/api/dev/util/testRes/:service	controllers.dev.Util.testRes(service: String)
+GET		/api/dev/util/delDb				controllers.dev.Util.deleteUser
+GET		/api/dev/util/delAllDb			controllers.dev.Util.deleteAllUsers
+GET		/api/dev/util/userRes/:p		controllers.dev.Util.userRes(p: String)
+GET		/api/dev/util/userDistant/:p	controllers.dev.Util.userDistantRes(p: String)
+
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               	controllers.Assets.at(path="/public", file)

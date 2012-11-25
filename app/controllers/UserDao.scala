@@ -76,7 +76,8 @@ object UserDao {
   }
 
   def delete(user: models.User) = {
-    collection.remove(models.User.toBSON(user))
+    val query = BSONDocument("accounts.id" -> new BSONString(user.accounts.head.id))
+    collection.remove(query)
   }
 
 }

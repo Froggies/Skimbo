@@ -11,6 +11,8 @@ trait AccountWsProvider extends WsProvider {
 
   protected val config: Configuration
 
+  def getUserInfosUrl():Option[String] = config.getString("urlUserInfos")
+  
   /**
    * Retrieve user informations from provider
    */
