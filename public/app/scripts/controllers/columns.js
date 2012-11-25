@@ -307,6 +307,9 @@ function executeCommand(data) {
                 column.messages = [];
             }
             data.body.msg.authorAvatar = checkExistingImage(data.body.msg.authorAvatar);
+
+            data.body.msg.dateAgo = moment(moment(Number(data.body.msg.createdAt)), "YYYYMMDD").fromNow();
+
             column.messages.push(data.body.msg);
             var insertSort = function(sortMe) {
               for(var i=0, j, tmp; i<sortMe.length; ++i ) {
