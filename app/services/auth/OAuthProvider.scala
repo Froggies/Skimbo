@@ -5,6 +5,10 @@ import play.api.mvc._
 import play.api.libs.oauth._
 import play.api.Play.current
 import play.api.libs.ws.WS
+import controllers.UserDao
+import scala.concurrent.Await
+import scala.concurrent.duration._
+import models.user.SkimboToken
 
 trait OAuthProvider extends GenericProvider {
 
@@ -21,8 +25,8 @@ trait OAuthProvider extends GenericProvider {
   lazy val fieldSecret = namespace+"_expires"
 
   /**
-   * Execute authentification on provider
-   * @param redirectRoute : Where the user wil be redirected after correct authentification
+   * Execute authentication on provider
+   * @param redirectRoute : Where the user wil be redirected after correct authentication
    */
   override def auth(redirectRoute: Call)(implicit request: RequestHeader): Result = {
     request.getQueryString("oauth_verifier") match {
@@ -38,23 +42,19 @@ trait OAuthProvider extends GenericProvider {
       // Step 2 : Retrieve access-token from WS and redirect to app
       case Some(verifier) =>
         service.retrieveAccessToken(getToken(request).get, verifier) match {
-          case Right(t) => Redirect(redirectRoute).withSession(generateUniqueId(request.session) + (fieldToken -> t.token) + (fieldSecret -> t.secret))
-          case Left(e)  => Redirect(redirectRoute).withSession(request.session + ("login-error" -> name))
+          case Right(t) => {
+              val session = generateUniqueId(request.session)
+              UserDao.setToken(session("id"), this, SkimboToken(t.token, Some(t.secret)))
+              Redirect(redirectRoute).withSession(session)
+            }
+          case Left(e)  => Redirect(redirectRoute).flashing("login-error" -> name)
         }
     }
   }
 
   override def getToken(implicit request: RequestHeader): Option[RequestToken] = {
-    for {
-      token <- request.session.get(fieldToken)
-      secret <- request.session.get(fieldSecret)
-    } yield {
-      RequestToken(token, secret)
-    }
-  }
-  
-  override def deleteToken(implicit request: RequestHeader) = {
-    request.session - fieldToken - fieldSecret
+    val skimboToken = request.session.get("id").flatMap(id => Await.result(UserDao.getToken(id, this), 1 second))
+    skimboToken.map(st => RequestToken(st.token, st.secret.get))
   }
 
   override def fetch(url: String)(implicit request: RequestHeader) = {

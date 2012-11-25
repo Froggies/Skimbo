@@ -6,7 +6,7 @@ import reactivemongo.bson._
 
 case class SkimboToken(
   token: String,
-  secret: Option[String])
+  secret: Option[String] = None)
 
 object SkimboToken {
   implicit val writer = (
