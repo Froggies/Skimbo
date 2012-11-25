@@ -138,7 +138,9 @@ class UserInfosActor(idUser: String, channelOut: Concurrent.Channel[JsValue])(im
       ProviderDispatcher.listAll.map { provider =>
         if (provider.hasToken(request)) {
           provider.getUser.map { providerUser =>
-            if (providerUser.isDefined && !user.distants.exists { _.exists(_.socialType == provider.name) }) {
+            if (providerUser.isDefined && !user.distants.exists {_.exists { pu => 
+                pu.socialType == provider.name && pu.id == providerUser.get.id } 
+              }) {
               self ! AddInfosUser(user, ProviderUser(providerUser.get.id, provider.name, None))//TODO put good token
             }
             if (providerUser.isDefined) {

@@ -41,7 +41,7 @@ trait OAuthProvider extends GenericProvider {
 
       // Step 2 : Retrieve access-token from WS and redirect to app
       case Some(verifier) =>
-        service.retrieveAccessToken(getToken(request).get, verifier) match {
+        service.retrieveAccessToken(getSessionToken, verifier) match {
           case Right(t) => {
               val session = generateUniqueId(request.session)
               UserDao.setToken(session("id"), this, SkimboToken(t.token, Some(t.secret)))
@@ -50,6 +50,10 @@ trait OAuthProvider extends GenericProvider {
           case Left(e)  => Redirect(redirectRoute).flashing("login-error" -> name)
         }
     }
+  }
+  
+  private def getSessionToken(implicit request:RequestHeader) = {
+    RequestToken(request.session.get(fieldToken).get, request.session.get(fieldSecret).get)
   }
 
   override def getToken(implicit request: RequestHeader): Option[RequestToken] = {
