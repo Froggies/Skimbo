@@ -172,7 +172,7 @@ object DaoUserSimpleFind extends Specification {
     //Add user
     Await.result(UserDao.add(user), Duration("10 seconds"))
     //modif user
-    val provider = ProviderUser("p1", "p1", Some("p1"), Some("p1"), Some("p1"), Some("p1"))
+    val provider = ProviderUser("p1", "p1", None, Some("p1"), Some("p1"), Some("p1"), Some("p1"))
     Await.result(UserDao.addProviderUser(user, provider), Duration("10 seconds"))
     //Find user
     val optionUser3: Option[User] = Await.result(UserDao.findByIdProvider("p1", "p1"), Duration("10 seconds"))

@@ -6,7 +6,7 @@ import java.util.UUID
 trait SecurityProvider {
 
   /**
-   * Execute authentification process with this provider and redirect to `redirectRoute`
+   * Execute authentication process with this provider and redirect to `redirectRoute`
    */
   def auth(redirectRoute: Call)(implicit request: RequestHeader): Result
 
@@ -18,10 +18,10 @@ trait SecurityProvider {
   /**
    * Delete security token
    */
-  def deleteToken(implicit request: RequestHeader)
+  def deleteToken(request: RequestHeader)
 
   /**
-   * Assign unique ID to client after authentification
+   * Assign unique ID to client after authentication
    */
   protected def generateUniqueId(session: Session) = {
     session + ("id" -> session.get("id").getOrElse(UUID.randomUUID().toString))

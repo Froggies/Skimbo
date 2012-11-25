@@ -4,7 +4,7 @@ import play.api._
 import play.api.mvc._
 import play.api.libs.json._
 import play.api.Play.current
-import models.user.Column
+import scala.concurrent.future
 import services.endpoints.JsonRequest._
 import play.modules.reactivemongo._
 import scala.concurrent.{ ExecutionContext, Future }
@@ -13,6 +13,10 @@ import reactivemongo.bson._
 import reactivemongo.bson.handlers.DefaultBSONHandlers.DefaultBSONDocumentWriter
 import reactivemongo.bson.handlers.DefaultBSONHandlers.DefaultBSONReaderHandler
 import reactivemongo.core.commands.LastError
+import services.auth.GenericProvider
+import models.user._
+import java.util.Date
+import services.auth.ProviderDispatcher
 
 object UserDao {
 
@@ -49,10 +53,22 @@ object UserDao {
   }
 
   def addProviderUser(user: models.User, providerUser: models.user.ProviderUser) = {
-    val query = BSONDocument("accounts.id" -> new BSONString(user.accounts.head.id))
-    val update = BSONDocument(
-      "$push" -> BSONDocument("distants" -> models.user.ProviderUser.toBSON(providerUser)))
-    collection.update(query, update)
+    if(providerUser.token.isDefined) {
+      val query = BSONDocument("accounts.id" -> new BSONString(user.accounts.head.id))
+      val update = BSONDocument(
+        "$push" -> BSONDocument("distants" -> models.user.ProviderUser.toBSON(providerUser)))
+      collection.update(query, update)
+    } else {
+      getToken(user.accounts.head.id, ProviderDispatcher.get(providerUser.socialType).get).map { token =>
+        if(token.isDefined) {
+          setToken(
+              user.accounts.head.id, 
+              ProviderDispatcher.get(providerUser.socialType).get, 
+              token.get, 
+              Some(providerUser.id))
+        }
+      }
+    }
   }
 
   def updateColumn(user: models.User, title: String, column: Column) = {
@@ -78,6 +94,65 @@ object UserDao {
   def delete(user: models.User) = {
     val query = BSONDocument("accounts.id" -> new BSONString(user.accounts.head.id))
     collection.remove(query)
+  }
+
+  def hasToken(idUser:String, provider: GenericProvider): Future[Boolean] = {
+    getToken(idUser, provider).map { token => 
+      token.isDefined
+    }
+  }
+  
+  def getToken(idUser:String, provider: GenericProvider): Future[Option[SkimboToken]] = {
+    val query = BSONDocument("accounts.id" -> new BSONString(idUser))
+    collection.find(query).headOption().map { optUser =>
+      if(optUser.isDefined) {
+        val distant = optUser.get.distants.getOrElse(Seq()).filter { distant =>
+          distant.socialType == provider.name
+        }
+        if(distant.size == 0) {
+          None
+        } else {
+          distant.head.token
+        }
+      } else {
+        None
+      }
+    }
+  }
+  
+  def setToken(idUser:String, provider: GenericProvider, token:SkimboToken, distantId: Option[String]=None) = {
+    val query = BSONDocument("accounts.id" -> new BSONString(idUser))
+    findOneById(idUser).map { user =>
+      val toUpdate =
+        if(user.isDefined) {
+          val exist = user.get.distants.getOrElse(Seq[ProviderUser]()).exists {
+            _.socialType == provider.name
+          }
+          val providersUser = 
+            if(exist) {
+              user.get.distants.getOrElse(Seq[ProviderUser]()).map { distant =>
+                if(distant.socialType == provider.name) {
+                  ProviderUser(distantId.getOrElse(distant.id), distant.socialType, Some(token))
+                } else {
+                  distant
+                }
+              }
+            } else {
+              Seq(ProviderUser(distantId.getOrElse(""), provider.name, Some(token))) ++ user.get.distants.getOrElse(Seq[ProviderUser]())
+            }
+          models.User(user.get.accounts, Some(providersUser), user.get.columns)
+        } else {
+          models.User(
+              Seq(Account(idUser, new Date())), 
+              Some(Seq(ProviderUser(distantId.getOrElse(""), provider.name, Some(token)))), 
+              None)
+        }
+      collection.update(query, models.User.toBSON(toUpdate), upsert=true);
+    }
+  }
+  
+  def removeToken(idUser:String, provider: GenericProvider): Future[Option[SkimboToken]] = {
+    future{None}
   }
 
 }

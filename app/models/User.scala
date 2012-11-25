@@ -60,10 +60,7 @@ object User {
         ProviderUser(
           asString(d, "id"),
           asString(d, "social"),
-          None, //d.getAs[BSONString]("login").get.value,
-          None, //d.getAs[BSONString]("name").get.value,
-          None, //Some(d.getAs[BSONString]("desc").get.value),
-          None //Some(d.getAs[BSONString]("avatar").get.value)
+          SkimboToken.fromBSON(d.getAs[BSONDocument]("token").get)
           )
       })
       val columns = tableTo[Column](document, "columns", { c =>

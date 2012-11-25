@@ -6,6 +6,7 @@ import services.auth._
 import models.user.ProviderUser
 import services.auth.actions.WSGzipJson
 import play.api.libs.json.JsValue
+import models.user.SkimboToken
 
 object StackExchange extends OAuth2Provider with WSGzipJson {
 
@@ -34,7 +35,7 @@ object StackExchange extends OAuth2Provider with WSGzipJson {
     
   override def resultAsJson(response:play.api.libs.ws.Response):JsValue = parseGzipJson(response)
     
-  override def distantUserToSkimboUser(ident: String, response: play.api.libs.ws.Response): Option[ProviderUser] = {
+  override def distantUserToSkimboUser(ident: String, response: play.api.libs.ws.Response)(implicit request: RequestHeader): Option[ProviderUser] = {
     try {
       val me = (resultAsJson(response) \ "items")(0)
       val id = (me \ "user_id").as[Int].toString
@@ -42,7 +43,14 @@ object StackExchange extends OAuth2Provider with WSGzipJson {
       val name = (me \ "display_name").asOpt[String]
       val description = Some("Reputation" + (me \ "reputation").as[Int])
       val profileImage = (me \ "profile_image").asOpt[String]
-      Some(ProviderUser(id, this.name, username, name, description, profileImage))
+      Some(ProviderUser(
+          id, 
+          this.name, 
+          Some(SkimboToken(getToken.get.token, None)), 
+          username, 
+          name, 
+          description, 
+          profileImage))
     } catch {
       case _ : Throwable => {
         Logger.error("Error during fetching user details STACKEXCHANGE")
