@@ -1,9 +1,10 @@
 'use strict';
 
 publicApp.controller('ColumnsCtrl', function($scope, $http) {
-    var wshost = 'ws://127.0.0.1:9000/api/stream/webSocket';
-    var ssehost = 'http://127.0.0.1:9000/api/stream/sse';
-    var sseping = 'http://127.0.0.1:9000/api/stream/ping';
+
+    var wshost = jsRoutes.controllers.stream.WebSocket.connect().webSocketURL();
+    var ssehost = jsRoutes.controllers.stream.Sse.connect().absoluteURL();
+    var sseping = jsRoutes.controllers.stream.Sse.ping().absoluteURL();
     
     var socket;
     if(window.MozWebSocket) {
