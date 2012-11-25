@@ -4,6 +4,7 @@ import play.api._
 import play.api.mvc._
 import play.api.libs.json._
 import play.api.Play.current
+import scala.concurrent.future
 import models.user.Column
 import services.endpoints.JsonRequest._
 import play.modules.reactivemongo._
@@ -13,12 +14,17 @@ import reactivemongo.bson._
 import reactivemongo.bson.handlers.DefaultBSONHandlers.DefaultBSONDocumentWriter
 import reactivemongo.bson.handlers.DefaultBSONHandlers.DefaultBSONReaderHandler
 import reactivemongo.core.commands.LastError
+import services.auth.GenericProvider
 
 object UserDao {
 
   import play.api.libs.concurrent.Execution.Implicits._
   import models.User._
 
+  case class SkimboToken(
+    token:String,
+    secret:Option[String])
+  
   val db = ReactiveMongoPlugin.db
   val collection = db("users")
 
@@ -78,6 +84,22 @@ object UserDao {
   def delete(user: models.User) = {
     val query = BSONDocument("accounts.id" -> new BSONString(user.accounts.head.id))
     collection.remove(query)
+  }
+
+  def hasToken(user: models.User, provider: GenericProvider): Future[Option[SkimboToken]] = {
+    future{None}
+  }
+  
+  def getToken(user: models.User, provider: GenericProvider): Future[Option[SkimboToken]] = {
+    future{None}
+  }
+  
+  def setToken(user: models.User, provider: GenericProvider): Future[Option[SkimboToken]] = {
+    future{None}
+  }
+  
+  def removeToken(user: models.User, provider: GenericProvider): Future[Option[SkimboToken]] = {
+    future{None}
   }
 
 }
