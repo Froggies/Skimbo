@@ -1,6 +1,6 @@
 @main("Skimbo") { } {
-	<!--<script type="text/javascript">
-		window.close();
+	<script type="text/javascript">
+        window.opener.sendMessageToWindow();
+        window.close();
 	</script>-->
-	<a href="javascript:window.open('','_parent','');window.close();">Close this window</a>	
 }

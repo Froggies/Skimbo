@@ -1,5 +1,16 @@
 <section id="content" ng-controller="ColumnsCtrl" >
-	
+	<section class="notifications">
+		<div class="notif column-title" ng-repeat="notification in notifications">
+			<a href="#" ng-click="reconnect(notification.providerName)">
+		        <div class="head"> <img ng-src="assets/img/brand/{{notification.providerName}}.png" alt="{{notification.providerName}}" width="24" height="24">You have been disconnected from <span class="social-network-name">{{notification.providerName}}</span></div>
+		        <div class="text">
+		        	Click here to be connected again to <span class="social-network-name">{{notification.providerName}}</span>.
+	        	</div>
+	        </a>
+    	</div>
+	</section>
+
+
 	<section class="column" 			  
 			 ng-repeat="c in columns">
 		<header class="column-title">
