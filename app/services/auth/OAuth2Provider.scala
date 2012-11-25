@@ -9,6 +9,10 @@ import play.api.Play.current
 import play.api.Logger
 import java.net.URLEncoder.encode
 import java.util.UUID.randomUUID
+import controllers.UserDao
+import scala.concurrent.duration._
+import scala.concurrent.Await
+import models.user.SkimboToken
 
 trait OAuth2Provider extends GenericProvider {
 
@@ -48,18 +52,16 @@ trait OAuth2Provider extends GenericProvider {
    * TOKEN must be in session
    */
   override def fetch(url: String)(implicit request: RequestHeader) = {
-    WS.url(url).withQueryString("access_token" -> getToken.get)
+    WS.url(url).withQueryString("access_token" -> getToken.get.token)
   }
 
   /**
    * Get token from session if exists
    */
-  override def getToken(implicit request: RequestHeader) = request.session.get(fieldToken)
-  
-  override def deleteToken(implicit request: RequestHeader) = {
-    request.session - fieldToken
+  override def getToken(implicit request: RequestHeader) = {
+    request.session.get("id").flatMap( id => Await.result(UserDao.getToken(id, this), 1 second))
   }
-
+  
   /**
    * Redirect the user to the service's accreditation page
    */
@@ -78,7 +80,7 @@ trait OAuth2Provider extends GenericProvider {
   }
 
   /**
-   * Check authentification code and fetch accessToken from provider WS
+   * Check authentication code and fetch accessToken from provider WS
    */
   private def retrieveAccessToken(code: String, redirectRoute: Call)(implicit request: RequestHeader) = {
 
@@ -93,17 +95,16 @@ trait OAuth2Provider extends GenericProvider {
         fetchAccessTokenResponse(code).map(response =>
           processToken(response) match {
 
-            // Provider return both token and expires timestamp
-            case Token(Some(token), Some(expires)) =>
-              Redirect(redirectRoute).withSession(generateUniqueId(request.session) + (fieldToken -> token) + (fieldExpires -> expires.toString))
-
-            // Provider return only token
-            case Token(Some(token), None) =>
-              Redirect(redirectRoute).withSession(generateUniqueId(request.session) + (fieldToken -> token))
+            // Provider return token
+            case Token(Some(token), _) => {
+              val session = generateUniqueId(request.session)
+              UserDao.setToken(session("id"), this, SkimboToken(token))
+              Redirect(redirectRoute).withSession(session)
+            }   
 
             // Provider return nothing > an error has occurred during authentication
             case _ =>
-              Redirect(redirectRoute).withSession(request.session - fieldToken).flashing("login-error" -> name)
+              Redirect(redirectRoute).flashing("login-error" -> name)
           })
       }
 

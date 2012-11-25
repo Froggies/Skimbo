@@ -3,6 +3,7 @@ package services.auth
 import play.api.Play.current
 import play.api.mvc._
 import services.auth.actions._
+import controllers.UserDao
 
 trait GenericProvider extends Results with WsProvider with AccountWsProvider with SecurityProvider {
 
@@ -19,5 +20,9 @@ trait GenericProvider extends Results with WsProvider with AccountWsProvider wit
 
   // Common config
   lazy val authRoute: Call = controllers.routes.Application.authenticate(name)
+  
+  override def deleteToken(request: RequestHeader) = {
+    UserDao.removeToken(request.session("id"), this)
+  }
 
 }
