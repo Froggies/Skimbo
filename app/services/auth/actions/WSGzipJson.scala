@@ -8,8 +8,6 @@ import play.api.libs.json.Json
 
 trait WSGzipJson {
 
-  // TODO > Est surement natif à PLAY2 => Creuser
-  // Sinon tenter via un iteratees
   def parseGzipJson(response: play.api.libs.ws.Response): JsValue = {
     def read(buf: BufferedReader, acc: List[String]): List[String] =
       buf.readLine match {

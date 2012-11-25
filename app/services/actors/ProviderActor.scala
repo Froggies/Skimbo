@@ -106,7 +106,7 @@ class ProviderActor(channel: Concurrent.Channel[JsValue],
         log.info("["+unifiedRequest.service+"] "+url.get)
 
         if (url.isDefined) {
-          provider.fetch(url.get).withTimeout(30000).get.onComplete{
+          provider.fetch(url.get).withTimeout(config.delay * 1000).get.onComplete{
             case Success(response) => {
               
               if (response.status != Status.OK) {
