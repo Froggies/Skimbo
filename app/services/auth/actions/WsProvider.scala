@@ -12,6 +12,6 @@ trait WsProvider {
    */
   def fetch(url: String)(implicit request: RequestHeader): WSRequestHolder
 
-  def resultAsJson(response:Response):JsValue = response.json
+  def resultAsJson(response: Response): JsValue = response.json
   
 }

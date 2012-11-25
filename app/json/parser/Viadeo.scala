@@ -57,9 +57,7 @@ object ViadeoWallParser extends GenericParser {
     }
   }
   
-  override def cut(json: JsValue): List[JsValue] = {
-    (json \ "data").as[List[JsValue]]
-  }
+  override def cut(json: JsValue): List[JsValue] = super.cut(json \ "data")
   
   override def nextSinceId(sinceId:String, sinceId2:String): String = {
     val date = DateTime.parse(sinceId, DateTimeFormat.forPattern(ViadeoWallMessage.datePattern))
