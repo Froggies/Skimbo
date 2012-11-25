@@ -43,7 +43,7 @@ publicApp.controller('ColumnsCtrl', function($scope, $http) {
             $http.get(sseping);
         }, false);
 
-        source.addEventListener('open', function(e) {console.log('socket ouverte');}, false);
+        source.addEventListener('open', function(e) {console.log('sse socket ouverte');}, false);
         source.addEventListener('error', function(e) {console.log('Une erreur est survenue');}, false);
     }
 

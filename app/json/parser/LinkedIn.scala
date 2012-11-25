@@ -69,9 +69,9 @@ object LinkedInWallParser extends GenericParser {
       }
       case "CONN" => {
         e.person.get.connections.headOption.map(friend => 
-          "Connection with " + friend.firstName +" "+ friend.lastName + 
-          friend.headLine.map(" "+_))
-        .getOrElse("New connection")
+          "Connection with " + friend.firstName +" "+ friend.lastName + " (" +
+          friend.headLine.getOrElse("New connection") + ")")
+          .getOrElse("New connection")
       }
       case "NCON" => {
         val p = e.person.get
