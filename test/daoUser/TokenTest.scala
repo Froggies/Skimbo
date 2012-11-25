@@ -17,22 +17,6 @@ import scala.concurrent.duration.Duration
 import services.auth.providers.Twitter
 import models.user.SkimboToken
 
-object UtilTest {
-  
-  def makeUser(id:String) = {
-    User.create(id)
-  }
-  
-  def makeAccount(id:String) = {
-    Account(id, new Date())
-  }
-  
-  def makeColumn(title:String, urService:String, urArg1:String, urArg2:String) = {
-    Column(title, Seq(UnifiedRequest(urService, Some(Map(urArg1 -> urArg2)))))
-  }
-  
-}
-
 
 object TokenTest extends Specification {
 

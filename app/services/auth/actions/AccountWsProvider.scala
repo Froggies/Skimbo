@@ -29,6 +29,6 @@ trait AccountWsProvider extends WsProvider {
   /**
    * Transcript getUser to real User
    */
-  def distantUserToSkimboUser(id: String, response: play.api.libs.ws.Response): Option[ProviderUser] = None
+  def distantUserToSkimboUser(id: String, response: play.api.libs.ws.Response)(implicit request: RequestHeader): Option[ProviderUser] = None
 
 }
