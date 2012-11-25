@@ -15,16 +15,13 @@ import reactivemongo.bson.handlers.DefaultBSONHandlers.DefaultBSONDocumentWriter
 import reactivemongo.bson.handlers.DefaultBSONHandlers.DefaultBSONReaderHandler
 import reactivemongo.core.commands.LastError
 import services.auth.GenericProvider
+import models.user.SkimboToken
 
 object UserDao {
 
   import play.api.libs.concurrent.Execution.Implicits._
   import models.User._
 
-  case class SkimboToken(
-    token:String,
-    secret:Option[String])
-  
   val db = ReactiveMongoPlugin.db
   val collection = db("users")
 
@@ -86,17 +83,40 @@ object UserDao {
     collection.remove(query)
   }
 
-  def hasToken(idUser:String, provider: GenericProvider): Future[Option[SkimboToken]] = {
+  def hasToken(idUser:String, provider: GenericProvider): Future[Boolean] = {
     val query = BSONDocument("accounts.id" -> new BSONString(idUser))
     collection.find(query).headOption().map { optUser =>
       if(optUser.isDefined) {
-        
+        val distant = optUser.get.distants.getOrElse(Seq()).filter { distant =>
+          distant.name == provider.name
+        }
+        if(distant.size == 0) {
+          false
+        } else {
+          distant.head.token.isDefined
+        }
+      } else {
+        false
       }
     }
   }
   
   def getToken(idUser:String, provider: GenericProvider): Future[Option[SkimboToken]] = {
-    future{None}
+    val query = BSONDocument("accounts.id" -> new BSONString(idUser))
+    collection.find(query).headOption().map { optUser =>
+      if(optUser.isDefined) {
+        val distant = optUser.get.distants.getOrElse(Seq()).filter { distant =>
+          distant.name == provider.name
+        }
+        if(distant.size == 0) {
+          None
+        } else {
+          distant.head.token
+        }
+      } else {
+        None
+      }
+    }
   }
   
   def setToken(idUser:String, provider: GenericProvider): Future[Option[SkimboToken]] = {
