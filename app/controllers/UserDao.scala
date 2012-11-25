@@ -84,20 +84,8 @@ object UserDao {
   }
 
   def hasToken(idUser:String, provider: GenericProvider): Future[Boolean] = {
-    val query = BSONDocument("accounts.id" -> new BSONString(idUser))
-    collection.find(query).headOption().map { optUser =>
-      if(optUser.isDefined) {
-        val distant = optUser.get.distants.getOrElse(Seq()).filter { distant =>
-          distant.name == provider.name
-        }
-        if(distant.size == 0) {
-          false
-        } else {
-          distant.head.token.isDefined
-        }
-      } else {
-        false
-      }
+    getToken(idUser, provider).map { token => 
+      token.isDefined
     }
   }
   
