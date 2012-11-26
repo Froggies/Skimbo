@@ -92,11 +92,11 @@ object LinkedInWallParser extends GenericParser {
 
   override def cut(json: JsValue): List[JsValue] = super.cut(json \ "values")
   
-  override def nextSinceId(sinceId:String, sinceId2:String): String = {
-    if(sinceId2.isEmpty()) {
+  override def nextSinceId(sinceId: String, sinceId2: String): String = {
+    if (sinceId2.isEmpty()) {
       sinceId
     } else {
-      if(sinceId.toLong > sinceId2.toLong) {
+      if (sinceId.toLong > sinceId2.toLong) {
         sinceId
       } else {
         sinceId2

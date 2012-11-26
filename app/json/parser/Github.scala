@@ -68,29 +68,18 @@ object GithubWallParser extends GenericParser {
   def buildMsg(e: GithubWallMessage) = {
     e.typeGithub match {
       case "ForkEvent" => "Fork of " + e.fork.get.repoName
-      case "PushEvent" => {
-        "Push on " + e.repoName + " : " + e.push.get.head.message
-      }
-      case "DownloadEvent" => {
+      case "PushEvent" => "Push on " + e.repoName + ": " + e.push.get.head.message
+      case "IssuesEvent" => "Issue [" + e.issues.get.title + "] > " + e.issues.get.state + ": " + e.issues.get.body
+      case "IssueCommentEvent" => "Issue [" + e.issues.get.title + "] > " + e.issueComment.get.body
+      case "DeleteEvent" => "Delete " + e.refType.get + " " + e.refName.get
+      case "CreateEvent" => "Create " + e.refType.get + " " + e.refName.get
+      case "DownloadEvent" =>
         if (!e.download.get.description.isEmpty()) {
           "New download (" + e.download.get.description + ") : " + e.download.get.name
         } else {
-          "New download : " + e.download.get.name
+          "New download: " + e.download.get.name
         }
-      }
-      case "IssuesEvent" => {
-        "Issue [" + e.issues.get.title + "] > " + e.issues.get.state + " : " + e.issues.get.body
-      }
-      case "IssueCommentEvent" => {
-        "Issue [" + e.issues.get.title + "] > " + e.issueComment.get.body
-      }
-      case "DeleteEvent" => {
-        "Delete " + e.refType.get + " " + e.refName.get
-      }
-      case "CreateEvent" => {
-        "Create " + e.refType.get + " " + e.refName.get
-      }
-      case _ => "Undevelopped type on " + e.repoName + " : " + e.typeGithub
+      case _ => "TOD type on " + e.repoName + " : " + e.typeGithub
     }
   }
 
@@ -99,16 +88,13 @@ object GithubWallParser extends GenericParser {
 
   def buildLink(e: GithubWallMessage) = {
     e.typeGithub match {
-      case "ForkEvent" => e.fork.get.url
-      case "PushEvent" => {
-        val push = e.push.get.head
-        Some(gitPushUrl.format(e.repoName, e.head.get))
-      }
-      case "DownloadEvent" => Some(e.download.get.url)
-      case "IssuesEvent" => Some(e.issues.get.htmlUrl)
-      case "IssueCommentEvent" => Some(e.issues.get.htmlUrl + "#issuecomment-" + e.issueComment.get.id)
-      case "DeleteEvent" => Some(gitRepoUrl.format(e.repoName))
-      case "CreateEvent" => Some(gitRepoUrl.format(e.repoName))
+      case "ForkEvent"          => e.fork.get.url
+      case "PushEvent"          => Some(gitPushUrl.format(e.repoName, e.head.get))
+      case "DownloadEvent"      => Some(e.download.get.url)
+      case "IssuesEvent"        => Some(e.issues.get.htmlUrl)
+      case "IssueCommentEvent"  => Some(e.issues.get.htmlUrl + "#issuecomment-" + e.issueComment.get.id)
+      case "DeleteEvent"        => Some(gitRepoUrl.format(e.repoName))
+      case "CreateEvent"        => Some(gitRepoUrl.format(e.repoName))
       case _ => None
     }
   }

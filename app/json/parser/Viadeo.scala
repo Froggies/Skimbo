@@ -43,7 +43,7 @@ object ViadeoWallParser extends GenericParser {
   }
   
   def generateMsg(e: ViadeoWallMessage) = {
-    if(e.message.isDefined && !e.message.get.isEmpty()) {
+    if(e.message.isDefined && !e.message.get.isEmpty()) { // TODO JLA
       e.message.get
     }
     else if(e.onMessage.isDefined && !e.onMessage.get.isEmpty()) {
@@ -59,13 +59,13 @@ object ViadeoWallParser extends GenericParser {
   
   override def cut(json: JsValue): List[JsValue] = super.cut(json \ "data")
   
-  override def nextSinceId(sinceId:String, sinceId2:String): String = {
+  override def nextSinceId(sinceId: String, sinceId2: String): String = {
     val date = DateTime.parse(sinceId, DateTimeFormat.forPattern(ViadeoWallMessage.datePattern))
-    if(sinceId2.isEmpty()) {
+    if (sinceId2.isEmpty()) {
       date.plusSeconds(1).toString(ViadeoWallMessage.datePattern)
     } else {
       val date1 = DateTime.parse(sinceId2, DateTimeFormat.forPattern(ViadeoWallMessage.datePattern))
-      if(date.isAfter(date1)) {
+      if (date.isAfter(date1)) {
         date.plusSeconds(1).toString(ViadeoWallMessage.datePattern)
       } else {
         date1.plusSeconds(1).toString(ViadeoWallMessage.datePattern)
