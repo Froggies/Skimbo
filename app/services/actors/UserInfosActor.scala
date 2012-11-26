@@ -1,9 +1,7 @@
 package services.actors
 
 import java.util.Date
-
 import scala.concurrent.ExecutionContext.Implicits._
-
 import akka.actor._
 import controllers.UserDao
 import models.command.Command
@@ -16,12 +14,14 @@ import play.api.libs.json._
 import play.api.mvc.RequestHeader
 import services.auth.ProviderDispatcher
 import services.commands.Commands
+import services.auth.GenericProvider
 
 case object Retreive
 case class Send(userId: String, json: JsValue)
 case class StartProvider(userId: String, column: Column)
 case class CheckAccounts(idUser: String)
 case class AddInfosUser(user: User, providerUser: ProviderUser)
+case class RefreshInfosUser(userId: String, provider: GenericProvider)
 
 object UserInfosActor {
 
@@ -33,6 +33,7 @@ object UserInfosActor {
     system.eventStream.subscribe(actor, classOf[Send])
     system.eventStream.subscribe(actor, classOf[StartProvider])
     system.eventStream.subscribe(actor, classOf[Dead])
+    system.eventStream.subscribe(actor, classOf[RefreshInfosUser])
     actor ! Retreive
     actor
   }
@@ -48,7 +49,11 @@ object UserInfosActor {
   def killActorsForUser(userId: String) = {
     system.eventStream.publish(Dead(userId))
   }
-  
+
+  def refreshInfosUser(userId: String, provider: GenericProvider) = {
+    system.eventStream.publish(RefreshInfosUser(userId, provider))
+  }
+
 }
 
 class UserInfosActor(idUser: String, channelOut: Concurrent.Channel[JsValue])(implicit request: RequestHeader) extends Actor {
@@ -114,22 +119,31 @@ class UserInfosActor(idUser: String, channelOut: Concurrent.Channel[JsValue])(im
       }
     }
     case CheckAccounts(idUser: String) => {
-      UserDao.findOneById(idUser).map { _.map { user =>
-        ProviderDispatcher.listAll.map { provider =>
-          if (provider.hasToken(request)) {
-            provider.getUser.map { providerUser =>
-              if (providerUser.isDefined && !user.distants.exists {_.exists { pu => 
-                  pu.socialType == provider.name && pu.id == providerUser.get.id } 
+      ProviderDispatcher.listAll.map { provider =>
+        self ! RefreshInfosUser(idUser, provider)
+      }
+    }
+    case RefreshInfosUser(id: String, provider: GenericProvider) => {
+      if (id == idUser) {
+        UserDao.findOneById(idUser).map {
+          _.map { user =>
+            if (provider.hasToken(request)) {
+              provider.getUser.map { providerUser =>
+                if (providerUser.isDefined && !user.distants.exists {
+                  _.exists { pu =>
+                    pu.socialType == provider.name && pu.id == providerUser.get.id
+                  }
                 }) {
-                self ! AddInfosUser(user, ProviderUser(providerUser.get.id, provider.name, None))//TODO put good token
-              }
-              if (providerUser.isDefined) {
-                self ! Send(idUser, Json.toJson(Command("userInfos", Some(Json.toJson(providerUser.get)))))
+                  self ! AddInfosUser(user, ProviderUser(providerUser.get.id, provider.name, None)) //TODO put good token
+                }
+                if (providerUser.isDefined) {
+                  self ! Send(idUser, Json.toJson(Command("userInfos", Some(Json.toJson(providerUser.get)))))
+                }
               }
             }
           }
         }
-      }}
+      }
     }
     case AddInfosUser(user: User, providerUser: ProviderUser) => {
       UserDao.addProviderUser(user, providerUser)
