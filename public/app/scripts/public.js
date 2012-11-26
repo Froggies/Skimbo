@@ -1,7 +1,7 @@
 'use strict';
 
 // Declare app level module which depends on filters, and services
-var publicApp = angular.module('publicApp', [], function($routeProvider, $locationProvider) {
+var publicApp = angular.module('publicApp', ['ngSanitize'], function($routeProvider, $locationProvider) {
   $routeProvider
     .when('/', {
       templateUrl: 'assets/app/views/main.html'

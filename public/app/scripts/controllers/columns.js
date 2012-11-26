@@ -70,15 +70,6 @@ publicApp.controller('ColumnsCtrl', function($scope, $http) {
         source.addEventListener('error', function(e) {console.log('Une erreur est survenue');}, false);
     }
 
-    $scope.truncateString = function(chaine) {
-      if(chaine.length > 120) { 
-        return String(chaine).substring(0, 120)+"...";
-      }
-      else {
-        return chaine;
-      }
-    }
-
     $scope.addColumn = function() {
         if($scope.serviceProposes == undefined) {
           $http.get("/api/providers/services").success(function(data) {
@@ -336,6 +327,22 @@ function checkExistingImage(image) {
 
 var urlexp = /(http|ftp|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?/gi;
 
+function urlify(msg) {
+  var text = msg.message;
+  return text.replace(urlexp, function(url) {
+    return '<a class="'+msg.from+'" href="' + url + '" target="_blank">LINK</a>';
+  });
+}
+
+$scope.truncateString = function(chaine) {
+  if(chaine.length > 120 && !urlexp.test(chaine)) { 
+    return String(chaine).substring(0, 120)+"...";
+  }
+  else {
+    return chaine;
+  }
+}
+
 function executeCommand(data) {
     if(data.cmd == "allUnifiedRequests") {
       var serviceProposes = new Array();
@@ -377,6 +384,9 @@ function executeCommand(data) {
             data.body.msg.authorAvatar = checkExistingImage(data.body.msg.authorAvatar);
 
             data.body.msg.dateAgo = moment(moment(Number(data.body.msg.createdAt)), "YYYYMMDD").fromNow();
+            data.body.msg.original = data.body.msg.message;
+            data.body.msg.message = $scope.truncateString(data.body.msg.message);
+            data.body.msg.message = urlify(data.body.msg);
 
             column.messages.push(data.body.msg);
             var insertSort = function(sortMe) {
@@ -389,6 +399,8 @@ function executeCommand(data) {
               }
             }
             insertSort(column.messages);
+
+
         });
     } else if(data.cmd == "allColumns") {
         $scope.$apply(function() {

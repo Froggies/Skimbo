@@ -31,7 +31,9 @@
 						<!-- <p class="date-creation">{{m.createdAt | date:'mediumDate'}}</p> -->
 						<p class="date-creation">{{m.dateAgo}}</p>
 
-						<div class="message" title="{{m.message}}"> {{truncateString(m.message)}}</div>
+						<div class="message" ng-bind-html="m.message" title="{{m.original}}">
+							<!--{{truncateString(m.message)}}-->
+						</div>
 					</div>
 				</li>
 			</ul>
