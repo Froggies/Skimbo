@@ -383,7 +383,6 @@ function executeCommand(data) {
             }
             data.body.msg.authorAvatar = checkExistingImage(data.body.msg.authorAvatar);
 
-            data.body.msg.dateAgo = moment(moment(Number(data.body.msg.createdAt)), "YYYYMMDD").fromNow();
             data.body.msg.original = data.body.msg.message;
             data.body.msg.message = $scope.truncateString(data.body.msg.message);
             data.body.msg.message = urlify(data.body.msg);
@@ -392,6 +391,7 @@ function executeCommand(data) {
             var insertSort = function(sortMe) {
               for(var i=0, j, tmp; i<sortMe.length; ++i ) {
                 tmp = sortMe[i];
+                tmp.dateAgo = moment(moment(Number(tmp.createdAt)), "YYYYMMDD").fromNow();
                 for(j=i-1; j>=0 && sortMe[j].createdAt < tmp.createdAt; --j) {
                   sortMe[j+1] = sortMe[j];
                 }

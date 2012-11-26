@@ -13,6 +13,9 @@ import controllers.UserDao
 import scala.concurrent.duration._
 import scala.concurrent.Await
 import models.user.SkimboToken
+import services.commands.Commands
+import models.command.Command
+import models.command.NewToken
 
 trait OAuth2Provider extends GenericProvider {
 
@@ -98,7 +101,9 @@ trait OAuth2Provider extends GenericProvider {
             // Provider return token
             case Token(Some(token), _) => {
               val session = generateUniqueId(request.session)
+              //TODO rework this, same lignes in OAuthProvider
               UserDao.setToken(session("id"), this, SkimboToken(token))
+              Commands.interpretCmd(session("id"), NewToken.asCommand(this));
               Redirect(redirectRoute).withSession(session)
             }   
 

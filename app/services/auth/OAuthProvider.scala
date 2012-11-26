@@ -9,6 +9,8 @@ import controllers.UserDao
 import scala.concurrent.Await
 import scala.concurrent.duration._
 import models.user.SkimboToken
+import services.commands.Commands
+import models.command.NewToken
 
 trait OAuthProvider extends GenericProvider {
 
@@ -44,7 +46,9 @@ trait OAuthProvider extends GenericProvider {
         service.retrieveAccessToken(getSessionToken, verifier) match {
           case Right(t) => {
               val session = generateUniqueId(request.session)
+              //TODO rework this, same lignes in OAuthProvider
               UserDao.setToken(session("id"), this, SkimboToken(t.token, Some(t.secret)))
+              Commands.interpretCmd(session("id"), NewToken.asCommand(this))
               Redirect(redirectRoute).withSession(session)
             }
           case Left(e)  => Redirect(redirectRoute).flashing("login-error" -> name)

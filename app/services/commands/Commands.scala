@@ -13,12 +13,14 @@ import services.actors.ProviderActor
 
 object Commands {
 
-  def interpret(idUser: String, json: JsValue)(implicit context: scala.concurrent.ExecutionContext, req: RequestHeader): Unit = {
+  import play.api.libs.concurrent.Execution.Implicits._
+  
+  def interpret(idUser: String, json: JsValue)(implicit req: RequestHeader): Unit = {
     val cmd = Json.fromJson[Command](json).getOrElse(Command("_"))
     interpretCmd(idUser, cmd)
   }
 
-  def interpretCmd(idUser: String, cmd: Command)(implicit context: scala.concurrent.ExecutionContext, req: RequestHeader): Unit = {
+  def interpretCmd(idUser: String, cmd: Command)(implicit req: RequestHeader): Unit = {
     cmd.name match {
       case "allColumns" => {
         UserDao.findOneById(idUser).map(_.map { user =>
@@ -63,6 +65,9 @@ object Commands {
       case "deleteProvider" => {
         val providerName = (cmd.body.get \ "provider").as[String]
         ProviderActor.killProvider(idUser, providerName)
+      }
+      case "NewToken" => {
+        UserInfosActor.sendTo(idUser, Json.toJson(cmd))
       }
       case _ => {
         Logger.error("Command not found " + cmd)
