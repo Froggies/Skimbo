@@ -80,6 +80,10 @@ input[type=button] {
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#cb091c', endColorstr='#95141b',GradientType=0 ); /* IE6-8 */
 }
 
+.link-into-message {
+	text-decoration: none;
+}
+
 .banner a {
 	background: white;
 	display: inline-block;
@@ -194,7 +198,7 @@ input[type=button] {
 
 #bloc-utilisateur footer a, 
 #nom-prenom
- {
+{
 	color: #B6B6B6;
 }
 
