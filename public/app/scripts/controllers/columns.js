@@ -2,6 +2,7 @@
 
 publicApp.controller('ColumnsCtrl', function($scope, $http) {
 
+    //chrome memory leak !!!
     $scope.$destroy= function() {
       if ($rootScope == this) return; // we can't remove the root node;
         var parent = this.$parent;
