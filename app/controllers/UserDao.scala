@@ -147,8 +147,10 @@ object UserDao {
     }
   }
   
-  def removeToken(idUser:String, provider: GenericProvider): Future[Option[SkimboToken]] = {
-    future{None}
+  def removeToken(idUser:String, provider: GenericProvider) = {
+    val query = BSONDocument("accounts.id" -> new BSONString(idUser))
+    val update = BSONDocument("$pull" -> BSONDocument("distants" -> BSONDocument("social" -> new BSONString(provider.name))))
+    collection.update(query, update)
   }
 
 }

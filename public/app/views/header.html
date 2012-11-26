@@ -19,7 +19,7 @@
 						<a href="#" class="social-network-connected {{userInfo.socialType}}">
 							<img ng-src="assets/img/brand/{{userInfo.socialType}}.png" alt="{{userInfo.socialType}}" width="16" height="16">{{userInfo.username}}
 						</a>
-						<a href="/api/providers/del/{{userInfo.socialType}}" class="deconnexion {{userInfo.socialType}}">✘</a>
+						<a href="#" ng-click="deleteProvider(userInfo.socialType)" class="deconnexion {{userInfo.socialType}}">✘</a>
 					</li>
 				</ul>
 			</div>

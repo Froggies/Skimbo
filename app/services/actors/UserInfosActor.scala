@@ -138,12 +138,14 @@ class UserInfosActor(idUser: String, channelOut: Concurrent.Channel[JsValue])(im
     case CheckAccounts(idUser: String) => {
       UserDao.findOneById(idUser).map { _.map { user =>
         ProviderDispatcher.listAll.map { provider =>
-          if (provider.hasToken(request) && 
-              user.distants.getOrElse(Seq()).exists { pu => 
-                pu.socialType == provider.name  && pu.id.isEmpty()}) {
+          if (provider.hasToken(request)) {
             provider.getUser.map { providerUser =>
-              if (providerUser.isDefined) {
+              if (providerUser.isDefined && !user.distants.exists {_.exists { pu => 
+                  pu.socialType == provider.name && pu.id == providerUser.get.id } 
+                }) {
                 self ! AddInfosUser(user, ProviderUser(providerUser.get.id, provider.name, None))//TODO put good token
+              }
+              if (providerUser.isDefined) {
                 self ! Send(idUser, Json.toJson(Command("userInfos", Some(Json.toJson(providerUser.get)))))
               }
             }
