@@ -14,4 +14,6 @@ trait WsProvider {
 
   def resultAsJson(response: Response): JsValue = response.json
   
+  def isInvalidToken(response: Response): Boolean = true
+  
 }

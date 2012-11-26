@@ -108,7 +108,9 @@ class ProviderActor(channel: Concurrent.Channel[JsValue],
               if (response.status != Status.OK) {
                 log.error("["+unifiedRequest.service+"] HTTP Error "+response.status)
                 log.info(response.body.toString)
-                channel.push(Json.toJson(TokenInvalid(provider.name)))
+                if(provider.isInvalidToken(response)) {
+                  channel.push(Json.toJson(TokenInvalid(provider.name)))
+                }
               } else {
                 val explodedMsgs = parser.get.cutSafe(response, provider)
                 if (explodedMsgs.isEmpty) {
