@@ -30,9 +30,8 @@ object Application extends Controller {
     .getOrElse(BadRequest)
   }
 
-  def logout() = Authenticated { action =>
-    UserInfosActor.killActorsForUser(action.user.accounts.last.id)
-    Ok(views.html.index(Service.list(action.request))).withNewSession
+  def logout() = Action { implicit request =>
+    Ok(views.html.index(Service.list(request))).withNewSession
   }
   
   def closePopup() = Action {
