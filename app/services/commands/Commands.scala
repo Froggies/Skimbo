@@ -65,6 +65,7 @@ object Commands {
       case "deleteProvider" => {
         val providerName = (cmd.body.get \ "provider").as[String]
         ProviderActor.killProvider(idUser, providerName)
+        interpretCmd(idUser, Command("allUnifiedRequests"))
       }
       case "NewToken" => {
         UserInfosActor.sendTo(idUser, Json.toJson(cmd))

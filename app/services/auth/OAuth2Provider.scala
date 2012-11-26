@@ -16,6 +16,7 @@ import models.user.SkimboToken
 import services.commands.Commands
 import models.command.Command
 import models.command.NewToken
+import services.actors.UserInfosActor
 
 trait OAuth2Provider extends GenericProvider {
 
@@ -103,7 +104,8 @@ trait OAuth2Provider extends GenericProvider {
               val session = generateUniqueId(request.session)
               //TODO rework this, same lignes in OAuthProvider
               UserDao.setToken(session("id"), this, SkimboToken(token))
-              Commands.interpretCmd(session("id"), NewToken.asCommand(this));
+              Commands.interpretCmd(session("id"), NewToken.asCommand(this))
+              UserInfosActor.refreshInfosUser(session("id"), this)
               Redirect(redirectRoute).withSession(session)
             }   
 

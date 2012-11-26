@@ -444,7 +444,17 @@ function executeCommand(data) {
           $scope.$parent.$parent.userInfos = [];
         }
         data.body.avatar = checkExistingImage(data.body.avatar);
-        $scope.$parent.$parent.userInfos.push(data.body);
+        var found = false;
+        for (var i = 0; i < $scope.$parent.$parent.userInfos.length && !found; i++) {
+          var userInfos = $scope.$parent.$parent.userInfos[i];
+          if(userInfos.socialType == data.body.socialType) {
+            found = true;
+            $scope.$parent.$parent.userInfos[i] = data.body;
+          }
+        };
+        if(!found) {
+          $scope.$parent.$parent.userInfos.push(data.body);
+        }
       });
     }
     else if (data.cmd == "tokenInvalid") {
