@@ -19,7 +19,7 @@ object TokenInvalid {
 
 object NewToken {
   def asCommand(provider: GenericProvider) = {
-    Command("NewToken", Some(Json.obj(
+    Command("newToken", Some(Json.obj(
       "providerName" -> provider.name)))
   }
 }

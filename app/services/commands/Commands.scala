@@ -67,7 +67,7 @@ object Commands {
         ProviderActor.killProvider(idUser, providerName)
         interpretCmd(idUser, Command("allUnifiedRequests"))
       }
-      case "NewToken" => {
+      case "newToken" => {
         UserInfosActor.sendTo(idUser, Json.toJson(cmd))
       }
       case _ => {

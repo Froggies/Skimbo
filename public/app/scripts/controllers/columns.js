@@ -238,15 +238,6 @@ publicApp.controller('ColumnsCtrl', function($scope, $http) {
     }
 
     $scope.reconnect = function(socialNetworkName) {
-      window.sendMessageToWindow = function() {
-        $scope.$apply(function() {
-          for (var i = $scope.notifications.length - 1; i >= 0; i--) {
-            if ($scope.notifications[i].providerName == socialNetworkName) {
-              $scope.notifications.splice(i,1);
-            }
-          };
-        });
-      };
       $scope.openPopup({"socialNetwork": socialNetworkName});
     }
 
@@ -261,8 +252,6 @@ publicApp.controller('ColumnsCtrl', function($scope, $http) {
         
         newwindow.onclose = function() {
           $http.get("/api/providers/services").success(function(data) {
-            console.log("dans close",$scope.notifications);
-            executeCommand({"cmd":"allUnifiedRequests","body":data});
             if(_column != undefined) {
               var clientUnifiedRequest = serverToUnifiedRequest(_service.service);
               _column.unifiedRequests.push(clientUnifiedRequest);
@@ -271,8 +260,6 @@ publicApp.controller('ColumnsCtrl', function($scope, $http) {
         };
         newwindow.onbeforeunload = function() {
           $http.get("/api/providers/services").success(function(data) {
-            console.log("dans onbeforeunload",$scope.notifications);
-            executeCommand({"cmd":"allUnifiedRequests","body":data});
             if(_column != undefined) {
               var clientUnifiedRequest = serverToUnifiedRequest(_service.service);
               _column.unifiedRequests.push(clientUnifiedRequest);
@@ -474,6 +461,14 @@ function executeCommand(data) {
           $scope.notifications.push(data.body);
         }
       });
+    } else if(data.cmd == "newToken") {
+      $scope.$apply(function() {
+          for (var i = $scope.notifications.length - 1; i >= 0; i--) {
+            if ($scope.notifications[i].providerName == data.body.providerName) {
+              $scope.notifications.splice(i,1);
+            }
+          };
+        });
     }
     else {
       console.error("cmd not found : ", data);
