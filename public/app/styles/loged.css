@@ -375,9 +375,14 @@ header.column-title {
 }
 
 .add-service,
-.connected-on {
+.connected-on,
+.service-empty {
 	color: #C1C1C1;
 	margin: 15px 15px 0 15px;
+}
+
+.service-empty {
+	margin-bottom: 15px;
 }
 
 .social-network-link{
