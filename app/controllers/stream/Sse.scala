@@ -19,10 +19,6 @@ object Sse extends Controller {
 
     val (out, channelClient) = Concurrent.broadcast[JsValue]
     UserInfosActor.create(action.user.accounts.last.id, channelClient)
-    // -> to Skimbo
-    // -> trier par date
-    // -> filter en fonction des déjà vus
-    // -> to Json
     Ok.stream(out &> EventSource()).as(play.api.http.ContentTypes.EVENT_STREAM)
   }
 

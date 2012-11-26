@@ -10,21 +10,20 @@ case class Service(name: String, connected: Boolean)
 object Service {
 
   def list(implicit req: RequestHeader) = {
-    ProviderDispatcher.listAll.map(provider =>
-      Service(provider.name, provider.hasToken))
+    ProviderDispatcher.listAll.map(provider => Service(provider.name, provider.hasToken))
   }
   
-  def toJson()(implicit req: RequestHeader): JsValue = {
+  def toJson()(implicit req: RequestHeader) = {
     val services = list.map { service =>
       Json.obj(
-        "name" -> JsString(service.name),
-        "connected" -> JsBoolean(service.connected)
+        "name" -> service.name,
+        "connected" -> service.connected
       )
     }
     Json.toJson(services)
   }
   
-  def toJsonWithUnifiedRequest()(implicit req: RequestHeader): JsValue = {
+  def toJsonWithUnifiedRequest()(implicit req: RequestHeader) = {
     val jsonUnifiedRequests = Endpoints.getAll.map { endpoint =>
       Json.obj(
         "endpoint" -> endpoint.provider.name,

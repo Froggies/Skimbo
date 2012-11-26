@@ -17,13 +17,9 @@ trait AccountWsProvider extends WsProvider {
    * Retrieve user informations from provider
    */
   def getUser(implicit request: RequestHeader): Future[Option[ProviderUser]] = {
-    config.getString("urlUserInfos").map { url =>
-      Logger.info("fetch user infos on " + url)
-      fetch(url).get().map { response =>
-        //Logger.info("Users infos : " + response.body)
-        distantUserToSkimboUser(request.session("id"), response)
-      }
-    }.getOrElse(Future { None })
+    config.getString("urlUserInfos").map(url =>
+      fetch(url).get().map(response => distantUserToSkimboUser(request.session("id"), response))
+    ).getOrElse(Future { None })
   }
 
   /**

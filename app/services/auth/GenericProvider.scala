@@ -21,7 +21,7 @@ trait GenericProvider extends Results with WsProvider with AccountWsProvider wit
   // Common config
   lazy val authRoute: Call = controllers.routes.Application.authenticate(name)
   
-  override def deleteToken(request: RequestHeader) = {
+  override def deleteToken(implicit request: RequestHeader) = {
     UserDao.removeToken(request.session("id"), this)
   }
 
