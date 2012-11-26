@@ -115,6 +115,56 @@ object ViadeoFixture {
   ]}
     """
     
+  def timelineErrorNoName = """
+  {"data":[
+  {"id":"siuvjxolhVagsbyszagliVbrAO",
+    "type":"NEWS ITEM",
+    "name":"",
+    "link":"",
+    "on":{
+      "id":"siuvjxolhVagsbyszagliVbrAO",
+      "type":"NEWS ITEM",
+      "name":"",
+      "link":"",
+      "category":{
+        "id":"dvAhdetpuEzOnqspEpblgfVqqk",
+        "type":"NEWS CATEGORY",
+        "name":"Articles viewed",
+        "link":"",
+        "updated_time":"2012-11-26T13:57:03+0100"},
+      "label":"a consulté ",
+      "message":"Amazon va créer 2.500 emplois en ouvrant un 4e centre en France - Challenges.fr",
+      "title":"Amazon va créer 2.500 emplois en ouvrant un 4e centre en France - Challenges.fr",
+      "description":"Le nouveau centre du distributeur en ligne américain devrait ouvrir au \"deuxième semestre 2013\" à Lauwin-Planque (Nord).",
+      "picture":"http://static9.viadeo-static.com/images/photos/2/0022bv3uk8utt9tf/",
+      "language":"fr",
+      "updated_time":"2012-11-26T12:12:35+0100",
+      "infeed_link":"http://www.viadeo.com/shareit/redirect/?urlSharerId=0022bv3uk8utt9tf",
+      "creation_date":"2012-11-26T12:12:35+0100",
+      "comment_count":0,
+      "like_count":0,
+      "tags":["2.500 emploi","4e centre","actualité","actualité économique","amazon","challenge","challenges.fr","france","high","ipad","iphone","multimédia","tablette","tech","technologie","web"]},
+      "category":{
+        "id":"dvAhdetpuEzOnqspEpblgfVqqk",
+        "type":"NEWS CATEGORY",
+        "name":"Articles viewed",
+        "link":"",
+        "updated_time":"2012-11-26T13:57:03+0100"},
+      "label":"a consulté ",
+      "message":"Amazon va créer 2.500 emplois en ouvrant un 4e centre en France - Challenges.fr",
+      "title":"Amazon va créer 2.500 emplois en ouvrant un 4e centre en France - Challenges.fr",
+      "description":"Le nouveau centre du distributeur en ligne américain devrait ouvrir au \"deuxième semestre 2013\" à Lauwin-Planque (Nord).",
+      "picture":"http://static9.viadeo-static.com/images/photos/2/0022bv3uk8utt9tf/",
+      "language":"fr",
+      "updated_time":"2012-11-26T12:12:35+0100",
+      "infeed_link":"http://www.viadeo.com/shareit/redirect/?urlSharerId=0022bv3uk8utt9tf",
+      "creation_date":"2012-11-26T12:12:35+0100",
+      "comment_count":0,
+      "like_count":0,
+      "tags":["2.500 emploi","4e centre","actualité","actualité économique","amazon","challenge","challenges.fr","france","high","ipad","iphone","multimédia","tablette","tech","technologie","web"]}
+    ]
+    """
+    
   def timeline = """
     {"id":"",
     "type":"USER SMARTNEWS",

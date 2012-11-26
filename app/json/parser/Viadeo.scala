@@ -82,7 +82,7 @@ object ViadeoWallMessage {
   implicit val viadeoReader: Reads[ViadeoWallMessage] = (
     (__ \ "id").read[String] and
     (__ \ "type").read[String] and
-    ((__ \ "from" \ "name").read[String] or (__ \ "on" \ "from" \ "name").read[String]) and
+    ((__ \ "from" \ "name").read[String] or (__ \ "on" \ "from" \ "name").read[String] or (__ \ "type").read[String]) and
     (__ \ "on" \ "title").readOpt[String] and
     (__ \ "on" \ "message").readOpt[String] and
     (__ \ "like_count").read[Int] and
