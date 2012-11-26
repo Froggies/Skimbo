@@ -12,14 +12,14 @@ object Configuration {
     object wall extends EndpointConfig {
       override val url = withLimit("https://api.twitter.com/1.1/statuses/home_timeline.json?count=:limit")
       override val since = "&since_id=:since"//ID
-      override val delay = 60
+      override val delay = 80
       override val provider = providers.Twitter
       override val parser = Some(TwitterTimelineParser)
     }
     object user extends EndpointConfig {
       override val url = withLimit("https://api.twitter.com/1.1/statuses/user_timeline.json?count=:limit&screen_name=:username")
       override val since = wall.since
-      override val delay = 30
+      override val delay = 80
       override val provider = providers.Twitter
       override val requiredParams = List("username")
       override val parser = Some(TwitterTimelineParser)
@@ -28,7 +28,7 @@ object Configuration {
     object hashtag extends EndpointConfig {
       override val url = withLimit("https://api.twitter.com/1.1/search/tweets.json?count=:limit&result_type=mixed&q=%23:hashtag")
       override val since = wall.since
-      override val delay = 30
+      override val delay = 80
       override val provider = providers.Twitter
       override val requiredParams = List("hashtag")
       override val parser = Some(TwitterHashtagParser)
