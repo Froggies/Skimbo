@@ -41,8 +41,7 @@ object Commands {
         val modColumn = Json.fromJson[Column]((cmd.body.get \ "column").as[JsValue]).get
         UserDao.findOneById(idUser).map(_.map { user =>
           UserDao.updateColumn(user, modColumnTitle, modColumn)
-          //UserInfosActor.modifProfiderFor(idUser, modColumnTitle, modColumn)
-          UserInfosActor.killProfiderFor(idUser, modColumnTitle)
+          ProviderActor.killActorsForUserAndColumn(idUser, modColumnTitle)
           UserInfosActor.startProfiderFor(idUser, modColumn)
           UserInfosActor.sendTo(idUser, Json.toJson(Command(cmd.name, Some(JsString("Ok")))))
         })
@@ -51,7 +50,7 @@ object Commands {
         val delColumnTitle = (cmd.body.get \ "title").as[String]
         UserDao.findOneById(idUser).map(_.map { user =>
           UserDao.deleteColumn(user, delColumnTitle)
-          UserInfosActor.killProfiderFor(idUser, delColumnTitle)
+          ProviderActor.killActorsForUserAndColumn(idUser, delColumnTitle)
           UserInfosActor.sendTo(idUser, Json.toJson(Command(cmd.name, Some(JsString("Ok")))))
         })
       }

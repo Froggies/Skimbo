@@ -20,8 +20,6 @@ import services.commands.Commands
 case object Retreive
 case class Send(userId: String, json: JsValue)
 case class StartProvider(userId: String, column: Column)
-case class ModifProvider(userId: String, columnTitle: String, column: Column)
-case class KillProvider(userId: String, columnTitle: String)
 case class CheckAccounts(idUser: String)
 case class AddInfosUser(user: User, providerUser: ProviderUser)
 
@@ -34,8 +32,6 @@ object UserInfosActor {
     system.eventStream.subscribe(actor, Retreive.getClass())
     system.eventStream.subscribe(actor, classOf[Send])
     system.eventStream.subscribe(actor, classOf[StartProvider])
-    system.eventStream.subscribe(actor, classOf[ModifProvider])
-    system.eventStream.subscribe(actor, classOf[KillProvider])
     system.eventStream.subscribe(actor, classOf[Dead])
     actor ! Retreive
     actor
@@ -47,14 +43,6 @@ object UserInfosActor {
 
   def startProfiderFor(userId: String, column: Column) = {
     system.eventStream.publish(StartProvider(userId, column))
-  }
-
-  def killProfiderFor(userId: String, columnTitle: String) = {
-    system.eventStream.publish(KillProvider(userId, columnTitle))
-  }
-  
-  def modifProfiderFor(userId: String, columnTitle: String, column: Column) = {
-    system.eventStream.publish(ModifProvider(userId, columnTitle, column: Column))
   }
 
   def killActorsForUser(userId: String) = {
@@ -112,16 +100,6 @@ class UserInfosActor(idUser: String, channelOut: Concurrent.Channel[JsValue])(im
       if (id == idUser) {
         ProviderActor.create(channelOut, idUser, unifiedRequests)
         CheckAccounts(id)
-      }
-    }
-    case ModifProvider(id: String, columnTitle, column) => {
-      if (id == idUser) {
-        ProviderActor.modifActorsForUserAndColumn(id, columnTitle, column)
-      }
-    }
-    case KillProvider(id: String, columnTitle) => {
-      if (id == idUser) {
-        ProviderActor.killActorsForUserAndColumn(id, columnTitle)
       }
     }
     case Send(id: String, json: JsValue) => {
