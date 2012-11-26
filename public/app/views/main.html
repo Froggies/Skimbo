@@ -74,11 +74,13 @@
 							ng-click="deleteService(service,c,arg)"
 						>✘</a>
 					</div>
-					<div ng-show="!service.hasArguments">
-						<img ng-src="assets/img/brand/{{service.providerName}}.png" alt="{{service.providerName}}" width="24" height="24">
-						You are receving {{service.serviceName}}
+					<div class="input-service" ng-show="!service.hasArguments">
+						<img class="img-service" ng-src="assets/img/brand/{{service.providerName}}.png" alt="{{service.providerName}}" width="24" height="24">
+						<span class="receving-service">
+							You are receving {{service.serviceName}}
+						</span>
 						<a href="#" 
-							class="{{service.providerName}}"
+							class="delete-service {{service.providerName}}"
 							ng-click="deleteService(service,c)"
 						>✘</a>
 					</div>
