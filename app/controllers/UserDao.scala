@@ -114,7 +114,6 @@ object UserDao {
   }
   
   def setToken(idUser:String, provider: GenericProvider, token:SkimboToken, distantId: Option[String]=None) = {
-    Logger(UserDao.getClass()).error("SetToken for "+provider.name)
     val query = BSONDocument("accounts.id" -> new BSONString(idUser))
     findOneById(idUser).map { user =>
       val toUpdate =
