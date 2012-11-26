@@ -330,7 +330,7 @@ var urlexp = /(http|ftp|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&amp;:/~\+
 function urlify(msg) {
   var text = msg.message;
   return text.replace(urlexp, function(url) {
-    return '<a class="'+msg.from+'" href="' + url + '" target="_blank">LINK</a>';
+    return '<a class="'+msg.from+'" href="' + url + '" target="_blank">⚓</a>';
   });
 }
 
