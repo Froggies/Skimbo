@@ -324,8 +324,8 @@ function urlify(msg) {
 }
 
 $scope.truncateString = function(chaine) {
-  if(chaine.length > 120 && !urlexp.test(chaine)) { 
-    return String(chaine).substring(0, 120)+"...";
+  if(chaine.length > 140 && !urlexp.test(chaine)) { 
+    return String(chaine).substring(0, 140)+"...";
   }
   else {
     return chaine;
