@@ -53,15 +53,13 @@ object UserDao {
   }
 
   def addProviderUser(user: models.User, providerUser: models.user.ProviderUser) = {
-    getToken(user.accounts.head.id, ProviderDispatcher.get(providerUser.socialType).get).map { token =>
-      if(token.isDefined) {
+    getToken(user.accounts.head.id, ProviderDispatcher.get(providerUser.socialType).get).map(optToken =>
+      optToken.map(token => 
         setToken(
-            user.accounts.head.id, 
-            ProviderDispatcher.get(providerUser.socialType).get, 
-            token.get, 
-            Some(providerUser.id))
-      }
-    }
+          user.accounts.head.id, 
+          ProviderDispatcher.get(providerUser.socialType).get, 
+          token, 
+          Some(providerUser.id))))
   }
 
   def updateColumn(user: models.User, title: String, column: Column) = {
@@ -90,9 +88,7 @@ object UserDao {
   }
 
   def hasToken(idUser:String, provider: GenericProvider): Future[Boolean] = {
-    getToken(idUser, provider).map { token => 
-      token.isDefined
-    }
+    getToken(idUser, provider).map(_.isDefined)
   }
   
   def getToken(idUser:String, provider: GenericProvider): Future[Option[SkimboToken]] = {

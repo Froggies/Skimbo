@@ -75,26 +75,23 @@ object TrelloWallParser extends GenericParser {
   }
 
   def generateLink(e: TrelloWallMessage) = {
-    if(e.data.card.isDefined) {
-      Some(urlCard.format(e.data.board.get.id, e.data.card.get.idShort.get))
-    } else {
-      Some(urlBoard.format(e.data.board.get.id))
-    }
+    e.data.board.map(board =>
+      e.data.card.map(card => 
+        urlCard.format(board.id, card.idShort.get))
+      .getOrElse(
+        urlBoard.format(board.id))
+    )
   }
   
-  def generateAvatarUrl(e:TrelloWallMessage) = {
-    if(e.memberCreator.avatarHash.isDefined) {
-      Some(avatarUrl.format(e.memberCreator.avatarHash.get))
-    } else {
-      None
-    }
+  def generateAvatarUrl(e: TrelloWallMessage) = {
+    e.memberCreator.avatarHash.map(avatar => avatarUrl.format(avatar))
   }
   
-  override def nextSinceId(sinceId:String, sinceId2:String): String = {
-    if(sinceId2.isEmpty()) {
+  override def nextSinceId(sinceId: String, sinceId2: String): String = {
+    if (sinceId2.isEmpty()) {
       sinceId
     } else {
-      if((sinceId compareTo sinceId2) > 1) {
+      if ((sinceId compareTo sinceId2) > 1) {
         sinceId
       } else {
         sinceId2

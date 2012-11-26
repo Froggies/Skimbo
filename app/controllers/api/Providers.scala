@@ -7,25 +7,28 @@ import play.api.libs.json._
 import services.security.AuthenticatedAction.Authenticated
 import services.actors.ProviderActor
 import models.command.Command
+import play.api.http.ContentTypes._
 
 object Providers extends Controller {
 
   def listAll = Action { implicit req =>
-    Ok(Service.toJson()).as(play.api.http.ContentTypes.JSON)
+    Ok(Service.toJson())
   }
   
-  def listServices = Action {  implicit req =>
-    Ok(Service.toJsonWithUnifiedRequest).as(play.api.http.ContentTypes.JSON)
+  def listServices = Action { implicit req =>
+    Ok(Service.toJsonWithUnifiedRequest)
   }
   
   def delete(providerName: String) = Authenticated { action =>
-    val providerOpt  = ProviderDispatcher(providerName);
-    providerOpt.map { provider =>
+    implicit val request = action.request
+
+    ProviderDispatcher(providerName).map { provider =>
       action.user.accounts.foreach { account =>
         ProviderActor.killProfider(account.id, providerName)
       }
-      provider.deleteToken(action.request)
-      Ok(Json.toJson(Command("deleteProvider", Some(JsString("ok"))))).as(play.api.http.ContentTypes.JSON);
+      provider.deleteToken
+      val command = Command("deleteProvider", Some(JsString("ok")))
+      Ok(Json.toJson(command))
     }.getOrElse(BadRequest)
   }
 

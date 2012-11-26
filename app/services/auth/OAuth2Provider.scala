@@ -35,8 +35,8 @@ trait OAuth2Provider extends GenericProvider {
   lazy val accessTokenUrl   = config.getString("accessToken").get
 
   /**
-   * Execute authentification on provider
-   * @param redirectRoute : Where the user wil be redirected after correct authentification
+   * Execute authentication on provider
+   * @param redirectRoute : Where the user wil be redirected after correct authentication
    */
   override def auth(redirectRoute: Call)(implicit request: RequestHeader): Result = {
     request.getQueryString("code") match {
@@ -138,7 +138,7 @@ trait OAuth2Provider extends GenericProvider {
 }
 
 /**
- * Token send from prider
+ * Token send from provider
  */
 sealed case class Token(token: Option[String], expires: Option[Int])
 

@@ -7,6 +7,7 @@ import play.api.libs.json.JsValue
 import play.api.mvc.Controller
 import services.actors.UserInfosActor
 import services.commands.Commands
+import play.api.PlayException
 
 object WebSocket extends Controller {
 
@@ -14,8 +15,7 @@ object WebSocket extends Controller {
   
   def connect() = play.api.mvc.WebSocket.using[JsValue] { implicit request =>
     
-    //TODO : JL Authenticated in WebSocket ??
-    val userId = request.session.get("id").get
+    val userId = request.session.get("id").getOrElse(throw new PlayException("Security Runtime Error", "Unallowed websocket connection"))
 
     val (out, channelClient) = Concurrent.broadcast[JsValue]
     UserInfosActor.create(userId, channelClient)
