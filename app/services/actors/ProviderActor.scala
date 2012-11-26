@@ -68,7 +68,7 @@ object ProviderActor {
     system.eventStream.publish(DeadColumn(userId, columnTitle))
   }
   
-  def killProfider(idUser:String, providerName:String) = {
+  def killProvider(idUser:String, providerName:String) = {
     system.eventStream.publish(DeadProvider(idUser, providerName))
   }
 

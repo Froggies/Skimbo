@@ -24,7 +24,7 @@ object Providers extends Controller {
 
     ProviderDispatcher(providerName).map { provider =>
       action.user.accounts.foreach { account =>
-        ProviderActor.killProfider(account.id, providerName)
+        ProviderActor.killProvider(account.id, providerName)
       }
       provider.deleteToken
       val command = Command("deleteProvider", Some(JsString("ok")))

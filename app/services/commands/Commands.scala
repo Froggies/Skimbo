@@ -63,7 +63,7 @@ object Commands {
       }
       case "deleteProvider" => {
         val providerName = (cmd.body.get \ "provider").as[String]
-        ProviderActor.killProfider(idUser, providerName)
+        ProviderActor.killProvider(idUser, providerName)
       }
       case _ => {
         Logger.error("Command not found " + cmd)
