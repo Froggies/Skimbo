@@ -106,8 +106,8 @@ input[type=button] {
 .banner a {
 	background: white;
 	line-height: 30px;
-	padding-left: 8px;
-	padding-right: 8px;
+	padding-left: 6px;
+	padding-right: 6px;
 	border: 2px solid #B6B6B6;
 	-webkit-border-radius: 10px;
 	-moz-border-radius: 10px;
@@ -204,7 +204,7 @@ input[type=button] {
 }
 
 #bloc-utilisateur footer a {
-	margin: 5px;
+	margin: 4px;
 }
 
 #bloc-utilisateur footer a, 
