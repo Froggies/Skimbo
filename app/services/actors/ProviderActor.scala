@@ -108,7 +108,7 @@ class ProviderActor(channel: Concurrent.Channel[JsValue],
               if (response.status != Status.OK) {
                 log.error("["+unifiedRequest.service+"] HTTP Error "+response.status)
                 log.info(response.body.toString)
-                if(provider.isInvalidToken(response)) {
+                if (provider.isInvalidToken(response)) {
                   channel.push(Json.toJson(TokenInvalid(provider.name)))
                 }
               } else {

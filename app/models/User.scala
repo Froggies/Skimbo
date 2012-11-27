@@ -35,10 +35,7 @@ object User {
   def tableTo[Obj](document: BSONDocument, key: String, transform: (TraversableBSONDocument) => Obj): Seq[Obj] = {
     val doc = document.toTraversable
     val objs = doc.getAs[BSONArray](key).getOrElse(BSONArray()).toTraversable.toList
-    val seqObjs = for (obj <- objs) yield {
-      val a = obj.asInstanceOf[BSONDocument].toTraversable
-      transform(a)
-    }
+    val seqObjs = objs.map(obj => transform(obj.asInstanceOf[BSONDocument].toTraversable))
     seqObjs.toList
   }
 
@@ -52,8 +49,7 @@ object User {
 
     def fromBSON(document: BSONDocument): User = {
       val accounts = tableTo[Account](document, "accounts", { a =>
-        val lastUse = new Date()
-        lastUse.setTime(a.getAs[BSONDateTime]("lastUse").get.value)
+        val lastUse = new Date(a.getAs[BSONDateTime]("lastUse").get.value)
         Account(asString(a, "id"), lastUse)
       })
       val providers = tableTo[ProviderUser](document, "distants", { d =>
@@ -66,14 +62,10 @@ object User {
       val columns = tableTo[Column](document, "columns", { c =>
         val unifiedRequests = tableTo[UnifiedRequest](c, "unifiedRequests", { r =>
           val requestArgs = r.getAs[BSONDocument]("args").get.toTraversable
-          val args = requestArgs.mapped.map { requestArg =>
+          val args = requestArgs.mapped.map(requestArg =>
             (requestArg._1, requestArgs.getAs[BSONString](requestArg._1).get.value)
-          }
-          if (args.nonEmpty) {
-            UnifiedRequest(asString(r, "service"), Some(args.toMap))
-          } else {
-            UnifiedRequest(asString(r, "service"), None)
-          }
+          )
+          UnifiedRequest(asString(r, "service"), if (args.nonEmpty) Some(args) else None) 
         })
         Column(asString(c, "title"), unifiedRequests)
       })

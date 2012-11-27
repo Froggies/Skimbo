@@ -24,10 +24,9 @@ object Commands {
     cmd.name match {
       case "allColumns" => {
         UserDao.findOneById(idUser).map(_.map { user =>
-          if (user.columns.isDefined) {
-            val jsonRes = Json.toJson(user.columns.get)
-            UserInfosActor.sendTo(idUser, Json.toJson(Command(cmd.name, Some(jsonRes))))
-          }
+          user.columns.map(columns =>
+            UserInfosActor.sendTo(idUser, Json.toJson(Command(cmd.name, Some(Json.toJson(columns)))))
+          )
         })
       }
       case "addColumn" => {
