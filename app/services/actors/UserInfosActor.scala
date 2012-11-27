@@ -63,42 +63,28 @@ class UserInfosActor(idUser: String, channelOut: Concurrent.Channel[JsValue])(im
 
   def receive() = {
     case Retreive => {
-      log.info("Start retreive")
       UserDao.findOneById(idUser).map { optionUser =>
-        if (optionUser.isDefined) {
-          log.info("User has id in DB")
-          start(optionUser.get)
-        } else {
-          ProviderDispatcher.listAll.map { provider =>
-            if (provider.hasToken(request)) {
-              log.info("Call distantUser on " + provider.name)
-              provider.getUser.map { providerUser =>
-                if (providerUser.isDefined) {
-                  log.info("User has id in " + provider.name + " = " + providerUser.get.id)
-                  UserDao.findByIdProvider(provider.name, providerUser.get.id).map { optionUser =>
-                    if (optionUser.isDefined) {
-                      log.info("User has id of " + provider.name + " in DB = " + optionUser.get.accounts.last.id)
-                      val user = optionUser.get
+        optionUser.map(user => start(user))
+        .getOrElse(
+          ProviderDispatcher.listAll.map(provider =>
+            provider.getToken.map(token => 
+              provider.getUser.map(providerUser =>
+                providerUser.map(pUser => 
+                  UserDao.findByIdProvider(provider.name, pUser.id).map(optUser =>
+                    optUser.map{ user => 
                       UserDao.addAccount(user, Account(idUser, new Date()))
                       start(user)
-                    } else {
-                      log.info("User hasn't id of " + provider.name + " in DB createIt")
-                      val user = User(
-                        Seq(Account(idUser, new Date())),
-                        Some(Seq(providerUser.get)))
+                    }.getOrElse {
+                      val user = User(Seq(Account(idUser, new Date())), Some(Seq(pUser)))
                       UserDao.add(user)
                       start(user)
                     }
-                  }
-                } else {
-                  log.error("User hasn't id in " + provider.name + " ! WTF ?")
-                }
-              }
-            } else {
-              log.info("User hasn't token for " + provider.name)
-            }
-          }
-        }
+                  )
+                ).getOrElse(log.error("User hasn't id in " + provider.name + " ! WTF ?"))
+              )
+            ).getOrElse(log.info("User hasn't token for " + provider.name))
+          )
+        )
       }
     }
     case StartProvider(id: String, unifiedRequests) => {
