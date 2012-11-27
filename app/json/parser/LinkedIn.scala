@@ -44,8 +44,8 @@ object LinkedInWallParser extends GenericParser {
         if (mustBeIgnored(e)) 
           None
         else Some(Skimbo(
-          e.person.getOrElse(e.companyPerson.get.person).firstName,
-          e.person.getOrElse(e.companyPerson.get.person).lastName,
+          getName(e),
+          getName(e),
           generateText(e),
           e.timestamp,
           Nil,
@@ -54,6 +54,10 @@ object LinkedInWallParser extends GenericParser {
           e.timestamp.toInstant().getMillis().toString(),
           e.person.getOrElse(e.companyPerson.get.person).pictureUrl,
           LinkedIn)))
+  }
+  
+  def getName(msg: LinkedInWallMessage) = {
+    msg.person.getOrElse(msg.companyPerson.get.person).firstName+ " " +msg.person.getOrElse(msg.companyPerson.get.person).lastName
   }
 
   def mustBeIgnored(msg: LinkedInWallMessage) = {
