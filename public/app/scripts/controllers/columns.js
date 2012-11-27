@@ -110,13 +110,15 @@ publicApp.controller('ColumnsCtrl', function($scope, $http) {
     };
 
     $scope.addService = function(service, column) {
-      if(service.socialNetworkToken) {
-        var clientUnifiedRequest = serverToUnifiedRequest(service.service);
-        clientUnifiedRequest.fromServer = false;
-        column.unifiedRequests.push(clientUnifiedRequest);
-      }
-      else {
-        $scope.openPopup(service, column);
+      if(service.hasParser) {
+        if(service.socialNetworkToken) {
+          var clientUnifiedRequest = serverToUnifiedRequest(service.service);
+          clientUnifiedRequest.fromServer = false;
+          column.unifiedRequests.push(clientUnifiedRequest);
+        }
+        else {
+          $scope.openPopup(service, column);
+        }
       }
     }
 
@@ -274,9 +276,9 @@ publicApp.controller('ColumnsCtrl', function($scope, $http) {
 function getColumnByName(name) {
   if($scope.columns !== undefined) {
     for (var i = 0; i < $scope.columns.length; i++) {
-        if ($scope.columns[i].title == name) {
-            return $scope.columns[i];
-        }
+      if ($scope.columns[i].title == name) {
+          return $scope.columns[i];
+      }
     }
   }
 }
