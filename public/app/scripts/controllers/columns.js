@@ -345,7 +345,8 @@ function executeCommand(data) {
                             typeServiceChar:"",
                             explainService:"",
                             args:{},
-                            service:services[j]
+                            service:services[j],
+                            hasParser:services[j].hasParser
                           };
             service.explainService = fillExplainService(service.typeService, service.socialNetwork);
             service.typeServiceChar = $scope.typeServiceCharByService(services[j].service);

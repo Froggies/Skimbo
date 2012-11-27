@@ -430,6 +430,10 @@ header.column-title {
 	white-space: nowrap;
 }
 
+.social-network-active.false {
+	opacity: 0.3;
+}
+
 .services-actives {
 	margin: 0;
 	padding: 15px;

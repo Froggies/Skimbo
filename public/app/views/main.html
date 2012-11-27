@@ -50,8 +50,8 @@
 				<li ng-repeat="service in serviceProposes">
 					<div class="social-network-link">
 						<a href="#" ng-click="addService(service, c)" ref="{{service.explainService}}">
-							<img class="social-network-active {{service.socialNetworkToken}}" ng-src="assets/img/brand/{{service.socialNetwork}}.png" alt="{{service.socialNetwork}}" width="32" height="32"></a>
-						<span class="social-network-char {{service.socialNetwork}} social-network-active {{service.socialNetworkToken}}">{{service.typeServiceChar}}</span>
+							<img class="social-network-active {{service.hasParser}}" ng-src="assets/img/brand/{{service.socialNetwork}}.png" alt="{{service.socialNetwork}}" width="32" height="32"></a>
+						<span class="social-network-char {{service.socialNetwork}} social-network-active {{service.hasParser}}">{{service.typeServiceChar}}</span>
 					</div>
 				</li>
 			</ul>
