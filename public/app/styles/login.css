@@ -5,6 +5,11 @@ h1 {
     margin: 0 0 20px;
 }
 
+#container {
+    min-height: 100%;
+    height: 100%;
+}
+
 img
 {
 	max-width: 100%;
@@ -12,9 +17,12 @@ img
 }
 
 /** header **/
-header, .test {
-	max-height: 33%;
-	height: 33%;
+header {
+	height: 40%;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	-ms-box-sizing: border-box;
+	box-sizing: border-box;
 }
 
 .logo {
@@ -36,12 +44,14 @@ header, .test {
 
 /** Section **/
 section {
-	min-height: 33%;
-	max-height: 33%;
-	height: 33%;
-	box-sizing: border-box;
 	text-align: center;
 	padding-top: 60px;
+	height: 30%;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	-ms-box-sizing: border-box;
+	box-sizing: border-box;
+
 }
 
 section ul {
@@ -66,15 +76,16 @@ section li {
 /** footer **/
 footer {
     text-align: center;
-	box-sizing: border-box;
-	min-height: 33%;
-	max-height: 33%;
-	height: 33%;
     padding: 1%;
 	border-top: 1px solid black;
     -moz-box-shadow:inset 0 3px 10px black;
     -webkit-box-shadow:inset 0 3px 10px black;
     box-shadow:inset 0 3px 10px black;​
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	-ms-box-sizing: border-box;
+	box-sizing: border-box;
+    height: 30%;
 }
 
 footer p {
@@ -83,8 +94,6 @@ footer p {
 	box-sizing: border-box;
 	display: inline-block;
 	width: 27%;
-	min-height: 100%;
-	height: 33%;
     vertical-align: top;
     text-align: left;
     overflow: hidden;
