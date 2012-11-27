@@ -349,6 +349,9 @@ function executeCommand(data) {
                             hasParser:services[j].hasParser
                           };
             service.explainService = fillExplainService(service.typeService, service.socialNetwork);
+            if(service.hasParser == false) {
+              service.explainService = "Coming soon...";
+            }
             service.typeServiceChar = $scope.typeServiceCharByService(services[j].service);
             for (var k = 0; k < services[j].args.length; k++) {
               service.args[services[j].args[k]] = "";
