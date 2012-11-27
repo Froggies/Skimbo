@@ -65,32 +65,26 @@ class UserInfosActor(idUser: String, channelOut: Concurrent.Channel[JsValue])(im
     case Retreive => {
       UserDao.findOneById(idUser).map { optionUser =>
         optionUser.map(user => start(user))
-        .getOrElse(
-          ProviderDispatcher.listAll.map(provider =>
-            provider.getToken.map(token => 
-              provider.getUser.map(providerUser =>
-                providerUser.map(pUser => 
-                  UserDao.findByIdProvider(provider.name, pUser.id).map(optUser =>
-                    optUser.map{ user => 
-                      UserDao.addAccount(user, Account(idUser, new Date()))
-                      start(user)
-                    }.getOrElse {
-                      val user = User(Seq(Account(idUser, new Date())), Some(Seq(pUser)))
-                      UserDao.add(user)
-                      start(user)
-                    }
-                  )
-                ).getOrElse(log.error("User hasn't id in " + provider.name + " ! WTF ?"))
-              )
-            ).getOrElse(log.info("User hasn't token for " + provider.name))
-          )
-        )
+          .getOrElse(
+            ProviderDispatcher.listAll.map(provider =>
+              provider.getToken.map(token =>
+                provider.getUser.map(providerUser =>
+                  providerUser.map(pUser =>
+                    UserDao.findByIdProvider(provider.name, pUser.id).map(optUser =>
+                      optUser.map { user =>
+                        UserDao.addAccount(user, Account(idUser, new Date()))
+                        start(user)
+                      }.getOrElse {
+                        val user = User(Seq(Account(idUser, new Date())), Some(Seq(pUser)))
+                        UserDao.add(user)
+                        start(user)
+                      })).getOrElse(log.error("User hasn't id in " + provider.name + " ! WTF ?")))).getOrElse(log.info("User hasn't token for " + provider.name))))
       }
     }
     case StartProvider(id: String, unifiedRequests) => {
       if (id == idUser) {
         ProviderActor.create(channelOut, idUser, unifiedRequests)
-        CheckAccounts(id)
+        self ! CheckAccounts(id)
       }
     }
     case Send(id: String, json: JsValue) => {
@@ -138,11 +132,29 @@ class UserInfosActor(idUser: String, channelOut: Concurrent.Channel[JsValue])(im
   }
 
   def start(user: User) = {
-    user.columns.getOrElse(Seq()).foreach { column =>
-      self ! StartProvider(idUser, column)
+    if (user.columns.map(_.isEmpty).getOrElse(true)) {
+      //new user : check if have another account
+      ProviderDispatcher.listAll.map { provider =>
+        provider.getToken.map { token =>
+          provider.getUser.map { providerUser =>
+            providerUser.map(pUser =>
+              UserDao.findByIdProvider(provider.name, pUser.id).map(optUser =>
+                optUser.map { originalUser =>
+                  UserDao.merge(user, originalUser).map { _ =>
+                    Commands.interpretCmd(idUser, Command("allColumns"))
+                    originalUser.columns.map(_.foreach(self ! StartProvider(idUser, _)))
+                  }
+                }.getOrElse {
+                  Commands.interpretCmd(idUser, Command("allColumns"))
+                  self ! CheckAccounts(idUser)
+                }))
+          }
+        }
+      }
+    } else {
+      user.columns.map(_.foreach(self ! StartProvider(idUser, _)))
+      Commands.interpretCmd(idUser, Command("allColumns"))
     }
-    Commands.interpretCmd(idUser, Command("allColumns"))
-    self ! CheckAccounts(idUser)
   }
 
 }

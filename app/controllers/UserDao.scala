@@ -54,11 +54,11 @@ object UserDao {
 
   def addProviderUser(user: models.User, providerUser: models.user.ProviderUser) = {
     getToken(user.accounts.head.id, ProviderDispatcher.get(providerUser.socialType).get).map(optToken =>
-      optToken.map(token => 
+      optToken.map(token =>
         setToken(
-          user.accounts.head.id, 
-          ProviderDispatcher.get(providerUser.socialType).get, 
-          token, 
+          user.accounts.head.id,
+          ProviderDispatcher.get(providerUser.socialType).get,
+          token,
           Some(providerUser.id))))
   }
 
@@ -87,18 +87,18 @@ object UserDao {
     collection.remove(query)
   }
 
-  def hasToken(idUser:String, provider: GenericProvider): Future[Boolean] = {
+  def hasToken(idUser: String, provider: GenericProvider): Future[Boolean] = {
     getToken(idUser, provider).map(_.isDefined)
   }
-  
-  def getToken(idUser:String, provider: GenericProvider): Future[Option[SkimboToken]] = {
+
+  def getToken(idUser: String, provider: GenericProvider): Future[Option[SkimboToken]] = {
     val query = BSONDocument("accounts.id" -> new BSONString(idUser))
     collection.find(query).headOption().map { optUser =>
-      if(optUser.isDefined) {
+      if (optUser.isDefined) {
         val distant = optUser.get.distants.getOrElse(Seq()).filter { distant =>
           distant.socialType == provider.name
         }
-        if(distant.size == 0) {
+        if (distant.size == 0) {
           None
         } else {
           distant.head.token
@@ -108,19 +108,19 @@ object UserDao {
       }
     }
   }
-  
-  def setToken(idUser:String, provider: GenericProvider, token:SkimboToken, distantId: Option[String]=None) = {
+
+  def setToken(idUser: String, provider: GenericProvider, token: SkimboToken, distantId: Option[String] = None) = {
     val query = BSONDocument("accounts.id" -> new BSONString(idUser))
     findOneById(idUser).map { user =>
       val toUpdate =
-        if(user.isDefined) {
+        if (user.isDefined) {
           val exist = user.get.distants.getOrElse(Seq[ProviderUser]()).exists {
             _.socialType == provider.name
           }
-          val providersUser = 
-            if(exist) {
+          val providersUser =
+            if (exist) {
               user.get.distants.getOrElse(Seq[ProviderUser]()).map { distant =>
-                if(distant.socialType == provider.name) {
+                if (distant.socialType == provider.name) {
                   ProviderUser(distantId.getOrElse(distant.id), distant.socialType, Some(token))
                 } else {
                   distant
@@ -128,24 +128,38 @@ object UserDao {
               }
             } else {
               Seq(ProviderUser(
-                  distantId.getOrElse(""), 
-                  provider.name, Some(token))) ++ user.get.distants.getOrElse(Seq[ProviderUser]())
+                distantId.getOrElse(""),
+                provider.name, Some(token))) ++ user.get.distants.getOrElse(Seq[ProviderUser]())
             }
           models.User(user.get.accounts, Some(providersUser), user.get.columns)
         } else {
           models.User(
-              Seq(Account(idUser, new Date())), 
-              Some(Seq(ProviderUser(distantId.getOrElse(""), provider.name, Some(token)))), 
-              None)
+            Seq(Account(idUser, new Date())),
+            Some(Seq(ProviderUser(distantId.getOrElse(""), provider.name, Some(token)))),
+            None)
         }
-      collection.update(query, models.User.toBSON(toUpdate), upsert=true);
+      collection.update(query, models.User.toBSON(toUpdate), upsert = true);
     }
   }
-  
-  def removeToken(idUser:String, provider: GenericProvider) = {
+
+  def removeToken(idUser: String, provider: GenericProvider) = {
     val query = BSONDocument("accounts.id" -> new BSONString(idUser))
     val update = BSONDocument("$pull" -> BSONDocument("distants" -> BSONDocument("social" -> new BSONString(provider.name))))
     collection.update(query, update)
+  }
+
+  def merge(fromUser: models.User, toUser: models.User) = {
+    delete(fromUser) map { _ =>
+      fromUser.accounts.foreach(account => addAccount(toUser, account))
+      fromUser.columns.map(_.foreach(column => addColumn(toUser, column)))
+      fromUser.distants.map(_.foreach { distant =>
+        if (!distant.id.isEmpty()) { // new user hasn't id
+          addProviderUser(toUser, distant)
+        }
+      })
+    } map { _ =>
+      findOneById(toUser.accounts.head.id)
+    }
   }
 
 }
