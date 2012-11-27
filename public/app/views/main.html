@@ -64,7 +64,7 @@
 				<li class="service-empty" ng-show="c.unifiedRequests.length == 0">To add a stream in this column, select one or many services above.</li>
 				<li ng-repeat="service in c.unifiedRequests">
 					<div class="input-service" ng-show="service.hasArguments" ng-repeat="arg in service.args ">
-						<img class="img-service" ng-src="assets/img/brand/{{service.providerName}}.png" alt="{{service.providerName}}" width="32" height="32">
+						<img class="img-service" ng-src="assets/img/brand/{{service.providerName}}.png" alt="{{service.providerName}}" width="24" height="24">
 						<span class="type-service {{service.providerName}}">
 							{{typeServiceCharByService(service.service)}}
 						</span>

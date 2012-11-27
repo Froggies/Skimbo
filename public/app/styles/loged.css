@@ -1,6 +1,7 @@
 body {
 	width: 100%;
 	height: 100%;
+	background-attachment: fixed !important;
 	background: #e7e7e7; /* Old browsers */
 	/* IE9 SVG, needs conditional override of 'filter' to 'none' */
 	background: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/Pgo8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgdmlld0JveD0iMCAwIDEgMSIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSI+CiAgPGxpbmVhckdyYWRpZW50IGlkPSJncmFkLXVjZ2ctZ2VuZXJhdGVkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjAlIiB5MT0iMCUiIHgyPSIwJSIgeTI9IjEwMCUiPgogICAgPHN0b3Agb2Zmc2V0PSI1MCUiIHN0b3AtY29sb3I9IiNlN2U3ZTciIHN0b3Atb3BhY2l0eT0iMSIvPgogICAgPHN0b3Agb2Zmc2V0PSIxMDAlIiBzdG9wLWNvbG9yPSIjYzhjOGM4IiBzdG9wLW9wYWNpdHk9IjEiLz4KICA8L2xpbmVhckdyYWRpZW50PgogIDxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIGZpbGw9InVybCgjZ3JhZC11Y2dnLWdlbmVyYXRlZCkiIC8+Cjwvc3ZnPg==);
@@ -80,15 +81,30 @@ input[type=button] {
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#cb091c', endColorstr='#95141b',GradientType=0 ); /* IE6-8 */
 }
 
-.link-into-message {
+.link-into-message, 
+.banner a, 
+.column-new a,
+.delete-link, 
+.services-actives a, 
+.configure a, 
+.delete-service, 
+.notifications a {
 	text-decoration: none;
 }
 
-.banner a {
-	background: white;
+.banner a,
+.column-new a,
+.delete-link, 
+#nom-prenom img, 
+.img-service, 
+.receving-service {
 	display: inline-block;
 	vertical-align: middle;
-	text-decoration: none;
+}
+
+
+.banner a {
+	background: white;
 	line-height: 30px;
 	padding-left: 8px;
 	padding-right: 8px;
@@ -102,9 +118,6 @@ input[type=button] {
 .delete-link {
 	color: #B6B6B6;
 	background: white;
-	display: inline-block;
-	vertical-align: middle;
-	text-decoration: none;
 	line-height: 40px;
 	padding-left: 10px;
 	padding-right: 10px;
@@ -115,8 +128,6 @@ input[type=button] {
 }
 
 #nom-prenom img {
-	display: inline-block;
-	vertical-align: middle;
 	margin-right: 10px;
 }
 
@@ -284,7 +295,6 @@ header.column-title {
 .configure a{
 	font-size: 25px;
 	color: white;
-	text-decoration: none;
 }
 
 .column-content {
@@ -426,27 +436,40 @@ header.column-title {
 	list-style-type: none;
 }
 
-.services-actives a {
-	text-decoration: none;
-}
-
 .img-service{
 	-webkit-border-radius: 4px 0 0 4px;
 	-moz-border-radius: 4px 0 0 4px;
 	border-radius: 4px 0 0 4px;
 	margin-right: -1px;
-	vertical-align: top;
-	display: inline-block;
 	width: auto;
-	height: 20px;
 	min-width: 16px;
 	padding: 4px 5px;
-	font-size: 14px;
-	font-weight: normal;
+	background-color: #EEE;
+	border: 1px solid #CCC;
+}
+
+.img-service,
+.delete-service, 
+.type-service,
+.arg-service,
+.receving-service
+ {
 	line-height: 20px;
+	height: 20px;
+}
+
+.delete-service, 
+.type-service {
+	vertical-align: top;
+	display: inline-block;
+	font-weight: normal;
+	font-size: 14px;
+	min-width: 16px;
+	padding: 4px 5px;
 	text-align: center;
 	text-shadow: 0 1px 0 white;
 	background-color: #EEE;
+	width: auto;
 	border: 1px solid #CCC;
 }
 
@@ -455,39 +478,12 @@ header.column-title {
 	-moz-border-radius: 0 4px 4px 0;
 	border-radius: 0 4px 4px 0;
 	margin-left: -3px;
-	vertical-align: top;
-	display: inline-block;
 	white-space: nowrap;
-	width: auto;
-	height: 20px;
-	min-width: 16px;
-	padding: 4px 5px;
-	font-size: 14px;
-	font-weight: normal;
-	line-height: 20px;
-	text-align: center;
-	text-shadow: 0 1px 0 white;
-	background-color: #EEE;
-	border: 1px solid #CCC;
-	text-decoration: none;
 }
 
 .type-service {
 	margin-left: -4px;
 	margin-right: -2px;
-	vertical-align: top;
-	display: inline-block;
-	width: auto;
-	height: 20px;
-	min-width: 16px;
-	padding: 4px 5px;
-	font-size: 14px;
-	font-weight: normal;
-	line-height: 20px;
-	text-align: center;
-	text-shadow: 0 1px 0 white;
-	background-color: #EEE;
-	border: 1px solid #CCC;
 }
 
 .arg-service {
@@ -503,20 +499,13 @@ header.column-title {
 	margin-right: -3px;
 	margin-left: -3px;
 	vertical-align: top;
-	font-size: 14px;
-
+	font-size: 13px;
 	background-color: white;
 	border: 1px solid #CCC;
 	-webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
 	-moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
 	box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
-	-webkit-transition: border linear 0.2s, box-shadow linear 0.2s;
-	-moz-transition: border linear 0.2s, box-shadow linear 0.2s;
-	-o-transition: border linear 0.2s, box-shadow linear 0.2s;
-	transition: border linear 0.2s, box-shadow linear 0.2s;
-	line-height: 20px;
 	color: #555;
-	height: 20px;
 	padding: 4px 6px;
 }
 
@@ -532,14 +521,10 @@ header.column-title {
 
 .receving-service {
 	font-size: 11px;
-	vertical-align: top;
-	display: inline-block;
 	width: 150px;
-	height: 20px;
 	min-width: 16px;
 	padding: 4px 5px;
 	font-weight: normal;
-	line-height: 20px;
 	text-align: center;
 	text-shadow: 0 1px 0 white;
 	background-color: #EEE;
@@ -566,7 +551,6 @@ header.column-title {
     
 .notifications a {
 	color: black;
-	text-decoration: none;
 }
 
 .notif {
@@ -582,23 +566,23 @@ header.column-title {
     box-shadow: rgba(0,0,0,0.35) 0px 3px 6px, inset rgba(255,255,255,0.15) 0px 1px 0px, inset rgba(255,255,255,0.25) 0px 0px 1px;
     
     -webkit-transform-style: preserve-3d;
-     -khtml-transform-style: preserve-3d;
-       -moz-transform-style: preserve-3d;
-         -o-transform-style: preserve-3d;
-            transform-style: preserve-3d;
+    -khtml-transform-style: preserve-3d;
+    -moz-transform-style: preserve-3d;
+    -o-transform-style: preserve-3d;
+    transform-style: preserve-3d;
     
     
     -webkit-backface-visibility: hidden;
-     -khtml-backface-visibility: hidden;
-       -moz-backface-visibility: hidden;
-         -o-backface-visibility: hidden;
-            backface-visibility: hidden;
+    -khtml-backface-visibility: hidden;
+    -moz-backface-visibility: hidden;
+    -o-backface-visibility: hidden;
+    backface-visibility: hidden;
     
     -webkit-animation: flip 1s 1 linear;
-     -khtml-animation: flip 1s 1 linear;
-       -moz-animation: flip 1s 1 linear;
-         -o-animation: flip 1s 1 linear;
-            animation: flip 1s 1 linear;
+    -khtml-animation: flip 1s 1 linear;
+    -moz-animation: flip 1s 1 linear;
+    -o-animation: flip 1s 1 linear;
+    animation: flip 1s 1 linear;
         
     opacity: 0.9;
 
@@ -622,22 +606,22 @@ header.column-title {
     margin-top: -10px;
     padding-bottom: 10px;
     -webkit-transform-style: flat;
-     -khtml-transform-style: flat;
-       -moz-transform-style: flat;
-         -o-transform-style: flat;
-            transform-style: flat;
+    -khtml-transform-style: flat;
+    -moz-transform-style: flat;
+    -o-transform-style: flat;
+    transform-style: flat;
     
     -webkit-transform: skew(135deg);
-     -khtml-transform: skew(135deg);
-       -moz-transform: skew(135deg);
-         -o-transform: skew(135deg);
-            transform: skew(135deg);
+    -khtml-transform: skew(135deg);
+    -moz-transform: skew(135deg);
+    -o-transform: skew(135deg);
+    transform: skew(135deg);
     
     -webkit-animation: shine-in 1s 1 ease-out;
-     -khtml-animation: shine-in 1s 1 ease-out;
-       -moz-animation: shine-in 1s 1 ease-out;
-         -o-animation: shine-in 1s 1 ease-out;
-            animation: shine-in 1s 1 ease-out;
+    -khtml-animation: shine-in 1s 1 ease-out;
+    -moz-animation: shine-in 1s 1 ease-out;
+    -o-animation: shine-in 1s 1 ease-out;
+    animation: shine-in 1s 1 ease-out;
     
     background: -moz-linear-gradient(top, hsla(0,0%,100%,0.25) 0%, hsla(0,0%,100%,0) 100%);
     background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,hsla(0,0%,100%,0.2)), color-stop(100%,hsla(0,0%,100%,0)));
@@ -672,27 +656,24 @@ header.column-title {
     -webkit-animation: text-in 1s 1 ease-out;
 }
 
-
-
 @-webkit-keyframes flip {
-      0% {-webkit-transform: rotateY(-90deg);opacity: 0;border-right-width: 30px;}
-     80% {-webkit-transform: rotateY(10deg);border-right-width: 0px;}
-     95% {-webkit-transform: rotateY(-1deg);}
+    0% {-webkit-transform: rotateY(-90deg);opacity: 0;border-right-width: 30px;}
+    80% {-webkit-transform: rotateY(10deg);border-right-width: 0px;}
+    95% {-webkit-transform: rotateY(-1deg);}
     100% {-webkit-transform: rotateY(0deg);}
 }
 @-webkit-keyframes shine-in {
-      0% {margin-left: 100%;}
+    0% {margin-left: 100%;}
     100% {}
 }
 @-webkit-keyframes text-in {
-      0% {margin-left: 25%;margin-right: -25%;}
+    0% {margin-left: 25%;margin-right: -25%;}
 }
 
-
 @-khtml-keyframes flip {
-      0% {-khtml-transform: rotateY(-90deg);opacity: 0;border-right-width: 30px;}
-     80% {-khtml-transform: rotateY(10deg);border-right-width: 0px;}
-     95% {-khtml-transform: rotateY(-1deg);}
+    0% {-khtml-transform: rotateY(-90deg);opacity: 0;border-right-width: 30px;}
+    80% {-khtml-transform: rotateY(10deg);border-right-width: 0px;}
+    95% {-khtml-transform: rotateY(-1deg);}
     100% {-khtml-transform: rotateY(0deg);}
 }
 @-khtml-keyframes shine-in {
@@ -702,50 +683,47 @@ header.column-title {
       0% {margin-left: 25%;margin-right: -25%;}
 }
 
-
 @-moz-keyframes flip {
-      0% {-moz-transform: rotateY(-90deg);opacity: 0;border-right-width: 30px;}
-     80% {-moz-transform: rotateY(10deg);border-right-width: 0px;}
-     95% {-moz-transform: rotateY(-1deg);}
+    0% {-moz-transform: rotateY(-90deg);opacity: 0;border-right-width: 30px;}
+    80% {-moz-transform: rotateY(10deg);border-right-width: 0px;}
+    95% {-moz-transform: rotateY(-1deg);}
     100% {-moz-transform: rotateY(0deg);}
 }
 @-moz-keyframes shine-in {
-      0% {margin-left: 100%;}
+    0% {margin-left: 100%;}
 }
 @-moz-keyframes text-in {
-      0% {margin-left: 25%;margin-right: -25%;}
+    0% {margin-left: 25%;margin-right: -25%;}
 }
 
-
 @-o-keyframes flip {
-      0% {-o-transform: rotateY(-90deg);opacity: 0;border-right-width: 30px;}
-     80% {-o-transform: rotateY(10deg);border-right-width: 0px;}
-     95% {-o-transform: rotateY(-1deg);}
+    0% {-o-transform: rotateY(-90deg);opacity: 0;border-right-width: 30px;}
+    80% {-o-transform: rotateY(10deg);border-right-width: 0px;}
+    95% {-o-transform: rotateY(-1deg);}
     100% {-o-transform: rotateY(0deg);}
 }
 @-o-keyframes shine-in {
-      0% {margin-left: 100%;}
+    0% {margin-left: 100%;}
 }
 @-o-keyframes text-in {
-      0% {margin-left: 25%;margin-right: -25%;}
+    0% {margin-left: 25%;margin-right: -25%;}
 }
 
-
 @keyframes flip {
-      0% {-o-transform: rotateY(-90deg);opacity: 0;border-right-width: 30px;}
-     80% {-o-transform: rotateY(10deg);border-right-width: 0px;}
-     95% {-o-transform: rotateY(-1deg);}
+    0% {-o-transform: rotateY(-90deg);opacity: 0;border-right-width: 30px;}
+    80% {-o-transform: rotateY(10deg);border-right-width: 0px;}
+    95% {-o-transform: rotateY(-1deg);}
     100% {-o-transform: rotateY(0deg);}
 }
 @keyframes shine-in {
-      0% {margin-left: 100%;}
+    0% {margin-left: 100%;}
 }
 @keyframes text-in {
-      0% {margin-left: 25%;margin-right: -25%;}
+    0% {margin-left: 25%;margin-right: -25%;}
 }
 
 @-webkit-keyframes fadein{
-    0% {opacity: 0;}
+   0% {opacity: 0;}
    80% {opacity: 0;}
 }
 @-khtml-keyframes fadein{
@@ -753,18 +731,15 @@ header.column-title {
    80% {opacity: 0;}
 }
 @-moz-keyframes fadein{
-    0% {opacity: 0;}
+   0% {opacity: 0;}
    80% {opacity: 0;}
 }
 @-o-keyframes fadein{
-    0% {opacity: 0;}
+   0% {opacity: 0;}
    80% {opacity: 0;}
 }
 @keyframes fadein{
-    0% {opacity: 0;}
+   0% {opacity: 0;}
    80% {opacity: 0;}
 }​
-
-
-
 /*******************************************/
