@@ -1,8 +1,15 @@
 h1 {
+	font-size: 26px;
+	margin: 0;
+	font-weight: normal;
+    margin: 0 0 30px;
+}
+h2 {
 	font-size: 24px;
 	margin: 0;
 	font-weight: normal;
-    margin: 0 0 20px;
+  margin: 0 0 20px;
+  color: #333;
 }
 
 #container {
@@ -45,7 +52,7 @@ header {
 /** Section **/
 section {
 	text-align: center;
-	padding-top: 60px;
+	padding-top: 20px;
 	height: 30%;
 	-webkit-box-sizing: border-box;
 	-moz-box-sizing: border-box;
@@ -99,13 +106,13 @@ footer p {
     overflow: hidden;
     margin-right: 1%;
     margin-left: 1%;
-    margin-top: 1%;
+    margin-top: 0%;
     margin-bottom: 0px;
 }
 
 footer p:first-letter {
 	color: white;
-	font-size: 80px;
+	font-size: 60px;
 }
 
 .footer-graddient {

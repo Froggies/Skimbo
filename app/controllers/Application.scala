@@ -10,6 +10,7 @@ import services.auth.providers._
 import models.User
 import views.html.helper.javascriptRouter
 import play.api.Routes
+import play.api.http.ContentTypes._
 
 object Application extends Controller {
 
@@ -46,7 +47,7 @@ object Application extends Controller {
        stream.routes.javascript.WebSocket.connect,
        stream.routes.javascript.Sse.connect,
        stream.routes.javascript.Sse.ping   
-    )).as("text/javascript")
+    )).as(JAVASCRIPT)
   }
 
 }
