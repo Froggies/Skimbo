@@ -494,12 +494,14 @@ function executeCommand(data) {
       });
     } else if(data.cmd == "newToken") {
       $scope.$apply(function() {
+        if($scope.notifications != undefined) {
           for (var i = $scope.notifications.length - 1; i >= 0; i--) {
             if ($scope.notifications[i].providerName == data.body.providerName) {
               $scope.notifications.splice(i,1);
             }
           };
-        });
+        }
+      });
     }
     else {
       console.error("cmd not found : ", data);
