@@ -63,6 +63,7 @@ section ul {
 
 section li {
 	display: inline-block;
+	margin: 14px;
 }
 
 #social-networks li a img{
@@ -70,7 +71,6 @@ section li {
 	max-width: 100%;
 	height: auto;
 	margin: 0px;
-	padding: 0 14px;
 }
 
 /** footer **/
