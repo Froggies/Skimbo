@@ -503,7 +503,7 @@ function executeCommand(data) {
         }
       });
     }
-    else {
+    else if(cmd != "modColumn") {
       console.error("cmd not found : ", data);
     }
 }
