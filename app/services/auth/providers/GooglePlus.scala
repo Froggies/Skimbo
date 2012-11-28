@@ -42,6 +42,8 @@ object GooglePlus extends OAuth2Provider {
       }
     }
   }
+  
+  override def isInvalidToken(response: play.api.libs.ws.Response): Boolean = response.status == 401
 
 }
 
