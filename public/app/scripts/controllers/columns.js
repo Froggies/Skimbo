@@ -27,19 +27,36 @@ publicApp.controller('ColumnsCtrl', function($scope, $http) {
     var wshost = jsRoutes.controllers.stream.WebSocket.connect().webSocketURL();
     var ssehost = jsRoutes.controllers.stream.Sse.connect().absoluteURL();
     var sseping = jsRoutes.controllers.stream.Sse.ping().absoluteURL();
+
+    $scope.sseMode = function() {
+      console.log("sse mode actif !");
+      var source = new EventSource(ssehost);
+      source.addEventListener('message', function(msg) {
+          var data;
+          try {
+              data = JSON.parse(msg.data);
+          } catch(exception) {
+              data = msg.data;
+          }      
+          $scope.$apply(executeCommand(data));
+          //$http.get(sseping);//TODO decomment when ok
+      }, false);
+
+      source.addEventListener('open', function(e) {console.log('sse socket ouverte');}, false);
+      source.addEventListener('error', function(e) {console.log('sse Une erreur est survenue');}, false);
+    }
     
     var socket;
     if(window.MozWebSocket) {
         window.WebSocket=window.MozWebSocket;
     }
     if(!window.WebSocket) {
-        alert('Your browser doesn\'t support webSocket ! You switch in Sse mode but isn\'t recommended !');
-        return false;
+        $scope.sseMode();
     } else {
         socket = new WebSocket(wshost);
-        socket.onopen = function() { console.log('socket ouverte'); }
-        socket.onclose = function() { console.log('socket fermée'); }
-        socket.onerror = function() { console.log('Une erreur est survenue'); }
+        socket.onopen = function() { console.log('WS socket ouverte'); }
+        socket.onclose = function() { socket = undefined; $scope.sseMode(); console.log('WS socket fermée'); }
+        socket.onerror = function() { socket = undefined; $scope.sseMode(); console.log('WS Une erreur est survenue'); }
         socket.onmessage = function(msg){
             var data;
             try { //tente de parser data
@@ -52,22 +69,12 @@ publicApp.controller('ColumnsCtrl', function($scope, $http) {
         }
     } 
 
-    if (!window.WebSocket && !!window.EventSource) {
-        var source = new EventSource(ssehost);
-        source.addEventListener('message', function(msg) {
-            var data;
-            try { //tente de parser data
-                data = JSON.parse(msg.data);
-            } catch(exception) {
-                data = msg.data
-            }      
-            //ici on poura effectuer tout ce que l'on veux sur notre objet data
-            executeCommand(data);
-            $http.get(sseping);
-        }, false);
-
-        source.addEventListener('open', function(e) {console.log('sse socket ouverte');}, false);
-        source.addEventListener('error', function(e) {console.log('Une erreur est survenue');}, false);
+    function send(jsonMsg) {
+      if(socket !== undefined) {
+        socket.send(JSON.stringify(jsonMsg));
+      } else {
+        $http.post('/api/stream/command', JSON.stringify(jsonMsg));
+      }
     }
 
     $scope.addColumn = function() {
@@ -201,7 +208,7 @@ publicApp.controller('ColumnsCtrl', function($scope, $http) {
             column.showErrorTitleAlreadyExist = false;
             column.messages = [];
             column.showModifyColumn= !column.showModifyColumn;
-            socket.send(JSON.stringify(json));
+            send(json);
           }
         }
       }
@@ -209,7 +216,7 @@ publicApp.controller('ColumnsCtrl', function($scope, $http) {
 
     $scope.deleteColumn = function(column) {
       $scope.lastColumnDeleted = {"cmd":"delColumn", "body":{"title": column.title}};
-      socket.send(JSON.stringify($scope.lastColumnDeleted));
+      send($scope.lastColumnDeleted);
     }
 
     $scope.serviceHasTypeChar = function(service) {
@@ -325,7 +332,7 @@ function urlify(msg) {
   });
 }
 
-$scope.truncateString = function(chaine) {
+function truncateString(chaine) {
   if(chaine.length > 140 && !urlexp.test(chaine)) { 
     return String(chaine).substring(0, 140)+"...";
   }
@@ -379,7 +386,7 @@ function executeCommand(data) {
             data.body.msg.authorAvatar = checkExistingImage(data.body.msg.authorAvatar);
 
             data.body.msg.original = data.body.msg.message;
-            data.body.msg.message = $scope.truncateString(data.body.msg.message);
+            data.body.msg.message = truncateString(data.body.msg.message);
             data.body.msg.message = urlify(data.body.msg);
 
             column.messages.push(data.body.msg);
