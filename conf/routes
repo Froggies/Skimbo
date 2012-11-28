@@ -14,6 +14,7 @@ GET     /api/stream/webSocket       	controllers.stream.WebSocket.connect
 
 # Streams -- Sse
 GET     /api/stream/sse       			controllers.stream.Sse.connect
+POST    /api/stream/command    			controllers.stream.Sse.command
 GET     /api/stream/ping       			controllers.stream.Sse.ping
 
 # Dev util

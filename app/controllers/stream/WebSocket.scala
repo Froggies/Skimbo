@@ -21,7 +21,7 @@ object WebSocket extends Controller {
     UserInfosActor.create(userId, channelClient)
 
     val in = Iteratee.foreach[JsValue]{ cmd =>
-      log.info("Command from client : "+cmd)
+      log.info("[WS] Command from client : "+cmd)
       Commands.interpret(userId, cmd)
     }.mapDone { _ =>
       log.info("Disconnected")
