@@ -30,7 +30,7 @@ object Application extends Controller {
   }
 
   def logout() = Action { implicit request =>
-    Ok(views.html.index(Service.list(request))).withNewSession
+    Redirect(routes.Application.index).withNewSession
   }
   
   def closePopup() = Action {
@@ -43,9 +43,6 @@ object Application extends Controller {
 
     Ok(
       Routes.javascriptRouter("jsRoutes")(
-       routes.javascript.Application.index,
-       routes.javascript.Application.authenticate,
-       routes.javascript.Application.logout,
        stream.routes.javascript.WebSocket.connect,
        stream.routes.javascript.Sse.connect,
        stream.routes.javascript.Sse.ping   

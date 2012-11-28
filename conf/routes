@@ -4,7 +4,7 @@ GET     /jsRouter						controllers.Application.jsRouter
 GET     /api/providers/list         	controllers.api.Providers.listAll
 GET     /api/providers/services     	controllers.api.Providers.listServices
 GET		/api/providers/del/:provider    controllers.api.Providers.delete(provider: String)
-GET     /api/logout           			controllers.Application.logout
+GET     /logout           			    controllers.Application.logout
 
 GET     /auth/end						controllers.Application.closePopup
 GET     /auth/:provider             	controllers.Application.authenticate(provider: String)
