@@ -30,7 +30,7 @@ object Application extends Controller {
   }
 
   def logout() = Action { implicit request =>
-    Ok(views.html.index(Service.list(request))).withNewSession
+    Redirect(routes.Application.index).withNewSession
   }
   
   def closePopup() = Action {
