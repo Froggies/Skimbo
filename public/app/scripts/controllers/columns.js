@@ -288,6 +288,14 @@ function getColumnByName(name) {
       }
     }
   }
+  if($scope.tempColumns == undefined) {
+    $scope.tempColumns = [];
+  }
+  if($scope.tempColumns[name] == undefined) {
+    console.log("column "+name+" not found, rescuse column start !!");
+    $scope.tempColumns[name] = {};
+  }
+  return $scope.tempColumns[name];
 }
 
 
@@ -419,6 +427,14 @@ function executeCommand(data) {
                   clientUnifiedRequest.fromServer = true;
                   clientColumn.unifiedRequests.push(clientUnifiedRequest);
                 };
+                if($scope.tempColumns != undefined && $scope.tempColumns[originalColumn.title]) {
+                  var temp = $scope.tempColumns[originalColumn.title];
+                  for (var j = 0; j < temp.length; j++) {
+                    for (var h = 0; h < temp[j].messages.length; h++) {
+                      clientColumn.messages.push(temp[j].messages[h]);
+                    };
+                  };
+                }
                 clientColumn.showModifyColumn = false;
                 $scope.columns.push(clientColumn);
             }
