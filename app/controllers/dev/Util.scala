@@ -4,15 +4,15 @@ import play.api.mvc._
 import services.auth.providers._
 import services.endpoints.Endpoints
 import scala.concurrent.future
-import services.security.AuthenticatedAction.Authenticated
 import controllers.UserDao
 import services.auth.ProviderDispatcher
 import play.api.libs.json.Json
+import services.security.Authentication
+import scala.concurrent.ExecutionContext.Implicits.global
 
-object Util extends Controller {
+object Util extends Controller with Authentication {
 
   def testRes(service: String) = Action { implicit request =>
-    import scala.concurrent.ExecutionContext.Implicits.global
     Async {
       Endpoints.getConfig(service).flatMap { config => 
         Endpoints.genererUrl(service, Map.empty, None).map { url => 
@@ -20,23 +20,22 @@ object Util extends Controller {
             Ok(config.provider.resultAsJson(response))
           }
         }
-      }.getOrElse(future(Ok("Service not found")))
+      }.getOrElse(future(BadRequest("Service not found")))
     }
   }
   
-  def deleteUser() = Authenticated { action => 
-    import scala.concurrent.ExecutionContext.Implicits.global
-    UserDao.findOneById(action.user.accounts.head.id).map { user => 
-      user map { u =>
-        UserDao.delete(u)
+  def deleteUser() = Authenticated { user => request => 
+      Async {
+        UserDao.findOneById(user.accounts.head.id).map { user => 
+          user.map { u =>
+            UserDao.delete(u)
+            Ok("user deleted")
+          }.getOrElse(BadRequest("Service not found"))
+        }
       }
-    }
-    Ok("user deleted")
   }
   
-  //TODO remove this !!
-  def deleteAllUsers() = Authenticated { action => 
-    import scala.concurrent.ExecutionContext.Implicits.global
+  def deleteAllUsers() = Authenticated { user => request => 
     UserDao.findAll.foreach { users => 
       users foreach { user =>
         UserDao.delete(user)
@@ -46,7 +45,6 @@ object Util extends Controller {
   }
   
   def userDistantRes(providerName: String) = Action { implicit request =>
-    import scala.concurrent.ExecutionContext.Implicits.global
     Async {
       ProviderDispatcher(providerName).map { provider =>
        provider.fetch(provider.getUserInfosUrl.get).get.map { response =>

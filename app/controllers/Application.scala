@@ -5,7 +5,6 @@ import play.api.Logger
 import play.api.mvc._
 import services.actors.UserInfosActor
 import services.auth.ProviderDispatcher
-import services.security.AuthenticatedAction.Authenticated
 import views.html._
 import services.auth.providers._
 import models.User
