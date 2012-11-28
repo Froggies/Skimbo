@@ -14,6 +14,9 @@ object Facebook extends OAuth2Provider {
     "email",      // Get user email
     "read_stream" // Get wall activity
   )
+  override val additionalAccreditationParameters = Map(
+    "display" -> "popup"
+  )
 
   override def processToken(response: play.api.libs.ws.Response) = {
     val AuthQueryStringParser = """access_token=(.*)&expires=(.*)""".r

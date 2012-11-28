@@ -26,6 +26,7 @@ trait OAuth2Provider extends GenericProvider {
 
   // Define how to get token and expires timestamp from WS response
   def processToken(response: play.api.libs.ws.Response): Token
+  def additionalAccreditationParameters : Map[String, String] = Map.empty
 
   // Session and cookies fields
   lazy val fieldCsrf        = namespace+"_csrf"
@@ -78,7 +79,8 @@ trait OAuth2Provider extends GenericProvider {
       "scope"           -> permissions.mkString(permissionsSep),
       "response_type"   -> "code")
 
-    val url = redirectQueryString.foldLeft(authorizeUrl+"?")((url, qs) => url + qs._1+"="+qs._2+"&")
+    val url = (redirectQueryString ++ additionalAccreditationParameters)
+      .foldLeft(authorizeUrl+"?")((url, qs) => url + qs._1+"="+qs._2+"&")
 
     Redirect(url).withSession(request.session + (fieldCsrf -> csrf))
   }
