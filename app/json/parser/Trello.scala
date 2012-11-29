@@ -39,9 +39,9 @@ case class MemberCreatorTrello(
 object TrelloWallParser extends GenericParser {
 
   val avatarUrl = "https://trello-avatars.s3.amazonaws.com/%s/30.png"
-    val urlBoard = "https://trello.com/board/%s"
-    val urlCard = "https://trello.com/card/%s/%s"
-  
+  val urlBoard = "https://trello.com/board/%s"
+  val urlCard = "https://trello.com/card/%s/%s"
+
   override def asSkimbo(json: JsValue): Option[Skimbo] = {
     Json.fromJson[TrelloWallMessage](json).fold(
       error => logParseError(json, error, "ViadeoWallMessage"),
@@ -60,13 +60,13 @@ object TrelloWallParser extends GenericParser {
 
   def generateText(e: TrelloWallMessage) = {
     val sb = new StringBuilder
-    if(e.data.board.isDefined) {
+    if (e.data.board.isDefined) {
       sb append "[" append e.data.board.get.name append "] "
     }
-    if(e.data.card.isDefined) {
+    if (e.data.card.isDefined) {
       sb append e.data.card.get.name + " - "
     }
-    if(e.data.text.isDefined) {
+    if (e.data.text.isDefined) {
       sb append e.data.text.get
     } else {
       sb append e.trelloType
@@ -76,17 +76,21 @@ object TrelloWallParser extends GenericParser {
 
   def generateLink(e: TrelloWallMessage) = {
     e.data.board.map(board =>
-      e.data.card.map(card => 
+      e.data.card.map(card =>
         urlCard.format(board.id, card.idShort.get))
-      .getOrElse(
-        urlBoard.format(board.id))
-    )
+        .getOrElse(
+          urlBoard.format(board.id)))
   }
-  
+
   def generateAvatarUrl(e: TrelloWallMessage) = {
-    e.memberCreator.avatarHash.map(avatar => avatarUrl.format(avatar))
+    e.memberCreator.avatarHash.map(avatar =>
+      if (avatar.isEmpty()) {
+        ""
+      } else {
+        avatarUrl.format(avatar)
+      })
   }
-  
+
   override def nextSinceId(sinceId: String, sinceId2: String): String = {
     if (sinceId2.isEmpty()) {
       sinceId
