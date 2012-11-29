@@ -1,7 +1,9 @@
 Skimbo
 =====
 
-This app was created during the [Typesafe contest app](http://blog.typesafe.com/typesafe-developer-contest) with [Play2](https://github.com/playframework/play20/)
+This app was created during the _Typesafe contest app http://blog.typesafe.com/typesafe-developer-contest with [Play2](https://github.com/playframework/play20/)
+
+-----
 
 For the Typesafe contest, we made a web application **Skimbo** : a social networks mashup. 
 The main problem that our application solves is that most user are members of several social networks so to follow every changes on each social network, users have to open one tab for each one, which is not very convenient. Thanks to our application, the user can follow all its social networks, in a unique window, thanks to a new kind of display.
@@ -42,8 +44,7 @@ How to install ?
 > Get the project
 > Add your secret keys for all the social networks in a file called : "**my-social.conf**" with the following structure :
 
-```
-social {
+   social {
 
 	twitter { 
 		clientId=
@@ -90,8 +91,8 @@ social {
 		clientId=
 		secret=
 	}
-}
-```
+   }
+
 
 
 - Start mongoDB server
@@ -108,26 +109,13 @@ Anyway, we will keep adding functionnality to Skimbo. The next feature will be t
 
 If you want to help us to realize this dream, don't hesitate, contact us ! Don't worry, our english is bad, but our passion for computer and technology is very big !
 
+-----
 
+Froggies, our Team :
+-----
 
-
-
-
-# Team
- * [@udr3y](https://twitter.com/udr3y)
- * [@RmManeschi](https://twitter.com/RmManeschi)
- * [@studiodev](https://twitter.com/studiodev)
- * [@vp3n](https://twitter.com/vp3n)
- * Laurent Dufour (This guy is not on twitter !!)
-
-# Test app
-  * launch server
-  * go on 127.0.0.1:9000
-  * if login page -> choose provider
-  * and then column page with provider(s) call
-  * click on logout -> must stop stream !
-
-# Technical
-	* on logon : UserInfosActor start for retreive users infos (in bd if exist, else call provider(s))
-	* on endpoint start (sse for now in Application.scala/testActor2()) start ProviderActor
-	* on logout shutdown all ProviderActor for user 
+- _@udr3y https://twitter.com/udr3y
+- [@RmManeschi](https://twitter.com/RmManeschi)
+- [@studiodev](https://twitter.com/studiodev)
+- [@vp3n](https://twitter.com/vp3n)
+- Laurent Dufour (This guy is not on twitter !!)
