@@ -1,7 +1,7 @@
 Skimbo
 =====
 
-This app was created during the _Typesafe contest app http://blog.typesafe.com/typesafe-developer-contest with [Play2](https://github.com/playframework/play20/)
+This app was created during the Typesafe_ contest app with Play2_.
 
 -----
 
@@ -119,3 +119,8 @@ Froggies, our Team :
 - [@studiodev](https://twitter.com/studiodev)
 - [@vp3n](https://twitter.com/vp3n)
 - Laurent Dufour (This guy is not on twitter !!)
+
+
+
+.. _Typesafe: http://blog.typesafe.com/typesafe-developer-contest
+.. _Play2: https://github.com/playframework/play20/
