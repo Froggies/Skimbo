@@ -114,13 +114,21 @@ If you want to help us to realize this dream, don't hesitate, contact us ! Don't
 Froggies, our Team :
 -----
 
-- _@udr3y https://twitter.com/udr3y
-- [@RmManeschi](https://twitter.com/RmManeschi)
-- [@studiodev](https://twitter.com/studiodev)
-- [@vp3n](https://twitter.com/vp3n)
+Follow us on twitter :
+
+- udr3y_
+- RmManeschi_
+- studiodev_
+- vp3n_
 - Laurent Dufour (This guy is not on twitter !!)
+- Skimbo_
 
 
 
 .. _Typesafe: http://blog.typesafe.com/typesafe-developer-contest
 .. _Play2: https://github.com/playframework/play20/
+.. _udr3y:  https://twitter.com/udr3y
+.. _RmManeschi: https://twitter.com/RmManeschi
+.. _studiodev: https://twitter.com/studiodev
+.. _vp3n: https://twitter.com/vp3n
+.. _skimbo: https://twitter.com/skimbo34
