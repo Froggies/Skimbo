@@ -528,6 +528,14 @@ function executeCommand(data) {
       });
     } else if(data.cmd == "newToken") {
       $scope.$apply(function() {
+        if($scope.serviceProposes != undefined) {
+          for (var i = 0; i < $scope.serviceProposes.length; i++) {
+            if($scope.serviceProposes[i].service.service.split(".")[0] == data.body.providerName) {
+              $scope.serviceProposes[i].socialNetworkToken = true;
+            }
+          };
+        }
+
         if($scope.notifications != undefined) {
           for (var i = $scope.notifications.length - 1; i >= 0; i--) {
             if ($scope.notifications[i].providerName == data.body.providerName) {
@@ -537,7 +545,7 @@ function executeCommand(data) {
         }
       });
     }
-    else if(cmd != "modColumn") {
+    else if(data.cmd != "modColumn") {
       console.error("cmd not found : ", data);
     }
 }
