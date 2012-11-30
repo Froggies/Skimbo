@@ -31,6 +31,11 @@ Once those steps passed, we decided to store the user's configuration into a Mog
 
 It was the same for AngularJS, client side, it was also a real revelation, very powerful even with a lot of data.
 
+**High level architecture**
+-------- 
+
+.. image:: http://man.lydiman.net/test/skimboHLA.png
+
 How to install ?
 -------- 
 
