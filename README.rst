@@ -41,59 +41,9 @@ How to install ?
 - A browser which suppport WebSocket and/or Sse
 
 > Get the project
-> Add your secret keys for all the social networks in a file called : "**my-social.conf**" with the following structure :
+> Add your secret keys for all the social networks in a file called : "**my-social.conf**" with the following structure : https://gist.github.com/4172803
 
-   social {
-	twitter { 
-		clientId=
-		secret=
-	}
-	
-	facebook {
-		clientId=
-		secret=
-	}
-	
-	googleplus {
-		clientId=
-		secret=
-	}
-	
-	viadeo {
-		clientId=
-		secret=
-	}
-	
-	linkedin {
-		clientId=
-		secret=
-	}
-	
-	github {
-		clientId=
-		secret=
-	}
-	
-	stackexchange {
-		clientId=
-		secret=
-		key=
-	}
-	
-	trello {
-		clientId=
-		secret=
-	}
-
-	scoopit {
-		clientId=
-		secret=
-	}
-   }
-
-
-
-- Start mongoDB server
+- Start mongoDB server (mongoDb conf can be modified in application.conf)
 - cd Skimbo
 - play run
 
