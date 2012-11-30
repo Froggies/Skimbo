@@ -10,7 +10,7 @@ var publicApp = angular.module('publicApp', ['ngSanitize'], function($routeProvi
       templateUrl: 'assets/app/views/main.html'
     })
     .otherwise({
-      templateUrl: 'assets/app/views/main.html'
+      redirectTo: '/'
     });
   $locationProvider.html5Mode(true);
 })
