@@ -22,7 +22,7 @@ case class Skimbo(
 )
 
 object Skimbo {
-  implicit val writes:Writes[Skimbo] = new Writes[Skimbo] {
+  implicit val writes = new Writes[Skimbo] {
     def writes(skimbo: Skimbo) = {
       Json.obj(
         "authorName" -> skimbo.authorName,
