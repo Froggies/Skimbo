@@ -1,8 +1,8 @@
 Skimbo
-=====
+==========
 
 This app was created during the Typesafe_ contest app with Play2_.
------
+----------
 
 For the Typesafe contest, we made a web application **Skimbo** : a social networks mashup. 
 The main problem that our application solves is that most user are members of several social networks so to follow every changes on each social network, users have to open one tab for each one, which is not very convenient. Thanks to our application, the user can follow all its social networks, in a unique window, thanks to a new kind of display.
@@ -49,6 +49,11 @@ How to install ?
 
 - Get the project
 - Add your secret keys for all the social networks in a file called : "**my-social.conf**" with the following structure : https://gist.github.com/4172803
+-  You can add Linkedin for example, which does not check the domain
+    linkedin {
+        clientId=4flcxt37xsmp
+        secret=GYaqtVNMcBaY0ytZ
+    }
 - Start mongoDB server (mongoDb conf can be modified in application.conf)
 - cd Skimbo
 - play run
