@@ -3,7 +3,7 @@ package services.actors
 import java.util.Date
 import scala.concurrent.ExecutionContext.Implicits._
 import akka.actor._
-import controllers.UserDao
+import services.UserDao
 import models.command.Command
 import models.User
 import models.user._

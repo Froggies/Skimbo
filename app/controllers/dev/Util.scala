@@ -4,7 +4,7 @@ import play.api.mvc._
 import services.auth.providers._
 import services.endpoints.Endpoints
 import scala.concurrent.future
-import controllers.UserDao
+import services.UserDao
 import services.auth.ProviderDispatcher
 import play.api.libs.json.Json
 import services.security.Authentication

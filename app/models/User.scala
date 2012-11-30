@@ -1,6 +1,6 @@
 package models
 
-import controllers.UserDao
+import services.UserDao
 import play.api.libs.json._
 import reactivemongo.bson._
 import scala.collection.Map

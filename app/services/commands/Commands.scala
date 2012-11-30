@@ -1,6 +1,6 @@
 package services.commands
 
-import controllers.UserDao
+import services.UserDao
 import models.command.Command
 import models._
 import models.user._

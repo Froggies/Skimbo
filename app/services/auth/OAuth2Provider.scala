@@ -9,7 +9,7 @@ import play.api.Play.current
 import play.api.Logger
 import java.net.URLEncoder.encode
 import java.util.UUID.randomUUID
-import controllers.UserDao
+import services.UserDao
 import scala.concurrent.duration._
 import scala.concurrent.Await
 import models.user.SkimboToken

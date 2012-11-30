@@ -5,7 +5,7 @@ import play.api.mvc._
 import play.api.libs.oauth._
 import play.api.Play.current
 import play.api.libs.ws.WS
-import controllers.UserDao
+import services.UserDao
 import scala.concurrent.Await
 import scala.concurrent.duration._
 import models.user.SkimboToken

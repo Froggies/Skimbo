@@ -3,7 +3,7 @@ package services.auth
 import play.api.Play.current
 import play.api.mvc._
 import services.auth.actions._
-import controllers.UserDao
+import services.UserDao
 
 trait GenericProvider extends Results with WsProvider with AccountWsProvider with SecurityProvider {
 
