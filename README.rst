@@ -41,6 +41,7 @@ How to install ?
 - A browser which suppport WebSocket and/or Sse
 
 > Get the project
+
 > Add your secret keys for all the social networks in a file called : "**my-social.conf**" with the following structure : https://gist.github.com/4172803
 
 - Start mongoDB server (mongoDb conf can be modified in application.conf)
