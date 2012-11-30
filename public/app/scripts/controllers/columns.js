@@ -24,6 +24,10 @@ publicApp.controller('ColumnsCtrl', function($scope, $http) {
 
     }
 
+    var isPageVisible = document.hasFocus();
+    var nbNewMessages = 0;
+    pageVisibility(switchPageVisible, switchPageInvisible);
+
     var wshost = jsRoutes.controllers.stream.WebSocket.connect().webSocketURL();
     var ssehost = jsRoutes.controllers.stream.Sse.connect().absoluteURL();
     var sseping = jsRoutes.controllers.stream.Sse.ping().absoluteURL();
@@ -86,7 +90,7 @@ publicApp.controller('ColumnsCtrl', function($scope, $http) {
         if($scope.columns == undefined) {
           $scope.columns = [];
         }
-        $scope.columns.push({"title":"What is here ? ("+($scope.columns.length+1)+")",
+        $scope.columns.push({"title": (String.fromCharCode(945+$scope.columns.length)) + ") What is here ? ",
                               "oldTitle":"",
                               "showModifyColumn":"true",
                               "newColumn":"true",
@@ -393,6 +397,24 @@ function truncateString(chaine) {
   }
 }
 
+function notifyNewMessage() {
+  if (!isPageVisible) {
+    nbNewMessages += 1;
+    document.title = "("+nbNewMessages+") Skimbo";
+  }
+}
+
+function switchPageVisible() {
+  document.title = "Skimbo";
+  nbNewMessages = 0;
+  isPageVisible = true;
+}
+
+function switchPageInvisible() {
+  isPageVisible = false;
+  nbNewMessages = 0;
+}
+
 function executeCommand(data) {
     if(data.cmd == "allUnifiedRequests") {
       var serviceProposes = new Array();
@@ -453,8 +475,7 @@ function executeCommand(data) {
               }
             }
             insertSort(column.messages);
-
-
+            notifyNewMessage();
         });
     } else if(data.cmd == "allColumns") {
         $scope.$apply(function() {
