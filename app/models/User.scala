@@ -57,7 +57,7 @@ object User {
           asString(d, "id"),
           asString(d, "social"),
           SkimboToken.fromBSON(d.getAs[BSONDocument]("token").get)
-          )
+        )
       })
       val columns = tableTo[Column](document, "columns", { c =>
         val unifiedRequests = tableTo[UnifiedRequest](c, "unifiedRequests", { r =>

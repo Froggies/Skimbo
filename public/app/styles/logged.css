@@ -141,6 +141,8 @@ input[type=button] {
     border: 2px solid #B6B6B6;
     right: 20px;
 	top: 50px;
+	font-size: 14px;
+	color: #666;
 }
 
 .connected-on {
@@ -210,7 +212,7 @@ input[type=button] {
 #bloc-utilisateur footer a, 
 #nom-prenom
 {
-	color: #B6B6B6;
+	color: #666;
 }
 
 [draggable] {
@@ -391,7 +393,6 @@ header.column-title {
 .add-service,
 .connected-on,
 .service-empty {
-	color: #C1C1C1;
 	margin: 15px 15px 0 15px;
 }
 

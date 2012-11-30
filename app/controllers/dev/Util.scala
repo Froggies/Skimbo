@@ -9,7 +9,8 @@ import services.auth.ProviderDispatcher
 import play.api.libs.json.Json
 import services.security.Authentication
 import scala.concurrent.ExecutionContext.Implicits.global
-
+import play.api.Play.current
+      
 object Util extends Controller with Authentication {
 
   def testRes(service: String) = Action { implicit request =>
@@ -38,7 +39,6 @@ object Util extends Controller with Authentication {
 
   def deleteAllUsers(pwd: String) = Authenticated { user =>
     request =>
-      import play.api.Play.current
       if (pwd == current.configuration.getString("pwdDelAllDb").get) {
         UserDao.findAll.foreach { users =>
           users foreach { user =>

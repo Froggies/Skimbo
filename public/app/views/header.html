@@ -5,9 +5,9 @@
 
 	<div class="separateur-gris"></div>
 
-	<input id="skimber" type="button" value="Skimber !" title="Coming soon...">
+	<!--<input id="skimber" type="button" value="Skimber !" title="Coming soon...">-->
 	<div id="recherche-et-profil">
-		<input type="search" placeholder="Rechercher" results="5" name="test" ng-model="$parent.$parent.query">
+		<input type="search" placeholder="Live search" results="5" name="test" ng-model="$parent.$parent.query">
 		<a id="nom-prenom" href="#" ng-click="showUserInformations=!showUserInformations">
 			<img ng-src="{{$parent.userInfos[0].avatar}}" width="24" height="24">{{$parent.userInfos[0].username}} ▼
 		</a>

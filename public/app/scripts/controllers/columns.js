@@ -86,7 +86,7 @@ publicApp.controller('ColumnsCtrl', function($scope, $http) {
         if($scope.columns == undefined) {
           $scope.columns = [];
         }
-        $scope.columns.push({"title":"",
+        $scope.columns.push({"title":"What is here ? ("+($scope.columns.length+1)+")",
                               "oldTitle":"",
                               "showModifyColumn":"true",
                               "newColumn":"true",

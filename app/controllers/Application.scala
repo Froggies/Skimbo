@@ -15,14 +15,14 @@ import play.api.http.ContentTypes._
 object Application extends Controller {
 
   def index = Action { implicit request =>
-    request.session.get("id")
+    session.get("id")
       .map(_ => Ok(views.html.unified()))
       .getOrElse(Ok(views.html.index(Service.list)))
   }
 
   def authenticate(providerName: String) = Action { implicit request =>
     val providerOpt  = ProviderDispatcher(providerName);
-    val userOpt = request.session.get("id").map(User.create)
+    val userOpt = session.get("id").map(User.create)
 
     providerOpt.map(provider => 
       userOpt.map(_ => provider.auth(routes.Application.closePopup))
@@ -30,7 +30,7 @@ object Application extends Controller {
     .getOrElse(BadRequest)
   }
 
-  def logout() = Action { implicit request =>
+  def logout() = Action {
     Redirect(routes.Application.index).withNewSession
   }
   
