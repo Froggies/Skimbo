@@ -57,8 +57,6 @@ Anyway, we will keep adding functionnality to Skimbo. The next feature will be t
 
 If you want to help us to realize this dream, don't hesitate, contact us ! Don't worry, our english is bad, but our passion for computer and technology is very big !
 
------
-
 Froggies, our Team :
 -----
 
@@ -70,8 +68,6 @@ Follow us on twitter :
 - vp3n_
 - Laurent Dufour (This guy is not on twitter !!)
 - Skimbo_
-
------
 
 Licence
 ----
