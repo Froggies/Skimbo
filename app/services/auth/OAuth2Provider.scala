@@ -163,7 +163,6 @@ trait OAuth2Provider extends GenericProvider {
  */
 sealed case class Token(token: Option[String], expires: Option[Int])
 
-// Method to retrieve token
 sealed abstract class Verb
 case object Get extends Verb
 case object Post extends Verb
