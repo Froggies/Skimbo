@@ -29,6 +29,8 @@ object Endpoints {
       Service("linkedin.wall", Configuration.Linkedin.wall))),
     Endpoint(GooglePlus, Seq(
       Service("googleplus.wall", Configuration.GooglePlus.wall))),
+      // must be a userId :'(
+      //Service("googleplus.user", Configuration.GooglePlus.user))),
     Endpoint(GitHub, Seq(
       Service("github.notifications", Configuration.Github.notifications))),
     Endpoint(Trello, Seq(

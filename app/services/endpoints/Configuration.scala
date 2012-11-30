@@ -89,6 +89,13 @@ object Configuration {
       override val provider = providers.GooglePlus
       override val parser = Some(GoogleplusWallParser)
     }
+    object user extends EndpointConfig {
+      override val url = withLimit("https://www.googleapis.com/plus/v1/people/:username/activities/public?maxResults=:limit")
+      override val manualNextResults = true // Fuck Google+, there is no "since" key... Must be handle in actor with cache...
+      override val provider = providers.GooglePlus
+      override val requiredParams = List("username")
+      override val parser = Some(GoogleplusWallParser)
+    }
   }
 
   object Github {
