@@ -192,8 +192,38 @@ publicApp.controller('ColumnsCtrl', function($scope, $http) {
           }
         };
       };
+
+      column.showDoubleParser = false;
+      if(!column.showErrorBlankArg) {
+        var nbServiceFound = 0;
+        var nbArgFound = 0;
+        for (var i = 0; i < column.unifiedRequests.length && !column.showDoubleParser; i++) {
+          nbServiceFound = 0;
+          nbArgFound = 0;
+          for (var u = 0; u < column.unifiedRequests.length && !column.showDoubleParser; u++) {
+            if(column.unifiedRequests[i].args.length > 0) {
+              for (var j = 0; j < column.unifiedRequests[i].args.length && !column.showDoubleParser; j++) {
+                for (var h = 0; h < column.unifiedRequests[u].args.length && !column.showDoubleParser; h++) {
+                  if (column.unifiedRequests[i].service == column.unifiedRequests[u].service && 
+                    column.unifiedRequests[i].args[j].value == column.unifiedRequests[u].args[h].value) {
+                    nbArgFound++;
+                  }
+                };
+                if(nbArgFound > 1) {
+                  column.showDoubleParser = true;
+                }
+              };
+            } else if(column.unifiedRequests[i].service == column.unifiedRequests[u].service) {
+              nbServiceFound++;
+            }
+          };
+          if(nbServiceFound > 1) {
+            column.showDoubleParser = true;
+          }
+        };
+      }
      
-      if (!column.showErrorBlankArg) {
+      if (!column.showErrorBlankArg && !column.showDoubleParser) {
         if(column.title =="") {
           column.showErrorTitleRequired = true;
         }

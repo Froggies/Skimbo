@@ -53,7 +53,8 @@
 			<div class="add-service" ng-show="c.unifiedRequests.length > 0">Already in your column :</div>
 			<div class="error-div">
 				<span class="error-message" ng-show="c.showErrorBlankArg">All fields are required</span> 
-				<br ng-show="c.showErrorBlankArg"/>
+				<span class="error-message" ng-show="c.showDoubleParser">You can't add twice same services</span> 
+				<br ng-show="c.showErrorBlankArg || c.showDoubleParser"/>
 			</div>
 			<ul class="services-actives">
 				<li class="service-empty" ng-show="c.unifiedRequests.length == 0">To add a stream in this column, select one or many services above.</li>
