@@ -99,7 +99,7 @@ trait OAuth2Provider extends GenericProvider {
       // Send request to retrieve auth token and parse response
       Async {
         fetchAccessTokenResponse(code).map(response =>
-          processToken(response) match {
+          processTokenSafe(response) match {
 
             // Provider return token
             case Token(Some(token), _) => {
@@ -141,6 +141,18 @@ trait OAuth2Provider extends GenericProvider {
     method match {
       case Get  => req.withQueryString(data.toSeq: _*).get
       case Post => req.post(data.mapValues(Seq(_)))
+    }
+  }
+  
+  private def processTokenSafe(response: play.api.libs.ws.Response): Token = {
+    try {
+      processToken(response)
+    } catch {
+      case _: Throwable => {
+        Logger.error("["+name+"] Unable to process token")
+        Logger.info(response.body)
+        Token(None, None)
+      }
     }
   }
 
