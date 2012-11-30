@@ -103,15 +103,15 @@ a[ref]:hover:before {
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00000000', endColorstr='#00000000',GradientType=0 );
 }
 
-::-webkit-scrollbar {
+.win ::-webkit-scrollbar, .linux ::-webkit-scrollbar {
     width: 12px;
 }
  
-::-webkit-scrollbar-track {
+.win ::-webkit-scrollbar-track, .linux ::-webkit-scrollbar-track {
     -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3); 
 }
  
-::-webkit-scrollbar-thumb {
+.win ::-webkit-scrollbar-thumb, .linux ::-webkit-scrollbar-thumb {
     -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5); 
 }
 
