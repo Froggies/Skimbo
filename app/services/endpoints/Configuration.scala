@@ -67,7 +67,7 @@ object Configuration {
     object wall extends EndpointConfig {
       override val limit = 30
       override val url = withLimit("https://api.viadeo.com/me/smart_news.json?limit=:limit")
-      override val since = "&since=:since"//date = ISO-8601 [YYYY-MM-DD'T'HH:MM:SSZZ]
+      override val since = "&since=:since"
       override val provider = providers.Viadeo
       override val parser = Some(ViadeoWallParser)
     }
@@ -76,7 +76,7 @@ object Configuration {
   object Linkedin {
     object wall extends EndpointConfig {
       override val url = withLimit("http://api.linkedin.com/v1/people/~/network/updates?count=:limit")
-      override val since = "&after=:since"//timestamp = milliseconds since the epoch
+      override val since = "&after=:since"
       override val provider = providers.LinkedIn
       override val parser = Some(LinkedInWallParser)
     }
@@ -91,7 +91,7 @@ object Configuration {
     }
     object user extends EndpointConfig {
       override val url = withLimit("https://www.googleapis.com/plus/v1/people/:username/activities/public?maxResults=:limit")
-      override val manualNextResults = true // Fuck Google+, there is no "since" key... Must be handle in actor with cache...
+      override val manualNextResults = true
       override val provider = providers.GooglePlus
       override val requiredParams = List("username")
       override val parser = Some(GoogleplusWallParser)
@@ -100,8 +100,8 @@ object Configuration {
 
   object Github {
     object notifications extends EndpointConfig {
-      override val url = "https://api.github.com/users/:username/received_events" // (default limit : 30)
-      override val manualNextResults = true // Fuck too (http://developer.github.com/v3/#conditional-requests)
+      override val url = "https://api.github.com/users/:username/received_events"
+      override val manualNextResults = true
       override val provider = providers.GitHub
       override val requiredParams = List("username")
       override val parser = Some(GithubWallParser)

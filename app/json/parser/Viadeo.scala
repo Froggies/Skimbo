@@ -59,12 +59,12 @@ object ViadeoWallParser extends GenericParser {
   
   override def cut(json: JsValue): List[JsValue] = super.cut(json \ "data")
   
-  override def nextSinceId(sinceId: String, sinceId2: String): String = {
+  override def nextSinceId(sinceId: String, compareSinceId: String): String = {
     val date = DateTime.parse(sinceId, DateTimeFormat.forPattern(ViadeoWallMessage.datePattern))
-    if (sinceId2.isEmpty()) {
+    if (compareSinceId.isEmpty()) {
       date.plusSeconds(1).toString(ViadeoWallMessage.datePattern)
     } else {
-      val date1 = DateTime.parse(sinceId2, DateTimeFormat.forPattern(ViadeoWallMessage.datePattern))
+      val date1 = DateTime.parse(compareSinceId, DateTimeFormat.forPattern(ViadeoWallMessage.datePattern))
       if (date.isAfter(date1)) {
         date.plusSeconds(1).toString(ViadeoWallMessage.datePattern)
       } else {

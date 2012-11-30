@@ -33,7 +33,6 @@ publicApp.controller('ColumnsCtrl', function($scope, $http) {
     var sseping = jsRoutes.controllers.stream.Sse.ping().absoluteURL();
 
     $scope.sseMode = function() {
-      console.log("sse mode actif !");
       var source = new EventSource(ssehost);
       source.addEventListener('message', function(msg) {
           var data;
@@ -46,7 +45,7 @@ publicApp.controller('ColumnsCtrl', function($scope, $http) {
           //$http.get(sseping);//TODO decomment when ok
       }, false);
 
-      source.addEventListener('open', function(e) {console.log('sse socket ouverte');}, false);
+      //source.addEventListener('open', function(e) {console.log('sse socket ouverte');}, false);
       source.addEventListener('error', function(e) {source.close(); console.log('sse Une erreur est survenue');}, false);
     }
     
@@ -58,8 +57,8 @@ publicApp.controller('ColumnsCtrl', function($scope, $http) {
         $scope.sseMode();
     } else {
         socket = new WebSocket(wshost);
-        socket.onopen = function() { console.log('WS socket ouverte'); }
-        socket.onclose = function() { socket = undefined; $scope.sseMode(); console.log('WS socket fermée'); }
+        //socket.onopen = function() { console.log('WS socket ouverte'); }
+        //socket.onclose = function() { socket = undefined; $scope.sseMode(); console.log('WS socket fermée'); }
         socket.onerror = function() { socket = undefined; $scope.sseMode(); console.log('WS Une erreur est survenue'); }
         socket.onmessage = function(msg){
             var data;
@@ -183,9 +182,11 @@ publicApp.controller('ColumnsCtrl', function($scope, $http) {
       }
 
       column.showErrorBlankArg = false;
+      var cleanRegex = /[&\/\\#,+()$~%'":*?<>{}]/g;
 
       for (var i = 0; i < column.unifiedRequests.length; i++) {
         for (var j = 0; j < column.unifiedRequests[i].args.length; j++) {
+          column.unifiedRequests[i].args[j].value = column.unifiedRequests[i].args[j].value.replace(cleanRegex, '');
           if (column.unifiedRequests[i].args[j].value == "") {
             column.showErrorBlankArg = true;
             break;
@@ -336,7 +337,7 @@ publicApp.controller('ColumnsCtrl', function($scope, $http) {
          var top = (document.body.clientHeight-height)/2;
       }
       
-      var newwindow = window.open("/auth/"+service.socialNetwork, 'Connexion', 'height='+height+', width='+width+', left='+left+', top='+top);
+      var newwindow = window.open("/auth/"+service.socialNetwork, 'Connection', 'height='+height+', width='+width+', left='+left+', top='+top);
       window.callMeToRefresh = function() {
         var col = _column;
         var serv = _service;
@@ -348,25 +349,8 @@ publicApp.controller('ColumnsCtrl', function($scope, $http) {
           });
       }
 
-      if (newwindow !== undefined) {
-        if (window.focus) newwindow.focus();
-        
-        /*newwindow.onclose = function() {
-          $http.get("/api/providers/services").success(function(data) {
-            if(_column != undefined) {
-              var clientUnifiedRequest = serverToUnifiedRequest(_service.service);
-              _column.unifiedRequests.push(clientUnifiedRequest);
-            }
-          });
-        };
-        newwindow.onbeforeunload = function() {
-          $http.get("/api/providers/services").success(function(data) {
-            if(_column != undefined) {
-              var clientUnifiedRequest = serverToUnifiedRequest(_service.service);
-              _column.unifiedRequests.push(clientUnifiedRequest);
-            }
-          });
-        };*/
+      if (newwindow !== undefined && window.focus) {
+        newwindow.focus();
       }
       return false;
     }
@@ -384,7 +368,6 @@ function getColumnByName(name) {
     $scope.tempColumns = [];
   }
   if($scope.tempColumns[name] == undefined) {
-    console.log("column "+name+" not found, rescuse column start !!");
     $scope.tempColumns[name] = {};
   }
   return $scope.tempColumns[name];
@@ -585,7 +568,6 @@ function executeCommand(data) {
       });
     }
     else if (data.cmd == "tokenInvalid") {
-      console.log("tokenInvalid");
       $scope.$apply(function() {
         if($scope.notifications == undefined) {
           $scope.notifications = [];

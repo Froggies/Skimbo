@@ -37,12 +37,12 @@ object GoogleplusWallParser extends GenericParser {
   
   override def cut(json: JsValue): List[JsValue] = super.cut(json \ "items")
   
-  override def nextSinceId(sinceId: String, sinceId2: String): String = {
+  override def nextSinceId(sinceId: String, compareSinceId: String): String = {
     val date = DateTime.parse(sinceId, DateTimeFormat.forPattern(GoogleplusWallMessage.datePattern))
-    if (sinceId2.isEmpty()) {
+    if (compareSinceId.isEmpty()) {
       date.toString(GoogleplusWallMessage.datePattern)
     } else {
-      val date1 = DateTime.parse(sinceId2, DateTimeFormat.forPattern(GoogleplusWallMessage.datePattern))
+      val date1 = DateTime.parse(compareSinceId, DateTimeFormat.forPattern(GoogleplusWallMessage.datePattern))
       if (date.isAfter(date1)) {
         date.toString(GoogleplusWallMessage.datePattern)
       } else {

@@ -20,6 +20,7 @@ import json.Skimbo
 import play.api.http.Status
 import scala.util._
 import models.command.Error
+import services.endpoints.EndpointConfig
 
 sealed case class Ping(idUser: String)
 sealed case class Dead(idUser: String)
@@ -113,10 +114,9 @@ class ProviderActor(channel: Concurrent.Channel[JsValue],
                   channel.push(Json.toJson(TokenInvalid(provider.name)))
                 } else if(provider.isRateLimiteError(response)) {
                   channel.push(Json.toJson(Error(provider.name, "Rate limite exceeded on")))
-                } else {
-                  // TODO client send ??
+                } /*else {
                   channel.push(Json.toJson(Error(provider.name, "Error on")))
-                }
+                }*/
               } else {
                 val explodedMsgs = parser.get.cutSafe(response, provider)
                 if (explodedMsgs.isEmpty) {
@@ -126,23 +126,9 @@ class ProviderActor(channel: Concurrent.Channel[JsValue],
                 } else {
                   val skimboMsgs = explodedMsgs.get.map(jsonMsg => parser.get.asSkimboSafe(jsonMsg)).flatten
                   val listJson = if (config.manualNextResults || config.mustBeReordered) reorderMessagesByDate(skimboMsgs) else skimboMsgs
-              
-                  log.info("["+unifiedRequest.service+"] Received messages : "+listJson.size)
-              
-                  val messages = Enumerator.enumerate(listJson)
-                  val ite = Iteratee.foreach { skimboMsg: Skimbo =>
-                  val msg = Json.obj("column" -> column.title, "msg" -> skimboMsg)
-                    if (config.manualNextResults) {
-                      if (skimboMsg.createdAt.isAfter(sinceDate)) {
-                        channel.push(Json.toJson(Command("msg", Some(msg))))
-                        sinceDate = skimboMsg.createdAt // TODO : utiliser uniquement SinceID (convertir date en string)
-                      }
-                    } else {
-                      sinceId = parser.get.nextSinceId(skimboMsg.sinceId, sinceId)
-                      channel.push(Json.toJson(Command("msg", Some(msg))))
-                    }
-                  }
-                  messages(ite)
+                  val messagesEnumerators = Enumerator.enumerate(listJson)
+                  val pusherIteratee = pushNewMessagesIteratee(config)
+                  messagesEnumerators(pusherIteratee)
                 }
               }
             }
@@ -192,6 +178,21 @@ class ProviderActor(channel: Concurrent.Channel[JsValue],
   
   def reorderMessagesByDate(msgs: List[Skimbo]) = {
     msgs.sortWith((msg1, msg2) => msg1.createdAt.isBefore(msg2.createdAt))
+  }
+  
+  def pushNewMessagesIteratee(config: EndpointConfig) = {
+    Iteratee.foreach { skimboMsg: Skimbo =>
+      val msg = Json.obj("column" -> column.title, "msg" -> skimboMsg)
+      if (config.manualNextResults) {
+        if (skimboMsg.createdAt.isAfter(sinceDate)) {
+          channel.push(Json.toJson(Command("msg", Some(msg))))
+          sinceDate = skimboMsg.createdAt
+        }
+      } else {
+        sinceId = parser.get.nextSinceId(skimboMsg.sinceId, sinceId)
+        channel.push(Json.toJson(Command("msg", Some(msg))))
+      }
+    }
   }
 
 }

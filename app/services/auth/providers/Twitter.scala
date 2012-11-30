@@ -30,7 +30,7 @@ object Twitter extends OAuthProvider {
           profileImage))
     } catch {
       case _ : Throwable => {
-        Logger.error("Error during fetching user details TWITTER")
+        Logger.error("Error during fetching user details TWITTER (certainly Rate Limit Exceeded)")
         None
       }
     }

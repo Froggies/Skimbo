@@ -29,8 +29,6 @@ object Endpoints {
       Service("linkedin.wall", Configuration.Linkedin.wall))),
     Endpoint(GooglePlus, Seq(
       Service("googleplus.wall", Configuration.GooglePlus.wall))),
-      // must be a userId :'(
-      //Service("googleplus.user", Configuration.GooglePlus.user))),
     Endpoint(GitHub, Seq(
       Service("github.notifications", Configuration.Github.notifications))),
     Endpoint(Trello, Seq(
@@ -65,7 +63,7 @@ object Endpoints {
   }
 
   def genererUrl(endpoint: String, param: Map[String, String], sinceOpt: Option[String]): Option[String] = {
-    getConfig(endpoint).map { config =>
+    getConfig(endpoint).flatMap { config =>
       val isRequestValid = config.requiredParams.forall(param.get(_).isDefined) // Check if all required params are defined
       if (!isRequestValid) {
         Logger.error("Request invalid : all required params are not defined.")
@@ -74,11 +72,14 @@ object Endpoints {
         None
       }
 
-      val baseUrl = param.foldLeft(config.url)((url, param) => url.replace(":" + param._1, param._2)) // Generate url with params
-      if(!config.manualNextResults) {
-        sinceOpt.map(since => baseUrl + config.since.replace(":since", since)).getOrElse(baseUrl) // And "since" element to Url
+      // Generate url with params
+      val baseUrl = param.foldLeft(config.url)((url, param) => url.replace(":" + param._1, param._2))
+      
+      if (!config.manualNextResults) {
+        // And "since" element to Url
+        Some(sinceOpt.map(since => baseUrl + config.since.replace(":since", since)).getOrElse(baseUrl))
       } else {
-        baseUrl
+        Some(baseUrl)
       }
     }
   }

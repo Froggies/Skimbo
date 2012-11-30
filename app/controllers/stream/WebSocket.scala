@@ -20,13 +20,8 @@ object WebSocket extends Controller {
     val (out, channelClient) = Concurrent.broadcast[JsValue]
     UserInfosActor.create(userId, channelClient)
 
-    val in = Iteratee.foreach[JsValue]{ cmd =>
-      log.info("[WS] Command from client : "+cmd)
-      Commands.interpret(userId, cmd)
-    }.mapDone { _ =>
-      log.info("Disconnected")
-      UserInfosActor.killActorsForUser(userId)
-    }
+    val in = Iteratee.foreach[JsValue](cmd => Commands.interpret(userId, cmd))
+              .mapDone( _ => UserInfosActor.killActorsForUser(userId))
 
     (in, out)
   }
