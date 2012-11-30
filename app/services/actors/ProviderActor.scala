@@ -95,11 +95,11 @@ class ProviderActor(channel: Concurrent.Channel[JsValue],
 
       log.info("["+unifiedRequest.service+"] Fetching")
 
-      if (provider.hasToken(request) && parser.isDefined) {
+      if (provider.hasToken(request)) {
         val optSinceId = if (sinceId.isEmpty) None else Some(sinceId)
         val url = Endpoints.genererUrl(unifiedRequest.service, unifiedRequest.args.getOrElse(Map.empty), optSinceId);
         val config = Endpoints.getConfig(unifiedRequest.service).get
-
+            
         log.info("["+unifiedRequest.service+"] "+url.get)
 
         if (url.isDefined) {
@@ -114,35 +114,49 @@ class ProviderActor(channel: Concurrent.Channel[JsValue],
                 } else if(provider.isRateLimiteError(response)) {
                   channel.push(Json.toJson(Error(provider.name, "Rate limite exceeded on")))
                 } else {
-                  // TODO client send ??
                   channel.push(Json.toJson(Error(provider.name, "Error on")))
                 }
               } else {
-                val explodedMsgs = parser.get.cutSafe(response, provider)
-                if (explodedMsgs.isEmpty) {
-                  log.error("["+unifiedRequest.service+"] Unexpected result")
-                  log.info(response.body.toString)
-                  channel.push(Json.toJson(Error(provider.name, "Unexpected result on")))
-                } else {
-                  val skimboMsgs = explodedMsgs.get.map(jsonMsg => parser.get.asSkimboSafe(jsonMsg)).flatten
-                  val listJson = if (config.manualNextResults || config.mustBeReordered) reorderMessagesByDate(skimboMsgs) else skimboMsgs
-              
-                  log.info("["+unifiedRequest.service+"] Received messages : "+listJson.size)
-              
-                  val messages = Enumerator.enumerate(listJson)
-                  val ite = Iteratee.foreach { skimboMsg: Skimbo =>
-                  val msg = Json.obj("column" -> column.title, "msg" -> skimboMsg)
-                    if (config.manualNextResults) {
-                      if (skimboMsg.createdAt.isAfter(sinceDate)) {
-                        channel.push(Json.toJson(Command("msg", Some(msg))))
-                        sinceDate = skimboMsg.createdAt // TODO : utiliser uniquement SinceID (convertir date en string)
-                      }
+                config.format match {
+                  case "Json" => {
+                    val explodedMsgs = parser.get.cutSafe(response, provider)
+                    if (explodedMsgs.isEmpty) {
+                      log.error("["+unifiedRequest.service+"] Unexpected result")
+                      log.info(response.body.toString)
+                      channel.push(Json.toJson(Error(provider.name, "Unexpected result on")))
                     } else {
-                      sinceId = parser.get.nextSinceId(skimboMsg.sinceId, sinceId)
-                      channel.push(Json.toJson(Command("msg", Some(msg))))
+                      val skimboMsgs = explodedMsgs.get.map(jsonMsg => parser.get.asSkimboSafe(jsonMsg)).flatten
+                      val listJson = if (config.manualNextResults || config.mustBeReordered) reorderMessagesByDate(skimboMsgs) else skimboMsgs
+                  
+                      log.info("["+unifiedRequest.service+"] Received messages : "+listJson.size)
+                  
+                      val messages = Enumerator.enumerate(listJson)
+                      val ite = Iteratee.foreach { skimboMsg: Skimbo =>
+                      val msg = Json.obj("column" -> column.title, "msg" -> skimboMsg)
+                        if (config.manualNextResults) {
+                          if (skimboMsg.createdAt.isAfter(sinceDate)) {
+                            channel.push(Json.toJson(Command("msg", Some(msg))))
+                            sinceDate = skimboMsg.createdAt // TODO : utiliser uniquement SinceID (convertir date en string)
+                          }
+                        } else {
+                          sinceId = parser.get.nextSinceId(skimboMsg.sinceId, sinceId)
+                          channel.push(Json.toJson(Command("msg", Some(msg))))
+                        }
+                      }
+                      messages(ite)
                     }
                   }
-                  messages(ite)
+                  case "Xml" => {
+                    val elems = config.parserXml.get.cutSafe(response, provider).get
+                    val msg = elems.map(e => config.parserXml.get.toSkimbo(e))
+                    val messages = Enumerator.enumerate(msg)
+                      val ite = Iteratee.foreach { skimboMsg: Skimbo =>
+                      val msg = Json.obj("column" -> column.title, "msg" -> skimboMsg)
+                       
+                          channel.push(Json.toJson(Command("msg", Some(msg))))
+                      }
+                      messages(ite)
+                  }
                 }
               }
             }

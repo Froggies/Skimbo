@@ -4,6 +4,7 @@ import services.auth.GenericProvider
 import services.auth.providers
 import json.parser._
 import org.joda.time.format.DateTimeFormat
+import xml._
 
 object Configuration {
 
@@ -121,6 +122,19 @@ object Configuration {
       override val provider = providers.Scoopit
     }
   }
+  
+  object Experimental {
+    object test extends EndpointConfig {
+      override val url = ""
+      override val provider = providers.NoAuth
+      override val manualNextResults = true
+      override val delay = 800
+      override val requiredParams = List("url")
+      override val parserXml = Some(ParserAtom)
+      override val parser = Some(GoogleplusWallParser)
+      override val format = "Xml"
+    }
+  }
 }
 
 
@@ -133,7 +147,10 @@ trait EndpointConfig {
   val limit = 20
   val manualNextResults = false
   val parser: Option[GenericParser] = None
+  val parserXml: Option[GenericXmlParser] = None
   val mustBeReordered = false
+  val format: String = "Json"
 
   def withLimit(url: String) = url.replace(":limit", limit.toString)
+  
 }

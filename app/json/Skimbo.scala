@@ -4,6 +4,7 @@ import org.joda.time._
 import scala.util.parsing.json.JSONObject
 import play.api.libs.json._
 import services.auth.GenericProvider
+import scala.collection.immutable.List
 
 /**
 * Common format between social networks
@@ -29,7 +30,7 @@ object Skimbo {
         "authorScreenName" -> skimbo.authorScreenName,
         "message" -> skimbo.message,
         "createdAt" -> skimbo.createdAt.toDate().getTime().toString(),
-        "comments" -> List[String](),
+        "comments" -> List.empty[String],
         "shared" -> skimbo.shared,
         "directLink" -> skimbo.directLink,
         "sinceId" -> skimbo.sinceId,

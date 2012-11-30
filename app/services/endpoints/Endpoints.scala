@@ -34,7 +34,10 @@ object Endpoints {
     Endpoint(Trello, Seq(
       Service("trello.notifications", Configuration.Trello.notifications))),
     Endpoint(Scoopit, Seq(
-      Service("scoopit.notifications", Configuration.Scoopit.notifications))))
+      Service("scoopit.notifications", Configuration.Scoopit.notifications))),
+    Endpoint(NoAuth, Seq(
+      Service("noauth.xml", Configuration.Experimental.test)
+    )))
 
   def getAll: Seq[Endpoint] = {
     endpoints
@@ -63,7 +66,7 @@ object Endpoints {
   }
 
   def genererUrl(endpoint: String, param: Map[String, String], sinceOpt: Option[String]): Option[String] = {
-    getConfig(endpoint).map { config =>
+    getConfig(endpoint).flatMap { config =>
       val isRequestValid = config.requiredParams.forall(param.get(_).isDefined) // Check if all required params are defined
       if (!isRequestValid) {
         Logger.error("Request invalid : all required params are not defined.")
@@ -72,11 +75,15 @@ object Endpoints {
         None
       }
 
-      val baseUrl = param.foldLeft(config.url)((url, param) => url.replace(":" + param._1, param._2)) // Generate url with params
-      if(!config.manualNextResults) {
-        sinceOpt.map(since => baseUrl + config.since.replace(":since", since)).getOrElse(baseUrl) // And "since" element to Url
+      if (config.url.isEmpty()) {
+        Some(param("url"))
       } else {
-        baseUrl
+        val baseUrl = param.foldLeft(config.url)((url, param) => url.replace(":" + param._1, param._2)) // Generate url with params
+        if(!config.manualNextResults) {
+          Some(sinceOpt.map(since => baseUrl + config.since.replace(":since", since)).getOrElse(baseUrl)) // And "since" element to Url
+        } else {
+          Some(baseUrl)
+        }
       }
     }
   }

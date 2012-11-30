@@ -32,7 +32,7 @@ object Service {
           "args" -> service.configuration.requiredParams,
           "hasParser" -> service.configuration.parser.isDefined
         )),
-        "hasToken" -> endpoint.provider.hasToken
+        "hasToken" -> endpoint.provider.hasToken 
       )
     }
     Json.toJson(jsonUnifiedRequests)
