@@ -90,5 +90,5 @@ object ViadeoWallMessage {
     (__ \ "message").readOpt[String] and
     (__ \ "picture").readOpt[String] and
     (__ \ "updated_time").read[DateTime](Reads.jodaDateReads(datePattern)) and
-    (__ \ "infeed_link").readOpt[String])(ViadeoWallMessage.apply _)
+    ((__ \ "infeed_link").readOpt[String] or (__ \ "on" \ "link").readOpt[String]))(ViadeoWallMessage.apply _)
 }
