@@ -48,12 +48,8 @@ How to install ?
 **Installation :**
 
 - Get the project
-- Add your secret keys for all the social networks in a file called : "**my-social.conf**" with the following structure : https://gist.github.com/4172803
--  You can add Linkedin for example, which does not check the domain
-    linkedin {
-        clientId=4flcxt37xsmp
-        secret=GYaqtVNMcBaY0ytZ
-    }
+- Add your secret keys for all the social networks in a file called : "**conf/my-social.conf**" with the following structure : https://gist.github.com/4172803
+- You can add Linkedin for example, which does not check the domain (https://gist.github.com/3c2b283adf15be148fdf), or create your own apps (oauth1/2 token)
 - Start mongoDB server (mongoDb conf can be modified in application.conf)
 - cd Skimbo
 - play run
