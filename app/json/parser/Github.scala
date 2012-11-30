@@ -79,7 +79,7 @@ object GithubWallParser extends GenericParser {
         } else {
           "New download: " + e.download.get.name
         }
-      case _ => "TOD type on " + e.repoName + " : " + e.typeGithub
+      case _ => "TODO type on " + e.repoName + " : " + e.typeGithub
     }
   }
 
