@@ -47,7 +47,7 @@ publicApp.controller('ColumnsCtrl', function($scope, $http) {
       }, false);
 
       source.addEventListener('open', function(e) {console.log('sse socket ouverte');}, false);
-      source.addEventListener('error', function(e) {console.log('sse Une erreur est survenue');}, false);
+      source.addEventListener('error', function(e) {source.close(); console.log('sse Une erreur est survenue');}, false);
     }
     
     var socket;
