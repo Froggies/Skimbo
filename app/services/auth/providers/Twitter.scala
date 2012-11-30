@@ -37,6 +37,8 @@ object Twitter extends OAuthProvider {
   }
   
   override def isInvalidToken(response: Response): Boolean = response.status != 429
+  
+  override def isRateLimiteError(response: Response): Boolean = response.status == 429
 
 }
 

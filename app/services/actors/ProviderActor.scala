@@ -19,6 +19,7 @@ import services.endpoints.JsonRequest.UnifiedRequest
 import json.Skimbo
 import play.api.http.Status
 import scala.util._
+import models.command.Error
 
 sealed case class Ping(idUser: String)
 sealed case class Dead(idUser: String)
@@ -110,13 +111,18 @@ class ProviderActor(channel: Concurrent.Channel[JsValue],
                 log.info(response.body.toString)
                 if (provider.isInvalidToken(response)) {
                   channel.push(Json.toJson(TokenInvalid(provider.name)))
+                } else if(provider.isRateLimiteError(response)) {
+                  channel.push(Json.toJson(Error(provider.name, "Rate limite exceeded on")))
+                } else {
+                  // TODO client send ??
+                  channel.push(Json.toJson(Error(provider.name, "Error on")))
                 }
               } else {
                 val explodedMsgs = parser.get.cutSafe(response, provider)
                 if (explodedMsgs.isEmpty) {
                   log.error("["+unifiedRequest.service+"] Unexpected result")
                   log.info(response.body.toString)
-                  // channel.push(something???) // TODO
+                  channel.push(Json.toJson(Error(provider.name, "Unexpected result on")))
                 } else {
                   val skimboMsgs = explodedMsgs.get.map(jsonMsg => parser.get.asSkimboSafe(jsonMsg)).flatten
                   val listJson = if (config.manualNextResults || config.mustBeReordered) reorderMessagesByDate(skimboMsgs) else skimboMsgs
@@ -143,6 +149,7 @@ class ProviderActor(channel: Concurrent.Channel[JsValue],
 
             case Failure(error) => {
               log.error("["+unifiedRequest.service+"] Timeout HTTP", error)
+              channel.push(Json.toJson(Error(provider.name, "Timeout on")))
             }
           }
         }
@@ -152,7 +159,7 @@ class ProviderActor(channel: Concurrent.Channel[JsValue],
         self ! Dead(idUser)
       } else {
         log.error("Provider " + provider.name + " havn't parser for " + unifiedRequest.service)
-        channel.push(Json.toJson(Command("error", Some(JsString("provider havn't parser")))))
+        channel.push(Json.toJson(Error(provider.name, "No parser on")))
         self ! Dead(idUser)
       }
     }

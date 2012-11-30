@@ -16,4 +16,6 @@ trait WsProvider {
   
   def isInvalidToken(response: Response): Boolean =  response.body.contains("token")
   
+  def isRateLimiteError(response: Response): Boolean =  response.body.contains("rate")
+  
 }

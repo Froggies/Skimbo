@@ -250,6 +250,20 @@ publicApp.controller('ColumnsCtrl', function($scope, $http) {
         return "";
     }
 
+    $scope.clickOnNotification = function(notification) {
+      if(notification.isError == false) {
+        $scope.reconnect(notification.providerName);
+      } else {
+        for (var i = 0; i < $scope.notifications.length; i++) {
+          var notif = $scope.notifications[i];
+          if(notification.providerName == notif.providerName && notification.msg == notif.msg) {
+            $scope.notifications.splice(i, 1);
+            return;
+          }
+        };
+      }
+    }
+
     $scope.reconnect = function(socialNetworkName) {
       $scope.openPopup({"socialNetwork": socialNetworkName});
     }
@@ -554,6 +568,9 @@ function executeCommand(data) {
           }
         };
         if(!notificationExiste) {
+          data.body.title = "You have been disconnected from";
+          data.body.footer = "Click here to be connected again.";
+          data.body.isError = false;
           $scope.notifications.push(data.body);
         }
       });
@@ -575,8 +592,19 @@ function executeCommand(data) {
           };
         }
       });
-    }
-    else if(data.cmd != "modColumn") {
+    } else if(data.cmd == "error") {
+      $scope.$apply(function() {
+        if($scope.notifications == undefined) {
+          $scope.notifications = [];
+        }
+        var error = {};
+        error.title = data.body.msg;
+        error.providerName = data.body.providerName;
+        error.footer = "Click here to hide error.";
+        error.isError = true;
+        $scope.notifications.push(error);
+      });
+    } else if(data.cmd != "modColumn") {
       console.log("Command not yet implemented: ", data);
     }
 }
