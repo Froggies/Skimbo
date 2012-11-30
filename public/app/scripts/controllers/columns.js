@@ -289,11 +289,21 @@ publicApp.controller('ColumnsCtrl', function($scope, $http) {
       }
       
       var newwindow = window.open("/auth/"+service.socialNetwork, 'Connexion', 'height='+height+', width='+width+', left='+left+', top='+top);
+      window.callMeToRefresh = function() {
+        var col = _column;
+        var serv = _service;
+        $http.get("/api/providers/services").success(function(data) {
+            if(col != undefined) {
+              var clientUnifiedRequest = serverToUnifiedRequest(serv.service);
+              col.unifiedRequests.push(clientUnifiedRequest);
+            }
+          });
+      }
 
       if (newwindow !== undefined) {
         if (window.focus) newwindow.focus();
         
-        newwindow.onclose = function() {
+        /*newwindow.onclose = function() {
           $http.get("/api/providers/services").success(function(data) {
             if(_column != undefined) {
               var clientUnifiedRequest = serverToUnifiedRequest(_service.service);
@@ -308,7 +318,7 @@ publicApp.controller('ColumnsCtrl', function($scope, $http) {
               _column.unifiedRequests.push(clientUnifiedRequest);
             }
           });
-        };
+        };*/
       }
       return false;
     }
@@ -546,7 +556,7 @@ function executeCommand(data) {
       });
     }
     else if(data.cmd != "modColumn") {
-      console.error("cmd not found : ", data);
+      console.log("Command not yet implemented: ", data);
     }
 }
 
