@@ -24,7 +24,13 @@ publicApp.controller('ColumnsCtrl', function($scope, $http) {
 
     }
 
-    var isPageVisible = document.hasFocus();
+    var isPageVisible = true;
+    try {
+      isPageVisible = document.hasFocus();
+    } catch(error) {
+      isPageVisible = true;
+    }
+    
     var nbNewMessages = 0;
     pageVisibility(switchPageVisible, switchPageInvisible);
 
