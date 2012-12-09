@@ -1,6 +1,6 @@
 'use strict';
 
-publicApp.controller('HeaderCtrl', function($scope, $http) {
+publicApp.controller('HeaderController', function($scope, $http) {
 
 	$scope.deleteProvider = function(providerName) {
       $http.get("/api/providers/del/"+providerName).success(function() {

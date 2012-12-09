@@ -2,7 +2,7 @@
     <link rel="stylesheet" media="screen" href="@routes.Assets.at("app/styles/logged.css")"/>
 } {
 
-	<div ng-app="publicApp" ng-controller="MainCtrl">
+	<div ng-app="publicApp" ng-controller="MainController">
 
         <header class="banner" ng-include="'@routes.Assets.at("app/views/header.html")'"></header>
 
@@ -16,10 +16,15 @@
 		<script src="@routes.Assets.at("app/scripts/vendor/whoareyou.js")"></script>
 		
         <!-- build:js scripts/scripts.js -->
-        <script src="@routes.Assets.at("app/scripts/public.js")"></script>
-        <script src="@routes.Assets.at("app/scripts/controllers/main.js")"></script>
-        <script src="@routes.Assets.at("app/scripts/controllers/header.js")"></script>
-        <script src="@routes.Assets.at("app/scripts/controllers/columns.js")"></script>
+        <script src="@routes.Assets.at("javascripts/public.js")"></script>
+
+        <script src="@routes.Assets.at("javascripts/services/package.js")"></script>
+        <script src="@routes.Assets.at("javascripts/controllers/package.js")"></script>
+
+        <script src="@routes.Assets.at("javascripts/services/StringUtils.js")"></script>
+        <script src="@routes.Assets.at("javascripts/controllers/MainController.js")"></script>
+        <script src="@routes.Assets.at("javascripts/controllers/HeaderController.js")"></script>
+        <script src="@routes.Assets.at("javascripts/controllers/ColumnController.js")"></script>
         <script src="@routes.Assets.at("app/scripts/controllers/translation.js")"></script>
         <!-- endbuild -->
 
