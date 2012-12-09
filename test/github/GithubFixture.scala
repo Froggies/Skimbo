@@ -329,6 +329,39 @@ object GithubFixture {
     ]
     """
     
+  val miniGollumnEvent = 
+    """
+  {
+    "type":"GollumEvent",
+    "org":{
+      "id":2130294,
+      "url":"https://api.github.com/orgs/Froggies",
+      "login":"Froggies",
+      "avatar_url":"https://secure.gravatar.com/avatar/6562ef61dbcfb7174e9adb63f38345e7?d=https://a248.e.akamai.net/assets.github.com%2Fimages%2Fgravatars%2Fgravatar-org-420.png",
+      "gravatar_id":"6562ef61dbcfb7174e9adb63f38345e7"},
+    "actor":{
+      "id":1492516,
+      "url":"https://api.github.com/users/manland",
+      "login":"manland",
+      "avatar_url":"https://secure.gravatar.com/avatar/c6b552a4cd47f7cf1701ea5b650cd2e3?d=https://a248.e.akamai.net/assets.github.com%2Fimages%2Fgravatars%2Fgravatar-user-420.png",
+      "gravatar_id":"c6b552a4cd47f7cf1701ea5b650cd2e3"},
+    "repo":{
+      "id":6017536,
+      "url":"https://api.github.com/repos/Froggies/Skimbo",
+      "name":"Froggies/Skimbo"},
+    "public":true,
+    "payload":{
+      "pages":[{
+        "action":"created",
+        "sha":"af6f3d5d5ca5a128b40b9e297a7dd55e7284da3c",
+        "html_url":"https://github.com/Froggies/Skimbo/wiki/Features",
+        "summary":null,
+        "page_name":"Features",
+        "title":"Features"}]},
+    "created_at":"2012-12-09T12:34:08Z",
+    "id":"1639167048"}
+    """
+    
   val timeline = 
     """
 [

@@ -59,7 +59,7 @@ publicApp.controller('ColumnsCtrl', function($scope, $http) {
     if(window.MozWebSocket) {
         window.WebSocket=window.MozWebSocket;
     }
-    if(!window.WebSocket) {
+    if(true /*!window.WebSocket*/) {
         $scope.sseMode();
     } else {
         socket = new WebSocket(wshost);
