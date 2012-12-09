@@ -362,6 +362,31 @@ object GithubFixture {
     "id":"1639167048"}
     """
     
+  val miniWatchEvent = 
+    """
+  {"type":"WatchEvent",
+    "org":{
+      "id":2130294,
+      "url":"https://api.github.com/orgs/Froggies",
+      "login":"Froggies",
+      "avatar_url":"https://secure.gravatar.com/avatar/6562ef61dbcfb7174e9adb63f38345e7?d=https://a248.e.akamai.net/assets.github.com%2Fimages%2Fgravatars%2Fgravatar-org-420.png",
+      "gravatar_id":"6562ef61dbcfb7174e9adb63f38345e7"},
+    "actor":{
+      "id":2130753,
+      "url":"https://api.github.com/users/Adedib",
+      "login":"Adedib",
+      "avatar_url":"https://secure.gravatar.com/avatar/7be780eff9db7c2496db48645642c02a?d=https://a248.e.akamai.net/assets.github.com%2Fimages%2Fgravatars%2Fgravatar-user-420.png",
+      "gravatar_id":"7be780eff9db7c2496db48645642c02a"},
+    "repo":{
+      "id":6017536,
+      "url":"https://api.github.com/repos/Froggies/Skimbo",
+      "name":"Froggies/Skimbo"},
+    "public":true,
+    "payload":{"action":"started"},
+    "created_at":"2012-12-09T17:33:36Z",
+    "id":"1639219457"}
+    """
+    
   val timeline = 
     """
 [
