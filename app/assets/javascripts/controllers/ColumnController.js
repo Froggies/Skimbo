@@ -1,6 +1,6 @@
 'use strict';
 
-publicApp.controller('ColumnsCtrl', function($scope, $http) {
+controllers.controller('ColumnController', ["$scope", "StringUtils", "$http", function($scope, stringUtils, $http) {
 
     //chrome memory leak !!!
     $scope.$destroy= function() {
@@ -414,22 +414,6 @@ function checkExistingImage(image) {
 
 var urlexp = /(http|ftp|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?/gi;
 
-function urlify(msg) {
-  var text = msg.message;
-  return text.replace(urlexp, function(url) {
-    return '<a class="link-into-message '+msg.from+'" href="' + url + '" target="_blank">∞</a>';
-  });
-}
-
-function truncateString(chaine) {
-  if(chaine.length > 140 && !urlexp.test(chaine)) { 
-    return String(chaine).substring(0, 140)+"...";
-  }
-  else {
-    return chaine;
-  }
-}
-
 function notifyNewMessage() {
   if (!isPageVisible) {
     nbNewMessages += 1;
@@ -493,8 +477,8 @@ function executeCommand(data) {
             data.body.msg.authorAvatar = checkExistingImage(data.body.msg.authorAvatar);
 
             data.body.msg.original = data.body.msg.message;
-            data.body.msg.message = truncateString(data.body.msg.message);
-            data.body.msg.message = urlify(data.body.msg);
+            data.body.msg.message = stringUtils.truncateString(data.body.msg.message);
+            data.body.msg.message = stringUtils.urlify(data.body.msg);
 
             column.messages.push(data.body.msg);
             var insertSort = function(sortMe) {
@@ -666,7 +650,7 @@ function executeCommand(data) {
     return serverUnifiedRequest;
   }
 
-});
+}]);
 
 
 
