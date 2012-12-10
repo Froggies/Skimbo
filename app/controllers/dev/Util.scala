@@ -11,6 +11,7 @@ import services.security.Authentication
 import scala.concurrent.ExecutionContext.Implicits.global
 import play.api.Play.current
 import models.user.SkimboToken
+import views.html.defaultpages.badRequest
 
 object Util extends Controller with Authentication {
 
@@ -84,17 +85,19 @@ object Util extends Controller with Authentication {
     }
   }
 
-  def invalidToken(providerName: String) = Action { implicit request =>
+  def invalidToken(providerName: String, pwd: String) = Action { implicit request =>
     import scala.concurrent.ExecutionContext.Implicits.global
-    ProviderDispatcher(providerName).map { provider =>
-      UserDao.findAll().map { users =>
-        val userWithProvider = users.filter { user =>
-          user.distants.map(_.exists { distant =>
-            distant.socialType == providerName
-          }).getOrElse(false)
-        }
-        userWithProvider.map { user =>
-          UserDao.setToken(user.accounts.head.id, provider, SkimboToken("1"), None);
+    if (pwd == current.configuration.getString("pwdDelAllDb").get) {
+      ProviderDispatcher(providerName).map { provider =>
+        UserDao.findAll().map { users =>
+          val userWithProvider = users.filter { user =>
+            user.distants.map(_.exists { distant =>
+              distant.socialType == providerName
+            }).getOrElse(false)
+          }
+          userWithProvider.map { user =>
+            UserDao.setToken(user.accounts.head.id, provider, SkimboToken("1"), None);
+          }
         }
       }
     }
