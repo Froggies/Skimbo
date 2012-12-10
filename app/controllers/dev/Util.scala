@@ -10,7 +10,8 @@ import play.api.libs.json.Json
 import services.security.Authentication
 import scala.concurrent.ExecutionContext.Implicits.global
 import play.api.Play.current
-      
+import models.user.SkimboToken
+
 object Util extends Controller with Authentication {
 
   def testRes(service: String) = Action { implicit request =>
@@ -24,7 +25,7 @@ object Util extends Controller with Authentication {
       }.getOrElse(future(BadRequest("Service not found")))
     }
   }
-  
+
   def staticRes() = Action { implicit request =>
     import scala.concurrent.ExecutionContext.Implicits.global
     Async {
@@ -82,5 +83,22 @@ object Util extends Controller with Authentication {
       }.getOrElse(future(Ok("Provider not found")))
     }
   }
-  
+
+  def invalidToken(providerName: String) = Action { implicit request =>
+    import scala.concurrent.ExecutionContext.Implicits.global
+    ProviderDispatcher(providerName).map { provider =>
+      UserDao.findAll().map { users =>
+        val userWithProvider = users.filter { user =>
+          user.distants.map(_.exists { distant =>
+            distant.socialType == providerName
+          }).getOrElse(false)
+        }
+        userWithProvider.map { user =>
+          UserDao.setToken(user.accounts.head.id, provider, SkimboToken("1"), None);
+        }
+      }
+    }
+    Ok("ok")
+  }
+
 }

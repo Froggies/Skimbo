@@ -34,9 +34,15 @@ object UserDao {
     collection.find(query).toList
   }
 
-  def findOneById(id: String): Future[Option[models.User]] = {
-    val query = BSONDocument("accounts.id" -> new BSONString(id))
+  def findOneById(idUser: String): Future[Option[models.User]] = {
+    val query = BSONDocument("accounts.id" -> new BSONString(idUser))
     collection.find(query).headOption()
+  }
+  
+  def updateLastUse(idUser: String) = {
+    val query = BSONDocument("accounts.id" -> new BSONString(idUser))
+    val account = Account(idUser, new Date())
+    collection.update(query, Account.toBSON(account))
   }
 
   def addAccount(user: models.User, account: models.user.Account) = {

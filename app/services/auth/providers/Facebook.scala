@@ -5,6 +5,7 @@ import play.api.mvc._
 import services.auth._
 import models.user.ProviderUser
 import models.user.SkimboToken
+import play.api.libs.ws.Response
 
 object Facebook extends OAuth2Provider {
 

@@ -24,6 +24,7 @@ GET		/api/dev/util/delDb				controllers.dev.Util.deleteUser
 GET		/api/dev/util/delAllDb/:pwd		controllers.dev.Util.deleteAllUsers(pwd: String)
 GET		/api/dev/util/userRes/:p		controllers.dev.Util.userRes(p: String)
 GET		/api/dev/util/userDistant/:p	controllers.dev.Util.userDistantRes(p: String)
+GET		/api/dev/util/invalidToken/:p	controllers.dev.Util.invalidToken(p: String)
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               	controllers.Assets.at(path="/public", file)
