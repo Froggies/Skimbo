@@ -11,8 +11,9 @@ object Facebook extends OAuth2Provider {
   override val name = "facebook"
   override val namespace = "fb"
   override val permissions: Seq[String] = Seq(
-    "email",      // Get user email
-    "read_stream" // Get wall activity
+    "email",       // Get user email
+    "read_stream", // Get wall activity
+    "read_mailbox" // Get perso mails
   )
   override val additionalAccreditationParameters = Map(
     "display" -> "popup"

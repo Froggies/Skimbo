@@ -52,7 +52,6 @@ object FacebookWallParser extends GenericParser {
 }
 
 object FacebookWallMessage {
-
   implicit val facebookReader: Reads[FacebookWallMessage] = (
     (__ \ "id").read[String] and
     (__ \ "from" \ "name").read[String] and

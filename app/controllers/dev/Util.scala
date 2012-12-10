@@ -28,8 +28,8 @@ object Util extends Controller with Authentication {
   def staticRes() = Action { implicit request =>
     import scala.concurrent.ExecutionContext.Implicits.global
     Async {
-      Endpoints.getConfig("github.notifications").flatMap { config =>
-        Endpoints.genererUrl("github.notifications", Map("username" -> "froggies"), None).map { url =>
+      Endpoints.getConfig("facebook.message").flatMap { config =>
+        Endpoints.genererUrl("facebook.message", Map.empty, None).map { url =>
           config.provider.fetch(url).get.map { response =>
             Ok(config.provider.resultAsJson(response))
           }

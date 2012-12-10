@@ -51,6 +51,7 @@ object Configuration {
       override val delay = 30
       override val provider = providers.Facebook
       override val requiredParams = List("username")
+      override val parser = Some(FacebookWallParser)
       override val mustBeReordered = true
     }
     object group extends EndpointConfig {
@@ -59,6 +60,15 @@ object Configuration {
       override val delay = 30
       override val provider = providers.Facebook
       override val requiredParams = List("groupId")
+      override val parser = Some(FacebookWallParser)
+      override val mustBeReordered = true
+    }
+    object message extends EndpointConfig {
+      override val url = withLimit("https://graph.facebook.com/me/inbox?limit=:limit")
+      override val since = wall.since
+      override val delay = 30
+      override val provider = providers.Facebook
+      override val parser = Some(FacebookInboxParser)
       override val mustBeReordered = true
     }
   }

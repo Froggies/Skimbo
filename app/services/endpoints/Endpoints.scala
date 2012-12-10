@@ -21,7 +21,8 @@ object Endpoints {
     Endpoint(Facebook, Seq(
       Service("facebook.wall", Configuration.Facebook.wall),
       Service("facebook.user", Configuration.Facebook.user),
-      Service("facebook.group", Configuration.Facebook.group)
+      Service("facebook.group", Configuration.Facebook.group),
+      Service("facebook.message", Configuration.Facebook.message)
       )),
     Endpoint(Viadeo, Seq(
       Service("viadeo.wall", Configuration.Viadeo.wall))),
