@@ -8,6 +8,7 @@ import play.api.mvc.Controller
 import services.actors.UserInfosActor
 import services.commands.Commands
 import play.api.PlayException
+import services.UserDao
 
 object WebSocket extends Controller {
 
@@ -20,6 +21,8 @@ object WebSocket extends Controller {
     val (out, channelClient) = Concurrent.broadcast[JsValue]
     UserInfosActor.create(userId, channelClient)
 
+    UserDao.updateLastUse(userId)
+    
     val in = Iteratee.foreach[JsValue](cmd => Commands.interpret(userId, cmd))
               .mapDone( _ => UserInfosActor.killActorsForUser(userId))
 

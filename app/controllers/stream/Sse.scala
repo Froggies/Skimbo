@@ -9,6 +9,7 @@ import services.commands.Commands
 import models.command.Command
 import play.api.libs.json.Json
 import services.security.Authentication
+import services.UserDao
 
 object Sse extends Controller with Authentication {
 
@@ -24,8 +25,10 @@ object Sse extends Controller with Authentication {
   }
 
   def connect() = Authenticated { user => implicit request =>
+    val userId = user.accounts.head.id
     val (out, channelClient) = Concurrent.broadcast[JsValue]
-    UserInfosActor.create(user.accounts.last.id, channelClient)
+    UserInfosActor.create(userId, channelClient)
+    UserDao.updateLastUse(userId)
     Ok.stream(out &> EventSource()).as(play.api.http.ContentTypes.EVENT_STREAM)
   }
 

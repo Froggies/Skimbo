@@ -41,8 +41,17 @@ object UserDao {
   
   def updateLastUse(idUser: String) = {
     val query = BSONDocument("accounts.id" -> new BSONString(idUser))
-    val account = Account(idUser, new Date())
-    collection.update(query, Account.toBSON(account))
+    findOneById(idUser).map(_.map { user =>
+      val accounts:Seq[Account] = user.accounts.map { account =>
+        if(account.id == idUser) {
+          models.user.Account(idUser, new Date())
+        } else {
+          account
+        }
+      }
+      val u = models.User(accounts, user.distants, user.columns)
+      collection.update(query, models.User.toBSON(u))
+    })
   }
 
   def addAccount(user: models.User, account: models.user.Account) = {
