@@ -28,7 +28,9 @@ object Sse extends Controller with Authentication {
     val userId = user.accounts.head.id
     val (out, channelClient) = Concurrent.broadcast[JsValue]
     UserInfosActor.create(userId, channelClient)
+    
     UserDao.updateLastUse(userId)
+    
     Ok.stream(out &> EventSource()).as(play.api.http.ContentTypes.EVENT_STREAM)
   }
 
