@@ -62,8 +62,8 @@ object LinkedInWallParser extends GenericParser {
 
   def mustBeIgnored(msg: LinkedInWallMessage) = {
     (msg.person.isEmpty) || 
-    (!List("STAT", "CONN", "NCON", "MSFC", "JGRP", "PICU", "PROF").contains(msg.updateType))
-    (msg.updateType == "CONN" && msg.person.get.connections.head.firstName == "private") || 
+    (!List("STAT", "CONN", "NCON", "MSFC", "JGRP", "PICU", "PROF").contains(msg.updateType)) ||
+    (msg.updateType == "CONN" && !msg.person.get.connections.isEmpty && msg.person.get.connections.head.firstName == "private") || 
     (msg.updateType == "STAT" && msg.person.get.currentStatus.isEmpty)
   }
 
