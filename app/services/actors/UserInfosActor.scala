@@ -53,6 +53,15 @@ object UserInfosActor {
   def refreshInfosUser(userId: String, provider: GenericProvider) = {
     system.eventStream.publish(RefreshInfosUser(userId, provider))
   }
+  
+  def restartProviderColumns(userId: String, provider: GenericProvider) = {
+    UserDao.findOneById(userId).map(_.map { user =>
+      user.columns.map(
+          _.filter( 
+              _.unifiedRequests.exists( 
+                  _.service.startsWith(provider.name))).foreach(startProfiderFor(userId, _)))
+    })
+  }
 
 }
 

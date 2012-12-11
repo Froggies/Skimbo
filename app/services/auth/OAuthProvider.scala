@@ -51,6 +51,7 @@ trait OAuthProvider extends GenericProvider {
               UserDao.setToken(session("id"), this, SkimboToken(t.token, Some(t.secret)))
               Commands.interpretCmd(session("id"), NewToken.asCommand(this))
               UserInfosActor.refreshInfosUser(session("id"), this)
+              UserInfosActor.restartProviderColumns(session("id"), this)
               Redirect(redirectRoute).withSession(session)
             }
           case Left(e)  => Redirect(redirectRoute).flashing("login-error" -> name)

@@ -108,6 +108,7 @@ trait OAuth2Provider extends GenericProvider {
               UserDao.setToken(session("id"), this, SkimboToken(token))
               Commands.interpretCmd(session("id"), NewToken.asCommand(this))
               UserInfosActor.refreshInfosUser(session("id"), this)
+              UserInfosActor.restartProviderColumns(session("id"), this)
               Redirect(redirectRoute).withSession(session)
             }   
 
