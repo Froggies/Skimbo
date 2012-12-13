@@ -34,6 +34,26 @@ object Configuration {
       override val parser = Some(TwitterHashtagParser)
       override val mustBeReordered = true
     }
+    object directMessage extends EndpointConfig {
+      override val url = withLimit("https://api.twitter.com/1.1/direct_messages.json?count=:limit")
+      override val since = wall.since
+      override val delay = 80
+      override val provider = providers.Twitter
+      override val parser = Some(TwitterDirectMessageParser)
+    }
+    object messageToMe extends EndpointConfig {
+      override val url = withLimit("https://api.twitter.com/1.1/statuses/mentions_timeline.json?count=:limit")
+      override val since = "&since_id=:since"//ID
+      override val delay = 80
+      override val provider = providers.Twitter
+      override val parser = Some(TwitterTimelineParser)
+    }
+    object connect extends EndpointConfig {
+      override val url = "https://api.twitter.com/1.1/friends/ids.json"
+      override val delay = 80
+      override val provider = providers.Twitter
+      //override val parser = Some(TwitterConnectParser)//more complexe than expected
+    }
   }
 
   object Facebook {

@@ -34,7 +34,7 @@ object TwitterTimelineParser extends GenericParser {
 
   override def asSkimbo(json: JsValue): Option[Skimbo] = {
     Json.fromJson[Tweet](json).fold(
-      error => logParseError(json, error, "ViadeoWallMessage"),
+      error => logParseError(json, error, "TwitterTimelineParser"),
       tweet => Some(Skimbo(
         tweet.authorName,
         tweet.screenName,

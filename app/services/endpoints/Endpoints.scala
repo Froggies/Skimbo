@@ -17,7 +17,10 @@ object Endpoints {
     Endpoint(Twitter, Seq(
       Service("twitter.wall", Configuration.Twitter.wall),
       Service("twitter.hashtag", Configuration.Twitter.hashtag),
-      Service("twitter.user", Configuration.Twitter.user))),
+      Service("twitter.user", Configuration.Twitter.user),
+      Service("twitter.directMessage", Configuration.Twitter.directMessage),
+      Service("twitter.messageToMe", Configuration.Twitter.messageToMe),
+      Service("twitter.connect", Configuration.Twitter.connect))),
     Endpoint(Facebook, Seq(
       Service("facebook.wall", Configuration.Facebook.wall),
       Service("facebook.user", Configuration.Facebook.user),
