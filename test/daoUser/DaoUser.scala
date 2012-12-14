@@ -26,7 +26,7 @@ object UtilTest {
   }
   
   def makeColumn(title:String, urService:String, urArg1:String, urArg2:String) = {
-    Column(title, Seq(UnifiedRequest(urService, Some(Map(urArg1 -> urArg2)))))
+    Column(title, Seq(UnifiedRequest(urService, Some(Map(urArg1 -> urArg2)))), 0, -1, -1)
   }
   
 }

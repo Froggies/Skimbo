@@ -182,7 +182,10 @@ publicApp.controller('ColumnsCtrl', function($scope, $http) {
         json = {"cmd":"addColumn", 
                 "body":{
                   "title":column.title,
-                  "unifiedRequests": unifiedRequests
+                  "unifiedRequests": unifiedRequests,
+                  "index":0,
+                  "width":-1,
+                  "height":-1
                 }
               };
       }

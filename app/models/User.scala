@@ -46,6 +46,10 @@ object User {
     def asString(doc: TraversableBSONDocument, key: String): String = {
       doc.getAs[BSONString](key).get.value
     }
+    
+    def asInt(doc: TraversableBSONDocument, key: String) : Int = {
+      doc.getAs[BSONInteger](key).get.value
+    }
 
     def fromBSON(document: BSONDocument): User = {
       val accounts = tableTo[Account](document, "accounts", { a =>
@@ -67,7 +71,8 @@ object User {
           )
           UnifiedRequest(asString(r, "service"), if (args.nonEmpty) Some(args) else None) 
         })
-        Column(asString(c, "title"), unifiedRequests)
+        Column(asString(c, "title"), unifiedRequests, 
+            asInt(c, "index"), asInt(c, "width"), asInt(c, "height"))
       })
       User(accounts, Some(providers), Some(columns))
     }
