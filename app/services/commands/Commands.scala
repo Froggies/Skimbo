@@ -10,6 +10,7 @@ import play.api.libs.json._
 import play.api.mvc.RequestHeader
 import services.actors.UserInfosActor
 import services.actors.ProviderActor
+import services.actors.PingActor
 
 object Commands {
 
@@ -68,6 +69,9 @@ object Commands {
       }
       case "newToken" => {
         UserInfosActor.sendTo(idUser, Json.toJson(cmd))
+      }
+      case "pong" => {
+        PingActor.ping(idUser);
       }
       case _ => {
         Logger.error("Command not found " + cmd)

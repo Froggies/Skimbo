@@ -22,7 +22,6 @@ import scala.util._
 import models.command.Error
 import services.endpoints.EndpointConfig
 
-sealed case class Ping(idUser: String)
 sealed case class Dead(idUser: String)
 sealed case class DeadColumn(idUser: String, columnTitle: String)
 sealed case class DeadProvider(idUser: String, providerName: String)
@@ -42,7 +41,7 @@ object ProviderActor {
       endpoint match {
         case Some((provider, time, parser)) => {
           val actor = system.actorOf(Props(
-            new ProviderActor(channel, provider, unifiedRequest, time, userId, false, parser, column)))
+            new ProviderActor(channel, provider, unifiedRequest, time, userId, parser, column)))
           system.eventStream.subscribe(actor, classOf[Dead])
           system.eventStream.subscribe(actor, classOf[DeadColumn])
           system.eventStream.subscribe(actor, classOf[Ping])
@@ -52,10 +51,6 @@ object ProviderActor {
       }
 
     }
-  }
-
-  def ping(userId: String) = {
-    system.eventStream.publish(Ping(userId))
   }
 
   def killActorsForUser(userId: String) = {
@@ -76,7 +71,7 @@ class ProviderActor(channel: Concurrent.Channel[JsValue],
   provider: GenericProvider, 
   unifiedRequest: UnifiedRequest, 
   delay: Int,
-  idUser: String, longPolling: Boolean,
+  idUser: String,
   parser: Option[GenericParser] = None, 
   column: Column)(implicit request: RequestHeader) extends Actor {
 
@@ -90,10 +85,6 @@ class ProviderActor(channel: Concurrent.Channel[JsValue],
 
   def receive = {
     case ReceiveTimeout => {
-      if (longPolling) {
-        scheduler.cancel() //need ping to call provider
-      }
-
       log.info("["+unifiedRequest.service+"] Fetching")
 
       if (provider.hasToken(request) && parser.isDefined) {
@@ -150,13 +141,6 @@ class ProviderActor(channel: Concurrent.Channel[JsValue],
       }
     }
 
-    case Ping(id) => {
-      if (id == idUser) {
-        Akka.system.scheduler.scheduleOnce(delay second) {
-          self ! ReceiveTimeout
-        }
-      }
-    }
     case Dead(id) => {
       if (id == idUser) {
         scheduler.cancel()
