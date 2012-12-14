@@ -59,7 +59,7 @@ publicApp.controller('ColumnsCtrl', function($scope, $http) {
     if(window.MozWebSocket) {
         window.WebSocket=window.MozWebSocket;
     }
-    if(true /*!window.WebSocket*/) {
+    if(!window.WebSocket) {
         $scope.sseMode();
     } else {
         socket = new WebSocket(wshost);
@@ -625,6 +625,9 @@ function executeCommand(data) {
         error.isError = true;
         $scope.notifications.push(error);
       });
+    } else if(data.cmd == "ping") {
+      //only sse connexion
+      send({"cmd":"pong"});
     } else if(data.cmd != "modColumn") {
       console.log("Command not yet implemented: ", data);
     }

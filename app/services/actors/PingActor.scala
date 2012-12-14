@@ -21,6 +21,7 @@ object PingActor {
   
   def create(idUser: String, channelOut: Concurrent.Channel[JsValue]) = {
     val actor = system.actorOf(Props(new PingActor(idUser)))
+    system.eventStream.subscribe(actor, classOf[Ping])
     actor
   }
   
@@ -40,10 +41,10 @@ class PingActor(idUser: String) extends Actor {
   
   def receive = {
     case Ask => {
-      UserInfosActor.sendTo(idUser, Json.toJson(Command("Ping")))
+      UserInfosActor.sendTo(idUser, Json.toJson(Command("ping")))
       if(schedulerKill == null || schedulerKill.isCancelled) {
         schedulerKill = Akka.system.scheduler.scheduleOnce(60 second) {
-          self ! Kill
+          self ! Dead
         }
       }
     }
