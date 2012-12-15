@@ -173,7 +173,10 @@ publicApp.controller('ColumnsCtrl', function($scope, $http) {
                    "title": column.oldTitle, 
                    "column":{
                      "title":column.title,
-                     "unifiedRequests": unifiedRequests
+                     "unifiedRequests": unifiedRequests,
+                     "index":0,
+                     "width":-1,
+                     "height":-1
                    }
                  }
                 };

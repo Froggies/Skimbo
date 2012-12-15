@@ -4,6 +4,7 @@ import java.util.Date
 import play.api.libs.json._
 import play.api.libs.functional.syntax._
 import reactivemongo.bson._
+import services.dao.UtilBson
 
 case class Account(
   id: String,
@@ -20,5 +21,10 @@ object Account {
     BSONDocument( 
       "id" -> BSONString(account.id),
       "lastUse" -> BSONDateTime(account.lastUse.getTime()))
+  }
+  
+  def fromBSON(a: TraversableBSONDocument) = {
+    val lastUse = new Date(a.getAs[BSONDateTime]("lastUse").get.value)
+    Account(UtilBson.asString(a, "id"), lastUse)
   }
 }

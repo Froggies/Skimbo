@@ -1,4 +1,4 @@
-package models.user
+package updateDb._20121215
 
 import play.api.libs.json._
 import play.api.libs.functional.syntax._
@@ -7,36 +7,19 @@ import reactivemongo.bson._
 import play.api.libs.json.JsNumber
 import services.dao.UtilBson
 
-case class Column(
+case class OldColumn(
   title: String,
-  unifiedRequests: Seq[UnifiedRequest],
-  index: Int,
-  width: Int,
-  height: Int) {
+  unifiedRequests: Seq[UnifiedRequest]) {
 
   override def equals(other: Any) = other match {
-    case that: Column => that.title == title
+    case that: OldColumn => that.title == title
     case _ => false
   }
 }
 
-object Column {
+object OldColumn {
 
-  implicit val reader = (
-    (__ \ "title").read[String] and
-    (__ \ "unifiedRequests").read[Seq[UnifiedRequest]] and
-    (__ \ "index").read[Int] and
-    (__ \ "width").read[Int] and
-    (__ \ "height").read[Int])(Column.apply _)
-
-  implicit val writer = (
-    (__ \ "title").write[String] and
-    (__ \ "unifiedRequests").write[Seq[UnifiedRequest]] and
-    (__ \ "index").write[Int] and
-    (__ \ "width").write[Int] and
-    (__ \ "height").write[Int])(unlift(Column.unapply))
-
-  def toBSON(column: Column) = {
+  def toBSON(column: OldColumn) = {
     val unifiedRequests: Seq[BSONDocument] = column.unifiedRequests.map { unifiedRequest =>
       val args: Seq[(String, BSONString)] = unifiedRequest.args.getOrElse(Map.empty).mapValues(BSONString(_)).toSeq
       BSONDocument(
@@ -46,9 +29,9 @@ object Column {
     BSONDocument(
       "title" -> BSONString(column.title),
       "unifiedRequests" -> BSONArray(unifiedRequests: _*),
-      "index" -> BSONInteger(column.index),
-      "width" -> BSONInteger(column.width),
-      "height" -> BSONInteger(column.height))
+      "index" -> BSONInteger(0),
+      "width" -> BSONInteger(-1),
+      "height" -> BSONInteger(-1))
   }
 
   def fromBSON(c: TraversableBSONDocument) = {
@@ -58,8 +41,7 @@ object Column {
         (requestArg._1, requestArgs.getAs[BSONString](requestArg._1).get.value))
       UnifiedRequest(UtilBson.asString(r, "service"), if (args.nonEmpty) Some(args) else None)
     })
-    Column(UtilBson.asString(c, "title"), unifiedRequests,
-      UtilBson.asInt(c, "index"), UtilBson.asInt(c, "width"), UtilBson.asInt(c, "height"))
+    OldColumn(UtilBson.asString(c, "title"), unifiedRequests)
   }
 
 }

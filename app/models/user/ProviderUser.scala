@@ -3,6 +3,7 @@ package models.user
 import play.api.libs.json._
 import play.api.libs.functional.syntax._
 import reactivemongo.bson._
+import services.dao.UtilBson
 
 case class ProviderUser(
   id: String,
@@ -30,4 +31,13 @@ object ProviderUser {
       "social" -> BSONString(distant.socialType),
       "token" -> SkimboToken.toBSON(distant.token.get))
   }
+  
+  def fromBSON(d: TraversableBSONDocument) = {
+    ProviderUser(
+          UtilBson.asString(d, "id"),
+          UtilBson.asString(d, "social"),
+          SkimboToken.fromBSON(d.getAs[BSONDocument]("token").get)
+        )
+  }
+  
 }
