@@ -14,7 +14,8 @@ object ProviderDispatcher {
       Scoopit,
       StackExchange,
       Trello,
-      Viadeo
+      Viadeo,
+      BetaSeries
   )
 
   def apply(providerName: String) = get(providerName)

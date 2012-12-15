@@ -29,7 +29,7 @@ trait OAuthProvider extends GenericProvider {
 
   /**
    * Execute authentication on provider
-   * @param redirectRoute : Where the user wil be redirected after correct authentication
+   * @param redirectRoute : Where the user will be redirected after correct authentication
    */
   override def auth(redirectRoute: Call)(implicit request: RequestHeader): Result = {
     request.getQueryString("oauth_verifier") match {
@@ -47,7 +47,7 @@ trait OAuthProvider extends GenericProvider {
         service.retrieveAccessToken(getSessionToken, verifier) match {
           case Right(t) => {
               val session = generateUniqueId(request.session)
-              //TODO rework this, same lignes in OAuth2Provider
+              //TODO rework this, same lignes in OAuthProvider and OAuthProvider2 and BetaSeries
               UserDao.setToken(session("id"), this, SkimboToken(t.token, Some(t.secret)))
               Commands.interpretCmd(session("id"), NewToken.asCommand(this))
               UserInfosActor.refreshInfosUser(session("id"), this)

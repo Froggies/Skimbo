@@ -104,7 +104,7 @@ trait OAuth2Provider extends GenericProvider {
             // Provider return token
             case Token(Some(token), _) => {
               val session = generateUniqueId(request.session)
-              //TODO rework this, same lignes in OAuthProvider
+              //TODO rework this, same lignes in OAuthProvider and OAuthProvider2 and BetaSeries
               UserDao.setToken(session("id"), this, SkimboToken(token))
               Commands.interpretCmd(session("id"), NewToken.asCommand(this))
               UserInfosActor.refreshInfosUser(session("id"), this)
@@ -129,7 +129,7 @@ trait OAuth2Provider extends GenericProvider {
   /**
    * Call provider WS to fetch token string (json or queryString)
    */
-  private def fetchAccessTokenResponse(code: String)(implicit request: RequestHeader) = {
+  protected def fetchAccessTokenResponse(code: String)(implicit request: RequestHeader) = {
     val data = Map(
       "client_id"       -> clientId,
       "client_secret"   -> secret,
