@@ -6,30 +6,29 @@ import play.api.mvc.RequestHeader
 object ProviderDispatcher {
 
   private val providers = Seq(
-      Twitter,
-      Facebook,
-      GitHub,
-      GooglePlus,
-      LinkedIn,
-      Scoopit,
-      StackExchange,
-      Trello,
-      Viadeo,
-      BetaSeries
-  )
+    Twitter,
+    Facebook,
+    GitHub,
+    GooglePlus,
+    LinkedIn,
+    Scoopit,
+    StackExchange,
+    Trello,
+    Viadeo,
+    BetaSeries)
 
   def apply(providerName: String) = get(providerName)
 
-  def get(providerName: String) : Option[GenericProvider] =
+  def get(providerName: String): Option[GenericProvider] =
     providers.find(_.name == providerName)
 
-  def atLeastOneIsConnected(implicit req: RequestHeader) : Boolean =
+  def atLeastOneIsConnected(implicit req: RequestHeader): Boolean =
     providers.exists(_.hasToken)
 
-  def listAll : Seq[GenericProvider] = providers
+  def listAll: Seq[GenericProvider] = providers
 
-  def listConnecteds(implicit req: RequestHeader) : Seq[GenericProvider] =
-     providers.filter(_.hasToken)
+  def listConnecteds(implicit req: RequestHeader): Seq[GenericProvider] =
+    providers.filter(_.hasToken)
 
 }
 

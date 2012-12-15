@@ -1,13 +1,18 @@
 package services.actors
 
-import scala.concurrent.ExecutionContext.Implicits._
-import akka.actor._
-import scala.concurrent.duration._
-import play.api.libs.iteratee._
-import play.api.libs.json.JsValue
-import play.libs.Akka
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.duration.DurationInt
+
+import akka.actor.Actor
+import akka.actor.ActorSystem
+import akka.actor.Cancellable
+import akka.actor.Props
+import akka.actor.actorRef2Scala
 import models.command.Command
+import play.api.libs.iteratee.Concurrent
+import play.api.libs.json.JsValue
 import play.api.libs.json.Json
+import play.libs.Akka
 
 case class Ping(idUser: String)
 case class Ask()
@@ -18,31 +23,31 @@ case class Ask()
 object PingActor {
 
   private val system: ActorSystem = ActorSystem("userInfos");
-  
+
   def create(idUser: String, channelOut: Concurrent.Channel[JsValue]) = {
     val actor = system.actorOf(Props(new PingActor(idUser)))
     system.eventStream.subscribe(actor, classOf[Ping])
     actor
   }
-  
+
   def ping(userId: String) = {
     system.eventStream.publish(Ping(userId))
   }
-  
+
 }
 
 class PingActor(idUser: String) extends Actor {
-  
+
   val scheduler = Akka.system.scheduler.schedule(0 second, 30 second) {
     self ! Ask
   }
-  
-  var schedulerKill:Cancellable = null
-  
+
+  var schedulerKill: Cancellable = null
+
   def receive = {
     case Ask => {
       UserInfosActor.sendTo(idUser, Json.toJson(Command("ping")))
-      if(schedulerKill == null || schedulerKill.isCancelled) {
+      if (schedulerKill == null || schedulerKill.isCancelled) {
         schedulerKill = Akka.system.scheduler.scheduleOnce(60 second) {
           self ! Dead
         }
@@ -60,5 +65,5 @@ class PingActor(idUser: String) extends Actor {
       context.stop(self)
     }
   }
-  
+
 }

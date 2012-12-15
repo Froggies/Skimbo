@@ -1,11 +1,13 @@
 package services.endpoints
 
 import play.api.Logger
-import play.api.mvc._
-import services.endpoints.JsonRequest._
 import play.api.libs.json.JsValue
+import play.api.mvc.AnyContent
+import play.api.mvc.Request
 import services.auth.GenericProvider
 import services.auth.providers._
+import services.endpoints.JsonRequest.UnifiedRequest
+import services.endpoints.JsonRequest.unifiedRequestReader
 
 case class Service(service: String, configuration: EndpointConfig)
 case class Endpoint(provider: GenericProvider, services: Seq[Service])
@@ -25,8 +27,7 @@ object Endpoints {
       Service("facebook.wall", Configuration.Facebook.wall),
       Service("facebook.user", Configuration.Facebook.user),
       Service("facebook.group", Configuration.Facebook.group),
-      Service("facebook.message", Configuration.Facebook.message)
-      )),
+      Service("facebook.message", Configuration.Facebook.message))),
     Endpoint(Viadeo, Seq(
       Service("viadeo.wall", Configuration.Viadeo.wall))),
     Endpoint(LinkedIn, Seq(
@@ -78,7 +79,7 @@ object Endpoints {
 
       // Generate url with params
       val baseUrl = param.foldLeft(config.url)((url, param) => url.replace(":" + param._1, param._2))
-      
+
       if (!config.manualNextResults) {
         // And "since" element to Url
         Some(sinceOpt.map(since => baseUrl + config.since.replace(":since", since)).getOrElse(baseUrl))

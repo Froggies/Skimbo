@@ -1,20 +1,23 @@
 package services.actors
 
 import java.util.Date
-import scala.concurrent.ExecutionContext.Implicits._
+
+import scala.concurrent.ExecutionContext.Implicits.global
+
 import akka.actor._
-import services.UserDao
-import models.command.Command
 import models.User
+import models.command.Command
 import models.user._
 import play.api.Logger
 import play.api.UnexpectedException
 import play.api.libs.iteratee.Concurrent
-import play.api.libs.json._
+import play.api.libs.json.JsValue
+import play.api.libs.json.Json
 import play.api.mvc.RequestHeader
+import services.UserDao
+import services.auth.GenericProvider
 import services.auth.ProviderDispatcher
 import services.commands.Commands
-import services.auth.GenericProvider
 
 case object Retreive
 case class Send(userId: String, json: JsValue)
@@ -53,13 +56,13 @@ object UserInfosActor {
   def refreshInfosUser(userId: String, provider: GenericProvider) = {
     system.eventStream.publish(RefreshInfosUser(userId, provider))
   }
-  
+
   def restartProviderColumns(userId: String, provider: GenericProvider) = {
     UserDao.findOneById(userId).map(_.map { user =>
       user.columns.map(
-          _.filter( 
-              _.unifiedRequests.exists( 
-                  _.service.startsWith(provider.name))).foreach(startProfiderFor(userId, _)))
+        _.filter(
+          _.unifiedRequests.exists(
+            _.service.startsWith(provider.name))).foreach(startProfiderFor(userId, _)))
     })
   }
 
@@ -69,31 +72,25 @@ class UserInfosActor(idUser: String, channelOut: Concurrent.Channel[JsValue])(im
 
   import scala.concurrent.ExecutionContext.Implicits.global
   val log = Logger(classOf[UserInfosActor])
-  
+
   def receive() = {
     case Retreive => {
       UserDao.findOneById(idUser).map { optionUser =>
         optionUser.map(user => start(user))
-        .getOrElse(
-          ProviderDispatcher.listAll.map(provider =>
-            provider.getToken.map(token =>
-              provider.getUser.map(providerUser =>
-                providerUser.map(pUser =>
-                  UserDao.findByIdProvider(provider.name, pUser.id).map(optUser =>
-                    optUser.map { user =>
-                      UserDao.addAccount(user, Account(idUser, new Date()))
-                      start(user)
-                    }.getOrElse {
-                      val user = User(Seq(Account(idUser, new Date())), Some(Seq(pUser)))
-                      UserDao.add(user)
-                      start(user)
-                    }
-                  )
-                ).getOrElse(log.error("User hasn't id in " + provider.name + " ! WTF ?"))
-              )
-            ).getOrElse(log.info("User hasn't token for " + provider.name))
-          )
-        )
+          .getOrElse(
+            ProviderDispatcher.listAll.map(provider =>
+              provider.getToken.map(token =>
+                provider.getUser.map(providerUser =>
+                  providerUser.map(pUser =>
+                    UserDao.findByIdProvider(provider.name, pUser.id).map(optUser =>
+                      optUser.map { user =>
+                        UserDao.addAccount(user, Account(idUser, new Date()))
+                        start(user)
+                      }.getOrElse {
+                        val user = User(Seq(Account(idUser, new Date())), Some(Seq(pUser)))
+                        UserDao.add(user)
+                        start(user)
+                      })).getOrElse(log.error("User hasn't id in " + provider.name + " ! WTF ?")))).getOrElse(log.info("User hasn't token for " + provider.name))))
       }
     }
     case StartProvider(id: String, unifiedRequests) => {
@@ -158,9 +155,7 @@ class UserInfosActor(idUser: String, channelOut: Concurrent.Channel[JsValue])(im
                 }.getOrElse {
                   Commands.interpretCmd(idUser, Command("allColumns"))
                   self ! CheckAccounts(idUser)
-                }
-              )
-            )
+                }))
           }
         }
       }

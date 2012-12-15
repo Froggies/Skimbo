@@ -1,7 +1,8 @@
 package models.command
 
+import play.api.libs.functional.syntax.functionalCanBuildApplicative
+import play.api.libs.functional.syntax.toFunctionalBuilderOps
 import play.api.libs.json._
-import play.api.libs.functional.syntax._
 
 case class Command(name: String, body: Option[JsValue] = None) {
   override def equals(other: Any) = other match {
@@ -18,10 +19,10 @@ object Command {
 
   implicit val commandWrites = new Writes[Command] {
     def writes(c: Command): JsValue = {
-      c.body.map(_ => 
+      c.body.map(_ =>
         Json.obj("cmd" -> c.name, "body" -> c.body.get))
-      .getOrElse(
-        Json.obj("cmd" -> c.name))
+        .getOrElse(
+          Json.obj("cmd" -> c.name))
     }
   }
 }

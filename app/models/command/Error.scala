@@ -1,9 +1,9 @@
 package models.command
 
-import play.api.libs.json.Writes
 import play.api.libs.json.JsValue
 import play.api.libs.json.Json
-import services.auth.GenericProvider
+import play.api.libs.json.Json.toJsFieldJsValueWrapper
+import play.api.libs.json.Writes
 
 case class Error(providerName: String, msg: String, columnName: Option[String] = None)
 

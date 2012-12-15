@@ -1,7 +1,8 @@
 package services.auth.actions
 
-import play.api.mvc._
 import java.util.UUID
+
+import play.api.mvc._
 
 trait SecurityProvider {
 
@@ -14,7 +15,7 @@ trait SecurityProvider {
    * Retrieve security token
    */
   def getToken(implicit request: RequestHeader): Option[Any]
-  
+
   /**
    * Delete security token
    */
