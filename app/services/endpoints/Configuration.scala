@@ -159,6 +159,15 @@ object Configuration {
       override val provider = providers.Scoopit
     }
   }
+  
+  object BetaSeries {
+    object notifications extends EndpointConfig {
+      override val url = withLimit("http://api.betaseries.com/members/notifications.json?number=:limit")
+      override val since = "&last_id=:since" // id
+      override val provider = providers.BetaSeries
+      override val mustBeReordered = true
+    }
+  }
 }
 
 
