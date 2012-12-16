@@ -1,7 +1,7 @@
 Skimbo
 ==========
 
-This app was created during the Typesafe_ contest app with Play2_.
+This app was created during the Typesafe_ contest app with Play2_. Test it on Demo_
 ----------
 
 For the Typesafe contest, we made a web application **Skimbo** : a social networks mashup. 
@@ -85,7 +85,7 @@ Licensed under the Apache License, Version 2.0 (the "License"); you may not use 
 
 Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
 
-
+.. _Demo: http://skimbo.studio-dev.fr/
 .. _Typesafe: http://blog.typesafe.com/typesafe-developer-contest
 .. _Play2: https://github.com/playframework/play20/
 .. _udr3y:  https://twitter.com/udr3y
