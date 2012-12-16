@@ -39,6 +39,32 @@ object Util extends Controller with Authentication {
       }.getOrElse(future(BadRequest("Service not found")))
     }
   }
+  
+  def staticResBetaseries() = Action { implicit request =>
+    import scala.concurrent.ExecutionContext.Implicits.global
+    Async {
+      Endpoints.getConfig("betaseries.notifications").flatMap { config =>
+        Endpoints.genererUrl("betaseries.notifications", Map.empty, None).map { url =>
+          config.provider.fetch(url).get.map { response =>
+            Ok(config.provider.resultAsJson(response))
+          }
+        }
+      }.getOrElse(future(BadRequest("Service not found")))
+    }
+  }
+  
+  def staticResScoopit() = Action { implicit request =>
+    import scala.concurrent.ExecutionContext.Implicits.global
+    Async {
+      Endpoints.getConfig("scoopit.notifications").flatMap { config =>
+        Endpoints.genererUrl("scoopit.notifications", Map.empty, None).map { url =>
+          config.provider.fetch(url).get.map { response =>
+            Ok(config.provider.resultAsJson(response))
+          }
+        }
+      }.getOrElse(future(BadRequest("Service not found")))
+    }
+  }
 
   def deleteUser() = Authenticated { user =>
     request =>
