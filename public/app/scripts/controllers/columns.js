@@ -1,6 +1,10 @@
 'use strict';
 
-publicApp.controller('ColumnsCtrl', function($scope, $http) {
+publicApp.controller('ColumnsCtrl', function($scope, $rootScope, $http) {
+
+    // translation : 
+    $rootScope.currentLanguage = navigator.language.substring(0,2);
+    console.log(navigator.language);
 
     //chrome memory leak !!!
     $scope.$destroy= function() {
@@ -59,8 +63,7 @@ publicApp.controller('ColumnsCtrl', function($scope, $http) {
     if(window.MozWebSocket) {
         window.WebSocket=window.MozWebSocket;
     }
-    // if(!window.WebSocket) {
-    if(true) {
+    if(!window.WebSocket) {
         $scope.sseMode();
     } else {
         socket = new WebSocket(wshost);

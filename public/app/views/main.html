@@ -35,12 +35,12 @@
 		</div>
 		<div class="modify-column" ng-show="c.showModifyColumn">
 			<div class="error-div">
-				<span class="error-message" ng-show="c.showErrorTitleRequired">The title is required !</span> 
+				<span class="error-message" ng-show="c.showErrorTitleRequired">{{'TITLE_REQUIRED' | i18n}}</span> 
 				<br ng-show="c.showErrorTitleRequired"/>
-				<span class="error-message" ng-show="c.showErrorTitleAlreadyExist">This title already exist</span> 
+				<span class="error-message" ng-show="c.showErrorTitleAlreadyExist">{{'TITLE_ALREADY_EXISTS' | i18n}}</span> 
 				<br ng-show="c.showErrorTitleAlreadyExist"/>
 			</div>
-			<div class="add-service">Available services :</div>
+			<div class="add-service">{{'AVAILABLE_SERVICES' | i18n}}</div>
 			<ul class="services-proposes">
 				<li ng-repeat="service in serviceProposes">
 					<div class="social-network-link">
@@ -50,14 +50,14 @@
 					</div>
 				</li>
 			</ul>
-			<div class="add-service" ng-show="c.unifiedRequests.length > 0">Already in your column :</div>
+			<div class="add-service" ng-show="c.unifiedRequests.length > 0">{{'ALREADY_IN_YOUR_COLUMN' | i18n}}</div>
 			<div class="error-div">
-				<span class="error-message" ng-show="c.showErrorBlankArg">All fields are required</span> 
-				<span class="error-message" ng-show="c.showDoubleParser">You can't add twice same services</span> 
+				<span class="error-message" ng-show="c.showErrorBlankArg">{{'ALL_FIELD_REQUIRED' | i18n}}</span> 
+				<span class="error-message" ng-show="c.showDoubleParser">{{'CANT_ADD_SAME_SERVICE' | i18n}}</span> 
 				<br ng-show="c.showErrorBlankArg || c.showDoubleParser"/>
 			</div>
 			<ul class="services-actives">
-				<li class="service-empty" ng-show="c.unifiedRequests.length == 0">To add a stream in this column, select one or many services above.</li>
+				<li class="service-empty" ng-show="c.unifiedRequests.length == 0">{{'TO_ADD_STREAM_IN_COLUMN' | i18n}}</li>
 				<li ng-repeat="service in c.unifiedRequests">
 					<div class="input-service" ng-show="service.hasArguments" ng-repeat="arg in service.args ">
 						<img class="img-service" ng-src="assets/img/brand/{{service.providerName}}.png" alt="{{service.providerName}}" width="24" height="24">
@@ -73,7 +73,7 @@
 					<div class="input-service" ng-show="!service.hasArguments">
 						<img class="img-service" ng-src="assets/img/brand/{{service.providerName}}.png" alt="{{service.providerName}}" width="24" height="24">
 						<span class="receving-service">
-							You are receving {{service.serviceName}}
+							{{'YOU_ARE_RECEIVING' | i18n}} {{service.serviceName}}
 						</span>
 						<a href="#" 
 							class="delete-service {{service.providerName}}"
@@ -85,17 +85,17 @@
 
 
 			<div class="controls-modify"ng-hide="c.newColumn" >
-				<input type="button" ng-click="changeColumn(c);" value="Change"/>
+				<input type="button" ng-click="changeColumn(c);" value="{{'CHANGE' | i18n}}"/>
 				<br/>
 				<br/>
-				<a href="#" class="delete-link" ng-click="deleteColumn(c)">Delete</a>
+				<a href="#" class="delete-link" ng-click="deleteColumn(c)">{{'DELETE' | i18n}}</a>
 			</div>
 			<div ng-show="c.newColumn" class="controls-new"> 
-				<input type="button" ng-click="changeColumn(c);" value="Create !"/>
+				<input type="button" ng-click="changeColumn(c);" value="{{'CREATE' | i18n}}"/>
 			</div>
 		</div>
 	</section>
 	<section class="column-new">
-		<a href="#" ng-click="addColumn()">New</a>
+		<a href="#" ng-click="addColumn()">{{'ADD_NEW_COLUMN' | i18n}}</a>
 	</section>
 </section>
