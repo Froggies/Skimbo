@@ -15,7 +15,7 @@ import services.actors.PingActor
 object Commands {
 
   import play.api.libs.concurrent.Execution.Implicits._
-  
+
   def interpret(idUser: String, json: JsValue)(implicit req: RequestHeader): Unit = {
     val cmd = Json.fromJson[Command](json).getOrElse(Command("_"))
     interpretCmd(idUser, cmd)
@@ -26,8 +26,7 @@ object Commands {
       case "allColumns" => {
         UserDao.findOneById(idUser).map(_.map { user =>
           user.columns.map(columns =>
-            UserInfosActor.sendTo(idUser, Json.toJson(Command(cmd.name, Some(Json.toJson(columns)))))
-          )
+            UserInfosActor.sendTo(idUser, Json.toJson(Command(cmd.name, Some(Json.toJson(columns))))))
         })
       }
       case "addColumn" => {
@@ -43,6 +42,22 @@ object Commands {
         ProviderActor.killActorsForUserAndColumn(idUser, modColumnTitle)
         UserInfosActor.startProfiderFor(idUser, modColumn)
         UserInfosActor.sendTo(idUser, Json.toJson(Command(cmd.name, Some(JsString("Ok")))))
+      }
+      case "modColumnsOrder" => {
+        val columnsOrder = (cmd.body.get \ "columns").as[List[String]]
+        UserDao.findOneById(idUser).map(_.map { user =>
+          user.columns.map(_.map { column =>
+            UserDao.updateColumn(
+              idUser,
+              column.title,
+              Column(
+                column.title,
+                column.unifiedRequests,
+                columnsOrder.indexOf(column.title),
+                column.width,
+                column.height))
+          })
+        })
       }
       case "delColumn" => {
         val delColumnTitle = (cmd.body.get \ "title").as[String]

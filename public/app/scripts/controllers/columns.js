@@ -83,12 +83,15 @@ publicApp.controller('ColumnsCtrl', function($scope, $rootScope, $http) {
     } 
 
     var send = function(jsonMsg) {
+      console.log("send : ",jsonMsg);
       if(socket !== undefined) {
         socket.send(JSON.stringify(jsonMsg));
       } else {
         $http.post('/api/stream/command', JSON.stringify(jsonMsg));
       }
     }
+
+    $scope.send = send;
 
     $scope.addColumn = function() {
         if($scope.serviceProposes == undefined) {
@@ -530,6 +533,7 @@ function executeCommand(data) {
                 var clientColumn = {};
                 clientColumn.title = originalColumn.title;
                 clientColumn.unifiedRequests = [];
+                clientColumn.index = originalColumn.index;
                 for (var j = 0; j < originalColumn.unifiedRequests.length; j++) {
                   var unifiedRequest = originalColumn.unifiedRequests[j];
                   var clientUnifiedRequest = serverToClientUnifiedRequest(unifiedRequest);
@@ -545,7 +549,7 @@ function executeCommand(data) {
                   };
                 }
                 clientColumn.showModifyColumn = false;
-                $scope.columns.push(clientColumn);
+                $scope.columns.splice(originalColumn.index, 0, clientColumn);
             }
         });
     } else if(data.cmd == "delColumn" && data.body == "Ok") {
@@ -740,7 +744,12 @@ function drop(target,ev)
     scope.columns[toId] = temp;
     scope.columns[toId].index = fromId;
     scope.$eval(scope.columns);
-    console.log("send(switchColumn("+fromId+", "+toId+"))");
+    var modColumnsOrder = {"cmd":"modColumnsOrder", "body":{}};
+    modColumnsOrder.body.columns = [];
+    for (var i = 0; i < scope.columns.length; i++) {
+      modColumnsOrder.body.columns.push(scope.columns[i].title);
+    };
+    scope.send(modColumnsOrder);
   }); 
 
 }
