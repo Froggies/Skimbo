@@ -82,7 +82,7 @@ publicApp.controller('ColumnsCtrl', function($scope, $rootScope, $http) {
         }
     } 
 
-    function send(jsonMsg) {
+    var send = function(jsonMsg) {
       if(socket !== undefined) {
         socket.send(JSON.stringify(jsonMsg));
       } else {
