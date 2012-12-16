@@ -116,6 +116,7 @@ class ProviderActor(channel: Concurrent.Channel[JsValue],
                 log.info(response.body.toString)
                 if (provider.isInvalidToken(response)) {
                   channel.push(Json.toJson(TokenInvalid(provider.name)))
+                  self ! Dead(idUser)
                 } else if (provider.isRateLimiteError(response)) {
                   channel.push(Json.toJson(Error(provider.name, "Rate limite exceeded on")))
                 } /*else {

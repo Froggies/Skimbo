@@ -39,7 +39,9 @@ object Endpoints {
     Endpoint(Trello, Seq(
       Service("trello.notifications", Configuration.Trello.notifications))),
     Endpoint(Scoopit, Seq(
-      Service("scoopit.notifications", Configuration.Scoopit.notifications))))
+      Service("scoopit.notifications", Configuration.Scoopit.notifications))),
+    Endpoint(BetaSeries, Seq(
+      Service("betaseries.notifications", Configuration.BetaSeries.notifications))))
 
   def getAll: Seq[Endpoint] = {
     endpoints
