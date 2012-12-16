@@ -694,59 +694,50 @@ function executeCommand(data) {
 });
 
 
-
-
-
-
 function dragOver(target, ev)
 {
-	ev.preventDefault();
+  ev.preventDefault();
 }
 
 function dragStart(target,ev)
 {
 	target.style.opacity = "0.5";
-	ev.dataTransfer.setData("text/html", target.innerHTML);
+  ev.dataTransfer.setData('text/plain', "none");
+  ev.dataTransfer.setData("text/html", target.innerHTML);
 	ev.dataTransfer.setData("id", target.id);
 	ev.dataTransfer.effectAllowed = 'move';
 }
 
 function dragEnter(target, ev) {
-	target.style.backgroundColor = "red";
 	ev.preventDefault();
 }
 
 function dragLeave(target, ev) {
-	target.style.backgroundColor = "pink";
 	ev.preventDefault();
 }
 
 function dragEnd(target,ev)
 {
-	target.style.backgroundColor = "pink";
 	target.style.opacity = "1";
 }
 
 function drop(target,ev)
 {
 	ev.preventDefault();
-	var fromHtml=ev.dataTransfer.getData("text/html");
-	var id=ev.dataTransfer.getData("id");
+  console.log("drop "+target.id);
+	var fromId = ev.dataTransfer.getData("id");
+  fromId = fromId.split("_")[1];
+	var toId = target.id;
+  toId = toId.split("_")[1];
 
-	var toHtml = target.innerHTML;
-
-	target.innerHTML = fromHtml;
-	document.getElementById(id).innerHTML = toHtml;
-
-	target.style.backgroundColor = "pink";
 	target.style.opacity = "1";
-	// angular.element(target).scope().$root.$eval();
-	var scope = angular.element(target).scope();
-    // update the model with a wrap in $apply(fn) which will refresh the view for us
-    // scope.$apply(function() {
-    // 	console.log("test");
-    //     scope.$eval(scope.data);
-    // 	console.log("test apres");
-    // }); 
+
+	var scope = angular.element(target).scope().$parent;
+  scope.$apply(function() {
+    var temp = scope.columns[fromId];
+    scope.columns[fromId] = scope.columns[toId];
+    scope.columns[toId] = temp;
+    scope.$eval(scope.columns);
+  }); 
 
 }

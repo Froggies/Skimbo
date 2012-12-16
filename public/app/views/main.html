@@ -9,8 +9,16 @@
 	</section>
 
 
-	<section class="column" 			  
-			 ng-repeat="c in columns">
+	<section class="column" 
+			ng-repeat="c in columns"
+		  id="column_{{$index}}"
+			draggable="true"
+			ondragstart="dragStart(this,event)"
+			ondragend="dragEnd(this,event)"
+			ondragenter="dragEnter(this,event)"
+			ondragleave="dragLeave(this,event)"
+			ondragover="dragOver(this,event)"
+			ondrop="drop(this,event)">
 		<header class="column-title">
 			<div class="title" ng-hide="c.showModifyColumn">{{c.title}}</div>
 			<input class="title-input error {{c.showErrorTitleAlreadyExist}} {{c.showErrorTitleRequired}}" type="text" ng-model="c.title" ng-show="c.showModifyColumn" value="{{c.title}}" onfocus="if (this.value.indexOf('What is here ?') != -1) this.value='';" />
