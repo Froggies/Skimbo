@@ -59,7 +59,8 @@ publicApp.controller('ColumnsCtrl', function($scope, $http) {
     if(window.MozWebSocket) {
         window.WebSocket=window.MozWebSocket;
     }
-    if(!window.WebSocket) {
+    // if(!window.WebSocket) {
+    if(true) {
         $scope.sseMode();
     } else {
         socket = new WebSocket(wshost);
@@ -621,12 +622,24 @@ function executeCommand(data) {
         if($scope.notifications == undefined) {
           $scope.notifications = [];
         }
-        var error = {};
-        error.title = data.body.msg;
-        error.providerName = data.body.providerName;
-        error.footer = "Click here to hide error.";
-        error.isError = true;
-        $scope.notifications.push(error);
+        
+
+        var notificationExiste = false;
+        for (var i = 0; i < $scope.notifications.length; i++) {
+          if ($scope.notifications[i].providerName == data.body.providerName && 
+            $scope.notifications[i].title == data.body.msg) {
+            notificationExiste = true;
+            break;
+          }
+        };
+        if(!notificationExiste) {
+          var error = {};
+          error.title = data.body.msg;
+          error.providerName = data.body.providerName;
+          error.footer = "Click here to hide error.";
+          error.isError = true;
+          $scope.notifications.push(error);
+        }
       });
     } else if(data.cmd == "ping") {
       //only sse connexion
