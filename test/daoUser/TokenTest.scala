@@ -32,7 +32,7 @@ object TokenTest extends Specification {
         test1(id, user)
         test2(id, user)
 
-        Await.result(UserDao.delete(user), Duration("10 seconds"))
+        Await.result(UserDao.delete(id), Duration("10 seconds"))
         Await.result(UserDao.findOneById(id), Duration("10 seconds")) must be beNone
       }
     }

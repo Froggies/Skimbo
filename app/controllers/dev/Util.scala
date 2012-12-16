@@ -71,7 +71,7 @@ object Util extends Controller with Authentication {
       Async {
         UserDao.findOneById(user.accounts.head.id).map { user =>
           user.map { u =>
-            UserDao.delete(u)
+            UserDao.delete(u.accounts.head.id)
             Ok("user deleted")
           }.getOrElse(BadRequest("Service not found"))
         }
@@ -83,7 +83,7 @@ object Util extends Controller with Authentication {
       if (pwd == current.configuration.getString("pwdDelAllDb").get) {
         UserDao.findAll.foreach { users =>
           users foreach { user =>
-            UserDao.delete(user)
+            UserDao.delete(user.accounts.head.id)
           }
         }
       }

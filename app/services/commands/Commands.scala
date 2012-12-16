@@ -32,29 +32,23 @@ object Commands {
       }
       case "addColumn" => {
         val newColumn = Json.fromJson[Column](cmd.body.get).get
-        UserDao.findOneById(idUser).map(_.map { user =>
-          UserDao.addColumn(user, newColumn)
-          UserInfosActor.startProfiderFor(idUser, newColumn)
-          UserInfosActor.sendTo(idUser, Json.toJson(Command(cmd.name, Some(JsString("Ok")))))
-        })
+        UserDao.addColumn(idUser, newColumn)
+        UserInfosActor.startProfiderFor(idUser, newColumn)
+        UserInfosActor.sendTo(idUser, Json.toJson(Command(cmd.name, Some(JsString("Ok")))))
       }
       case "modColumn" => {
         val modColumnTitle = (cmd.body.get \ "title").as[String]
         val modColumn = Json.fromJson[Column]((cmd.body.get \ "column").as[JsValue]).get
-        UserDao.findOneById(idUser).map(_.map { user =>
-          UserDao.updateColumn(user, modColumnTitle, modColumn)
-          ProviderActor.killActorsForUserAndColumn(idUser, modColumnTitle)
-          UserInfosActor.startProfiderFor(idUser, modColumn)
-          UserInfosActor.sendTo(idUser, Json.toJson(Command(cmd.name, Some(JsString("Ok")))))
-        })
+        UserDao.updateColumn(idUser, modColumnTitle, modColumn)
+        ProviderActor.killActorsForUserAndColumn(idUser, modColumnTitle)
+        UserInfosActor.startProfiderFor(idUser, modColumn)
+        UserInfosActor.sendTo(idUser, Json.toJson(Command(cmd.name, Some(JsString("Ok")))))
       }
       case "delColumn" => {
         val delColumnTitle = (cmd.body.get \ "title").as[String]
-        UserDao.findOneById(idUser).map(_.map { user =>
-          UserDao.deleteColumn(user, delColumnTitle)
-          ProviderActor.killActorsForUserAndColumn(idUser, delColumnTitle)
-          UserInfosActor.sendTo(idUser, Json.toJson(Command(cmd.name, Some(JsString("Ok")))))
-        })
+        UserDao.deleteColumn(idUser, delColumnTitle)
+        ProviderActor.killActorsForUserAndColumn(idUser, delColumnTitle)
+        UserInfosActor.sendTo(idUser, Json.toJson(Command(cmd.name, Some(JsString("Ok")))))
       }
       case "allUnifiedRequests" => {
         UserInfosActor.sendTo(idUser, Json.toJson(Command(cmd.name, Some(Service.toJsonWithUnifiedRequest))))

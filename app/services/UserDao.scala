@@ -54,31 +54,31 @@ object UserDao {
     })
   }
 
-  def addAccount(user: models.User, account: models.user.Account) = {
-    val query = BSONDocument("accounts.id" -> new BSONString(user.accounts.head.id))
+  def addAccount(idUser: String, account: models.user.Account) = {
+    val query = BSONDocument("accounts.id" -> new BSONString(idUser))
     val update = BSONDocument("$push" -> BSONDocument("accounts" -> models.user.Account.toBSON(account)))
     collection.update(query, update)
   }
 
-  def addColumn(user: models.User, column: models.user.Column) = {
-    val query = BSONDocument("accounts.id" -> new BSONString(user.accounts.head.id))
+  def addColumn(idUser: String, column: models.user.Column) = {
+    val query = BSONDocument("accounts.id" -> new BSONString(idUser))
     val update = BSONDocument("$push" -> BSONDocument("columns" -> models.user.Column.toBSON(column)))
     collection.update(query, update)
   }
 
-  def addProviderUser(user: models.User, providerUser: models.user.ProviderUser) = {
-    getToken(user.accounts.head.id, ProviderDispatcher.get(providerUser.socialType).get).map(optToken =>
+  def addProviderUser(idUser: String, providerUser: models.user.ProviderUser) = {
+    getToken(idUser, ProviderDispatcher.get(providerUser.socialType).get).map(optToken =>
       optToken.map(token =>
         setToken(
-          user.accounts.head.id,
+          idUser,
           ProviderDispatcher.get(providerUser.socialType).get,
           token,
           Some(providerUser.id))))
   }
 
-  def updateColumn(user: models.User, title: String, column: Column) = {
-    deleteColumn(user, title)
-    val query = BSONDocument("accounts.id" -> new BSONString(user.accounts.head.id))
+  def updateColumn(idUser: String, title: String, column: Column) = {
+    deleteColumn(idUser, title)
+    val query = BSONDocument("accounts.id" -> new BSONString(idUser))
     val update = BSONDocument("$push" -> BSONDocument("columns" -> Column.toBSON(column)))
     collection.update(query, update)
   }
@@ -90,14 +90,14 @@ object UserDao {
     collection.find(query).headOption()
   }
 
-  def deleteColumn(user: models.User, columnTitle: String) = {
-    val query = BSONDocument("accounts.id" -> new BSONString(user.accounts.head.id))
+  def deleteColumn(idUser: String, columnTitle: String) = {
+    val query = BSONDocument("accounts.id" -> new BSONString(idUser))
     val update = BSONDocument("$pull" -> BSONDocument("columns" -> BSONDocument("title" -> new BSONString(columnTitle))))
     collection.update(query, update)
   }
 
-  def delete(user: models.User) = {
-    val query = BSONDocument("accounts.id" -> new BSONString(user.accounts.head.id))
+  def delete(idUser: String) = {
+    val query = BSONDocument("accounts.id" -> new BSONString(idUser))
     collection.remove(query)
   }
 
@@ -162,18 +162,20 @@ object UserDao {
     collection.update(query, update)
   }
 
-  def merge(fromUser: models.User, toUser: models.User) = {
-    delete(fromUser) map { _ =>
-      fromUser.accounts.foreach(account => addAccount(toUser, account))
-      fromUser.columns.map(_.foreach(column => addColumn(toUser, column)))
-      fromUser.distants.map(_.foreach { distant =>
-        if (!distant.id.isEmpty()) { // new user hasn't id
-          addProviderUser(toUser, distant)
-        }
-      })
-    } map { _ =>
-      findOneById(toUser.accounts.head.id)
-    }
+  def merge(fromUserId: String, toUserId: String) = {
+    findOneById(fromUserId).map ( _.map { fromUser =>
+      delete(fromUserId) map { _ =>
+        fromUser.accounts.foreach(account => addAccount(toUserId, account))
+        fromUser.columns.map(_.foreach(column => addColumn(toUserId, column)))
+        fromUser.distants.map(_.foreach { distant =>
+          if (!distant.id.isEmpty()) { // new user hasn't id
+            addProviderUser(toUserId, distant)
+          }
+        })
+      } map { _ =>
+        findOneById(toUserId)
+      }
+    })
   }
 
 }

@@ -103,7 +103,8 @@ publicApp.controller('ColumnsCtrl', function($scope, $rootScope, $http) {
                               "oldTitle":"",
                               "showModifyColumn":"true",
                               "newColumn":"true",
-                              "unifiedRequests":[]});
+                              "unifiedRequests":[],
+                              "index":$scope.columns.length});
     };
 
     $scope.modifyColumn = function(column) {
@@ -178,7 +179,7 @@ publicApp.controller('ColumnsCtrl', function($scope, $rootScope, $http) {
                    "column":{
                      "title":column.title,
                      "unifiedRequests": unifiedRequests,
-                     "index":0,
+                     "index":column.index,
                      "width":-1,
                      "height":-1
                    }
@@ -190,7 +191,7 @@ publicApp.controller('ColumnsCtrl', function($scope, $rootScope, $http) {
                 "body":{
                   "title":column.title,
                   "unifiedRequests": unifiedRequests,
-                  "index":0,
+                  "index":column.index,
                   "width":-1,
                   "height":-1
                 }
@@ -701,7 +702,7 @@ function dragOver(target, ev)
 
 function dragStart(target,ev)
 {
-	target.style.opacity = "0.5";
+	target.style.opacity = "0.7";
   ev.dataTransfer.setData('text/plain', "none");
   ev.dataTransfer.setData("text/html", target.innerHTML);
 	ev.dataTransfer.setData("id", target.id);
@@ -724,20 +725,22 @@ function dragEnd(target,ev)
 function drop(target,ev)
 {
 	ev.preventDefault();
-  console.log("drop "+target.id);
+  target.style.opacity = "1";
+
 	var fromId = ev.dataTransfer.getData("id");
   fromId = fromId.split("_")[1];
 	var toId = target.id;
   toId = toId.split("_")[1];
 
-	target.style.opacity = "1";
-
 	var scope = angular.element(target).scope().$parent;
   scope.$apply(function() {
     var temp = scope.columns[fromId];
     scope.columns[fromId] = scope.columns[toId];
+    scope.columns[fromId].index = toId;
     scope.columns[toId] = temp;
+    scope.columns[toId].index = fromId;
     scope.$eval(scope.columns);
+    console.log("send(switchColumn("+fromId+", "+toId+"))");
   }); 
 
 }

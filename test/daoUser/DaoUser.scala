@@ -14,6 +14,8 @@ import models.user.Column
 import services.endpoints.JsonRequest._
 import models.user.ProviderUser
 import scala.concurrent.duration.Duration
+import models.user.SkimboToken
+import services.auth.providers.Twitter
 
 object UtilTest {
   
@@ -66,7 +68,7 @@ object DaoUserSimpleFind extends Specification {
     optionUser.get.accounts.size must beEqualTo(1)
     optionUser.get.accounts(0).id must beEqualTo(id)
     //Delete user
-    Await.result(UserDao.delete(optionUser.get), Duration("10 seconds"))
+    Await.result(UserDao.delete(id), Duration("10 seconds"))
     Await.result(UserDao.findOneById(id), Duration("10 seconds")) must be beNone
   }
 
@@ -78,8 +80,7 @@ object DaoUserSimpleFind extends Specification {
     Await.result(UserDao.add(user), Duration("10 seconds"))
     //modif user
     val id2 = "test2.1"
-    Await.result(UserDao.addAccount(user, UtilTest.makeAccount(id)), Duration("10 seconds"))
-    Await.result(UserDao.addAccount(user, UtilTest.makeAccount(id2)), Duration("10 seconds"))
+    Await.result(UserDao.addAccount(id, UtilTest.makeAccount(id2)), Duration("10 seconds"))
     //Find user
     val optionUser2: Option[User] = Await.result(UserDao.findOneById(id2), Duration("10 seconds"))
     optionUser2 must not be beNone
@@ -87,7 +88,7 @@ object DaoUserSimpleFind extends Specification {
     optionUser2.get.accounts(0).id must beEqualTo(id)
     optionUser2.get.accounts(1).id must beEqualTo(id2)
     //Delete user
-    Await.result(UserDao.delete(optionUser2.get), Duration("10 seconds"))
+    Await.result(UserDao.delete(id2), Duration("10 seconds"))
     Await.result(UserDao.findOneById(id), Duration("10 seconds")) must be beNone
   }
 
@@ -99,7 +100,7 @@ object DaoUserSimpleFind extends Specification {
     Await.result(UserDao.add(user), Duration("10 seconds"))
     //modif user
     val column = UtilTest.makeColumn("test", "test", "t", "t")
-    Await.result(UserDao.addColumn(user, column), Duration("10 seconds"))
+    Await.result(UserDao.addColumn(id, column), Duration("10 seconds"))
     //Find user
     val optionUser3: Option[User] = Await.result(UserDao.findOneById(id), Duration("10 seconds"))
     optionUser3 must beSome
@@ -112,7 +113,7 @@ object DaoUserSimpleFind extends Specification {
     optionUser3.get.columns.get(0).unifiedRequests(0).args.get.size must beEqualTo(1)
     optionUser3.get.columns.get(0).unifiedRequests(0).args.get("t") must beEqualTo("t")
     //Delete user
-    Await.result(UserDao.delete(optionUser3.get), Duration("10 seconds"))
+    Await.result(UserDao.delete(id), Duration("10 seconds"))
     Await.result(UserDao.findOneById(id), Duration("10 seconds")) must be beNone
   }
   
@@ -124,16 +125,16 @@ object DaoUserSimpleFind extends Specification {
     Await.result(UserDao.add(user), Duration("10 seconds"))
     //modif user
     val column = UtilTest.makeColumn("test", "test", "t", "t")
-    Await.result(UserDao.addColumn(user, column), Duration("10 seconds"))
+    Await.result(UserDao.addColumn(id, column), Duration("10 seconds"))
     //modif user
-    Await.result(UserDao.deleteColumn(user, "test"), Duration("10 seconds"))
+    Await.result(UserDao.deleteColumn(id, "test"), Duration("10 seconds"))
     //Find user
     val optionUser3: Option[User] = Await.result(UserDao.findOneById(id), Duration("10 seconds"))
     optionUser3 must beSome
     optionUser3.get.columns must beSome
     optionUser3.get.columns.get.size must beEqualTo(0)
     //Delete user
-    Await.result(UserDao.delete(optionUser3.get), Duration("10 seconds"))
+    Await.result(UserDao.delete(id), Duration("10 seconds"))
     Await.result(UserDao.findOneById(id), Duration("10 seconds")) must be beNone
   }
   
@@ -145,10 +146,10 @@ object DaoUserSimpleFind extends Specification {
     Await.result(UserDao.add(user), Duration("10 seconds"))
     //modif user
     val column = UtilTest.makeColumn("test", "test", "t", "t")
-    Await.result(UserDao.addColumn(user, column), Duration("10 seconds"))
+    Await.result(UserDao.addColumn(id, column), Duration("10 seconds"))
     //modif user
     val column2 = UtilTest.makeColumn("test2", "test2", "t2", "t2")
-    Await.result(UserDao.updateColumn(user, "test", column2), Duration("10 seconds"))
+    Await.result(UserDao.updateColumn(id, "test", column2), Duration("10 seconds"))
     //Find user
     val optionUser3: Option[User] = Await.result(UserDao.findOneById(id), Duration("10 seconds"))
     optionUser3 must beSome
@@ -161,7 +162,7 @@ object DaoUserSimpleFind extends Specification {
     optionUser3.get.columns.get(0).unifiedRequests(0).args.get.size must beEqualTo(1)
     optionUser3.get.columns.get(0).unifiedRequests(0).args.get("t2") must beEqualTo("t2")
     //Delete user
-    Await.result(UserDao.delete(optionUser3.get), Duration("10 seconds"))
+    Await.result(UserDao.delete(id), Duration("10 seconds"))
     Await.result(UserDao.findOneById(id), Duration("10 seconds")) must be beNone
   }
   
@@ -172,22 +173,25 @@ object DaoUserSimpleFind extends Specification {
     //Add user
     Await.result(UserDao.add(user), Duration("10 seconds"))
     //modif user
-    val provider = ProviderUser("p1", "p1", None, Some("p1"), Some("p1"), Some("p1"), Some("p1"))
-    Await.result(UserDao.addProviderUser(user, provider), Duration("10 seconds"))
+    val token = SkimboToken("1")
+    val provider = ProviderUser("p1", Twitter.name, Some(token), Some("p1"), Some("p1"), Some("p1"), Some("p1"))
+    Await.result(UserDao.setToken(id, Twitter, token), Duration("10 seconds"))
+    Await.result(Await.result(UserDao.addProviderUser(id, provider), Duration("10 seconds")).get, Duration("10 seconds"))
     //Find user
-    val optionUser3: Option[User] = Await.result(UserDao.findByIdProvider("p1", "p1"), Duration("10 seconds"))
+    val optionUser3: Option[User] = Await.result(UserDao.findByIdProvider(Twitter.name, "p1"), Duration("10 seconds"))
+    println(optionUser3)
     optionUser3 must beSome
     optionUser3.get.distants must beSome
     optionUser3.get.distants.get.size must beEqualTo(1)
     optionUser3.get.distants.get(0).id must beEqualTo("p1")
-    optionUser3.get.distants.get(0).socialType must beEqualTo("p1")
+    optionUser3.get.distants.get(0).socialType must beEqualTo(Twitter.name)
     // we don't save personal data
     optionUser3.get.distants.get(0).username must beNone
     optionUser3.get.distants.get(0).name must beNone
     optionUser3.get.distants.get(0).description must beNone
     optionUser3.get.distants.get(0).avatar must beNone
     //Delete user
-    Await.result(UserDao.delete(optionUser3.get), Duration("10 seconds"))
+    Await.result(UserDao.delete(id), Duration("10 seconds"))
     Await.result(UserDao.findOneById(id), Duration("10 seconds")) must be beNone
   }
 

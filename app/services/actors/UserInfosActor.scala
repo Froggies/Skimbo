@@ -23,7 +23,7 @@ case object Retreive
 case class Send(userId: String, json: JsValue)
 case class StartProvider(userId: String, column: Column)
 case class CheckAccounts(idUser: String)
-case class AddInfosUser(user: User, providerUser: ProviderUser)
+case class AddInfosUser(providerUser: ProviderUser)
 case class RefreshInfosUser(userId: String, provider: GenericProvider)
 
 object UserInfosActor {
@@ -84,7 +84,7 @@ class UserInfosActor(idUser: String, channelOut: Concurrent.Channel[JsValue])(im
                   providerUser.map(pUser =>
                     UserDao.findByIdProvider(provider.name, pUser.id).map(optUser =>
                       optUser.map { user =>
-                        UserDao.addAccount(user, Account(idUser, new Date()))
+                        UserDao.addAccount(idUser, Account(idUser, new Date()))
                         start(user)
                       }.getOrElse {
                         val user = User(Seq(Account(idUser, new Date())), Some(Seq(pUser)))
@@ -123,7 +123,7 @@ class UserInfosActor(idUser: String, channelOut: Concurrent.Channel[JsValue])(im
               provider.getUser.map { providerUser =>
                 if (providerUser.isDefined && !user.distants.exists(
                   _.exists(pu => pu.socialType == provider.name && pu.id == providerUser.get.id))) {
-                  self ! AddInfosUser(user, ProviderUser(providerUser.get.id, provider.name, None))
+                  self ! AddInfosUser(ProviderUser(providerUser.get.id, provider.name, None))
                 }
                 if (providerUser.isDefined) {
                   self ! Send(idUser, Json.toJson(Command("userInfos", Some(Json.toJson(providerUser.get)))))
@@ -134,8 +134,8 @@ class UserInfosActor(idUser: String, channelOut: Concurrent.Channel[JsValue])(im
         }
       }
     }
-    case AddInfosUser(user: User, providerUser: ProviderUser) => {
-      UserDao.addProviderUser(user, providerUser)
+    case AddInfosUser(providerUser: ProviderUser) => {
+      UserDao.addProviderUser(idUser, providerUser)
     }
     case e: Exception => throw new UnexpectedException(Some("Incorrect message receive"), Some(e))
   }
@@ -148,7 +148,7 @@ class UserInfosActor(idUser: String, channelOut: Concurrent.Channel[JsValue])(im
             providerUser.map(pUser =>
               UserDao.findByIdProvider(provider.name, pUser.id).map(optUser =>
                 optUser.map { originalUser =>
-                  UserDao.merge(user, originalUser).map { _ =>
+                  UserDao.merge(idUser, originalUser.accounts.head.id).map { _ =>
                     Commands.interpretCmd(idUser, Command("allColumns"))
                     originalUser.columns.map(_.foreach(self ! StartProvider(idUser, _)))
                   }
