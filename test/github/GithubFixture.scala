@@ -387,6 +387,58 @@ object GithubFixture {
     "id":"1639219457"}
     """
     
+  val commitCommentEvent = 
+    """
+  {"type":"CommitCommentEvent",
+    "org":{
+      "avatar_url":"https://secure.gravatar.com/avatar/6562ef61dbcfb7174e9adb63f38345e7?d=https://a248.e.akamai.net/assets.github.com%2Fimages%2Fgravatars%2Fgravatar-org-420.png",
+      "url":"https://api.github.com/orgs/Froggies",
+      "gravatar_id":"6562ef61dbcfb7174e9adb63f38345e7",
+      "id":2130294,
+      "login":"Froggies"},
+    "created_at":"2012-12-16T16:14:28Z",
+    "public":true,
+    "actor":{
+      "avatar_url":"https://secure.gravatar.com/avatar/c6b552a4cd47f7cf1701ea5b650cd2e3?d=https://a248.e.akamai.net/assets.github.com%2Fimages%2Fgravatars%2Fgravatar-user-420.png",
+      "url":"https://api.github.com/users/manland",
+      "gravatar_id":"c6b552a4cd47f7cf1701ea5b650cd2e3",
+      "id":1492516,
+      "login":"manland"},
+    "repo":{
+      "url":"https://api.github.com/repos/Froggies/Skimbo",
+      "id":6017536,
+      "name":"Froggies/Skimbo"},
+    "payload":{
+      "comment":{
+        "url":"https://api.github.com/repos/Froggies/Skimbo/comments/2315443",
+        "commit_id":"f6be865463b4395c76dc498c62f44d1b060c335d",
+        "html_url":"https://github.com/Froggies/Skimbo/commit/f6be865463b4395c76dc498c62f44d1b060c335d#commitcomment-2315443",
+        "user":{
+          "followers_url":"https://api.github.com/users/manland/followers",
+          "received_events_url":"https://api.github.com/users/manland/received_events",
+          "url":"https://api.github.com/users/manland",
+          "gists_url":"https://api.github.com/users/manland/gists{/gist_id}",
+          "following_url":"https://api.github.com/users/manland/following",
+          "gravatar_id":"c6b552a4cd47f7cf1701ea5b650cd2e3",
+          "type":"User",
+          "starred_url":"https://api.github.com/users/manland/starred{/owner}{/repo}",
+          "avatar_url":"https://secure.gravatar.com/avatar/c6b552a4cd47f7cf1701ea5b650cd2e3?d=https://a248.e.akamai.net/assets.github.com%2Fimages%2Fgravatars%2Fgravatar-user-420.png",
+          "events_url":"https://api.github.com/users/manland/events{/privacy}",
+          "repos_url":"https://api.github.com/users/manland/repos",
+          "subscriptions_url":"https://api.github.com/users/manland/subscriptions",
+          "id":1492516,
+          "login":"manland",
+          "organizations_url":"https://api.github.com/users/manland/orgs"},
+        "path":"public/app/scripts/controllers/columns.js",
+        "updated_at":"2012-12-16T16:14:28Z",
+        "body":"Encore un test!",
+        "created_at":"2012-12-16T16:14:28Z",
+        "id":2315443,
+        "line":63,
+        "position":6}},
+    "id":"1642941013"}
+    """
+    
   val timeline = 
     """
 [

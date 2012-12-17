@@ -18,7 +18,7 @@ case class GithubWallMessage(
   avatarUser: Option[String],
   repoName: String,
   issues: Option[GithubIssuesEvent],
-  issueComment: Option[GithubIssueCommentEvent],
+  issueComment: Option[GithubCommentEvent],
   download: Option[GithubDownloadEvent],
   gollum: Option[GithubGollumEvent],
   refType:Option[String],
@@ -44,9 +44,10 @@ case class GithubIssuesEvent(
   htmlUrl: String,
   body: String)
   
-case class GithubIssueCommentEvent(
+case class GithubCommentEvent(
   id: Int,
-  body: String)
+  body: String,
+  htmlUrl: Option[String])
   
 case class GithubGollumEvent(
   action: String,
@@ -78,6 +79,7 @@ object GithubWallParser extends GenericParser {
       case "PushEvent" => "Push on " + e.repoName + ": " + e.push.get.head.message
       case "IssuesEvent" => "Issue [" + e.issues.get.title + "] > " + e.issues.get.state + ": " + e.issues.get.body
       case "IssueCommentEvent" => "Issue [" + e.issues.get.title + "] > " + e.issueComment.get.body
+      case "CommitCommentEvent" => "Comment on commit : " + e.issueComment.get.body
       case "DeleteEvent" => "Delete " + e.refType.get + " " + e.refName.get
       case "CreateEvent" => "Create " + e.refType.get + " " + e.refName.get
       case "DownloadEvent" =>
@@ -102,6 +104,7 @@ object GithubWallParser extends GenericParser {
       case "DownloadEvent"      => Some(e.download.get.url)
       case "IssuesEvent"        => Some(e.issues.get.htmlUrl)
       case "IssueCommentEvent"  => Some(e.issues.get.htmlUrl + "#issuecomment-" + e.issueComment.get.id)
+      case "CommitCommentEvent" => Some(e.issueComment.get.htmlUrl.get)
       case "DeleteEvent"        => Some(gitRepoUrl.format(e.repoName))
       case "CreateEvent"        => Some(gitRepoUrl.format(e.repoName))
       case "WatchEvent"         => Some(gitRepoUrl.format(e.repoName))
@@ -140,10 +143,11 @@ object GithubIssuesEvent {
     (__ \ "body").read[String])(GithubIssuesEvent.apply _)
 }
 
-object GithubIssueCommentEvent {
-  implicit val githubReader: Reads[GithubIssueCommentEvent] = (
+object GithubCommentEvent {
+  implicit val githubReader: Reads[GithubCommentEvent] = (
     (__ \ "id").read[Int] and
-    (__ \ "body").read[String])(GithubIssueCommentEvent.apply _)
+    (__ \ "body").read[String] and
+    (__ \ "html_url").readOpt[String])(GithubCommentEvent.apply _)
 }
 
 object GithubGollumEvent {
@@ -168,7 +172,7 @@ object GithubWallMessage {
     (__ \ "actor" \ "avatar_url").readOpt[String] and
     (__ \ "repo" \ "name").read[String] and
     (__ \ "payload" \ "issue").readOpt[GithubIssuesEvent] and
-    (__ \ "payload" \ "comment").readOpt[GithubIssueCommentEvent] and
+    (__ \ "payload" \ "comment").readOpt[GithubCommentEvent] and
     (__ \ "payload" \ "download").readOpt[GithubDownloadEvent] and
     ((__ \ "payload" \ "pages")(0)).readOpt[GithubGollumEvent] and
     (__ \ "payload" \ "ref_type").readOpt[String] and
