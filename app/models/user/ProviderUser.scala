@@ -29,7 +29,7 @@ object ProviderUser {
     BSONDocument(
       "id" -> BSONString(distant.id),
       "social" -> BSONString(distant.socialType),
-      "token" -> SkimboToken.toBSON(distant.token.get))
+      "token" -> SkimboToken.toBSON(distant.token.getOrElse(SkimboToken(""))))
   }
   
   def fromBSON(d: TraversableBSONDocument) = {

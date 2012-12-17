@@ -31,6 +31,7 @@ object Twitter extends OAuthProvider {
     } catch {
       case _ : Throwable => {
         Logger.error("Error during fetching user details TWITTER (certainly Rate Limit Exceeded)")
+        Logger.error(response.json.toString)
         None
       }
     }

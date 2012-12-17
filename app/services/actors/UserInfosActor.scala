@@ -148,10 +148,10 @@ class UserInfosActor(idUser: String, channelOut: Concurrent.Channel[JsValue])(im
             providerUser.map(pUser =>
               UserDao.findByIdProvider(provider.name, pUser.id).map(optUser =>
                 optUser.map { originalUser =>
-                  UserDao.merge(idUser, originalUser.accounts.head.id).map { _ =>
+                  UserDao.merge(idUser, originalUser.accounts.head.id, {
                     Commands.interpretCmd(idUser, Command("allColumns"))
                     originalUser.columns.map(_.foreach(self ! StartProvider(idUser, _)))
-                  }
+                  })
                 }.getOrElse {
                   Commands.interpretCmd(idUser, Command("allColumns"))
                   self ! CheckAccounts(idUser)

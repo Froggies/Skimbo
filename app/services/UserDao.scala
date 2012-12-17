@@ -16,6 +16,7 @@ import services.auth.ProviderDispatcher
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import services.auth.GenericProvider
 import java.util.Date
+import reactivemongo.core.commands.LastError
 
 object UserDao {
 
@@ -38,20 +39,13 @@ object UserDao {
     val query = BSONDocument("accounts.id" -> new BSONString(idUser))
     collection.find(query).headOption()
   }
-  
+
   def updateLastUse(idUser: String) = {
     val query = BSONDocument("accounts.id" -> new BSONString(idUser))
-    findOneById(idUser).map(_.map { user =>
-      val accounts:Seq[Account] = user.accounts.map { account =>
-        if(account.id == idUser) {
-          models.user.Account(idUser, new Date())
-        } else {
-          account
-        }
-      }
-      val u = models.User(accounts, user.distants, user.columns)
-      collection.update(query, models.User.toBSON(u))
-    })
+    val update = BSONDocument(
+      "$set" -> BSONDocument(
+        "accounts.$" -> models.user.Account.toBSON(models.user.Account(idUser, new Date()))))
+    collection.update(query, update)
   }
 
   def addAccount(idUser: String, account: models.user.Account) = {
@@ -77,9 +71,10 @@ object UserDao {
   }
 
   def updateColumn(idUser: String, title: String, column: Column) = {
-    deleteColumn(idUser, title)
-    val query = BSONDocument("accounts.id" -> new BSONString(idUser))
-    val update = BSONDocument("$push" -> BSONDocument("columns" -> Column.toBSON(column)))
+    val query = BSONDocument(
+      "accounts.id" -> new BSONString(idUser),
+      "columns.title" -> new BSONString(title))
+    val update = BSONDocument("$set" -> BSONDocument("columns.$" -> Column.toBSON(column)))
     collection.update(query, update)
   }
 
@@ -162,19 +157,20 @@ object UserDao {
     collection.update(query, update)
   }
 
-  def merge(fromUserId: String, toUserId: String) = {
-    findOneById(fromUserId).map ( _.map { fromUser =>
-      delete(fromUserId) map { _ =>
-        fromUser.accounts.foreach(account => addAccount(toUserId, account))
-        fromUser.columns.map(_.foreach(column => addColumn(toUserId, column)))
-        fromUser.distants.map(_.foreach { distant =>
-          if (!distant.id.isEmpty()) { // new user hasn't id
-            addProviderUser(toUserId, distant)
+  def merge(fromUserId: String, toUserId: String, onDone: => Any = {}) = {
+    findOneById(fromUserId).map(_.map { fromUser =>
+      findOneById(toUserId).map(_.map { toUser =>
+        val accounts = fromUser.accounts ++ toUser.accounts
+        val columns = fromUser.columns.getOrElse(Seq()) ++ toUser.columns.getOrElse(Seq())
+        val distants = fromUser.distants.getOrElse(Seq()) ++ toUser.distants.getOrElse(Seq())
+        val newUser = models.User(accounts, Some(distants), Some(columns))
+        val query = BSONDocument("accounts.id" -> new BSONString(toUserId))
+        delete(fromUserId) onSuccess {
+          case _ => collection.update(query, models.User.toBSON(newUser)) onSuccess {
+            case _ => onDone
           }
-        })
-      } map { _ =>
-        findOneById(toUserId)
-      }
+        }
+      })
     })
   }
 

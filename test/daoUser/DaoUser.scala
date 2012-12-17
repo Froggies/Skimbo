@@ -16,21 +16,33 @@ import models.user.ProviderUser
 import scala.concurrent.duration.Duration
 import models.user.SkimboToken
 import services.auth.providers.Twitter
+import org.joda.time.DateTime
 
 object UtilTest {
-  
-  def makeUser(id:String) = {
+
+  def makeUser(id: String) = {
     User.create(id)
   }
-  
-  def makeAccount(id:String) = {
+
+  def makeAccount(id: String) = {
     Account(id, new Date())
   }
-  
-  def makeColumn(title:String, urService:String, urArg1:String, urArg2:String) = {
+
+  def makeAccountOld(id: String) = {
+    Account(id, new DateTime().minusDays(1).toDate())
+  }
+
+  def makeColumn(title: String, urService: String, urArg1: String, urArg2: String) = {
     Column(title, Seq(UnifiedRequest(urService, Some(Map(urArg1 -> urArg2)))), 0, -1, -1)
   }
-  
+
+  def makeFullUser(id: String) = {
+    User(
+      Seq(makeAccount(id)),
+      Some(Seq(ProviderUser("provider_" + id, "provider_" + id, None))),
+      Some(Seq(makeColumn("col_" + id, "col_" + id, "col_" + id, "col_" + id))))
+  }
+
 }
 
 object DaoUserSimpleFind extends Specification {
@@ -44,12 +56,14 @@ object DaoUserSimpleFind extends Specification {
         val id = "test"
         val user = UtilTest.makeUser(id)
 
-        test1(id, user)
-        test2(id, user)
-        test3(id, user)
-        test4(id, user)
-        test5(id, user)
-        test6(id, user)
+        addUser(id, user)
+        modifUser(id, user)
+        addColumn(id, user)
+        delColumn(id, user)
+        modColumn(id, user)
+        addAndFindProvider(id, user)
+        updateLastUse(id, user)
+        mergeUser
 
         Await.result(UserDao.findOneById(id), Duration("10 seconds")) must be beNone
       }
@@ -59,7 +73,7 @@ object DaoUserSimpleFind extends Specification {
   /**
    * Test 1 : add, find and delete
    */
-  def test1(id: String, user: User) {
+  def addUser(id: String, user: User) {
     //Add user
     Await.result(UserDao.add(user), Duration("10 seconds"))
     //Find user
@@ -75,7 +89,7 @@ object DaoUserSimpleFind extends Specification {
   /**
    * Test 2 : add, mod, find and delete
    */
-  def test2(id: String, user: User) {
+  def modifUser(id: String, user: User) {
     //Add user
     Await.result(UserDao.add(user), Duration("10 seconds"))
     //modif user
@@ -95,7 +109,7 @@ object DaoUserSimpleFind extends Specification {
   /**
    * Test 3 : add, addColumn, find and delete
    */
-  def test3(id: String, user: User) {
+  def addColumn(id: String, user: User) {
     //Add user
     Await.result(UserDao.add(user), Duration("10 seconds"))
     //modif user
@@ -116,11 +130,11 @@ object DaoUserSimpleFind extends Specification {
     Await.result(UserDao.delete(id), Duration("10 seconds"))
     Await.result(UserDao.findOneById(id), Duration("10 seconds")) must be beNone
   }
-  
+
   /**
    * Test 4 : add, delColumn, find and delete
    */
-  def test4(id: String, user: User) {
+  def delColumn(id: String, user: User) {
     //Add user
     Await.result(UserDao.add(user), Duration("10 seconds"))
     //modif user
@@ -137,16 +151,17 @@ object DaoUserSimpleFind extends Specification {
     Await.result(UserDao.delete(id), Duration("10 seconds"))
     Await.result(UserDao.findOneById(id), Duration("10 seconds")) must be beNone
   }
-  
+
   /**
    * Test 5 : add, modColumn, find and delete
    */
-  def test5(id: String, user: User) {
+  def modColumn(id: String, user: User) {
     //Add user
     Await.result(UserDao.add(user), Duration("10 seconds"))
     //modif user
     val column = UtilTest.makeColumn("test", "test", "t", "t")
     Await.result(UserDao.addColumn(id, column), Duration("10 seconds"))
+    Await.result(UserDao.addColumn(id, UtilTest.makeColumn("other", "other", "o", "o")), Duration("10 seconds"))
     //modif user
     val column2 = UtilTest.makeColumn("test2", "test2", "t2", "t2")
     Await.result(UserDao.updateColumn(id, "test", column2), Duration("10 seconds"))
@@ -154,7 +169,7 @@ object DaoUserSimpleFind extends Specification {
     val optionUser3: Option[User] = Await.result(UserDao.findOneById(id), Duration("10 seconds"))
     optionUser3 must beSome
     optionUser3.get.columns must beSome
-    optionUser3.get.columns.get.size must beEqualTo(1)
+    optionUser3.get.columns.get.size must beEqualTo(2)
     optionUser3.get.columns.get(0).title must beEqualTo("test2")
     optionUser3.get.columns.get(0).unifiedRequests.size must beEqualTo(1)
     optionUser3.get.columns.get(0).unifiedRequests(0).service must beEqualTo("test2")
@@ -165,11 +180,11 @@ object DaoUserSimpleFind extends Specification {
     Await.result(UserDao.delete(id), Duration("10 seconds"))
     Await.result(UserDao.findOneById(id), Duration("10 seconds")) must be beNone
   }
-  
+
   /**
    * Test 6 : add, addProvider, findbyProvider and delete
    */
-  def test6(id: String, user: User) {
+  def addAndFindProvider(id: String, user: User) {
     //Add user
     Await.result(UserDao.add(user), Duration("10 seconds"))
     //modif user
@@ -179,7 +194,6 @@ object DaoUserSimpleFind extends Specification {
     Await.result(Await.result(UserDao.addProviderUser(id, provider), Duration("10 seconds")).get, Duration("10 seconds"))
     //Find user
     val optionUser3: Option[User] = Await.result(UserDao.findByIdProvider(Twitter.name, "p1"), Duration("10 seconds"))
-    println(optionUser3)
     optionUser3 must beSome
     optionUser3.get.distants must beSome
     optionUser3.get.distants.get.size must beEqualTo(1)
@@ -193,6 +207,60 @@ object DaoUserSimpleFind extends Specification {
     //Delete user
     Await.result(UserDao.delete(id), Duration("10 seconds"))
     Await.result(UserDao.findOneById(id), Duration("10 seconds")) must be beNone
+  }
+
+  /**
+   * Test 7 : update lastUse
+   */
+  def updateLastUse(id: String, user: User) {
+    //Add user
+    Await.result(UserDao.add(user), Duration("10 seconds"))
+    //modif user
+    val account = UtilTest.makeAccountOld("test2")
+    Await.result(UserDao.addAccount(id, account), Duration("10 seconds"))
+    Await.result(UserDao.updateLastUse("test2"), Duration("10 seconds"))
+    //Find user
+    val optionUser3: Option[User] = Await.result(UserDao.findOneById(id), Duration("10 seconds"))
+    optionUser3 must beSome
+    optionUser3.get.accounts.size must beEqualTo(2)
+    optionUser3.get.accounts(1).id must beEqualTo("test2")
+    optionUser3.get.accounts(1).lastUse must not be equalTo(account.lastUse)
+    //Delete user
+    Await.result(UserDao.delete(id), Duration("10 seconds"))
+    Await.result(UserDao.findOneById(id), Duration("10 seconds")) must be beNone
+  }
+
+  /**
+   * Test 8
+   */
+  def mergeUser() {
+    val user = UtilTest.makeFullUser("test")
+    val user2 = UtilTest.makeFullUser("test2")
+    val user3 = UtilTest.makeFullUser("test3")
+    //Add user
+    Await.result(UserDao.add(user), Duration("10 seconds"))
+    Await.result(UserDao.add(user2), Duration("10 seconds"))
+    Await.result(UserDao.add(user3), Duration("10 seconds"))
+    //modif user
+    Await.result(
+      Await.result(
+        UserDao.merge("test", "test2"),
+        Duration("10 seconds")).get,
+      Duration("10 seconds")).get
+    Thread.sleep(10)
+    //Find user
+    val optionUser: Option[User] = Await.result(UserDao.findOneById("test"), Duration("10 seconds"))
+    optionUser must beSome
+    optionUser.get.accounts.size must beEqualTo(2)
+    optionUser.get.accounts(1).id must beEqualTo("test2")
+    val optionUser3: Option[User] = Await.result(UserDao.findOneById("test3"), Duration("10 seconds"))
+    optionUser3 must beSome
+    optionUser3.get.accounts.size must beEqualTo(1)
+    //Delete user
+    Await.result(UserDao.delete("test"), Duration("10 seconds"))
+    Await.result(UserDao.findOneById("test2"), Duration("10 seconds")) must beNone
+    Await.result(UserDao.delete("test3"), Duration("10 seconds"))
+    Await.result(UserDao.findOneById("test3"), Duration("10 seconds")) must be beNone
   }
 
 }
