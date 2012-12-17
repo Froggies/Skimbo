@@ -21,6 +21,7 @@ case class GithubWallMessage(
   issueComment: Option[GithubCommentEvent],
   download: Option[GithubDownloadEvent],
   gollum: Option[GithubGollumEvent],
+  pullRequest: Option[GithubPullRequestEvent],
   refType:Option[String],
   refName:Option[String])
 
@@ -53,6 +54,11 @@ case class GithubGollumEvent(
   action: String,
   pageName: String,
   pageUrl: String
+)
+
+case class GithubPullRequestEvent(
+  body:String,
+  url:String
 )
 
 object GithubWallParser extends GenericParser {
@@ -90,6 +96,7 @@ object GithubWallParser extends GenericParser {
         }
       case "WatchEvent" => "Watch " + e.repoName
       case "GollumEvent" => "Has " + e.gollum.get.action + " " + e.gollum.get.pageName + " on wiki"
+      case "PullRequestEvent" => "PullRequest : " + e.pullRequest.get.body
       case _ => "TODO type on " + e.repoName + " : " + e.typeGithub
     }
   }
@@ -109,6 +116,7 @@ object GithubWallParser extends GenericParser {
       case "CreateEvent"        => Some(gitRepoUrl.format(e.repoName))
       case "WatchEvent"         => Some(gitRepoUrl.format(e.repoName))
       case "GollumEvent"        => Some(e.gollum.get.pageUrl)
+      case "PullRequestEvent"   => Some(e.pullRequest.get.url)
       case _ => None
     }
   }
@@ -157,6 +165,12 @@ object GithubGollumEvent {
     (__ \ "html_url").read[String])(GithubGollumEvent.apply _)
 }
 
+object GithubPullRequestEvent {
+  implicit val githubReader: Reads[GithubPullRequestEvent] = (
+    (__ \ "body").read[String] and
+    (__ \ "_links" \ "html" \ "href").read[String])(GithubPullRequestEvent.apply _)
+}
+
 object GithubWallMessage {
   
   val datePattern = "yyyy-MM-dd'T'HH:mm:ss'Z'"
@@ -175,6 +189,7 @@ object GithubWallMessage {
     (__ \ "payload" \ "comment").readOpt[GithubCommentEvent] and
     (__ \ "payload" \ "download").readOpt[GithubDownloadEvent] and
     ((__ \ "payload" \ "pages")(0)).readOpt[GithubGollumEvent] and
+    (__ \ "payload" \ "pull_request").readOpt[GithubPullRequestEvent] and
     (__ \ "payload" \ "ref_type").readOpt[String] and
     (__ \ "payload" \ "ref").readOpt[String])(GithubWallMessage.apply _)
 }

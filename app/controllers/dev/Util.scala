@@ -31,7 +31,7 @@ object Util extends Controller with Authentication {
     import scala.concurrent.ExecutionContext.Implicits.global
     Async {
       Endpoints.getConfig("github.notifications").flatMap { config =>
-        Endpoints.genererUrl("github.notifications", Map("username" -> "froggies"), None).map { url =>
+        Endpoints.genererUrl("github.notifications", Map("username" -> "zenexity"), None).map { url =>
           config.provider.fetch(url).get.map { response =>
             Ok(config.provider.resultAsJson(response))
           }
