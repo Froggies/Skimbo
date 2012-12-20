@@ -1,22 +1,23 @@
 package services;
 
-import play.api._
-import play.api.mvc._
-import play.api.libs.json._
-import play.api.Play.current
-import services.endpoints.JsonRequest._
-import play.modules.reactivemongo._
+import java.util.Date
+
 import scala.concurrent.Future
-import reactivemongo.api._
-import reactivemongo.bson._
+
+import models.User.UserBSONReader
+import models.user.Account
+import models.user.Column
+import models.user.ProviderUser
+import models.user.SkimboToken
+import play.api.Play.current
+import play.api.libs.concurrent.Execution.Implicits.defaultContext
+import play.modules.reactivemongo.ReactiveMongoPlugin
+import reactivemongo.bson.BSONDocument
+import reactivemongo.bson.BSONString
 import reactivemongo.bson.handlers.DefaultBSONHandlers.DefaultBSONDocumentWriter
 import reactivemongo.bson.handlers.DefaultBSONHandlers.DefaultBSONReaderHandler
-import models.user._
-import services.auth.ProviderDispatcher
-import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import services.auth.GenericProvider
-import java.util.Date
-import reactivemongo.core.commands.LastError
+import services.auth.ProviderDispatcher
 
 object UserDao {
 

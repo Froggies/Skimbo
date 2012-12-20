@@ -17,6 +17,9 @@ GET     /api/stream/sse       			controllers.stream.Sse.connect
 POST    /api/stream/command    			controllers.stream.Sse.command
 GET     /api/stream/ping       			controllers.stream.Sse.ping
 
+# Stats
+GET		/api/stats							controllers.api.Stats.get
+
 # Dev util
 GET		/api/dev/util/testRes/:service	controllers.dev.Util.testRes(service: String)
 GET		/api/dev/util/staticRes			controllers.dev.Util.staticRes
