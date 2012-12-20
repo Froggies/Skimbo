@@ -39,16 +39,16 @@ object Stats extends Controller {
         res ++= "\n"
         
         res ++= "nb accounts by user :\n"
-        res ++= formatMap(nbAccountsByUser(users))
+        res ++= formatMap(users.size, nbAccountsByUser(users))
         
         res ++= "nb columns by user :\n"
-        res ++= formatMap(nbColumnsByUser(users))
+        res ++= formatMap(users.size, nbColumnsByUser(users))
         
         res ++= "nb services by columns :\n"
-        res ++= formatMap(nbServiceByColumn(users))
+        res ++= formatMap(users.size, nbServiceByColumn(users))
         
         res ++= "nb services by user :\n"
-        res ++= formatMap(nbServiceByUser(users))
+        res ++= formatMap(users.size, nbServiceByUser(users))
           
         Ok(res.toString)
       }
@@ -71,13 +71,19 @@ object Stats extends Controller {
     }.size
   }
   
-  def formatMap(map : Map[Int, Int]) = {
+  def formatMap(nbUsers: Double, map : Map[Int, Int]) = {
     val res = new StringBuilder
     map.toList.sortBy(_._1).foreach { m => 
         res ++= "\t" + m._1 + " : " + m._2 + "\n"
     }
-    res ++= "\n"
-    res
+    var nb = 0.0
+    var coef = 0
+    map.toList.foreach(coef += _._2)
+    map.toList.foreach { v =>
+      nb += v._2 * v._1
+    }
+    val r = nb/coef
+    res ++= "Average : " + r + "\n\n"
   }
   
   def nbColumnsByUser(users: Seq[User]):Map[Int, Int] = {
