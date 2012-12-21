@@ -1,13 +1,11 @@
 services.factory("PopupProvider", ["Network", function($network) {
 
   return {
-    openPopup: function(service, column) {
-      var _service = service;
-      var _column = column;
+    openPopup: function(service, optionalCallback) {
       var width = 500;
       var height = 500;
 
-      switch(service.socialNetwork ) {
+      switch(service.socialNetwork) {
         case "github":
           width = 960;
           height = 430;
@@ -40,9 +38,10 @@ services.factory("PopupProvider", ["Network", function($network) {
       
       var newwindow = window.open("/auth/"+service.socialNetwork, 'Connection', 'height='+height+', width='+width+', left='+left+', top='+top);
       window.callMeToRefresh = function() {
-        var col = _column;
-        var serv = _service;
         $network.send({cmd:"allUnifiedRequests"});
+        if(optionalCallback !== undefined) {
+          optionalCallback();
+        }
       }
 
       if (newwindow !== undefined && window.focus) {

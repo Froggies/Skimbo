@@ -52,6 +52,8 @@ services.factory("ServerCommunication", [
           clientColumn.title = originalColumn.title;
           clientColumn.unifiedRequests = [];
           clientColumn.index = originalColumn.index;
+          clientColumn.width = originalColumn.width;
+          clientColumn.height = originalColumn.height;
           for (var j = 0; j < originalColumn.unifiedRequests.length; j++) {
             var unifiedRequest = originalColumn.unifiedRequests[j];
             var clientUnifiedRequest = $unifiedRequestUtils.serverToClientUnifiedRequest(unifiedRequest);

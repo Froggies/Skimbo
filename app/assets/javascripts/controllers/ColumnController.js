@@ -119,11 +119,13 @@ controllers.controller('ColumnController', [
         $scope.columns.push(
           {
             "title": (String.fromCharCode(945+$scope.columns.length)) + ") What is here ? ",
-            "oldTitle":"",
-            "showModifyColumn":"true",
-            "newColumn":"true",
-            "unifiedRequests":[],
-            "index":$scope.columns.length
+            "oldTitle": "",
+            "showModifyColumn": "true",
+            "newColumn": "true",
+            "unifiedRequests": [],
+            "index": $scope.columns.length,
+            "width": -1,
+            "height": -1
           }
         );
     };
@@ -142,7 +144,7 @@ controllers.controller('ColumnController', [
         column.showErrorBlankArg = false;
         for (var i = column.unifiedRequests.length - 1; i >= 0; i--) {
           if(column.unifiedRequests[i].fromServer == false) {
-            column.unifiedRequests.splice(i,1);
+            column.unifiedRequests.splice(i, 1);
           }
         };
       }
@@ -156,7 +158,13 @@ controllers.controller('ColumnController', [
           column.unifiedRequests.push(clientUnifiedRequest);
         }
         else {
-          $popupProvider.openPopup(service, column);
+          $popupProvider.openPopup(service, function() {
+            $scope.$apply(function() {
+              var clientUnifiedRequest = $unifiedRequestUtils.serverToUnifiedRequest(service.service);
+              clientUnifiedRequest.fromServer = false;
+              column.unifiedRequests.push(clientUnifiedRequest);
+            });
+          });
         }
       }
     }
@@ -293,7 +301,7 @@ controllers.controller('ColumnController', [
 
     $scope.clickOnNotification = function(notification) {
       if(notification.isError == false) {
-        $popupProvider.reconnect({"socialNetwork": notification.providerName});
+        $popupProvider.openPopup({"socialNetwork": notification.providerName});
       } else {
         var index = $arrayUtils.indexOfWith($scope.notifications, notification, function(inArray, data) {
           return inArray.providerName == data.providerName && inArray.msg == data.msg;
