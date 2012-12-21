@@ -50,12 +50,13 @@ services.factory("Network", ["$http", "ServerCommunication", function($http, $se
       //only sse connexion
       _send({"cmd":"pong"});
     } else {
+      // console.log(data);
       $serverCommunication.cmd(data);
     }
   }
 
   function _send(jsonMsg) {
-    console.log("send : ",jsonMsg);
+    // console.log("send : ",jsonMsg);
     if(socket !== undefined) {
       socket.send(JSON.stringify(jsonMsg));
     } else {

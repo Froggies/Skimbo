@@ -1,8 +1,8 @@
 'use strict';
 
 controllers.controller('ColumnController', [
-  "$scope", "Network", "$rootScope", "UnifiedRequestUtils",
-  function($scope, $network, $rootScope, $unifiedRequestUtils) {
+  "$scope", "Network", "$rootScope", "UnifiedRequestUtils", "Visibility", "PopupProvider", "ArrayUtils",
+  function($scope, $network, $rootScope, $unifiedRequestUtils, $visibility, $popupProvider, $arrayUtils) {
 
     //chrome memory leak !!!
     $scope.$destroy= function() {
@@ -26,16 +26,6 @@ controllers.controller('ColumnController', [
 
     }
 
-    var isPageVisible = true;
-    try {
-      isPageVisible = document.hasFocus();
-    } catch(error) {
-      isPageVisible = true;
-    }
-    
-    var nbNewMessages = 0;
-    pageVisibility(switchPageVisible, switchPageInvisible);
-
     $scope.send = $network.send;
 
     $rootScope.$on('availableServices', function(evt, serviceProposes) {
@@ -50,7 +40,6 @@ controllers.controller('ColumnController', [
     });
 
     $rootScope.$on('allColumns', function(evt, columns) {
-      console.log(columns);
       $scope.$apply(function() {
         $scope.columns = columns;
       });
@@ -64,18 +53,8 @@ controllers.controller('ColumnController', [
           column.messages = [];
         }
         column.messages.push(msg.msg);
-        var insertSort = function(sortMe) {
-          for(var i=0, j, tmp; i<sortMe.length; ++i ) {
-            tmp = sortMe[i];
-            tmp.dateAgo = moment(moment(Number(tmp.createdAt)), "YYYYMMDD").fromNow();
-            for(j=i-1; j>=0 && sortMe[j].createdAt < tmp.createdAt; --j) {
-              sortMe[j+1] = sortMe[j];
-            }
-            sortMe[j+1] = tmp;
-          }
-        }
-        insertSort(column.messages);
-        notifyNewMessage();
+        $arrayUtils.sortMsg(column.messages);
+        $visibility.notifyNewMessage();
       });
     });
 
@@ -84,14 +63,7 @@ controllers.controller('ColumnController', [
         if($scope.notifications == undefined) {
           $scope.notifications = [];
         }
-        var notificationExiste = false;
-        for (var i = 0; i < $scope.notifications.length; i++) {
-          if ($scope.notifications[i].providerName == data.providerName) {
-            notificationExiste = true;
-            break;
-          }
-        };
-        if(!notificationExiste) {
+        if(!$arrayUtils.exist($scope.notifications, data, "providerName")) {
           $scope.notifications.push(data);
         }
       });
@@ -106,13 +78,9 @@ controllers.controller('ColumnController', [
             }
           };
         }
-
-        if($scope.notifications != undefined) {
-          for (var i = $scope.notifications.length - 1; i >= 0; i--) {
-            if ($scope.notifications[i].providerName == data.providerName) {
-              $scope.notifications.splice(i,1);
-            }
-          };
+        var index = $arrayUtils.indexOf($scope.notifications, data, "providerName");
+        if(index > -1) {
+          $scope.notifications.splice(index, 1);
         }
       });
     });
@@ -122,34 +90,20 @@ controllers.controller('ColumnController', [
         if($scope.notifications == undefined) {
           $scope.notifications = [];
         }
-        var notificationExiste = false;
-        for (var i = 0; i < $scope.notifications.length; i++) {
-          if ($scope.notifications[i].providerName == data.providerName && 
-            $scope.notifications[i].title == data.msg) {
-            notificationExiste = true;
-            break;
-          }
-        };
-        if(!notificationExiste) {
+        var exist = $arrayUtils.existWith($scope.notifications, data, function(inArray, data) {
+          return inArray.providerName == data.providerName && inArray.title == data.msg;
+        });
+        if(!exist) {
           $scope.notifications.push(data);
         }
       });
     });
 
-    $rootScope.$on('deleteColumn', function(evt, data) {
+    $rootScope.$on('delColumn', function(evt, data) {
       $scope.$apply(function() {
-        var title = $scope.lastColumnDeleted.body.title;
-        var columnIndice = 0;
-        var columnFind = false;
-        for (var i = 0; i < $scope.columns.length; i++) {
-          if($scope.columns[i].title == title) {
-            columnIndice = i;
-            columnFind = true;
-            break;
-          }
-        }
-        if(columnFind) {
-          $scope.columns.splice(columnIndice,1);
+        var index = $arrayUtils.indexOf($scope.columns, $scope.lastColumnDeleted.body, "title");
+        if(index > -1) {
+          $scope.columns.splice(index, 1);
         }
         $scope.lastColumnDeleted = undefined;
       });
@@ -170,7 +124,8 @@ controllers.controller('ColumnController', [
             "newColumn":"true",
             "unifiedRequests":[],
             "index":$scope.columns.length
-          });
+          }
+        );
     };
 
     $scope.modifyColumn = function(column) {
@@ -182,8 +137,7 @@ controllers.controller('ColumnController', [
       }
       if(column.showModifyColumn == true) {
         column.oldTitle = column.title;
-      }
-      else {
+      } else {
         column.title = column.oldTitle;
         column.showErrorBlankArg = false;
         for (var i = column.unifiedRequests.length - 1; i >= 0; i--) {
@@ -202,7 +156,7 @@ controllers.controller('ColumnController', [
           column.unifiedRequests.push(clientUnifiedRequest);
         }
         else {
-          $scope.openPopup(service, column);
+          $popupProvider.openPopup(service, column);
         }
       }
     }
@@ -237,29 +191,31 @@ controllers.controller('ColumnController', [
         unifiedRequests.push($unifiedRequestUtils.clientToServerUnifiedRequest(column.unifiedRequests[i]));
       };
       if(!column.newColumn) {
-        json = {"cmd":"modColumn", 
-                 "body":{
-                   "title": column.oldTitle, 
-                   "column":{
-                     "title":column.title,
-                     "unifiedRequests": unifiedRequests,
-                     "index":column.index,
-                     "width":-1,
-                     "height":-1
-                   }
-                 }
-                };
+        json = {
+          "cmd": "modColumn", 
+          "body": {
+            "title": column.oldTitle, 
+            "column": {
+              "title": column.title,
+              "unifiedRequests": unifiedRequests,
+              "index": column.index,
+              "width": column.width,
+              "height": column.height
+            }
+          }
+        };
       } else {
         column.newColumn = false;
-        json = {"cmd":"addColumn", 
-                "body":{
-                  "title":column.title,
-                  "unifiedRequests": unifiedRequests,
-                  "index":column.index,
-                  "width":-1,
-                  "height":-1
-                }
-              };
+        json = {
+          "cmd": "addColumn", 
+          "body": {
+            "title": column.title,
+            "unifiedRequests": unifiedRequests,
+            "index": column.index,
+            "width": column.width,
+            "height": column.height
+          }
+        };
       }
 
       column.showErrorBlankArg = false;
@@ -337,162 +293,32 @@ controllers.controller('ColumnController', [
 
     $scope.clickOnNotification = function(notification) {
       if(notification.isError == false) {
-        $scope.reconnect(notification.providerName);
+        $popupProvider.reconnect({"socialNetwork": notification.providerName});
       } else {
-        for (var i = 0; i < $scope.notifications.length; i++) {
-          var notif = $scope.notifications[i];
-          if(notification.providerName == notif.providerName && notification.msg == notif.msg) {
-            $scope.notifications.splice(i, 1);
-            return;
+        var index = $arrayUtils.indexOfWith($scope.notifications, notification, function(inArray, data) {
+          return inArray.providerName == data.providerName && inArray.msg == data.msg;
+        });
+        if(index > -1) {
+          $scope.notifications.splice(index, 1);
+        }
+      }
+    }
+
+    function getColumnByName(name) {
+      if($scope.columns !== undefined) {
+        for (var i = 0; i < $scope.columns.length; i++) {
+          if ($scope.columns[i].title == name) {
+              return $scope.columns[i];
           }
-        };
+        }
       }
+      if($rootScope.tempColumns == undefined) {
+        $rootScope.tempColumns = [];
+      }
+      if($rootScope.tempColumns[name] == undefined) {
+        $rootScope.tempColumns[name] = {};
+      }
+      return $rootScope.tempColumns[name];
     }
-
-    $scope.reconnect = function(socialNetworkName) {
-      $scope.openPopup({"socialNetwork": socialNetworkName});
-    }
-
-    $scope.openPopup = function(service, column) {
-      var _service = service;
-      var _column = column;
-      var scope = $scope;
-      var width = 500;
-      var height = 500;
-
-      switch(service.socialNetwork ) {
-        case "github":
-          width = 960;
-          height = 430;
-        break;
-        case "facebook":
-         width = 640;
-          height = 372;   
-        break;
-        case "viadeo":
-          width = 570;
-          height = 315;
-        break;
-        case "trello":
-          width = 572;
-          height = 610;
-        break;
-        case "twitter":
-          width = 600;
-          height = 500;
-        break;
-      }
-
-      if (window.innerWidth) {
-        var left = (window.innerWidth-width)/2;
-        var top = (window.innerHeight-height)/2;
-      } else {
-         var left = (document.body.clientWidth-width)/2;
-         var top = (document.body.clientHeight-height)/2;
-      }
-      
-      var newwindow = window.open("/auth/"+service.socialNetwork, 'Connection', 'height='+height+', width='+width+', left='+left+', top='+top);
-      window.callMeToRefresh = function() {
-        var col = _column;
-        var serv = _service;
-        $network.send({cmd:"allUnifiedRequests"});
-      }
-
-      if (newwindow !== undefined && window.focus) {
-        newwindow.focus();
-      }
-      return false;
-    }
-
-
-function getColumnByName(name) {
-  if($scope.columns !== undefined) {
-    for (var i = 0; i < $scope.columns.length; i++) {
-      if ($scope.columns[i].title == name) {
-          return $scope.columns[i];
-      }
-    }
-  }
-  if($rootScope.tempColumns == undefined) {
-    $rootScope.tempColumns = [];
-  }
-  if($rootScope.tempColumns[name] == undefined) {
-    $rootScope.tempColumns[name] = {};
-  }
-  return $rootScope.tempColumns[name];
-}
-
-function notifyNewMessage() {
-  if (!isPageVisible) {
-    nbNewMessages += 1;
-    document.title = "("+nbNewMessages+") Skimbo";
-  }
-}
-
-function switchPageVisible() {
-  document.title = "Skimbo";
-  nbNewMessages = 0;
-  isPageVisible = true;
-}
-
-function switchPageInvisible() {
-  isPageVisible = false;
-  nbNewMessages = 0;
-}
 
 }]);
-
-function dragOver(target, ev)
-{
-  ev.preventDefault();
-}
-
-function dragStart(target,ev)
-{
-	target.style.opacity = "0.7";
-  ev.dataTransfer.setData('text/plain', "none");
-  ev.dataTransfer.setData("text/html", target.innerHTML);
-	ev.dataTransfer.setData("id", target.id);
-	ev.dataTransfer.effectAllowed = 'move';
-}
-
-function dragEnter(target, ev) {
-	ev.preventDefault();
-}
-
-function dragLeave(target, ev) {
-	ev.preventDefault();
-}
-
-function dragEnd(target,ev)
-{
-	target.style.opacity = "1";
-}
-
-function drop(target,ev)
-{
-	ev.preventDefault();
-  target.style.opacity = "1";
-
-	var fromId = ev.dataTransfer.getData("id");
-  fromId = fromId.split("_")[1];
-	var toId = target.id;
-  toId = toId.split("_")[1];
-
-	var scope = angular.element(target).scope().$parent;
-  scope.$apply(function() {
-    var temp = scope.columns[fromId];
-    scope.columns[fromId] = scope.columns[toId];
-    scope.columns[fromId].index = toId;
-    scope.columns[toId] = temp;
-    scope.columns[toId].index = fromId;
-    scope.$eval(scope.columns);
-    var modColumnsOrder = {"cmd":"modColumnsOrder", "body":{}};
-    modColumnsOrder.body.columns = [];
-    for (var i = 0; i < scope.columns.length; i++) {
-      modColumnsOrder.body.columns.push(scope.columns[i].title);
-    };
-    scope.send(modColumnsOrder);
-  }); 
-
-}
