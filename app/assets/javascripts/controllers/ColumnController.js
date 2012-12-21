@@ -1,10 +1,8 @@
 'use strict';
 
-controllers.controller('ColumnController', ["$scope", "$rootScope", "StringUtils", "$http", function($scope, $rootScope, stringUtils, $http) {
-
-    // translation : 
-    $rootScope.currentLanguage = navigator.language.substring(0,2);
-    console.log(navigator.language);
+controllers.controller('ColumnController', [
+  "$scope", "Network", "$rootScope", "UnifiedRequestUtils",
+  function($scope, $network, $rootScope, $unifiedRequestUtils) {
 
     //chrome memory leak !!!
     $scope.$destroy= function() {
@@ -38,85 +36,148 @@ controllers.controller('ColumnController', ["$scope", "$rootScope", "StringUtils
     var nbNewMessages = 0;
     pageVisibility(switchPageVisible, switchPageInvisible);
 
-    var wshost = jsRoutes.controllers.stream.WebSocket.connect().webSocketURL();
-    var ssehost = jsRoutes.controllers.stream.Sse.connect().absoluteURL();
-    var sseping = jsRoutes.controllers.stream.Sse.ping().absoluteURL();
+    $scope.send = $network.send;
 
-    $scope.sseMode = function() {
-      var source = new EventSource(ssehost);
-      source.addEventListener('message', function(msg) {
-          var data;
-          try {
-              data = JSON.parse(msg.data);
-          } catch(exception) {
-              data = msg.data;
-          }      
-          $scope.$apply(executeCommand(data));
-          //$http.get(sseping);//TODO decomment when ok
-      }, false);
-
-      //source.addEventListener('open', function(e) {console.log('sse socket ouverte');}, false);
-      source.addEventListener('error', function(e) {source.close(); console.log('sse Une erreur est survenue');}, false);
-    }
-    
-    var socket;
-    if(window.MozWebSocket) {
-        window.WebSocket=window.MozWebSocket;
-    }
-    if(!window.WebSocket) {
-        $scope.sseMode();
-    } else {
-        socket = new WebSocket(wshost);
-        //socket.onopen = function() { console.log('WS socket ouverte'); }
-        //socket.onclose = function() { socket = undefined; $scope.sseMode(); console.log('WS socket fermée'); }
-        socket.onerror = function() { socket = undefined; $scope.sseMode(); console.log('WS Une erreur est survenue'); }
-        socket.onmessage = function(msg){
-            var data;
-            try { //tente de parser data
-                data = JSON.parse(msg.data);
-            } catch(exception) {
-                data = msg.data
-            }      
-            //ici on poura effectuer tout ce que l'on veux sur notre objet data
-            executeCommand(data);
+    $rootScope.$on('availableServices', function(evt, serviceProposes) {
+      if(!$scope.$$phase) {
+          $scope.$apply(function() {
+            $scope.serviceProposes = serviceProposes;
+          });
         }
-    } 
+        else {
+          $scope.serviceProposes = serviceProposes;
+        }
+    });
 
-    var send = function(jsonMsg) {
-      console.log("send : ",jsonMsg);
-      if(socket !== undefined) {
-        socket.send(JSON.stringify(jsonMsg));
-      } else {
-        $http.post('/api/stream/command', JSON.stringify(jsonMsg));
-      }
-    }
+    $rootScope.$on('allColumns', function(evt, columns) {
+      console.log(columns);
+      $scope.$apply(function() {
+        $scope.columns = columns;
+      });
+    });
 
-    $scope.send = send;
+    $rootScope.$on('msg', function(evt, msg) {
+      $scope.$apply(function() {
+        var column = getColumnByName(msg.column);
+        
+        if(column.messages == undefined) {
+          column.messages = [];
+        }
+        column.messages.push(msg.msg);
+        var insertSort = function(sortMe) {
+          for(var i=0, j, tmp; i<sortMe.length; ++i ) {
+            tmp = sortMe[i];
+            tmp.dateAgo = moment(moment(Number(tmp.createdAt)), "YYYYMMDD").fromNow();
+            for(j=i-1; j>=0 && sortMe[j].createdAt < tmp.createdAt; --j) {
+              sortMe[j+1] = sortMe[j];
+            }
+            sortMe[j+1] = tmp;
+          }
+        }
+        insertSort(column.messages);
+        notifyNewMessage();
+      });
+    });
+
+    $rootScope.$on('tokenInvalid', function(evt, data) {
+      $scope.$apply(function() {
+        if($scope.notifications == undefined) {
+          $scope.notifications = [];
+        }
+        var notificationExiste = false;
+        for (var i = 0; i < $scope.notifications.length; i++) {
+          if ($scope.notifications[i].providerName == data.providerName) {
+            notificationExiste = true;
+            break;
+          }
+        };
+        if(!notificationExiste) {
+          $scope.notifications.push(data);
+        }
+      });
+    });
+
+    $rootScope.$on('newToken', function(evt, data) {
+      $scope.$apply(function() {
+        if($scope.serviceProposes != undefined) {
+          for (var i = 0; i < $scope.serviceProposes.length; i++) {
+            if($scope.serviceProposes[i].service.service.split(".")[0] == data.providerName) {
+              $scope.serviceProposes[i].socialNetworkToken = true;
+            }
+          };
+        }
+
+        if($scope.notifications != undefined) {
+          for (var i = $scope.notifications.length - 1; i >= 0; i--) {
+            if ($scope.notifications[i].providerName == data.providerName) {
+              $scope.notifications.splice(i,1);
+            }
+          };
+        }
+      });
+    });
+
+    $rootScope.$on('error', function(evt, data) {
+      $scope.$apply(function() {
+        if($scope.notifications == undefined) {
+          $scope.notifications = [];
+        }
+        var notificationExiste = false;
+        for (var i = 0; i < $scope.notifications.length; i++) {
+          if ($scope.notifications[i].providerName == data.providerName && 
+            $scope.notifications[i].title == data.msg) {
+            notificationExiste = true;
+            break;
+          }
+        };
+        if(!notificationExiste) {
+          $scope.notifications.push(data);
+        }
+      });
+    });
+
+    $rootScope.$on('deleteColumn', function(evt, data) {
+      $scope.$apply(function() {
+        var title = $scope.lastColumnDeleted.body.title;
+        var columnIndice = 0;
+        var columnFind = false;
+        for (var i = 0; i < $scope.columns.length; i++) {
+          if($scope.columns[i].title == title) {
+            columnIndice = i;
+            columnFind = true;
+            break;
+          }
+        }
+        if(columnFind) {
+          $scope.columns.splice(columnIndice,1);
+        }
+        $scope.lastColumnDeleted = undefined;
+      });
+    });
 
     $scope.addColumn = function() {
         if($scope.serviceProposes == undefined) {
-          $http.get("/api/providers/services").success(function(data) {
-            executeCommand({"cmd":"allUnifiedRequests","body":data});
-          });
+          $network.send({cmd:"allUnifiedRequests"});
         }
         if($scope.columns == undefined) {
           $scope.columns = [];
         }
-        $scope.columns.push({"title": (String.fromCharCode(945+$scope.columns.length)) + ") What is here ? ",
-                              "oldTitle":"",
-                              "showModifyColumn":"true",
-                              "newColumn":"true",
-                              "unifiedRequests":[],
-                              "index":$scope.columns.length});
+        $scope.columns.push(
+          {
+            "title": (String.fromCharCode(945+$scope.columns.length)) + ") What is here ? ",
+            "oldTitle":"",
+            "showModifyColumn":"true",
+            "newColumn":"true",
+            "unifiedRequests":[],
+            "index":$scope.columns.length
+          });
     };
 
     $scope.modifyColumn = function(column) {
       column.showModifyColumn = !column.showModifyColumn;
       if (column.showModifyColumn == true) {
         if($scope.serviceProposes == undefined) {
-          $http.get("/api/providers/services").success(function(data) {
-            executeCommand({"cmd":"allUnifiedRequests","body":data});
-          });
+          $network.send({cmd:"allUnifiedRequests"});
         }
       }
       if(column.showModifyColumn == true) {
@@ -136,7 +197,7 @@ controllers.controller('ColumnController', ["$scope", "$rootScope", "StringUtils
     $scope.addService = function(service, column) {
       if(service.hasParser) {
         if(service.socialNetworkToken) {
-          var clientUnifiedRequest = serverToUnifiedRequest(service.service);
+          var clientUnifiedRequest = $unifiedRequestUtils.serverToUnifiedRequest(service.service);
           clientUnifiedRequest.fromServer = false;
           column.unifiedRequests.push(clientUnifiedRequest);
         }
@@ -173,7 +234,7 @@ controllers.controller('ColumnController', ["$scope", "$rootScope", "StringUtils
       var json = "";
       var unifiedRequests = [];
       for (var i = 0; i < column.unifiedRequests.length; i++) {
-        unifiedRequests.push(clientToServerUnifiedRequest(column.unifiedRequests[i]));
+        unifiedRequests.push($unifiedRequestUtils.clientToServerUnifiedRequest(column.unifiedRequests[i]));
       };
       if(!column.newColumn) {
         json = {"cmd":"modColumn", 
@@ -263,7 +324,7 @@ controllers.controller('ColumnController', ["$scope", "$rootScope", "StringUtils
             column.showErrorTitleAlreadyExist = false;
             column.messages = [];
             column.showModifyColumn= !column.showModifyColumn;
-            send(json);
+            $network.send(json);
           }
         }
       }
@@ -271,34 +332,7 @@ controllers.controller('ColumnController', ["$scope", "$rootScope", "StringUtils
 
     $scope.deleteColumn = function(column) {
       $scope.lastColumnDeleted = {"cmd":"delColumn", "body":{"title": column.title}};
-      send($scope.lastColumnDeleted);
-    }
-
-    $scope.serviceHasTypeChar = function(service) {
-      if(service.typeServiceChar != "") {
-        return true;
-      }
-      return false;
-    }
-
-    $scope.typeServiceCharByService = function(service) {
-      var socialNetworkName = service.split(".")[0];
-      var typeService = service.split(".")[1];
-        if(typeService == "group") {
-          return "ഹ";
-        }
-        else if(typeService == "user") {
-          if(socialNetworkName == "twitter") {
-            return "@";
-          }
-          else {
-            return "😊";
-          }
-        }
-        else if (typeService == "hashtag") {
-          return "#";
-        }
-        return "";
+      $network.send($scope.lastColumnDeleted);
     }
 
     $scope.clickOnNotification = function(notification) {
@@ -361,12 +395,7 @@ controllers.controller('ColumnController', ["$scope", "$rootScope", "StringUtils
       window.callMeToRefresh = function() {
         var col = _column;
         var serv = _service;
-        $http.get("/api/providers/services").success(function(data) {
-            if(col != undefined) {
-              var clientUnifiedRequest = serverToUnifiedRequest(serv.service);
-              col.unifiedRequests.push(clientUnifiedRequest);
-            }
-          });
+        $network.send({cmd:"allUnifiedRequests"});
       }
 
       if (newwindow !== undefined && window.focus) {
@@ -384,46 +413,13 @@ function getColumnByName(name) {
       }
     }
   }
-  if($scope.tempColumns == undefined) {
-    $scope.tempColumns = [];
+  if($rootScope.tempColumns == undefined) {
+    $rootScope.tempColumns = [];
   }
-  if($scope.tempColumns[name] == undefined) {
-    $scope.tempColumns[name] = {};
+  if($rootScope.tempColumns[name] == undefined) {
+    $rootScope.tempColumns[name] = {};
   }
-  return $scope.tempColumns[name];
-}
-
-
-function fillExplainService(typeService, socialNetwork) {
-  if(typeService == "group") {
-    return "Click here to display a specific Facebook group.";
-  }
-  else if(typeService == "user") {
-    if(socialNetwork == "twitter") {
-      return "Click here to display tweets of a specific Twitter user.";
-    }
-    else {
-      return "Click here to display the wall of a specific Facebook user.";
-    }
-  }
-  else if (typeService == "hashtag") {
-    return "Click here to display tweets of a specific Twitter hashtag.";
-  }
-  else {
-    return "Click here to display your "+socialNetwork+" "+typeService+".";
-  }
-}
-
-function checkExistingImage(image) {
-  if(image == "" || image == undefined) {
-    return "assets/img/image-default.png";
-  }
-  else if(image.match("^www")=="www") {
-    return "http://"+image;
-  }
-  else {
-    return image;
-  }
+  return $rootScope.tempColumns[name];
 }
 
 function notifyNewMessage() {
@@ -443,240 +439,6 @@ function switchPageInvisible() {
   isPageVisible = false;
   nbNewMessages = 0;
 }
-
-function executeCommand(data) {
-    if(data.cmd == "allUnifiedRequests") {
-      var serviceProposes = new Array();
-      for (var i = 0; i < data.body.length; i++) {
-          var elementBodySocialNetwork = data.body[i];
-          var services = elementBodySocialNetwork.services;
-          for (var j = 0; j < services.length; j++) {
-            var service = {socialNetwork:elementBodySocialNetwork.endpoint,
-                            socialNetworkToken:elementBodySocialNetwork.hasToken,
-                            typeService:services[j].service.split(".")[1],
-                            typeServiceChar:"",
-                            explainService:"",
-                            args:{},
-                            service:services[j],
-                            hasParser:services[j].hasParser
-                          };
-            service.explainService = fillExplainService(service.typeService, service.socialNetwork);
-            if(service.hasParser == false) {
-              service.explainService = "Coming soon...";
-            }
-            service.typeServiceChar = $scope.typeServiceCharByService(services[j].service);
-            for (var k = 0; k < services[j].args.length; k++) {
-              service.args[services[j].args[k]] = "";
-            };
-            serviceProposes.push(service);
-          }
-      };
-      if(!$scope.$$phase) {
-        $scope.$apply(function() {
-          $scope.serviceProposes = serviceProposes;
-        });
-      }
-      else {
-        $scope.serviceProposes = serviceProposes;
-      }
-    } else if(data.cmd == "msg") {
-        var columnTitle = data.body.column;
-        var column = getColumnByName(columnTitle);
-        $scope.$apply(function() {
-            if(column.messages == undefined) {
-                column.messages = [];
-            }
-            data.body.msg.authorAvatar = checkExistingImage(data.body.msg.authorAvatar);
-
-            data.body.msg.original = data.body.msg.message;
-            data.body.msg.message = stringUtils.truncateString(data.body.msg.message);
-            data.body.msg.message = stringUtils.urlify(data.body.msg);
-
-            column.messages.push(data.body.msg);
-            var insertSort = function(sortMe) {
-              for(var i=0, j, tmp; i<sortMe.length; ++i ) {
-                tmp = sortMe[i];
-                tmp.dateAgo = moment(moment(Number(tmp.createdAt)), "YYYYMMDD").fromNow();
-                for(j=i-1; j>=0 && sortMe[j].createdAt < tmp.createdAt; --j) {
-                  sortMe[j+1] = sortMe[j];
-                }
-                sortMe[j+1] = tmp;
-              }
-            }
-            insertSort(column.messages);
-            notifyNewMessage();
-        });
-    } else if(data.cmd == "allColumns") {
-        $scope.$apply(function() {
-            $scope.columns = [];
-            var cols = data.body;
-            for (var i = 0; i < cols.length; i++) {
-                var originalColumn = cols[i];
-                var clientColumn = {};
-                clientColumn.title = originalColumn.title;
-                clientColumn.unifiedRequests = [];
-                clientColumn.index = originalColumn.index;
-                for (var j = 0; j < originalColumn.unifiedRequests.length; j++) {
-                  var unifiedRequest = originalColumn.unifiedRequests[j];
-                  var clientUnifiedRequest = serverToClientUnifiedRequest(unifiedRequest);
-                  clientUnifiedRequest.fromServer = true;
-                  clientColumn.unifiedRequests.push(clientUnifiedRequest);
-                };
-                if($scope.tempColumns != undefined && $scope.tempColumns[originalColumn.title]) {
-                  var temp = $scope.tempColumns[originalColumn.title];
-                  for (var j = 0; j < temp.length; j++) {
-                    for (var h = 0; h < temp[j].messages.length; h++) {
-                      clientColumn.messages.push(temp[j].messages[h]);
-                    };
-                  };
-                }
-                clientColumn.showModifyColumn = false;
-                $scope.columns.splice(originalColumn.index, 0, clientColumn);
-            }
-        });
-    } else if(data.cmd == "delColumn" && data.body == "Ok") {
-      $scope.$apply(function() {
-        var title = $scope.lastColumnDeleted.body.title;
-        var columnIndice = 0;
-        var columnFind = false;
-        for (var i = 0; i < $scope.columns.length; i++) {
-          if($scope.columns[i].title == title) {
-            columnIndice = i;
-            columnFind = true;
-            break;
-          }
-        }
-        if(columnFind) {
-          $scope.columns.splice(columnIndice,1);
-        }
-        $scope.lastColumnDeleted = undefined;
-      });
-    } else if(data.cmd == "userInfos") {
-      $scope.$parent.$parent.$apply(function() {
-        if($scope.$parent.$parent.userInfos == undefined) {
-          $scope.$parent.$parent.userInfos = [];
-        }
-        data.body.avatar = checkExistingImage(data.body.avatar);
-        var found = false;
-        for (var i = 0; i < $scope.$parent.$parent.userInfos.length && !found; i++) {
-          var userInfos = $scope.$parent.$parent.userInfos[i];
-          if(userInfos.socialType == data.body.socialType) {
-            found = true;
-            $scope.$parent.$parent.userInfos[i] = data.body;
-          }
-        };
-        if(!found) {
-          $scope.$parent.$parent.userInfos.push(data.body);
-        }
-      });
-    }
-    else if (data.cmd == "tokenInvalid") {
-      $scope.$apply(function() {
-        if($scope.notifications == undefined) {
-          $scope.notifications = [];
-        }
-        var notificationExiste = false;
-        for (var i = 0; i < $scope.notifications.length; i++) {
-          if ($scope.notifications[i].providerName == data.body.providerName) {
-            notificationExiste = true;
-            break;
-          }
-        };
-        if(!notificationExiste) {
-          data.body.title = "You have been disconnected from";
-          data.body.footer = "Click here to be connected again.";
-          data.body.isError = false;
-          $scope.notifications.push(data.body);
-        }
-      });
-    } else if(data.cmd == "newToken") {
-      $scope.$apply(function() {
-        if($scope.serviceProposes != undefined) {
-          for (var i = 0; i < $scope.serviceProposes.length; i++) {
-            if($scope.serviceProposes[i].service.service.split(".")[0] == data.body.providerName) {
-              $scope.serviceProposes[i].socialNetworkToken = true;
-            }
-          };
-        }
-
-        if($scope.notifications != undefined) {
-          for (var i = $scope.notifications.length - 1; i >= 0; i--) {
-            if ($scope.notifications[i].providerName == data.body.providerName) {
-              $scope.notifications.splice(i,1);
-            }
-          };
-        }
-      });
-    } else if(data.cmd == "error") {
-      $scope.$apply(function() {
-        if($scope.notifications == undefined) {
-          $scope.notifications = [];
-        }
-        
-
-        var notificationExiste = false;
-        for (var i = 0; i < $scope.notifications.length; i++) {
-          if ($scope.notifications[i].providerName == data.body.providerName && 
-            $scope.notifications[i].title == data.body.msg) {
-            notificationExiste = true;
-            break;
-          }
-        };
-        if(!notificationExiste) {
-          var error = {};
-          error.title = data.body.msg;
-          error.providerName = data.body.providerName;
-          error.footer = "Click here to hide error.";
-          error.isError = true;
-          $scope.notifications.push(error);
-        }
-      });
-    } else if(data.cmd == "ping") {
-      //only sse connexion
-      send({"cmd":"pong"});
-    } else if(data.cmd != "modColumn") {
-      console.log("Command not yet implemented: ", data);
-    }
-}
-
-  function serverToUnifiedRequest(unifiedRequest) {
-    var clientUnifiedRequest = {};
-    clientUnifiedRequest.service = unifiedRequest.service;
-    clientUnifiedRequest.providerName = unifiedRequest.service.split(".")[0];
-    clientUnifiedRequest.serviceName = unifiedRequest.service.split(".")[1];
-    clientUnifiedRequest.args = []
-    for (var index in unifiedRequest.args) {
-      var key = unifiedRequest.args[index];
-      clientUnifiedRequest.args.push({"key":key,"value":""});
-    };
-    clientUnifiedRequest.hasArguments = clientUnifiedRequest.args.length > 0;
-    return clientUnifiedRequest;
-  }
-
-  function serverToClientUnifiedRequest(unifiedRequest) {
-    var clientUnifiedRequest = {};
-    clientUnifiedRequest.service = unifiedRequest.service;
-    clientUnifiedRequest.providerName = unifiedRequest.service.split(".")[0];
-    clientUnifiedRequest.serviceName = unifiedRequest.service.split(".")[1];
-    clientUnifiedRequest.args = []
-    for (var key in unifiedRequest.args) {
-      var value = unifiedRequest.args[key];
-      clientUnifiedRequest.args.push({"key":key,"value":value});
-    };
-    clientUnifiedRequest.hasArguments = clientUnifiedRequest.args.length > 0;
-    return clientUnifiedRequest;
-  }
-
-  function clientToServerUnifiedRequest(unifiedRequest) {
-    var serverUnifiedRequest = {};
-    serverUnifiedRequest.service = unifiedRequest.providerName+"."+unifiedRequest.serviceName;
-    serverUnifiedRequest.args = {}
-    for (var index in unifiedRequest.args) {
-      var arg = unifiedRequest.args[index];
-      serverUnifiedRequest.args[arg.key] = arg.value;
-    };
-    return serverUnifiedRequest;
-  }
 
 }]);
 

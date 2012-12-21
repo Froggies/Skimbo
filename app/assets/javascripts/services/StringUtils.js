@@ -17,7 +17,34 @@ services.factory("StringUtils", ["$http", function($http) {
 		  } else {
 		    return str;
 		  }
-		}
+		},
+
+		serviceHasTypeChar: function(service) {
+      if(service.typeServiceChar != "") {
+        return true;
+      }
+      return false;
+    },
+
+    typeServiceCharByService: function(service) {
+      var socialNetworkName = service.split(".")[0];
+      var typeService = service.split(".")[1];
+        if(typeService == "group") {
+          return "ഹ";
+        }
+        else if(typeService == "user") {
+          if(socialNetworkName == "twitter") {
+            return "@";
+          }
+          else {
+            return "😊";
+          }
+        }
+        else if (typeService == "hashtag") {
+          return "#";
+        }
+        return "";
+    }
 
 	};
 
