@@ -681,6 +681,13 @@ function executeCommand(data) {
   }
 
 }]);
+<<<<<<< HEAD:app/assets/javascripts/controllers/ColumnController.js
+=======
+
+
+
+
+>>>>>>> 475c2384ea9c430c6b31d45e6371da9604c3d46b:app/assets/javascripts/controllers/ColumnController.js
 
 
 function dragOver(target, ev)
