@@ -37,6 +37,14 @@ header .separateur-gris {
 	margin-right: 20px;
 }
 
+#loader {
+	vertical-align: top;
+	color: #CE0022;
+	font-weight: bolder;
+	text-shadow: 0px 1px 1px black;
+	font-size: 15px;
+}
+
 #logo {
 	float: left;
 	margin-left: 2%;

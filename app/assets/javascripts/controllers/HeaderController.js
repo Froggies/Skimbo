@@ -1,6 +1,35 @@
 'use strict';
 
-publicApp.controller('HeaderController', function($scope, $rootScope, $http) {
+publicApp.controller('HeaderController', [
+  "$scope", "$rootScope", "$http", function($scope, $rootScope, $http) {
+
+  $scope.loading = true;
+  $scope.loadingMsg = "COLUMNS";
+  var firstMsg = true;
+
+  $rootScope.$on('allColumns', function(evt, data) {
+    $scope.$apply(function() {
+      $scope.loadingMsg = "MESSAGES";
+    });
+  });
+
+  $rootScope.$on('msg', function(evt, data) {
+    $scope.$apply(function() {
+      if(firstMsg == true) {
+        firstMsg = false;
+        $scope.loading = false;
+      }
+    });
+  });
+
+  $rootScope.$on('loading', function(evt, data) {
+    $scope.$apply(function() {
+      $scope.loading = data.loading;
+      if($scope.loading == true) {
+        $scope.loadingMsg = data.translationCode;
+      }
+    });
+  });
 
   $rootScope.$on('userInfos', function(evt, data) {
     $scope.$apply(function() {
@@ -32,4 +61,4 @@ publicApp.controller('HeaderController', function($scope, $rootScope, $http) {
       });
     }
 
-});
+}]);
