@@ -31,8 +31,7 @@ services.factory("ArrayUtils", function() {
       if(array !== undefined && cond !== undefined) {
         for (var i = 0; i < array.length; i++) {
           if (cond(array[i], object) == true) {
-            index = i;
-            break;
+            return i;
           }
         }
       }

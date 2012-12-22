@@ -1,7 +1,8 @@
 'use strict';
 
 publicApp.controller('HeaderController', [
-  "$scope", "$rootScope", "$http", function($scope, $rootScope, $http) {
+  "$scope", "$rootScope", "$http", "ArrayUtils", "ImagesUtils",
+  function($scope, $rootScope, $http, $arrayUtils, $imagesUtils) {
 
   $scope.loading = true;
   $scope.loadingMsg = "COLUMNS";
@@ -35,17 +36,18 @@ publicApp.controller('HeaderController', [
     $scope.$apply(function() {
       if($scope.userInfos == undefined) {
         $scope.userInfos = [];
-      }
-      var found = false;
-      for (var i = 0; i < $scope.userInfos.length && !found; i++) {
-        var userInfos = $scope.userInfos[i];
-        if(userInfos.socialType == data.socialType) {
-          found = true;
-          $scope.userInfos[i] = data;
-        }
-      };
-      if(!found) {
         $scope.userInfos.push(data);
+      } else {
+        var index = $arrayUtils.indexOf($scope.userInfos, data, "socialType");
+        if(index > -1) {
+          $scope.userInfos[index] = data;
+        } else {
+          if($imagesUtils.isDefaultImage($scope.userInfos[0].avatar)) {
+            $scope.userInfos.splice(0, 0, data);
+          } else {
+            $scope.userInfos.push(data);
+          }
+        }
       }
     });
   });
