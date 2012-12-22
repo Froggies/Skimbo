@@ -100,13 +100,17 @@ controllers.controller('ColumnController', [
     });
 
     $rootScope.$on('delColumn', function(evt, data) {
-      $scope.$apply(function() {
-        var index = $arrayUtils.indexOf($scope.columns, $scope.lastColumnDeleted.body, "title");
-        if(index > -1) {
+      var index = $arrayUtils.indexOf($scope.columns, $scope.lastColumnDeleted.body, "title");
+      if(index > -1) {
+        if(!$scope.$$phase) {
+          $scope.$apply(function() {
+            $scope.columns.splice(index, 1);
+          });
+        } else {
           $scope.columns.splice(index, 1);
         }
-        $scope.lastColumnDeleted = undefined;
-      });
+      }
+      $scope.lastColumnDeleted = undefined;
     });
 
     $scope.addColumn = function() {
@@ -296,7 +300,11 @@ controllers.controller('ColumnController', [
 
     $scope.deleteColumn = function(column) {
       $scope.lastColumnDeleted = {"cmd":"delColumn", "body":{"title": column.title}};
-      $network.send($scope.lastColumnDeleted);
+      if(!column.newColumn) {
+        $network.send($scope.lastColumnDeleted);
+      } else {
+        $rootScope.$broadcast('delColumn', {});
+      }
     }
 
     $scope.clickOnNotification = function(notification) {
