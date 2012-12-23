@@ -1,0 +1,53 @@
+<div id="main-div" ng-controller="ModifColumnController">
+  <input id="modifButton" type="button" ng-click="newColumn()" value="New column" />
+  <div id="content-div" ng-show="showModifyColumn">
+    <div class="error-div">
+      <span class="error-message" ng-show="c.showErrorTitleRequired">{{'TITLE_REQUIRED' | i18n}}</span> 
+      <br ng-show="c.showErrorTitleRequired"/>
+      <span class="error-message" ng-show="c.showErrorTitleAlreadyExist">{{'TITLE_ALREADY_EXISTS' | i18n}}</span> 
+      <br ng-show="c.showErrorTitleAlreadyExist"/>
+    </div>
+    <div class="add-service">{{'AVAILABLE_SERVICES' | i18n}}</div>
+    <ul class="services-proposes">
+      <li ng-repeat="service in serviceProposes">
+        <div class="social-network-link">
+          <a href="#" ng-click="addService(service, c)" ref="{{service.explainService}}">
+            <img class="social-network-active {{service.hasParser}}" ng-src="assets/img/brand/{{service.socialNetwork}}.png" alt="{{service.socialNetwork}}" width="32" height="32"></a>
+          <span class="social-network-char {{service.socialNetwork}} social-network-active {{service.hasParser}}">{{service.typeServiceChar}}</span>
+        </div>
+      </li>
+    </ul>
+    <div class="add-service" ng-show="c.unifiedRequests.length > 0">{{'ALREADY_IN_YOUR_COLUMN' | i18n}}</div>
+    <div class="error-div">
+      <span class="error-message" ng-show="c.showErrorBlankArg">{{'ALL_FIELD_REQUIRED' | i18n}}</span> 
+      <span class="error-message" ng-show="c.showDoubleParser">{{'CANT_ADD_SAME_SERVICE' | i18n}}</span> 
+      <br ng-show="c.showErrorBlankArg || c.showDoubleParser"/>
+    </div>
+    <ul class="services-actives">
+      <li class="service-empty" ng-show="c.unifiedRequests.length == 0">{{'TO_ADD_STREAM_IN_COLUMN' | i18n}}</li>
+      <li ng-repeat="service in c.unifiedRequests">
+        <div class="input-service" ng-show="service.hasArguments" ng-repeat="arg in service.args ">
+          <img class="img-service" ng-src="assets/img/brand/{{service.providerName}}.png" alt="{{service.providerName}}" width="24" height="24">
+          <span class="type-service {{service.providerName}}">
+            {{typeServiceCharByService(service.service)}}
+          </span>
+          <input class="arg-service" type="text" ng-model="arg.value" placeholder="{{arg.key}}" pattern="[ a-zA-Z0-9]*"/>
+          <a href="#" 
+            class="delete-service {{service.providerName}}"
+            ng-click="deleteService(service,c,arg)"
+          >✘</a>
+        </div>
+        <div class="input-service" ng-show="!service.hasArguments">
+          <img class="img-service" ng-src="assets/img/brand/{{service.providerName}}.png" alt="{{service.providerName}}" width="24" height="24">
+          <span class="receving-service">
+            {{'YOU_ARE_RECEIVING' | i18n}} {{service.serviceName}}
+          </span>
+          <a href="#" 
+            class="delete-service {{service.providerName}}"
+            ng-click="deleteService(service,c)"
+          >✘</a>
+        </div>
+      </li>
+    </ul>
+  </div>
+</div>

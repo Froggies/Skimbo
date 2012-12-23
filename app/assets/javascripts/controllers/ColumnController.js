@@ -26,8 +26,6 @@ controllers.controller('ColumnController', [
 
     }
 
-    $scope.send = $network.send;
-
     $rootScope.$on('availableServices', function(evt, serviceProposes) {
       if(!$scope.$$phase) {
           $scope.$apply(function() {
@@ -48,7 +46,6 @@ controllers.controller('ColumnController', [
     $rootScope.$on('msg', function(evt, msg) {
       $scope.$apply(function() {
         var column = getColumnByName(msg.column);
-        
         if(column.messages == undefined) {
           column.messages = [];
         }

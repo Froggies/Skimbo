@@ -1,10 +1,10 @@
 services.factory("Visibility", function() {
 
-  var isPageVisible = true;
+  var _isPageVisible = true;
   try {
-    isPageVisible = document.hasFocus();
+    _isPageVisible = document.hasFocus();
   } catch(error) {
-    isPageVisible = true;
+    _isPageVisible = true;
   }
   
   var nbNewMessages = 0;
@@ -13,20 +13,23 @@ services.factory("Visibility", function() {
   function switchPageVisible() {
     document.title = "Skimbo";
     nbNewMessages = 0;
-    isPageVisible = true;
+    _isPageVisible = true;
   }
 
   function switchPageInvisible() {
-    isPageVisible = false;
+    _isPageVisible = false;
     nbNewMessages = 0;
   }
 
   return {
     notifyNewMessage: function() {
-      if (!isPageVisible) {
+      if (!_isPageVisible) {
         nbNewMessages += 1;
         document.title = "("+nbNewMessages+") Skimbo";
       }
+    },
+    isPageVisible: function() {
+      return _isPageVisible;
     }
   }
 

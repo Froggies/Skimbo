@@ -1,0 +1,23 @@
+#main-div {
+  position: fixed;
+  right: 50%;
+}
+
+#modifButton {
+
+}
+
+#content-div {
+  position: fixed;
+  background-color: white;
+  top: 45px;
+  right: 50%;
+  width: 500px;
+  margin-right: -250px;
+  z-index: 10;
+  border-radius: 0 0 5px 5px;
+  background-color: #FAFAFA;
+  border-bottom: 1px solid #B6B6B6;
+  border-right: 1px solid #B6B6B6;
+  border-left: 1px solid #B6B6B6;
+}
