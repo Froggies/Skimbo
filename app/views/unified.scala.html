@@ -7,7 +7,12 @@
         <header class="banner" ng-include="'@routes.Assets.at("app/views/header.html")'"></header>
 
         <!-- Add your site or application content here -->
-        <div class="container" ng-view></div>
+        <div class="container" ng-view>
+            <noscript>
+                <p>Your navigator must run javascript files !</p>
+                <p>Vous devez autoriser l'exécution de javascript !</p>
+            </noscript>
+        </div>
 
         <script src="@routes.Assets.at("app/scripts/vendor/angular.min.js")"></script>
         <script src="@routes.Assets.at("app/scripts/vendor/angular-sanitize.min.js")"></script>
