@@ -22,6 +22,7 @@ case class GithubWallMessage(
   download: Option[GithubDownloadEvent],
   gollum: Option[GithubGollumEvent],
   pullRequest: Option[GithubPullRequestEvent],
+  pullRequestComment: Option[GithubPullRequestReviewCommentEvent],
   refType:Option[String],
   refName:Option[String])
 
@@ -56,6 +57,12 @@ case class GithubGollumEvent(
   pageUrl: String
 )
 
+case class GithubPullRequestReviewCommentEvent(
+  id: Int,
+  body: String,
+  htmlUrl: Option[String]
+)
+
 case class GithubPullRequestEvent(
   body:String,
   url:String
@@ -65,7 +72,7 @@ object GithubWallParser extends GenericParser {
 
   override def asSkimbo(json: JsValue): Option[Skimbo] = {
     Json.fromJson[GithubWallMessage](json).fold(
-      error => logParseError(json, error, "ViadeoWallMessage"),
+      error => logParseError(json, error, "GithubWallMessage"),
       e => Some(Skimbo(
         e.actorLogin,
         e.actorLogin,
@@ -97,6 +104,7 @@ object GithubWallParser extends GenericParser {
       case "WatchEvent" => "Watch " + e.repoName
       case "GollumEvent" => "Has " + e.gollum.get.action + " " + e.gollum.get.pageName + " on wiki"
       case "PullRequestEvent" => "PullRequest : " + e.pullRequest.get.body
+      case "PullRequestReviewCommentEvent" => "Comment on pull : " + e.pullRequestComment.get.body
       case _ => "TODO type on " + e.repoName + " : " + e.typeGithub
     }
   }
@@ -117,6 +125,7 @@ object GithubWallParser extends GenericParser {
       case "WatchEvent"         => Some(gitRepoUrl.format(e.repoName))
       case "GollumEvent"        => Some(e.gollum.get.pageUrl)
       case "PullRequestEvent"   => Some(e.pullRequest.get.url)
+      case "PullRequestReviewCommentEvent" => Some(e.pullRequestComment.get.htmlUrl.get)
       case _ => None
     }
   }
@@ -158,6 +167,13 @@ object GithubCommentEvent {
     (__ \ "html_url").readOpt[String])(GithubCommentEvent.apply _)
 }
 
+object GithubPullRequestReviewCommentEvent {
+  implicit val githubReader: Reads[GithubPullRequestReviewCommentEvent] = (
+    (__ \ "id").read[Int] and
+    (__ \ "body").read[String] and
+    (__ \ "_links" \ "html" \ "href").readOpt[String])(GithubPullRequestReviewCommentEvent.apply _)
+}
+
 object GithubGollumEvent {
   implicit val githubReader: Reads[GithubGollumEvent] = (
     (__ \ "action").read[String] and
@@ -190,6 +206,7 @@ object GithubWallMessage {
     (__ \ "payload" \ "download").readOpt[GithubDownloadEvent] and
     ((__ \ "payload" \ "pages")(0)).readOpt[GithubGollumEvent] and
     (__ \ "payload" \ "pull_request").readOpt[GithubPullRequestEvent] and
+    (__ \ "payload" \ "comment").readOpt[GithubPullRequestReviewCommentEvent] and
     (__ \ "payload" \ "ref_type").readOpt[String] and
     (__ \ "payload" \ "ref").readOpt[String])(GithubWallMessage.apply _)
 }
