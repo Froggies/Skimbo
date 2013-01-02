@@ -1,8 +1,10 @@
 'use strict';
 
 controllers.controller('ColumnController', [
-  "$scope", "Network", "$rootScope", "UnifiedRequestUtils", "Visibility", "PopupProvider", "ArrayUtils",
-  function($scope, $network, $rootScope, $unifiedRequestUtils, $visibility, $popupProvider, $arrayUtils) {
+  "$scope", "Network", "$rootScope", "UnifiedRequestUtils", "Visibility", 
+  "PopupProvider", "ArrayUtils", "ColumnSize",
+  function($scope, $network, $rootScope, $unifiedRequestUtils, $visibility, 
+    $popupProvider, $arrayUtils, $columnSize) {
 
     //chrome memory leak !!!
     $scope.$destroy= function() {
@@ -39,6 +41,8 @@ controllers.controller('ColumnController', [
 
     $rootScope.$on('allColumns', function(evt, columns) {
       $scope.$apply(function() {
+        $columnSize.setSize(columns);
+        $columnSize.buildSizeCompo(columns);
         $scope.columns = columns;
       });
     });
@@ -150,6 +154,10 @@ controllers.controller('ColumnController', [
         };
       }
     };
+
+    $scope.resizeColumn = function(column, height, width) {
+      $columnSize.resizeColumn(column, height, width);
+    }
 
     $scope.addService = function(service, column) {
       if(service.hasParser) {
