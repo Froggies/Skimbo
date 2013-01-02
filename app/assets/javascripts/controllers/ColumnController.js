@@ -156,6 +156,13 @@ controllers.controller('ColumnController', [
     };
 
     $scope.resizeColumn = function(column, height, width) {
+      $network.send({
+        cmd: "resizeColumn", 
+        body: {
+          "columnTitle": column.title,
+          "height": height,
+          "width": width
+      }});
       $columnSize.resizeColumn(column, height, width);
     }
 

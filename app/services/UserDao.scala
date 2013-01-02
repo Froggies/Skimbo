@@ -1,9 +1,7 @@
 package services;
 
 import java.util.Date
-
 import scala.concurrent.Future
-
 import models.User.UserBSONReader
 import models.user.Account
 import models.user.Column
@@ -18,6 +16,7 @@ import reactivemongo.bson.handlers.DefaultBSONHandlers.DefaultBSONDocumentWriter
 import reactivemongo.bson.handlers.DefaultBSONHandlers.DefaultBSONReaderHandler
 import services.auth.GenericProvider
 import services.auth.ProviderDispatcher
+import reactivemongo.bson.BSONInteger
 
 object UserDao {
 
@@ -91,7 +90,7 @@ object UserDao {
     val update = BSONDocument("$pull" -> BSONDocument("columns" -> BSONDocument("title" -> new BSONString(columnTitle))))
     collection.update(query, update)
   }
-
+  
   def delete(idUser: String) = {
     val query = BSONDocument("accounts.id" -> new BSONString(idUser))
     collection.remove(query)

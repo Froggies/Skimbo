@@ -56,7 +56,7 @@ services.factory("Network", ["$http", "ServerCommunication", function($http, $se
   }
 
   function _send(jsonMsg) {
-    // console.log("send : ",jsonMsg);
+    //console.log("send : ",jsonMsg);
     if(socket !== undefined) {
       socket.send(JSON.stringify(jsonMsg));
     } else {

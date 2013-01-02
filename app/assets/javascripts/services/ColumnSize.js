@@ -55,12 +55,12 @@ services.factory("ColumnSize", function() {
       };
     },
     resizeColumn: function(column, height, width) {
-      console.log(column, height, width);
       column.width = width;
       column.height = height;
       widthManagement(column);
       heightManagement(column);
       this.buildSizeCompo([column]);
+      return;
     }
   }
 
