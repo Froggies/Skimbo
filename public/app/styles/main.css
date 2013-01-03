@@ -158,6 +158,10 @@ a[ref]:hover:before {
 	color: #A38F8F;
 }
 
+.betaseries {
+	color: #3B8DD0;
+}
+
 .rond.twitter {
 	background: #00a0d1;
 }
@@ -192,4 +196,8 @@ a[ref]:hover:before {
 
 .rond.trello {
 	background: #A38F8F;
+}
+
+.rond.betaseries {
+	background: #3B8DD0;
 }
