@@ -22,7 +22,8 @@ services.factory("Network", ["$http", "ServerCommunication", function($http, $se
           data = JSON.parse(msg.data);
       } catch(exception) {
           data = msg.data;
-      }      
+      }     
+      console.log(data); 
       command(data);
     }
   }

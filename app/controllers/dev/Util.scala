@@ -12,6 +12,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import play.api.Play.current
 import models.user.SkimboToken
 import views.html.defaultpages.badRequest
+import play.api.libs.iteratee.Enumerator
 
 object Util extends Controller with Authentication {
 
@@ -21,6 +22,20 @@ object Util extends Controller with Authentication {
         Endpoints.genererUrl(service, Map.empty, None).map { url =>
           config.provider.fetch(url).get.map { response =>
             Ok(config.provider.resultAsJson(response))
+          }
+        }
+      }.getOrElse(future(BadRequest("Service not found")))
+    }
+  }
+  
+  def testSkimboRes(service: String) = Action { implicit request =>
+    Async {
+      Endpoints.getConfig(service).flatMap { config =>
+        Endpoints.genererUrl(service, Map.empty, None).map { url =>
+          config.provider.fetch(url).get.map { response =>
+            val arrayjs = config.parser.get.cut(config.provider.resultAsJson(response))
+            val res = arrayjs.map(config.parser.get.asSkimboSafe(_).get)
+            Ok(res.map(Json.toJson(_)).toString)
           }
         }
       }.getOrElse(future(BadRequest("Service not found")))
@@ -43,10 +58,10 @@ object Util extends Controller with Authentication {
   def staticResBetaseries() = Action { implicit request =>
     import scala.concurrent.ExecutionContext.Implicits.global
     Async {
-      Endpoints.getConfig("betaseries.notifications").flatMap { config =>
-        Endpoints.genererUrl("betaseries.notifications", Map.empty, None).map { url =>
+      Endpoints.getConfig("betaseries.planning").flatMap { config =>
+        Endpoints.genererUrl("betaseries.planning", Map.empty, None).map { url =>
           config.provider.fetch(url).get.map { response =>
-            Ok(config.provider.resultAsJson(response))
+            Ok(response.body)
           }
         }
       }.getOrElse(future(BadRequest("Service not found")))
