@@ -4,7 +4,7 @@
 if (document.location.hash == "#_=_") { document.location.replace("/"); }
 
 
-var publicApp = angular.module('publicApp', ['ngSanitize', "controllers"]);
+var publicApp = angular.module('publicApp', ['ngSanitize', 'controllers', 'filters']);
 
 publicApp.config(["$routeProvider", "$locationProvider", function($routeProvider, $locationProvider) {
 	$routeProvider

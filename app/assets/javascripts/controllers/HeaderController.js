@@ -1,6 +1,6 @@
 'use strict';
 
-publicApp.controller('HeaderController', [
+controllers.controller('HeaderController', [
   "$scope", "$rootScope", "$http", "ArrayUtils", "ImagesUtils",
   function($scope, $rootScope, $http, $arrayUtils, $imagesUtils) {
 
