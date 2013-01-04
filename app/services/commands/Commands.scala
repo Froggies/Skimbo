@@ -26,7 +26,10 @@ object Commands {
       case "allColumns" => {
         UserDao.findOneById(idUser).map(_.map { user =>
           user.columns.map(columns =>
-            UserInfosActor.sendTo(idUser, Json.toJson(Command(cmd.name, Some(Json.toJson(columns))))))
+            UserInfosActor.sendTo(idUser, Json.toJson(Command(cmd.name, Some(Json.toJson(columns)))))
+          ).getOrElse(
+            UserInfosActor.sendTo(idUser, Json.toJson(Command(cmd.name, Some(Json.toJson(new JsArray)))))
+          )
         })
       }
       case "addColumn" => {
@@ -70,7 +73,7 @@ object Commands {
         val columnWidth = (cmd.body.get \ "width").as[Int]
         val columnHeight = (cmd.body.get \ "height").as[Int]
         UserDao.findOneById(idUser).map(_.map { user =>
-          user.columns.map( _.filter( _.title == columnTitle).map { column =>
+          user.columns.map(_.filter(_.title == columnTitle).map { column =>
             UserDao.updateColumn(
               idUser,
               column.title,

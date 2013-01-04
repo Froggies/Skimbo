@@ -1,10 +1,8 @@
 package services.auth
 
 import java.util.UUID.randomUUID
-
 import scala.concurrent.Await
 import scala.concurrent.duration.DurationInt
-
 import models.command.NewToken
 import models.user.SkimboToken
 import play.api.Logger
@@ -16,6 +14,7 @@ import play.api.mvc.Result
 import services.UserDao
 import services.actors.UserInfosActor
 import services.commands.Commands
+import scala.concurrent.duration.Duration
 
 trait OAuth2Provider extends GenericProvider {
 
@@ -104,7 +103,7 @@ trait OAuth2Provider extends GenericProvider {
             case Token(Some(token), _) => {
               val session = generateUniqueId(request.session)
               //TODO rework this, same lignes in OAuthProvider and OAuthProvider2 and BetaSeries
-              UserDao.setToken(session("id"), this, SkimboToken(token))
+              Await.result(UserDao.setToken(session("id"), this, SkimboToken(token)), Duration("10 seconds"))
               Commands.interpretCmd(session("id"), NewToken.asCommand(this))
               UserInfosActor.refreshInfosUser(session("id"), this)
               UserInfosActor.restartProviderColumns(session("id"), this)

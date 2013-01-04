@@ -76,7 +76,8 @@ class UserInfosActor(idUser: String, channelOut: Concurrent.Channel[JsValue])(im
   def receive() = {
     case Retreive => {
       UserDao.findOneById(idUser).map { optionUser =>
-        optionUser.map(user => start(user))
+        optionUser
+          .map(user => start(user))
           .getOrElse(
             ProviderDispatcher.listAll.map(provider =>
               provider.getToken.map(token =>
@@ -142,8 +143,11 @@ class UserInfosActor(idUser: String, channelOut: Concurrent.Channel[JsValue])(im
 
   def start(user: User) = {
     if (user.columns.map(_.isEmpty).getOrElse(true)) {
-      ProviderDispatcher.listAll.map { provider =>
-        provider.getToken.map { token =>
+      val providers = ProviderDispatcher.listAll.filter(_.hasToken)
+      if (providers.isEmpty) {
+        Commands.interpretCmd(idUser, Command("allColumns"))
+      } else {
+        providers.map { provider =>
           provider.getUser.map { providerUser =>
             providerUser.map(pUser =>
               UserDao.findByIdProvider(provider.name, pUser.id).map(optUser =>
@@ -151,6 +155,7 @@ class UserInfosActor(idUser: String, channelOut: Concurrent.Channel[JsValue])(im
                   UserDao.merge(idUser, originalUser.accounts.head.id, {
                     Commands.interpretCmd(idUser, Command("allColumns"))
                     originalUser.columns.map(_.foreach(self ! StartProvider(idUser, _)))
+                    self ! Send(idUser, Json.toJson(Command("userInfos", Some(Json.toJson(providerUser.get)))))
                   })
                 }.getOrElse {
                   Commands.interpretCmd(idUser, Command("allColumns"))

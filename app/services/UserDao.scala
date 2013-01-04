@@ -90,7 +90,7 @@ object UserDao {
     val update = BSONDocument("$pull" -> BSONDocument("columns" -> BSONDocument("title" -> new BSONString(columnTitle))))
     collection.update(query, update)
   }
-  
+
   def delete(idUser: String) = {
     val query = BSONDocument("accounts.id" -> new BSONString(idUser))
     collection.remove(query)
@@ -147,7 +147,7 @@ object UserDao {
             Some(Seq(ProviderUser(distantId.getOrElse(""), provider.name, Some(token)))),
             None)
         }
-      collection.update(query, models.User.toBSON(toUpdate), upsert = true);
+      collection.update(query, models.User.toBSON(toUpdate), upsert = true)
     }
   }
 
@@ -160,15 +160,19 @@ object UserDao {
   def merge(fromUserId: String, toUserId: String, onDone: => Any = {}) = {
     findOneById(fromUserId).map(_.map { fromUser =>
       findOneById(toUserId).map(_.map { toUser =>
-        val accounts = fromUser.accounts ++ toUser.accounts
-        val columns = fromUser.columns.getOrElse(Seq()) ++ toUser.columns.getOrElse(Seq())
-        val distants = fromUser.distants.getOrElse(Seq()) ++ toUser.distants.getOrElse(Seq())
-        val newUser = models.User(accounts, Some(distants), Some(columns))
-        val query = BSONDocument("accounts.id" -> new BSONString(toUserId))
-        delete(fromUserId) onSuccess {
-          case _ => collection.update(query, models.User.toBSON(newUser)) onSuccess {
-            case _ => onDone
+        if (fromUser.accounts.head.id != toUser.accounts.head.id) {
+          val accounts = fromUser.accounts ++ toUser.accounts
+          val columns = fromUser.columns.getOrElse(Seq()) ++ toUser.columns.getOrElse(Seq())
+          val distants = fromUser.distants.getOrElse(Seq()).filter( _.id != "") ++ toUser.distants.getOrElse(Seq()).filter( _.id != "")
+          val newUser = models.User(accounts, Some(distants), Some(columns))
+          val query = BSONDocument("accounts.id" -> new BSONString(toUserId))
+          delete(fromUserId) onSuccess {
+            case _ => collection.update(query, models.User.toBSON(newUser)) onSuccess {
+              case _ => onDone
+            }
           }
+        } else {
+          onDone
         }
       })
     })

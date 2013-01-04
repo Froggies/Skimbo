@@ -9,9 +9,15 @@ publicApp.controller('HeaderController', [
   var firstMsg = true;
 
   $rootScope.$on('allColumns', function(evt, data) {
-    $scope.$apply(function() {
-      $scope.loadingMsg = "MESSAGES";
-    });
+    if(data.length > 0 && data[0].unifiedRequests.length > 0) {
+      $scope.$apply(function() {
+        $scope.loadingMsg = "MESSAGES";
+      });
+    } else {
+      $scope.$apply(function() {
+        $scope.loading = false;
+      });
+    }
   });
 
   $rootScope.$on('msg', function(evt, data) {
