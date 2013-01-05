@@ -119,9 +119,10 @@ class ProviderActor(channel: Concurrent.Channel[JsValue],
                   self ! Dead(idUser)
                 } else if (provider.isRateLimiteError(response)) {
                   channel.push(Json.toJson(Error(provider.name, "Rate limite exceeded on")))
-                } /*else {
-                  channel.push(Json.toJson(Error(provider.name, "Error on")))
-                }*/
+                } else {
+                  channel.push(Json.toJson(Error(provider.name, "Error in column "+column.title+" with")))
+                  self ! Dead(idUser)
+                }
               } else {
                 val explodedMsgs = parser.get.cutSafe(response, provider)
                 if (explodedMsgs.isEmpty) {

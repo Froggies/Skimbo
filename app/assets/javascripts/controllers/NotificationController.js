@@ -26,7 +26,7 @@ controllers.controller('NotificationController', [
     $rootScope.$on('error', function(evt, data) {
       $scope.$apply(function() {
         var exist = $arrayUtils.existWith($scope.notifications, data, function(inArray, data) {
-          return inArray.providerName == data.providerName && inArray.title == data.msg;
+          return inArray.providerName == data.providerName && inArray.title == data.title;
         });
         if(!exist) {
           $scope.notifications.push(data);

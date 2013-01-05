@@ -23,7 +23,7 @@ services.factory("ArrayUtils", function() {
     },
 
     existWith: function(array, object, cond) {
-      return this.indexOfWith(array, object, cond);
+      return this.indexOfWith(array, object, cond) > -1;
     },
 
     indexOfWith: function(array, object, cond) {
