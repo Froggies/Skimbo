@@ -23,7 +23,7 @@ services.factory("Network", ["$http", "ServerCommunication", function($http, $se
       } catch(exception) {
           data = msg.data;
       }     
-      console.log(data); 
+      //console.log(data); 
       command(data);
     }
   }

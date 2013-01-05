@@ -59,17 +59,6 @@ controllers.controller('ColumnController', [
       });
     });
 
-    $rootScope.$on('tokenInvalid', function(evt, data) {
-      $scope.$apply(function() {
-        if($scope.notifications == undefined) {
-          $scope.notifications = [];
-        }
-        if(!$arrayUtils.exist($scope.notifications, data, "providerName")) {
-          $scope.notifications.push(data);
-        }
-      });
-    });
-
     $rootScope.$on('newToken', function(evt, data) {
       $scope.$apply(function() {
         if($scope.serviceProposes != undefined) {
@@ -78,24 +67,6 @@ controllers.controller('ColumnController', [
               $scope.serviceProposes[i].socialNetworkToken = true;
             }
           };
-        }
-        var index = $arrayUtils.indexOf($scope.notifications, data, "providerName");
-        if(index > -1) {
-          $scope.notifications.splice(index, 1);
-        }
-      });
-    });
-
-    $rootScope.$on('error', function(evt, data) {
-      $scope.$apply(function() {
-        if($scope.notifications == undefined) {
-          $scope.notifications = [];
-        }
-        var exist = $arrayUtils.existWith($scope.notifications, data, function(inArray, data) {
-          return inArray.providerName == data.providerName && inArray.title == data.msg;
-        });
-        if(!exist) {
-          $scope.notifications.push(data);
         }
       });
     });
@@ -316,19 +287,6 @@ controllers.controller('ColumnController', [
         $network.send($scope.lastColumnDeleted);
       } else {
         $rootScope.$broadcast('delColumn', {});
-      }
-    }
-
-    $scope.clickOnNotification = function(notification) {
-      if(notification.isError == false) {
-        $popupProvider.openPopup({"socialNetwork": notification.providerName});
-      } else {
-        var index = $arrayUtils.indexOfWith($scope.notifications, notification, function(inArray, data) {
-          return inArray.providerName == data.providerName && inArray.msg == data.msg;
-        });
-        if(index > -1) {
-          $scope.notifications.splice(index, 1);
-        }
       }
     }
 
