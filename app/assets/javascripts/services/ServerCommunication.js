@@ -91,6 +91,12 @@ services.factory("ServerCommunication", [
         error.footer = "Click here to hide error.";
         error.isError = true;
         broadcast('error', error);
+      } else if (data.cmd == "disconnect") {
+        body = {};
+        body.title = "You have been disconnected from";
+        body.footer = "Click here to be connected again.";
+        body.isError = false;
+        broadcast('disconnect', body);
       } else if(data.cmd != "modColumn") {
         console.log("Command not yet implemented: ", data);
       }

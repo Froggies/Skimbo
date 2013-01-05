@@ -34,9 +34,18 @@ controllers.controller('NotificationController', [
       });
     });
 
+    $rootScope.$on('disconnect', function(evt, data) {
+      $scope.$apply(function() {
+        data.providerName = "skimbo";
+        $scope.notifications.push(data);
+      });
+    });
+
     $scope.clickOnNotification = function(notification) {
-      if(notification.isError == false) {
+      if(notification.isError == false && notification.providerName != "skimbo") {
         $popupProvider.openPopup({"socialNetwork": notification.providerName});
+      } else if(notification.isError == false && notification.providerName == "skimbo") {
+        window.location.href = "/";
       } else {
         var index = $arrayUtils.indexOfWith($scope.notifications, notification, function(inArray, data) {
           return inArray.providerName == data.providerName && inArray.msg == data.msg;
