@@ -1,8 +1,8 @@
 'use strict';
 
 controllers.controller('NotificationController', [
-  "$scope", "$rootScope", "$http", "ArrayUtils", "PopupProvider",
-  function($scope, $rootScope, $http, $arrayUtils, $popupProvider) {
+  "$scope", "$rootScope", "ArrayUtils", "PopupProvider",
+  function($scope, $rootScope, $arrayUtils, $popupProvider) {
 
     $scope.notifications = [];
 
