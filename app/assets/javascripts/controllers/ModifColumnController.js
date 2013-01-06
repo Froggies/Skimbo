@@ -77,7 +77,43 @@ controllers.controller('ModifColumnController', [
         return inArray.endpoint == socialNetwork.name;
       });
       if($scope.providersAndServices[indexOfSocialNetworkInProvidersAndServices] != undefined) {
-        $scope.servicesAvailable = $scope.providersAndServices[indexOfSocialNetworkInProvidersAndServices].services;
+        $scope.servicesAvailable = [];
+        for(var i=0; i < $scope.providersAndServices[indexOfSocialNetworkInProvidersAndServices].services.length; i++) {
+          $scope.servicesAvailable.push($unifiedRequestUtils.serverToUnifiedRequest($scope.providersAndServices[indexOfSocialNetworkInProvidersAndServices].services[i]));
+        }
+      }
+    }
+
+    $scope.addService = function(service) {
+      if($scope.servicesInColumn == undefined) {
+        $scope.servicesInColumn = [];
+      }
+      $scope.servicesInColumn.push(service);
+    }
+
+    $scope.cancelCreateColumn = function() {
+      $scope.socialNetworksSelected = [];
+      $scope.servicesAvailable = [];
+      $scope.servicesInColumn = [];
+    }
+
+    $scope.deleteService = function(service, arg) {
+      var found = false;
+      for (var i = 0; !found && i < $scope.servicesInColumn.length; i++) {
+        if($scope.servicesInColumn[i].service == service.service && 
+            $scope.servicesInColumn[i].args.length > 0) {
+          for (var j = 0; !found && j < $scope.servicesInColumn[i].args.length; j++) {
+            var a = $scope.servicesInColumn[i].args[j];
+            if(arg.key == a.key && arg.value == a.value) {
+              found = true;
+              $scope.servicesInColumn.splice(i,1);
+            }
+          }
+        }
+        else if($scope.servicesInColumn[i].service == service.service && arg === undefined) {
+          found = true;
+          $scope.servicesInColumn.splice(i,1);
+        }
       }
     }
 

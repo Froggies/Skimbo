@@ -32,14 +32,47 @@
           <ul class="services-proposes">
             <li ng-repeat="service in servicesAvailable">
               <div class="social-network-link">
-                <a href="#" ng-click="addSocialNetwork(service)" ref="{{'ADD_STREAM_FOR_SOCIAL_NETWORK' | i18n}} {{service.service}}">
-                  <img class="social-network-active {{service.hasParser}}" ng-src="assets/img/brand/{{service.service}}.png" alt="{{service.service}}" width="32" height="32"></a>
+                <a href="#" ng-click="addService(service)" ref="{{'ADD_STREAM_FOR_SOCIAL_NETWORK' | i18n}} {{service.service}}">
+                  {{service.serviceName}}
+                </a> 
               </div>
             </li>
           </ul>
         </div>
         <div id="services-in-column">
+          {{'ALREADY_IN_YOUR_COLUMN' | i18n}}
+          <ul class="services-proposes">
+            <li ng-repeat="service in servicesInColumn">
+              <div class="input-service" ng-show="service.hasArguments" ng-repeat="arg in service.args ">
+                <img class="img-service" ng-src="assets/img/brand/{{service.providerName}}.png" alt="{{service.providerName}}" width="24" height="24">
+                <span class="type-service {{service.providerName}}">
+                  {{typeServiceCharByService(service.service)}}
+                </span>
+                <input class="arg-service" type="text" ng-model="arg.value" placeholder="{{arg.key}}" pattern="[ a-zA-Z0-9]*"/>
+                <a href="#" 
+                  class="delete-service {{service.providerName}}"
+                  ng-click="deleteService(service,arg)"
+                >✘</a>
+              </div>
+              <div class="input-service" ng-show="!service.hasArguments">
+                <img class="img-service" ng-src="assets/img/brand/{{service.providerName}}.png" alt="{{service.providerName}}" width="24" height="24">
+                <span class="receving-service">
+                  {{'YOU_ARE_RECEIVING' | i18n}} {{service.serviceName}}
+                </span>
+                <a href="#" 
+                  class="delete-service {{service.providerName}}"
+                  ng-click="deleteService(service,arg)"
+                >✘</a>
+              </div>
+            </li>
+          </ul>
         </div>
+        <div class="controls-new"> 
+          <input ng-show="servicesInColumn.length > 0" type="button" ng-click="changeColumn(c);" value="{{'CREATE' | i18n}}"/>
+          <br/>
+          <br/>
+          <a href="#" class="delete-link" ng-click="cancelCreateColumn()">{{'CANCEL' | i18n}}</a>
+      </div>
     </div>
   </div>
 </div>
