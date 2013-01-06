@@ -37,6 +37,7 @@ services.factory("ServerCommunication", [
           }
         };
         broadcast('availableServices', serviceProposes);
+        broadcast('allUnifiedRequests', data.body);
       } else if(data.cmd == "msg") {
         data.body.msg.authorAvatar = $imagesUtils.checkExistingImage(data.body.msg.authorAvatar);
         data.body.msg.original = data.body.msg.message;
@@ -84,6 +85,8 @@ services.factory("ServerCommunication", [
         broadcast('tokenInvalid', data.body);
       } else if(data.cmd == "newToken") {
         broadcast('newToken', data.body);
+      } else if(data.cmd == "allProviders") {
+        broadcast('allProviders', data.body);
       } else if(data.cmd == "error") {
         var error = {};
         error.title = data.body.msg;
