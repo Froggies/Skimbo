@@ -1,6 +1,6 @@
 'use strict';
 
-publicApp.filter('i18n', ['$rootScope', function($rootScope) {
+filters.filter('i18n', ['$rootScope', function($rootScope) {
     return function (input) {
         var translations = {
             'fr' : {

@@ -167,6 +167,21 @@ object Configuration {
       override val provider = providers.BetaSeries
       override val mustBeReordered = true
     }
+    object planning extends EndpointConfig {
+      override val url = "http://api.betaseries.com/planning/member.json"
+      override val provider = providers.BetaSeries
+      override val manualNextResults = true
+      override val parser = Some(BetaseriesPlanningParser)
+      override val delay = 600
+    }
+    object timeline extends EndpointConfig {
+      override val url = withLimit("http://api.betaseries.com/timeline/friends.json?number=:limit")
+      override val provider = providers.BetaSeries
+      override val manualNextResults = true
+      override val mustBeReordered = true
+      override val parser = Some(BetaseriesTimelineParser)
+      override val delay = 600
+    }
   }
 }
 

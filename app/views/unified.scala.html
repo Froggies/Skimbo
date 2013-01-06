@@ -1,53 +1,63 @@
 @main("Skimbo") {
-    <link rel="stylesheet" media="screen" href="@routes.Assets.at("app/styles/logged.css")"/>
+  <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/logged.min.css")"/>
 } {
 
 	<div ng-app="publicApp" ng-controller="MainController">
 
-        <header class="banner" ng-include="'@routes.Assets.at("app/views/header.html")'"></header>
+    <header class="banner" ng-include="'@routes.Assets.at("app/views/header.html")'"></header>
 
-        <!-- Add your site or application content here -->
-        <div class="container" ng-view></div>
-
-        <script src="@routes.Assets.at("app/scripts/vendor/angular.min.js")"></script>
-        <script src="@routes.Assets.at("app/scripts/vendor/angular-sanitize.min.js")"></script>
-        <script src="@routes.Assets.at("app/scripts/vendor/moment.min.js")"></script>
-		<script src="@routes.Assets.at("app/scripts/vendor/pagevisibility.js")"></script>
-		<script src="@routes.Assets.at("app/scripts/vendor/whoareyou.js")"></script>
-		
-        <!-- build:js scripts/scripts.js -->
-        <script src="@routes.Assets.at("javascripts/public.js")"></script>
-
-        <script src="@routes.Assets.at("javascripts/services/package.js")"></script>
-        <script src="@routes.Assets.at("javascripts/controllers/package.js")"></script>
-
-        <script src="@routes.Assets.at("javascripts/services/StringUtils.js")"></script>
-        <script src="@routes.Assets.at("javascripts/services/ArrayUtils.js")"></script>
-        <script src="@routes.Assets.at("javascripts/services/UnifiedRequestUtils.js")"></script>
-        <script src="@routes.Assets.at("javascripts/services/ImagesUtils.js")"></script>
-        <script src="@routes.Assets.at("javascripts/services/Visibility.js")"></script>
-        <script src="@routes.Assets.at("javascripts/services/Network.js")"></script>
-        <script src="@routes.Assets.at("javascripts/services/PopupProvider.js")"></script>
-        <script src="@routes.Assets.at("javascripts/services/DragAndDropColumns.js")"></script>
-        <script src="@routes.Assets.at("javascripts/services/ServerCommunication.js")"></script>
-        <script src="@routes.Assets.at("javascripts/filters/translation.js")"></script>
-        <script src="@routes.Assets.at("javascripts/controllers/MainController.js")"></script>
-        <script src="@routes.Assets.at("javascripts/controllers/ModifColumnController.js")"></script>
-        <script src="@routes.Assets.at("javascripts/controllers/HeaderController.js")"></script>
-        <script src="@routes.Assets.at("javascripts/controllers/ColumnController.js")"></script>
-
-        <!-- endbuild -->
-
-        <!-- UserVoice -->
-        <script type="text/javascript">
-          var uvOptions = {};
-          (function() {
-            var uv = document.createElement('script'); uv.type = 'text/javascript'; uv.async = true;
-            uv.src = ('https:' == document.location.protocol ? 'https://' : 'http://') + 'widget.uservoice.com/SKUqq2hdqI52HMB8QRZjw.js';
-            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(uv, s);
-          })();
-        </script>
-        <!-- end UserVoice -->
+    <!-- Add your site or application content here -->
+    <div class="container" ng-view>
+      <noscript>
+        <p>Your navigator must run javascript files !</p>
+        <p>Vous devez autoriser l'exécution de javascript !</p>
+      </noscript>
     </div>
 
+  <script src="@routes.Assets.at("app/scripts/vendor/angular.min.js")"></script>
+  <script src="@routes.Assets.at("app/scripts/vendor/angular-sanitize.min.js")"></script>
+  <script src="@routes.Assets.at("app/scripts/vendor/moment.min.js")"></script>
+	<script src="@routes.Assets.at("app/scripts/vendor/pagevisibility.js")"></script>
+	<script src="@routes.Assets.at("app/scripts/vendor/whoareyou.js")"></script>
+		
+    <!-- build:js scripts/scripts.js -->
+  @defining(if (play.Play.isProd()) ".min" else "") { minified =>
+    <script src="@routes.Assets.at("javascripts/public"+ minified +".js")"></script>
+
+    <script src="@routes.Assets.at("javascripts/services/package"+ minified +".js")"></script>
+    <script src="@routes.Assets.at("javascripts/filters/package"+ minified +".js")"></script>
+    <script src="@routes.Assets.at("javascripts/controllers/package"+ minified +".js")"></script>
+
+    <script src="@routes.Assets.at("javascripts/services/StringUtils"+ minified +".js")"></script>
+    <script src="@routes.Assets.at("javascripts/services/ArrayUtils"+ minified +".js")"></script>
+    <script src="@routes.Assets.at("javascripts/services/UnifiedRequestUtils"+ minified +".js")"></script>
+    <script src="@routes.Assets.at("javascripts/services/ImagesUtils"+ minified +".js")"></script>
+    <script src="@routes.Assets.at("javascripts/services/Visibility"+ minified +".js")"></script>
+    <script src="@routes.Assets.at("javascripts/services/ColumnSize"+ minified +".js")"></script>
+    <script src="@routes.Assets.at("javascripts/services/Network"+ minified +".js")"></script>
+    <script src="@routes.Assets.at("javascripts/services/PopupProvider"+ minified +".js")"></script>
+    <script src="@routes.Assets.at("javascripts/services/DragAndDropColumns"+ minified +".js")"></script>
+    <script src="@routes.Assets.at("javascripts/services/ServerCommunication"+ minified +".js")"></script>
+
+    <script src="@routes.Assets.at("javascripts/filters/translation"+ minified +".js")"></script>
+
+    <script src="@routes.Assets.at("javascripts/controllers/NotificationController"+ minified +".js")"></script>
+    <script src="@routes.Assets.at("javascripts/controllers/MainController"+ minified +".js")"></script>
+    <script src="@routes.Assets.at("javascripts/controllers/ModifColumnController"+ minified +".js")"></script>
+    <script src="@routes.Assets.at("javascripts/controllers/HeaderController"+ minified +".js")"></script>
+    <script src="@routes.Assets.at("javascripts/controllers/ColumnController"+ minified +".js")"></script>
+  }
+    <!-- endbuild -->
+
+    <!-- UserVoice -->
+    <script type="text/javascript">
+      var uvOptions = {};
+      (function() {
+        var uv = document.createElement('script'); uv.type = 'text/javascript'; uv.async = true;
+        uv.src = ('https:' == document.location.protocol ? 'https://' : 'http://') + 'widget.uservoice.com/SKUqq2hdqI52HMB8QRZjw.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(uv, s);
+      })();
+    </script>
+    <!-- end UserVoice -->
+  </div>
 }

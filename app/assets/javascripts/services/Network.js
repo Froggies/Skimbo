@@ -22,7 +22,8 @@ services.factory("Network", ["$http", "ServerCommunication", function($http, $se
           data = JSON.parse(msg.data);
       } catch(exception) {
           data = msg.data;
-      }      
+      }     
+      //console.log(data); 
       command(data);
     }
   }
@@ -56,7 +57,7 @@ services.factory("Network", ["$http", "ServerCommunication", function($http, $se
   }
 
   function _send(jsonMsg) {
-    // console.log("send : ",jsonMsg);
+    //console.log("send : ",jsonMsg);
     if(socket !== undefined) {
       socket.send(JSON.stringify(jsonMsg));
     } else {

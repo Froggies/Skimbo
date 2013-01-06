@@ -1,8 +1,10 @@
 'use strict';
 
 controllers.controller('ColumnController', [
-  "$scope", "Network", "$rootScope", "UnifiedRequestUtils", "Visibility", "PopupProvider", "ArrayUtils",
-  function($scope, $network, $rootScope, $unifiedRequestUtils, $visibility, $popupProvider, $arrayUtils) {
+  "$scope", "Network", "$rootScope", "UnifiedRequestUtils", "Visibility", 
+  "PopupProvider", "ArrayUtils", "ColumnSize",
+  function($scope, $network, $rootScope, $unifiedRequestUtils, $visibility, 
+    $popupProvider, $arrayUtils, $columnSize) {
 
     //chrome memory leak !!!
     $scope.$destroy= function() {
@@ -39,6 +41,8 @@ controllers.controller('ColumnController', [
 
     $rootScope.$on('allColumns', function(evt, columns) {
       $scope.$apply(function() {
+        $columnSize.setSize(columns);
+        $columnSize.buildSizeCompo(columns);
         $scope.columns = columns;
       });
     });
@@ -55,17 +59,6 @@ controllers.controller('ColumnController', [
       });
     });
 
-    $rootScope.$on('tokenInvalid', function(evt, data) {
-      $scope.$apply(function() {
-        if($scope.notifications == undefined) {
-          $scope.notifications = [];
-        }
-        if(!$arrayUtils.exist($scope.notifications, data, "providerName")) {
-          $scope.notifications.push(data);
-        }
-      });
-    });
-
     $rootScope.$on('newToken', function(evt, data) {
       $scope.$apply(function() {
         if($scope.serviceProposes != undefined) {
@@ -74,24 +67,6 @@ controllers.controller('ColumnController', [
               $scope.serviceProposes[i].socialNetworkToken = true;
             }
           };
-        }
-        var index = $arrayUtils.indexOf($scope.notifications, data, "providerName");
-        if(index > -1) {
-          $scope.notifications.splice(index, 1);
-        }
-      });
-    });
-
-    $rootScope.$on('error', function(evt, data) {
-      $scope.$apply(function() {
-        if($scope.notifications == undefined) {
-          $scope.notifications = [];
-        }
-        var exist = $arrayUtils.existWith($scope.notifications, data, function(inArray, data) {
-          return inArray.providerName == data.providerName && inArray.title == data.msg;
-        });
-        if(!exist) {
-          $scope.notifications.push(data);
         }
       });
     });
@@ -150,6 +125,17 @@ controllers.controller('ColumnController', [
         };
       }
     };
+
+    $scope.resizeColumn = function(column, height, width) {
+      $network.send({
+        cmd: "resizeColumn", 
+        body: {
+          "columnTitle": column.title,
+          "height": height,
+          "width": width
+      }});
+      $columnSize.resizeColumn(column, height, width);
+    }
 
     $scope.addService = function(service, column) {
       if(service.hasParser) {
@@ -301,19 +287,6 @@ controllers.controller('ColumnController', [
         $network.send($scope.lastColumnDeleted);
       } else {
         $rootScope.$broadcast('delColumn', {});
-      }
-    }
-
-    $scope.clickOnNotification = function(notification) {
-      if(notification.isError == false) {
-        $popupProvider.openPopup({"socialNetwork": notification.providerName});
-      } else {
-        var index = $arrayUtils.indexOfWith($scope.notifications, notification, function(inArray, data) {
-          return inArray.providerName == data.providerName && inArray.msg == data.msg;
-        });
-        if(index > -1) {
-          $scope.notifications.splice(index, 1);
-        }
       }
     }
 

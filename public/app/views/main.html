@@ -1,13 +1,8 @@
 <section id="content">
-	<section class="notifications">
-		<div class="notif column-title" ng-repeat="notification in notifications">
-			<a href="#" ng-click="clickOnNotification(notification)">
-		        <div class="head"> <img ng-src="assets/img/brand/{{notification.providerName}}.png" alt="{{notification.providerName}}" width="24" height="24">{{notification.title}} <span class="social-network-name">{{notification.providerName}}</span></div>
-		        <div class="text">{{notification.footer}}</div>
-	        </a>
-    	</div>
+	<section class="notifications" 
+					 ng-controller="NotificationController"
+					 ng-include src="'assets/app/views/notification.html'">
 	</section>
-
 
 	<section class="column" 
 			ng-repeat="c in columns"
@@ -18,11 +13,23 @@
 			ondragenter="dragEnter(this,event)"
 			ondragleave="dragLeave(this,event)"
 			ondragover="dragOver(this,event)"
-			ondrop="drop(this,event)">
+			ondrop="drop(this,event)"
+			style="width:{{c.csswidth}};height:{{c.cssheight}}">
 		<header class="column-title">
 			<div class="title" ng-hide="c.showModifyColumn">{{c.title}}</div>
 			<input class="title-input error {{c.showErrorTitleAlreadyExist}} {{c.showErrorTitleRequired}}" type="text" ng-model="c.title" ng-show="c.showModifyColumn" value="{{c.title}}" onfocus="if (this.value.indexOf('What is here ?') != -1) this.value='';" />
-			<div class="configure"><a href="#" ng-click="modifyColumn(c)">⚙</a></div>
+			<div class="configure">
+				<a href="#" ng-click="c.show_size_column=!c.show_size_column">⤭</a>
+				<div class="column-size" ng-show="c.show_size_column">
+					<div ng-repeat="h in c.compoSize">
+						<a href="#" style="{{w.selectedStyle}}"
+								ng-click="resizeColumn(c, h.height, w.width)" 
+								ng-repeat="w in h.tab">□</a>
+					</div>
+					<br />
+				</div>
+				<a href="#" ng-click="modifyColumn(c)">⚙</a>
+			</div>
 		</header>
 		<div class="column-content" ng-hide="c.showModifyColumn">
 			<ul>

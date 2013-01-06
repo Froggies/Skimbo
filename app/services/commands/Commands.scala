@@ -26,7 +26,10 @@ object Commands {
       case "allColumns" => {
         UserDao.findOneById(idUser).map(_.map { user =>
           user.columns.map(columns =>
-            UserInfosActor.sendTo(idUser, Json.toJson(Command(cmd.name, Some(Json.toJson(columns))))))
+            UserInfosActor.sendTo(idUser, Json.toJson(Command(cmd.name, Some(Json.toJson(columns)))))
+          ).getOrElse(
+            UserInfosActor.sendTo(idUser, Json.toJson(Command(cmd.name, Some(Json.toJson(new JsArray)))))
+          )
         })
       }
       case "addColumn" => {
@@ -64,6 +67,24 @@ object Commands {
         UserDao.deleteColumn(idUser, delColumnTitle)
         ProviderActor.killActorsForUserAndColumn(idUser, delColumnTitle)
         UserInfosActor.sendTo(idUser, Json.toJson(Command(cmd.name, Some(JsString("Ok")))))
+      }
+      case "resizeColumn" => {
+        val columnTitle = (cmd.body.get \ "columnTitle").as[String]
+        val columnWidth = (cmd.body.get \ "width").as[Int]
+        val columnHeight = (cmd.body.get \ "height").as[Int]
+        UserDao.findOneById(idUser).map(_.map { user =>
+          user.columns.map(_.filter(_.title == columnTitle).map { column =>
+            UserDao.updateColumn(
+              idUser,
+              column.title,
+              Column(
+                column.title,
+                column.unifiedRequests,
+                column.index,
+                columnWidth,
+                columnHeight))
+          })
+        })
       }
       case "allUnifiedRequests" => {
         UserInfosActor.sendTo(idUser, Json.toJson(Command(cmd.name, Some(Service.toJsonWithUnifiedRequest))))

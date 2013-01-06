@@ -1,6 +1,6 @@
 'use strict';
 
-publicApp.controller('MainController', function($scope, $rootScope) {
+controllers.controller('MainController', function($scope, $rootScope) {
 
 	$scope.showUserInformations = false;
   // translation : 

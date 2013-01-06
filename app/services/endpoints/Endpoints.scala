@@ -41,7 +41,9 @@ object Endpoints {
     Endpoint(Scoopit, Seq(
       Service("scoopit.notifications", Configuration.Scoopit.notifications))),
     Endpoint(BetaSeries, Seq(
-      Service("betaseries.notifications", Configuration.BetaSeries.notifications))))
+      Service("betaseries.notifications", Configuration.BetaSeries.notifications),
+      Service("betaseries.planning", Configuration.BetaSeries.planning),
+      Service("betaseries.timeline", Configuration.BetaSeries.timeline))))
 
   def getAll: Seq[Endpoint] = {
     endpoints
