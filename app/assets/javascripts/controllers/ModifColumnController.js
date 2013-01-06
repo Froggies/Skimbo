@@ -1,6 +1,8 @@
 'use strict';
 
-controllers.controller('ModifColumnController', [
+define(["app"], function(app) {
+
+app.controller('ModifColumnController', [
   "$scope", "Network", "$rootScope", "UnifiedRequestUtils", "Visibility", "PopupProvider", "ArrayUtils",
   function($scope, $network, $rootScope, $unifiedRequestUtils, $visibility, $popupProvider, $arrayUtils) {
 
@@ -146,3 +148,6 @@ controllers.controller('ModifColumnController', [
   }
 
 ]);
+
+return app;
+});

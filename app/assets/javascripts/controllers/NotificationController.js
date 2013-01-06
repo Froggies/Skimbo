@@ -1,6 +1,8 @@
 'use strict';
 
-controllers.controller('NotificationController', [
+define(["app"], function(app) {
+
+app.controller('NotificationController', [
   "$scope", "$rootScope", "ArrayUtils", "PopupProvider",
   function($scope, $rootScope, $arrayUtils, $popupProvider) {
 
@@ -57,3 +59,6 @@ controllers.controller('NotificationController', [
     }
 
 }]);
+
+return app;
+});

@@ -1,1 +1,0 @@
-services = angular.module("services", []);

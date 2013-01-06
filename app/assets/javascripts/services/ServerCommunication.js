@@ -1,4 +1,8 @@
-services.factory("ServerCommunication", [
+'use strict';
+
+define(["app"], function(app) {
+
+app.factory("ServerCommunication", [
   "$http", "$rootScope", "UnifiedRequestUtils", "ImagesUtils", "StringUtils",
   function($http, $rootScope, $unifiedRequestUtils, $imagesUtils, $stringUtils) {
 
@@ -108,3 +112,6 @@ services.factory("ServerCommunication", [
 }
 
 ]);
+
+return app;
+});

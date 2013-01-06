@@ -1,4 +1,8 @@
-services.factory("ImagesUtils", function() {
+'use strict';
+
+define(["app"], function(app) {
+
+app.factory("ImagesUtils", function() {
 
   return {
     isDefaultImage: function(image) {
@@ -18,4 +22,7 @@ services.factory("ImagesUtils", function() {
     }
   }
 
+});
+
+return app;
 });

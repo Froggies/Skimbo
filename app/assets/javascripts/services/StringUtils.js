@@ -1,4 +1,8 @@
-services.factory("StringUtils", function() {
+'use strict';
+
+define(["app"], function(app) {
+
+app.factory("StringUtils", function() {
 
   var urlexp = /(http|ftp|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?/gi;
 
@@ -48,4 +52,7 @@ services.factory("StringUtils", function() {
 
 	};
 
+});
+
+return app;
 });

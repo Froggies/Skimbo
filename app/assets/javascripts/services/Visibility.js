@@ -1,4 +1,8 @@
-services.factory("Visibility", function() {
+'use strict';
+
+define(["app"], function(app) {
+
+app.factory("Visibility", function() {
 
   var _isPageVisible = true;
   try {
@@ -33,4 +37,7 @@ services.factory("Visibility", function() {
     }
   }
 
+});
+
+return app;
 });

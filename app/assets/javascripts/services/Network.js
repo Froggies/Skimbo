@@ -1,4 +1,8 @@
-services.factory("Network", ["$http", "ServerCommunication", function($http, $serverCommunication) {
+'use strict';
+
+define(["app"], function(app) {
+
+app.factory("Network", ["$http", "ServerCommunication", function($http, $serverCommunication) {
 
   var wshost = jsRoutes.controllers.stream.WebSocket.connect().webSocketURL();
   var ssehost = jsRoutes.controllers.stream.Sse.connect().absoluteURL();
@@ -85,3 +89,6 @@ services.factory("Network", ["$http", "ServerCommunication", function($http, $se
   };
 
 }]);
+
+return app;
+});

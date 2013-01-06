@@ -1,4 +1,8 @@
-services.factory("ArrayUtils", function() {
+'use strict';
+
+define(["app"], function(app) {
+
+app.factory("ArrayUtils", function() {
 
   return {
 
@@ -51,4 +55,7 @@ services.factory("ArrayUtils", function() {
 
   };
 
+});
+
+return app;
 });

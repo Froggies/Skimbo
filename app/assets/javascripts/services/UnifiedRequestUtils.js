@@ -1,4 +1,8 @@
-services.factory("UnifiedRequestUtils", function() {
+'use strict';
+
+define(["app"], function(app) {
+
+app.factory("UnifiedRequestUtils", function() {
 
   return {
 
@@ -63,4 +67,7 @@ services.factory("UnifiedRequestUtils", function() {
 
   };
 
+});
+
+return app;
 });

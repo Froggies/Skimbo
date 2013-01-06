@@ -79,16 +79,16 @@ object Endpoints {
         Logger.warn("Given : " + param)
         Logger.warn("Expected : " + config.requiredParams)
         None
-      }
-
-      // Generate url with params
-      val baseUrl = param.foldLeft(config.url)((url, param) => url.replace(":" + param._1, param._2))
-
-      if (!config.manualNextResults) {
-        // And "since" element to Url
-        Some(sinceOpt.map(since => baseUrl + config.since.replace(":since", since)).getOrElse(baseUrl))
       } else {
-        Some(baseUrl)
+        // Generate url with params
+        val baseUrl = param.foldLeft(config.url)((url, param) => url.replace(":" + param._1, param._2))
+  
+        if (!config.manualNextResults) {
+          // And "since" element to Url
+          Some(sinceOpt.map(since => baseUrl + config.since.replace(":since", since)).getOrElse(baseUrl))
+        } else {
+          Some(baseUrl)
+        }
       }
     }
   }

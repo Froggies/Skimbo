@@ -1,4 +1,8 @@
-services.factory("PopupProvider", ["Network", function($network) {
+'use strict';
+
+define(["app"], function(app) {
+
+app.factory("PopupProvider", ["Network", function($network) {
 
   return {
     openPopup: function(service, optionalCallback) {
@@ -52,3 +56,6 @@ services.factory("PopupProvider", ["Network", function($network) {
   }
 
 }]);
+
+return app;
+});

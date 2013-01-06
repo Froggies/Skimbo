@@ -1,4 +1,8 @@
-services.factory("ColumnSize", function() {
+'use strict';
+
+define(["app"], function(app) {
+
+app.factory("ColumnSize", function() {
 
   var maxWidthNbColumns = 6;
   var maxHeightNbColumns = 4;
@@ -64,4 +68,7 @@ services.factory("ColumnSize", function() {
     }
   }
 
+});
+
+return app;
 });

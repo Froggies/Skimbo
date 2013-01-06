@@ -1,6 +1,8 @@
 'use strict';
 
-controllers.controller('HeaderController', [
+define(["app"], function(app) {
+
+app.controller('HeaderController', [
   "$scope", "$rootScope", "$http", "ArrayUtils", "ImagesUtils",
   function($scope, $rootScope, $http, $arrayUtils, $imagesUtils) {
 
@@ -70,3 +72,6 @@ controllers.controller('HeaderController', [
     }
 
 }]);
+
+return app;
+});
