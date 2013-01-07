@@ -36,5 +36,5 @@ require([
   'controllers/HeaderController', 
   'controllers/ColumnController'
 ], function(angular, app) {
-  angular.bootstrap(document, ['publicApp']);
+  angular.bootstrap(window.document.getElementById('publicApp'), ['publicApp']);
 });

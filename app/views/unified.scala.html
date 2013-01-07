@@ -2,7 +2,7 @@
   <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/logged.min.css")"/>
 } {
 
-	<div ng-controller="MainController">
+	<div id="publicApp" ng-controller="MainController">
 
     <header class="banner" ng-include="'@routes.Assets.at("app/views/header.html")'"></header>
 
@@ -18,24 +18,17 @@
 	<script src="@routes.Assets.at("app/scripts/vendor/pagevisibility.js")"></script>
 	<script src="@routes.Assets.at("app/scripts/vendor/whoareyou.js")"></script>
 		
-    <!-- build:js scripts/scripts.js -->
+  @helper.requireJs(core = routes.Assets.at("javascripts/require.js").url, module = routes.Assets.at("javascripts/main").url)
 
-  @if(play.Play.isProd()) {
-    @helper.requireJs(core = routes.Assets.at("javascripts/require.js").url, module = routes.Assets.at("javascripts/mainProd").url)
-  } else {
-    @helper.requireJs(core = routes.Assets.at("javascripts/require.js").url, module = routes.Assets.at("javascripts/main").url)
-  }
-    <!-- endbuild -->
-
-    <!-- UserVoice -->
-    <script type="text/javascript">
-      var uvOptions = {};
-      (function() {
-        var uv = document.createElement('script'); uv.type = 'text/javascript'; uv.async = true;
-        uv.src = ('https:' == document.location.protocol ? 'https://' : 'http://') + 'widget.uservoice.com/SKUqq2hdqI52HMB8QRZjw.js';
-        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(uv, s);
-      })();
-    </script>
-    <!-- end UserVoice -->
+  <!-- UserVoice -->
+  <script type="text/javascript">
+    var uvOptions = {};
+    (function() {
+      var uv = document.createElement('script'); uv.type = 'text/javascript'; uv.async = true;
+      uv.src = ('https:' == document.location.protocol ? 'https://' : 'http://') + 'widget.uservoice.com/SKUqq2hdqI52HMB8QRZjw.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(uv, s);
+    })();
+  </script>
+  <!-- end UserVoice -->
   </div>
 }

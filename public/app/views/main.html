@@ -82,7 +82,7 @@
 						<input class="arg-service" type="text" ng-model="arg.value" placeholder="{{arg.key}}" pattern="[ a-zA-Z0-9]*"/>
 						<a href="#" 
 							class="delete-service {{service.providerName}}"
-							ng-click="deleteService(service,arg)"
+							ng-click="deleteService(service, c, arg)"
 						>✘</a>
 					</div>
 					<div class="input-service" ng-show="!service.hasArguments">

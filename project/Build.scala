@@ -15,8 +15,7 @@ object ApplicationBuild extends Build {
 	val main = play.Project(appName, appVersion, appDependencies).settings(
 	    scalacOptions ++= Seq("-language:postfixOps", "-deprecation","-unchecked","-feature"),
 	    resolvers += "sgodbillon" at "https://bitbucket.org/sgodbillon/repository/raw/master/snapshots/",
-	    //requireJs += "main.js",
-	    requireJs += "mainProd.js"
+	    requireJs += "main.js"
 	)
 
 }
