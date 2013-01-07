@@ -1,23 +1,6 @@
 'use strict';
 
-require.config({
-  baseUrl: '/assets/javascripts/',
-  paths: {
-    'angular': 'angular',
-    'angularSanitize': 'angularSanitize'
-  },
-  shim: {
-    'angular' : {'exports' : 'angular'},
-    'angularSanitize' : {deps:['angular']}
-  },
-  priority: [
-    "angular"
-  ]
-});
-
 require([
-  'angular',
-  'angularSanitize',
   'app',
   'services/StringUtils', 
   'services/ArrayUtils', 
@@ -35,6 +18,6 @@ require([
   'controllers/ModifColumnController', 
   'controllers/HeaderController', 
   'controllers/ColumnController'
-], function(angular, app) {
-  angular.bootstrap(window.document.getElementById('publicApp'), ['publicApp']);
+], function(app) {
+  window.angular.bootstrap(window.document.getElementById('publicApp'), ['publicApp']);
 });

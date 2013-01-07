@@ -109,9 +109,8 @@ app.factory("ServerCommunication", [
       }
     }
   }
-}
 
-]);
+}]);
 
 return app;
 });

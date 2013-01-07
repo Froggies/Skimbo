@@ -7,7 +7,6 @@ app.controller('ColumnController', [
   "PopupProvider", "ArrayUtils", "ColumnSize",
   function($scope, $network, $rootScope, $unifiedRequestUtils, $visibility, 
     $popupProvider, $arrayUtils, $columnSize) {
-
     //chrome memory leak !!!
     $scope.$destroy= function() {
         var parent = this.$parent;

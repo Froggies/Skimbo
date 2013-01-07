@@ -145,9 +145,7 @@ app.controller('ModifColumnController', [
       }
     };
 
-  }
-
-]);
+}]);
 
 return app;
 });

@@ -1,7 +1,7 @@
 function dragOver(target, ev)
 {
   ev.preventDefault();
-}
+};
 
 function dragStart(target,ev)
 {
@@ -10,20 +10,20 @@ function dragStart(target,ev)
   ev.dataTransfer.setData("text/html", target.innerHTML);
   ev.dataTransfer.setData("id", target.id);
   ev.dataTransfer.effectAllowed = 'move';
-}
+};
 
 function dragEnter(target, ev) {
   ev.preventDefault();
-}
+};
 
 function dragLeave(target, ev) {
   ev.preventDefault();
-}
+};
 
 function dragEnd(target,ev)
 {
   target.style.opacity = "1";
-}
+};
 
 function drop(target,ev)
 {
@@ -51,4 +51,4 @@ function drop(target,ev)
     scope.send(modColumnsOrder);
   }); 
 
-}
+};

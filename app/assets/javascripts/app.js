@@ -3,8 +3,8 @@
 // HACK Facebook : redirect to #_=_ and angular dont like this ...
 if (document.location.hash == "#_=_") { document.location.replace("/"); }
 
-define(['angular'], function(angular) {
-  var publicApp = angular.module('publicApp', ['ngSanitize']);
+define(function() {
+  var publicApp = window.angular.module('publicApp', ['ngSanitize']);
   publicApp.config(["$routeProvider", "$locationProvider", function($routeProvider, $locationProvider) {
     $routeProvider
       .when('/', {
