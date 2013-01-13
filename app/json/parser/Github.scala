@@ -134,7 +134,7 @@ object GithubWallParser extends GenericParser {
 
 object GithubForkeEvent {
   implicit val githubReader: Reads[GithubForkeEvent] = (
-    (__ \ "payload" \ "forkee" \ "html_url").readOpt[String] and
+    (__ \ "payload" \ "forkee" \ "html_url").readNullable[String] and
     (__ \ "repo" \ "name").read[String])(GithubForkeEvent.apply _)
 }
 
@@ -164,14 +164,14 @@ object GithubCommentEvent {
   implicit val githubReader: Reads[GithubCommentEvent] = (
     (__ \ "id").read[Int] and
     (__ \ "body").read[String] and
-    (__ \ "html_url").readOpt[String])(GithubCommentEvent.apply _)
+    (__ \ "html_url").readNullable[String])(GithubCommentEvent.apply _)
 }
 
 object GithubPullRequestReviewCommentEvent {
   implicit val githubReader: Reads[GithubPullRequestReviewCommentEvent] = (
     (__ \ "id").read[Int] and
     (__ \ "body").read[String] and
-    (__ \ "_links" \ "html" \ "href").readOpt[String])(GithubPullRequestReviewCommentEvent.apply _)
+    (__ \ "_links" \ "html" \ "href").readNullable[String])(GithubPullRequestReviewCommentEvent.apply _)
 }
 
 object GithubGollumEvent {
@@ -195,18 +195,18 @@ object GithubWallMessage {
     (__ \ "id").read[String] and
     (__ \ "actor" \ "login").read[String] and
     (__ \ "type").read[String] and
-    (__).readOpt[GithubForkeEvent] and
-    (__ \ "payload" \ "head").readOpt[String] and
-    (__ \ "payload" \ "commits").readOpt[List[GithubPushEvent]] and
+    (__).readNullable[GithubForkeEvent] and
+    (__ \ "payload" \ "head").readNullable[String] and
+    (__ \ "payload" \ "commits").readNullable[List[GithubPushEvent]] and
     (__ \ "created_at").read[DateTime](Reads.jodaDateReads(datePattern)) and
-    (__ \ "actor" \ "avatar_url").readOpt[String] and
+    (__ \ "actor" \ "avatar_url").readNullable[String] and
     (__ \ "repo" \ "name").read[String] and
-    (__ \ "payload" \ "issue").readOpt[GithubIssuesEvent] and
-    (__ \ "payload" \ "comment").readOpt[GithubCommentEvent] and
-    (__ \ "payload" \ "download").readOpt[GithubDownloadEvent] and
-    ((__ \ "payload" \ "pages")(0)).readOpt[GithubGollumEvent] and
-    (__ \ "payload" \ "pull_request").readOpt[GithubPullRequestEvent] and
-    (__ \ "payload" \ "comment").readOpt[GithubPullRequestReviewCommentEvent] and
-    (__ \ "payload" \ "ref_type").readOpt[String] and
-    (__ \ "payload" \ "ref").readOpt[String])(GithubWallMessage.apply _)
+    (__ \ "payload" \ "issue").readNullable[GithubIssuesEvent] and
+    (__ \ "payload" \ "comment").readNullable[GithubCommentEvent] and
+    (__ \ "payload" \ "download").readNullable[GithubDownloadEvent] and
+    ((__ \ "payload" \ "pages")(0)).readNullable[GithubGollumEvent] and
+    (__ \ "payload" \ "pull_request").readNullable[GithubPullRequestEvent] and
+    (__ \ "payload" \ "comment").readNullable[GithubPullRequestReviewCommentEvent] and
+    (__ \ "payload" \ "ref_type").readNullable[String] and
+    (__ \ "payload" \ "ref").readNullable[String])(GithubWallMessage.apply _)
 }

@@ -15,7 +15,7 @@ object Command {
 
   implicit val commandReads: Reads[Command] = (
     (__ \ "cmd").read[String] and
-    (__ \ "body").readOpt[JsValue])(Command.apply _)
+    (__ \ "body").readNullable[JsValue])(Command.apply _)
 
   implicit val commandWrites = new Writes[Command] {
     def writes(c: Command): JsValue = {

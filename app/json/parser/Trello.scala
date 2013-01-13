@@ -108,7 +108,7 @@ object TrelloWallParser extends GenericParser {
 object MemberCreatorTrello {
   implicit val jsonReader: Reads[MemberCreatorTrello] = (
     (__ \ "id").read[String] and
-    (__ \ "avatarHash").readOpt[String] and
+    (__ \ "avatarHash").readNullable[String] and
     (__ \ "fullName").read[String] and
     (__ \ "initials").read[String] and
     (__ \ "username").read[String])(MemberCreatorTrello.apply _)
@@ -117,7 +117,7 @@ object MemberCreatorTrello {
 object CardTrello {
   implicit val cardReader: Reads[CardTrello] = (
     (__ \ "name").read[String] and
-    (__ \ "idShort").readOpt[Int] and
+    (__ \ "idShort").readNullable[Int] and
     (__ \ "id").read[String])(CardTrello.apply _)
 }
 
@@ -129,9 +129,9 @@ object BoardTrello {
 
 object DataTrello {
   implicit val dataTrelloReader: Reads[DataTrello] = (
-    (__ \ "text").readOpt[String] and
-    (__ \ "card").readOpt[CardTrello] and
-    (__ \ "board").readOpt[BoardTrello])(DataTrello.apply _)
+    (__ \ "text").readNullable[String] and
+    (__ \ "card").readNullable[CardTrello] and
+    (__ \ "board").readNullable[BoardTrello])(DataTrello.apply _)
 }
 
 object TrelloWallMessage {

@@ -51,6 +51,6 @@ object TwitterDirectMessage {
     (__ \ "text").read[String] and
     (__ \ "sender" \ "name").read[String] and
     (__ \ "sender" \ "screen_name").read[String] and
-    (__ \ "sender" \ "profile_image_url").readOpt[String] and
+    (__ \ "sender" \ "profile_image_url").readNullable[String] and
     (__ \ "created_at").read[DateTime](twitterDateReader))(TwitterDirectMessage.apply _)
 }

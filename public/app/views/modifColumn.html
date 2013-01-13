@@ -33,12 +33,12 @@
             </li>
           </ul>
         </div>
-        <div class="sub-content">
+        <div class="sub-content" style="width:{{availableSocialNetworksWidth}}">
           {{'AVAILABLE_SOCIAL_NETWORKS' | i18n}}
           <ul class="services-proposes">
             <li ng-repeat="provider in providersAvailable">
               <div class="social-network-link">
-                <a class="btn" href="#" ng-click="addSocialNetwork(provider)" ref="{{'ADD_STREAM_FOR_SOCIAL_NETWORK' | i18n}} {{provider.name}}">
+                <a class="btn {{provider.selected}}" href="#" ng-click="addSocialNetwork(provider)" ref="{{'ADD_STREAM_FOR_SOCIAL_NETWORK' | i18n}} {{provider.name}}">
                   <img class="social-network-active {{service.hasParser}}" ng-src="assets/img/brand/{{provider.name}}.png" alt="{{provider.name}}" width="32" height="32"></a>
               </div>
             </li>

@@ -57,12 +57,12 @@ object FacebookWallMessage {
     (__ \ "from" \ "name").read[String] and
     (__ \ "from" \ "id").read[String].map(_.toLong) and
     (__ \ "type").read[String] and
-    (__ \ "status_type").readOpt[String] and
-    (__ \ "likes" \ "count").readOpt[Int].map(e => e.getOrElse(0)) and
-    (__ \ "comments" \ "count").readOpt[Int].map(e => e.getOrElse(0)) and
+    (__ \ "status_type").readNullable[String] and
+    (__ \ "likes" \ "count").readNullable[Int].map(e => e.getOrElse(0)) and
+    (__ \ "comments" \ "count").readNullable[Int].map(e => e.getOrElse(0)) and
     (__ \ "created_time").read[DateTime](Reads.jodaDateReads("yyyy-MM-dd'T'HH:mm:ssZZ")) and
-    ((__ \ "actions")(0) \\ "link").readOpt[String] and
-    (__ \ "message").readOpt[String] and
-    (__ \ "story").readOpt[String] and
-    (__ \ "picture").readOpt[String])(FacebookWallMessage.apply _)
+    ((__ \ "actions")(0) \\ "link").readNullable[String] and
+    (__ \ "message").readNullable[String] and
+    (__ \ "story").readNullable[String] and
+    (__ \ "picture").readNullable[String])(FacebookWallMessage.apply _)
 }

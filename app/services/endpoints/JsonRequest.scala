@@ -12,7 +12,7 @@ object JsonRequest {
 
   implicit val unifiedRequestReader: Reads[UnifiedRequest] = (
     (__ \ "service").read[String] and
-    (__ \ "args").readOpt[Map[String, String]])(UnifiedRequest)
+    (__ \ "args").readNullable[Map[String, String]])(UnifiedRequest)
         
   implicit val writes = new Writes[UnifiedRequest] {
     def writes(unifiedRequest: UnifiedRequest): JsValue = {

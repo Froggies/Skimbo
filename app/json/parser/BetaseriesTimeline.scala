@@ -92,7 +92,7 @@ object BetaseriesTimelineMessage {
     (__ \ "type").read[String] and
     (__ \ "ref").read[String] and
     (__ \ "login").read[String] and
-    (__ \ "data" \ "url").readOpt[String] and
-    (__ \ "data" \ "number").readOpt[String] and
-    (__ \ "data" \ "title").readOpt[String])(BetaseriesTimelineMessage.apply _)
+    (__ \ "data" \ "url").readNullable[String] and
+    (__ \ "data" \ "number").readNullable[String] and
+    (__ \ "data" \ "title").readNullable[String])(BetaseriesTimelineMessage.apply _)
 }

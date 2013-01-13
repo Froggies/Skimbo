@@ -116,6 +116,6 @@ object Tweet {
     (__ \ "retweet_count").read[Int] and
     (__ \ "user" \ "name").read[String] and
     (__ \ "user" \ "screen_name").read[String] and
-    (__ \ "user" \ "profile_image_url").readOpt[String] and
+    (__ \ "user" \ "profile_image_url").readNullable[String] and
     (__ \ "created_at").read[DateTime](twitterDateReader))(Tweet.apply _)
 }

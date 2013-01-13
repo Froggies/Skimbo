@@ -29,17 +29,7 @@ app.controller('ModifColumnController', [
     }
 
     $scope.showModifyColumn = false;
-
-    $rootScope.$on('availableServices', function(evt, serviceProposes) {
-      if(!$scope.$$phase) {
-          $scope.$apply(function() {
-            $scope.socialNetworks = serviceProposes;
-          });
-        }
-        else {
-          $scope.socialNetworks = serviceProposes;
-        }
-    });
+    $scope.availableSocialNetworksWidth = "90%";
 
     $rootScope.$on('allUnifiedRequests', function(evt, providers) {
       $scope.$apply(function() {
@@ -61,29 +51,7 @@ app.controller('ModifColumnController', [
       else if(! $arrayUtils.exist($scope.socialNetworksSelected,socialNetwork, "name")) {
         $scope.socialNetworksSelected.push(socialNetwork);
       }
-      $scope.selectSocialNetwork(socialNetwork);
-    }
-
-    $scope.selectSocialNetwork = function(socialNetwork) {
-      var indexOfLastSelected = $arrayUtils.indexOfWith($scope.socialNetworksSelected,undefined, function(inArray, data) {
-          return inArray.selected == true;
-      });
-      if($scope.socialNetworksSelected[indexOfLastSelected] != undefined) {
-        if($scope.socialNetworksSelected[indexOfLastSelected] != socialNetwork) {
-          $scope.socialNetworksSelected[indexOfLastSelected].selected = false;
-        }
-      }
-      var indexOfSocialNetwork = $arrayUtils.indexOf($scope.socialNetworksSelected,socialNetwork, "name");
-      $scope.socialNetworksSelected[indexOfSocialNetwork].selected = true;
-      var indexOfSocialNetworkInProvidersAndServices = $arrayUtils.indexOfWith($scope.providersAndServices, socialNetwork, function(inArray, data){
-        return inArray.endpoint == socialNetwork.name;
-      });
-      if($scope.providersAndServices[indexOfSocialNetworkInProvidersAndServices] != undefined) {
-        $scope.servicesAvailable = [];
-        for(var i=0; i < $scope.providersAndServices[indexOfSocialNetworkInProvidersAndServices].services.length; i++) {
-          $scope.servicesAvailable.push($unifiedRequestUtils.serverToUnifiedRequest($scope.providersAndServices[indexOfSocialNetworkInProvidersAndServices].services[i]));
-        }
-      }
+      selectSocialNetwork(socialNetwork);
     }
 
     $scope.addService = function(service) {
@@ -94,9 +62,13 @@ app.controller('ModifColumnController', [
     }
 
     $scope.cancelCreateColumn = function() {
+      $scope.availableSocialNetworksWidth = "90%";
       $scope.socialNetworksSelected = [];
       $scope.servicesAvailable = [];
       $scope.servicesInColumn = [];
+      for (var i = 0; i < $scope.providersAvailable.length; i++) {
+        $scope.providersAvailable[i].selected = false;
+      };
     }
 
     $scope.deleteService = function(service, arg) {
@@ -122,9 +94,6 @@ app.controller('ModifColumnController', [
     $scope.newColumn = function(column) {
       $scope.showModifyColumn = !$scope.showModifyColumn;
       if ($scope.showModifyColumn == true) {
-        if($scope.socialNetworks == undefined) {
-          $network.send({cmd:"allUnifiedRequests"});
-        }
         if($scope.providersAvailable == undefined) {
           $network.send({cmd:"allProviders"});
         }
@@ -144,6 +113,29 @@ app.controller('ModifColumnController', [
         // };
       }
     };
+
+    function selectSocialNetwork(socialNetwork) {
+      $scope.availableSocialNetworksWidth = "";
+      var indexOfLastSelected = $arrayUtils.indexOfWith($scope.socialNetworksSelected, undefined, function(inArray, data) {
+          return inArray.selected == true;
+      });
+      if($scope.socialNetworksSelected[indexOfLastSelected] != undefined) {
+        if($scope.socialNetworksSelected[indexOfLastSelected] != socialNetwork) {
+          $scope.socialNetworksSelected[indexOfLastSelected].selected = false;
+        }
+      }
+      var indexOfSocialNetwork = $arrayUtils.indexOf($scope.socialNetworksSelected, socialNetwork, "name");
+      $scope.socialNetworksSelected[indexOfSocialNetwork].selected = true;
+      var indexOfSocialNetworkInProvidersAndServices = $arrayUtils.indexOfWith($scope.providersAndServices, socialNetwork, function(inArray, data){
+        return inArray.endpoint == socialNetwork.name;
+      });
+      if($scope.providersAndServices[indexOfSocialNetworkInProvidersAndServices] != undefined) {
+        $scope.servicesAvailable = [];
+        for(var i=0; i < $scope.providersAndServices[indexOfSocialNetworkInProvidersAndServices].services.length; i++) {
+          $scope.servicesAvailable.push($unifiedRequestUtils.serverToUnifiedRequest($scope.providersAndServices[indexOfSocialNetworkInProvidersAndServices].services[i]));
+        }
+      }
+    }
 
 }]);
 

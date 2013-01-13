@@ -83,12 +83,12 @@ object ViadeoWallMessage {
     (__ \ "id").read[String] and
     (__ \ "type").read[String] and
     ((__ \ "from" \ "name").read[String] or (__ \ "on" \ "from" \ "name").read[String] or (__ \ "type").read[String]) and
-    (__ \ "on" \ "title").readOpt[String] and
-    (__ \ "on" \ "message").readOpt[String] and
+    (__ \ "on" \ "title").readNullable[String] and
+    (__ \ "on" \ "message").readNullable[String] and
     (__ \ "like_count").read[Int] and
-    (__ \ "title").readOpt[String] and
-    (__ \ "message").readOpt[String] and
-    (__ \ "picture").readOpt[String] and
+    (__ \ "title").readNullable[String] and
+    (__ \ "message").readNullable[String] and
+    (__ \ "picture").readNullable[String] and
     (__ \ "updated_time").read[DateTime](Reads.jodaDateReads(datePattern)) and
-    ((__ \ "infeed_link").readOpt[String] or (__ \ "on" \ "link").readOpt[String]))(ViadeoWallMessage.apply _)
+    ((__ \ "infeed_link").readNullable[String] or (__ \ "on" \ "link").readNullable[String]))(ViadeoWallMessage.apply _)
 }

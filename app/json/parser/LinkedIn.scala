@@ -119,14 +119,14 @@ object LinkedInWallParser extends GenericParser {
 
 object PersonLinkedIn {
   implicit val linkedInReader: Reads[PersonLinkedIn] = (
-    (__ \ "currentStatus").readOpt[String] and
+    (__ \ "currentStatus").readNullable[String] and
     (__ \ "firstName").read[String] and
-    (__ \ "headline").readOpt[String] and
+    (__ \ "headline").readNullable[String] and
     (__ \ "id").read[String] and
     (__ \ "lastName").read[String] and
-    (__ \ "pictureUrl").readOpt[String] and
-    (__ \ "siteStandardProfileRequest" \ "url").readOpt[String] and
-    (__ \ "connections" \ "values").readOpt[List[ConnectionLinkedIn]].map(_.getOrElse(List.empty)))(PersonLinkedIn.apply _)
+    (__ \ "pictureUrl").readNullable[String] and
+    (__ \ "siteStandardProfileRequest" \ "url").readNullable[String] and
+    (__ \ "connections" \ "values").readNullable[List[ConnectionLinkedIn]].map(_.getOrElse(List.empty)))(PersonLinkedIn.apply _)
 }
 
 object CompanyPersonLinkedIn {
@@ -137,18 +137,18 @@ object CompanyPersonLinkedIn {
 
 object LinkedInWallMessage {
   implicit val linkedInReader: Reads[LinkedInWallMessage] = (
-    (__ \ "numLikes").readOpt[Int] and
+    (__ \ "numLikes").readNullable[Int] and
     (__ \ "timestamp").read[DateTime] and
     (__ \ "updateType").read[String] and
     (__ \ "updateKey").read[String] and
-    (__ \ "updateContent" \ "person").readOpt[PersonLinkedIn] and
-    (__ \ "updateContent" \ "company" \ "name").readOpt[String] and
-    (__ \ "updateContent" \ "companyPersonUpdate").readOpt[CompanyPersonLinkedIn])(LinkedInWallMessage.apply _)
+    (__ \ "updateContent" \ "person").readNullable[PersonLinkedIn] and
+    (__ \ "updateContent" \ "company" \ "name").readNullable[String] and
+    (__ \ "updateContent" \ "companyPersonUpdate").readNullable[CompanyPersonLinkedIn])(LinkedInWallMessage.apply _)
 }
 
 object ConnectionLinkedIn {
   implicit val connectionLinkedInReader: Reads[ConnectionLinkedIn] = (
     (__ \ "firstName").read[String] and
     (__ \ "lastName").read[String] and
-    (__ \ "headline").readOpt[String])(ConnectionLinkedIn.apply _) 
+    (__ \ "headline").readNullable[String])(ConnectionLinkedIn.apply _) 
 }

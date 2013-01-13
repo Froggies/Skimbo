@@ -62,8 +62,8 @@ object GoogleplusWallMessage {
     (__ \ "title").read[String] and
     (__ \ "published").read[DateTime](Reads.jodaDateReads(datePattern)) and
     (__ \ "object" \ "plusoners" \ "totalItems").read[Int] and
-    (__ \ "url").readOpt[String] and
-    (__ \ "actor" \ "image" \ "url").readOpt[String])(GoogleplusWallMessage.apply _)
+    (__ \ "url").readNullable[String] and
+    (__ \ "actor" \ "image" \ "url").readNullable[String])(GoogleplusWallMessage.apply _)
     
 }
 

@@ -80,7 +80,7 @@ object FacebookUser {
 
 object FacebookInboxData {
   implicit val facebookDataReader: Reads[FacebookInboxData] = (
-    (__ \ "from").readOpt[FacebookUser] and
+    (__ \ "from").readNullable[FacebookUser] and
     (__ \ "message").read[String])(FacebookInboxData.apply _)
 }
 
@@ -89,5 +89,5 @@ object FacebookInboxMessage {
     (__ \ "id").read[String] and
     (__ \ "updated_time").read[DateTime](Reads.jodaDateReads("yyyy-MM-dd'T'HH:mm:ssZZ")) and
     (__ \ "to" \ "data").read[Seq[FacebookUser]] and
-    (__ \ "comments" \ "data").readOpt[Seq[FacebookInboxData]])(FacebookInboxMessage.apply _)
+    (__ \ "comments" \ "data").readNullable[Seq[FacebookInboxData]])(FacebookInboxMessage.apply _)
 }
