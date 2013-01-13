@@ -16,7 +16,7 @@
 
 	<div id="recherche-et-profil">
 		<input type="search" placeholder="Live search" results="5" name="test" ng-model="$parent.$parent.query">
-		<a id="nom-prenom" href="#" ng-click="showUserInformations=!showUserInformations">
+		<a id="nom-prenom" href="#" class="btn" ng-click="showUserInformations=!showUserInformations">
 			<img ng-src="{{userInfos[0].avatar}}" width="24" height="24">{{userInfos[0].username}} ▼
 		</a>
 		<div id="bloc-utilisateur" ng-show="showUserInformations" ng-click="showUserInformations=!showUserInformations">
@@ -32,10 +32,10 @@
 				</ul>
 			</div>
 			<footer>
-				<a href="https://github.com/Froggies/Skimbo/wiki/Contact" target="_blank" title="Contact us">@ Contact us</a>
-				<a href="https://github.com/Froggies/Skimbo/wiki/Help" target="_blank" title="Help">?</a>
-				<a href="https://github.com/Froggies/Skimbo/wiki/About" target="_blank" title="About"><b>ⓘ</b></a>
-				<a href="/logout" target="_self" title="Log out">✘ Log out</a>
+				<a class="btn" href="https://github.com/Froggies/Skimbo/wiki/Contact" target="_blank" title="Contact us">@ Contact us</a>
+				<a class="btn" href="https://github.com/Froggies/Skimbo/wiki/Help" target="_blank" title="Help">?</a>
+				<a class="btn" href="https://github.com/Froggies/Skimbo/wiki/About" target="_blank" title="About"><b>ⓘ</b></a>
+				<a class="btn" href="/logout" target="_self" title="Log out">✘ Log out</a>
 			</footer>
 		</div>
 	</div>

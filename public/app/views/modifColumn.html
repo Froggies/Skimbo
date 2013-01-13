@@ -5,49 +5,15 @@
       {{'COLUMN_TITLE' | i18n}} <input class="title-input error" type="text" ng-show="showModifyColumn" value="test AFAIRE" />
     </div>
     <div id="choose-service-provider">
-        <div id="providers-selected">
-          <ul class="services-proposes">
-            <li ng-repeat="providerSelected in socialNetworksSelected">
-              <div class="social-network-link">
-                <a href="#" ng-click="selectSocialNetwork(providerSelected)" ref="{{'ADD_STREAM_FOR_SOCIAL_NETWORK' | i18n}} {{providerSelected.name}}">
-                  <img class="social-network-active {{service.hasParser}}" ng-src="assets/img/brand/{{providerSelected.name}}.png" alt="{{providerSelected.name}}" width="32" height="32"></a>
-                  {{providerSelected.selected}}
-              </div>
-            </li>
-          </ul>
-        </div>
-        <div id="providers-available">
-          {{'AVAILABLE_SOCIAL_NETWORKS' | i18n}}
-          <ul class="services-proposes">
-            <li ng-repeat="provider in providersAvailable">
-              <div class="social-network-link">
-                <a href="#" ng-click="addSocialNetwork(provider)" ref="{{'ADD_STREAM_FOR_SOCIAL_NETWORK' | i18n}} {{provider.name}}">
-                  <img class="social-network-active {{service.hasParser}}" ng-src="assets/img/brand/{{provider.name}}.png" alt="{{provider.name}}" width="32" height="32"></a>
-              </div>
-            </li>
-          </ul>
-        </div>
-        <div id="services-available">
-          {{'AVAILABLE_SERVICES' | i18n}}
-          <ul class="services-proposes">
-            <li ng-repeat="service in servicesAvailable">
-              <div class="social-network-link">
-                <a href="#" ng-click="addService(service)" ref="{{'ADD_STREAM_FOR_SOCIAL_NETWORK' | i18n}} {{service.service}}">
-                  {{service.serviceName}}
-                </a> 
-              </div>
-            </li>
-          </ul>
-        </div>
-        <div id="services-in-column">
+        <div id="services-in-column" ng-show="servicesInColumn.length > 0">
           {{'ALREADY_IN_YOUR_COLUMN' | i18n}}
           <ul class="services-proposes">
             <li ng-repeat="service in servicesInColumn">
               <div class="input-service" ng-show="service.hasArguments" ng-repeat="arg in service.args ">
                 <img class="img-service" ng-src="assets/img/brand/{{service.providerName}}.png" alt="{{service.providerName}}" width="24" height="24">
-                <span class="type-service {{service.providerName}}">
+                <!--<span class="type-service {{service.providerName}}">
                   {{typeServiceCharByService(service.service)}}
-                </span>
+                </span>-->
                 <input class="arg-service" type="text" ng-model="arg.value" placeholder="{{arg.key}}" pattern="[ a-zA-Z0-9]*"/>
                 <a href="#" 
                   class="delete-service {{service.providerName}}"
@@ -57,7 +23,7 @@
               <div class="input-service" ng-show="!service.hasArguments">
                 <img class="img-service" ng-src="assets/img/brand/{{service.providerName}}.png" alt="{{service.providerName}}" width="24" height="24">
                 <span class="receving-service">
-                  {{'YOU_ARE_RECEIVING' | i18n}} {{service.serviceName}}
+                  <!--{{'YOU_ARE_RECEIVING' | i18n}} -->{{service.serviceName}}
                 </span>
                 <a href="#" 
                   class="delete-service {{service.providerName}}"
@@ -67,11 +33,32 @@
             </li>
           </ul>
         </div>
+        <div class="sub-content">
+          {{'AVAILABLE_SOCIAL_NETWORKS' | i18n}}
+          <ul class="services-proposes">
+            <li ng-repeat="provider in providersAvailable">
+              <div class="social-network-link">
+                <a class="btn" href="#" ng-click="addSocialNetwork(provider)" ref="{{'ADD_STREAM_FOR_SOCIAL_NETWORK' | i18n}} {{provider.name}}">
+                  <img class="social-network-active {{service.hasParser}}" ng-src="assets/img/brand/{{provider.name}}.png" alt="{{provider.name}}" width="32" height="32"></a>
+              </div>
+            </li>
+          </ul>
+        </div>
+        <div class="sub-content sub-content-right" ng-show="servicesAvailable.length > 0">
+          {{'AVAILABLE_SERVICES' | i18n}}
+          <ul class="services-proposes">
+            <li ng-repeat="service in servicesAvailable">
+              <div class="social-network-link">
+                <a class="btn" href="#" ng-click="addService(service)" ref="{{'ADD_STREAM_FOR_SOCIAL_NETWORK' | i18n}} {{service.service}}">
+                  {{service.serviceName}}
+                </a> 
+              </div>
+            </li>
+          </ul>
+        </div>
         <div class="controls-new"> 
+          <a href="#" class="btn delete-link" ng-click="cancelCreateColumn()">{{'CANCEL' | i18n}}</a>
           <input ng-show="servicesInColumn.length > 0" type="button" ng-click="changeColumn(c);" value="{{'CREATE' | i18n}}"/>
-          <br/>
-          <br/>
-          <a href="#" class="delete-link" ng-click="cancelCreateColumn()">{{'CANCEL' | i18n}}</a>
       </div>
     </div>
   </div>
