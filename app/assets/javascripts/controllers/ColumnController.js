@@ -29,6 +29,8 @@ app.controller('ColumnController', [
 
     }
 
+    $scope.columns = [];
+
     $rootScope.$on('availableServices', function(evt, serviceProposes) {
       if(!$scope.$$phase) {
           $scope.$apply(function() {
@@ -72,8 +74,8 @@ app.controller('ColumnController', [
       });
     });
 
-    $rootScope.$on('delColumn', function(evt, data) {
-      var index = $arrayUtils.indexOf($scope.columns, $scope.lastColumnDeleted.body, "title");
+    $rootScope.$on('delColumn', function(evt, column) {
+      var index = $arrayUtils.indexOf($scope.columns, column, "title");
       if(index > -1) {
         if(!$scope.$$phase) {
           $scope.$apply(function() {
@@ -83,48 +85,25 @@ app.controller('ColumnController', [
           $scope.columns.splice(index, 1);
         }
       }
-      $scope.lastColumnDeleted = undefined;
     });
 
-    $scope.addColumn = function() {
-        if($scope.serviceProposes == undefined) {
-          $network.send({cmd:"allUnifiedRequests"});
-        }
-        if($scope.columns == undefined) {
-          $scope.columns = [];
-        }
-        $scope.columns.push(
-          {
-            "title": (String.fromCharCode(945+$scope.columns.length)) + ") What is here ? ",
-            "oldTitle": "",
-            "showModifyColumn": "true",
-            "newColumn": "true",
-            "unifiedRequests": [],
-            "index": $scope.columns.length,
-            "width": -1,
-            "height": -1
-          }
-        );
-    };
+    $rootScope.$on('addColumn', function(evt, column) {
+      $columnSize.setSize([column]);
+      $columnSize.buildSizeCompo([column]);
+      $scope.columns.push(column);
+    });
+
+    $rootScope.$on('modColumn', function(evt, column) {
+      $scope.$apply(function() {
+        var c = getColumnByName(column.title);
+        c.title = column.column.title;
+        c.unifiedRequests = column.column.unifiedRequests;
+        c.messages = [];
+      });
+    });
 
     $scope.modifyColumn = function(column) {
-      column.showModifyColumn = !column.showModifyColumn;
-      if (column.showModifyColumn == true) {
-        if($scope.serviceProposes == undefined) {
-          $network.send({cmd:"allUnifiedRequests"});
-        }
-      }
-      if(column.showModifyColumn == true) {
-        column.oldTitle = column.title;
-      } else {
-        column.title = column.oldTitle;
-        column.showErrorBlankArg = false;
-        for (var i = column.unifiedRequests.length - 1; i >= 0; i--) {
-          if(column.unifiedRequests[i].fromServer == false) {
-            column.unifiedRequests.splice(i, 1);
-          }
-        };
-      }
+      $rootScope.$broadcast('clientModifyColumn', column);
     };
 
     $scope.resizeColumn = function(column, height, width) {
@@ -138,157 +117,9 @@ app.controller('ColumnController', [
       $columnSize.resizeColumn(column, height, width);
     }
 
-    $scope.addService = function(service, column) {
-      if(service.hasParser) {
-        if(service.socialNetworkToken) {
-          var clientUnifiedRequest = $unifiedRequestUtils.serverToUnifiedRequest(service.service);
-          clientUnifiedRequest.fromServer = false;
-          column.unifiedRequests.push(clientUnifiedRequest);
-        }
-        else {
-          $popupProvider.openPopup(service, function() {
-            $scope.$apply(function() {
-              var clientUnifiedRequest = $unifiedRequestUtils.serverToUnifiedRequest(service.service);
-              clientUnifiedRequest.fromServer = false;
-              column.unifiedRequests.push(clientUnifiedRequest);
-            });
-          });
-        }
-      }
-    }
-
-    $scope.deleteService = function(service, column, arg) {
-      var indexInColumn = -1;
-      var found = false;
-      for (var i = 0; !found && i < column.unifiedRequests.length; i++) {
-        if(column.unifiedRequests[i].service == service.service && 
-            column.unifiedRequests[i].args.length > 0) {
-          for (var j = 0; !found && j < column.unifiedRequests[i].args.length; j++) {
-            var a = column.unifiedRequests[i].args[j];
-            if(arg.key == a.key && arg.value == a.value) {
-              found = true;
-              column.unifiedRequests.splice(i,1);
-            }
-          }
-        }
-        else if(column.unifiedRequests[i].service == service.service && arg === undefined) {
-          found = true;
-          column.unifiedRequests.splice(i,1);
-        }
-      }
-    }
-
-    $scope.changeColumn = function(column) {
-      column.showErrorTitleAlreadyExist = false;
-      column.showErrorTitleRequired = false;
-      var json = "";
-      var unifiedRequests = [];
-      for (var i = 0; i < column.unifiedRequests.length; i++) {
-        unifiedRequests.push($unifiedRequestUtils.clientToServerUnifiedRequest(column.unifiedRequests[i]));
-      };
-      if(!column.newColumn) {
-        json = {
-          "cmd": "modColumn", 
-          "body": {
-            "title": column.oldTitle, 
-            "column": {
-              "title": column.title,
-              "unifiedRequests": unifiedRequests,
-              "index": column.index,
-              "width": column.width,
-              "height": column.height
-            }
-          }
-        };
-      } else {
-        column.newColumn = false;
-        json = {
-          "cmd": "addColumn", 
-          "body": {
-            "title": column.title,
-            "unifiedRequests": unifiedRequests,
-            "index": column.index,
-            "width": column.width,
-            "height": column.height
-          }
-        };
-      }
-
-      column.showErrorBlankArg = false;
-      var cleanRegex = /[&\/\\#,+()$~%'":*?<>{}]/g;
-
-      for (var i = 0; i < column.unifiedRequests.length; i++) {
-        for (var j = 0; j < column.unifiedRequests[i].args.length; j++) {
-          column.unifiedRequests[i].args[j].value = column.unifiedRequests[i].args[j].value.replace(cleanRegex, '');
-          if (column.unifiedRequests[i].args[j].value == "") {
-            column.showErrorBlankArg = true;
-            break;
-          }
-        };
-      };
-
-      column.showDoubleParser = false;
-      if(!column.showErrorBlankArg) {
-        var nbServiceFound = 0;
-        var nbArgFound = 0;
-        for (var i = 0; i < column.unifiedRequests.length && !column.showDoubleParser; i++) {
-          nbServiceFound = 0;
-          nbArgFound = 0;
-          for (var u = 0; u < column.unifiedRequests.length && !column.showDoubleParser; u++) {
-            if(column.unifiedRequests[i].args.length > 0) {
-              for (var j = 0; j < column.unifiedRequests[i].args.length && !column.showDoubleParser; j++) {
-                for (var h = 0; h < column.unifiedRequests[u].args.length && !column.showDoubleParser; h++) {
-                  if (column.unifiedRequests[i].service == column.unifiedRequests[u].service && 
-                    column.unifiedRequests[i].args[j].value == column.unifiedRequests[u].args[h].value) {
-                    nbArgFound++;
-                  }
-                };
-                if(nbArgFound > 1) {
-                  column.showDoubleParser = true;
-                }
-              };
-            } else if(column.unifiedRequests[i].service == column.unifiedRequests[u].service) {
-              nbServiceFound++;
-            }
-          };
-          if(nbServiceFound > 1) {
-            column.showDoubleParser = true;
-          }
-        };
-      }
-     
-      if (!column.showErrorBlankArg && !column.showDoubleParser) {
-        if(column.title =="") {
-          column.showErrorTitleRequired = true;
-        }
-        else {
-          column.showErrorTitleRequired = false;
-          var nombreName = 0;
-          for (var i = 0; i < $scope.columns.length; i++) {
-            if($scope.columns[i].title == column.title) {
-              nombreName++;
-            }
-          };
-          if(nombreName > 1) {
-            column.showErrorTitleAlreadyExist = true;
-          }
-          else {
-            column.showErrorTitleAlreadyExist = false;
-            column.messages = [];
-            column.showModifyColumn= !column.showModifyColumn;
-            $network.send(json);
-          }
-        }
-      }
-    }
-
-    $scope.deleteColumn = function(column) {
-      $scope.lastColumnDeleted = {"cmd":"delColumn", "body":{"title": column.title}};
-      if(!column.newColumn) {
-        $network.send($scope.lastColumnDeleted);
-      } else {
-        $rootScope.$broadcast('delColumn', {});
-      }
+    $scope.send = function(json) {
+      //helper for drag&drop service, remove it when drag&drop muted in directive
+      $network.send(json);
     }
 
     function getColumnByName(name) {

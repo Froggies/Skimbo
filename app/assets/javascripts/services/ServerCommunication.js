@@ -73,12 +73,28 @@ app.factory("ServerCommunication", [
               };
             };
           }
-          clientColumn.showModifyColumn = false;
           columns.splice(originalColumn.index, 0, clientColumn);
         }
         broadcast('allColumns', columns);
-      } else if(data.cmd == "delColumn" && data.body == "Ok") {
+      } else if(data.cmd == "delColumn") {
         broadcast('delColumn', data.body);
+      } else if(data.cmd == "addColumn") {
+        broadcast('addColumn', data.body);
+      } else if(data.cmd == "modColumn") {
+        var originalColumn = data.body.column;
+        var clientColumn = {};
+        clientColumn.title = originalColumn.title;
+        clientColumn.unifiedRequests = [];
+        clientColumn.index = originalColumn.index;
+        clientColumn.width = originalColumn.width;
+        clientColumn.height = originalColumn.height;
+        for (var j = 0; j < originalColumn.unifiedRequests.length; j++) {
+          var unifiedRequest = originalColumn.unifiedRequests[j];
+          var clientUnifiedRequest = $unifiedRequestUtils.serverToClientUnifiedRequest(unifiedRequest);
+          clientUnifiedRequest.fromServer = true;
+          clientColumn.unifiedRequests.push(clientUnifiedRequest);
+        };
+        broadcast('modColumn', data.body);
       } else if(data.cmd == "userInfos") {
         data.body.avatar = $imagesUtils.checkExistingImage(data.body.avatar);
         broadcast('userInfos', data.body);
@@ -104,7 +120,7 @@ app.factory("ServerCommunication", [
         body.footer = "Click here to be connected again.";
         body.isError = false;
         broadcast('disconnect', body);
-      } else if(data.cmd != "modColumn") {
+      } else {
         console.log("Command not yet implemented: ", data);
       }
     }

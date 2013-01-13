@@ -1,14 +1,23 @@
 <div id="main-div" ng-controller="ModifColumnController">
   <input id="modifButton" type="button" ng-click="newColumn()" value="{{'ADD_NEW_COLUMN' | i18n}}" />
   <div id="content-div-add-column" ng-show="showModifyColumn">
+    <div class="error-div">
+      <span class="error-message" ng-show="showErrorTitleRequired">{{'TITLE_REQUIRED' | i18n}}</span>
+      <br ng-show="showErrorTitleRequired"/>
+      <span class="error-message" ng-show="showErrorTitleAlreadyExist">{{'TITLE_ALREADY_EXISTS' | i18n}}</span>
+    </div>
     <div id="column-title">
-      {{'COLUMN_TITLE' | i18n}} <input class="title-input error" type="text" ng-show="showModifyColumn" value="{{titleColumn}}" />
+      {{'COLUMN_TITLE' | i18n}} <input class="title-input error" type="text" ng-model="column.title" ng-show="showModifyColumn" value="{{column.title}}" />
     </div>
     <div id="choose-service-provider">
-        <div id="services-in-column" ng-show="servicesInColumn.length > 0">
+        <div id="services-in-column" ng-show="column.unifiedRequests.length > 0">
           {{'ALREADY_IN_YOUR_COLUMN' | i18n}}
+          <div class="error-div">
+            <span class="error-message" ng-show="showErrorBlankArg">{{'ALL_FIELD_REQUIRED' | i18n}}</span> 
+            <span class="error-message" ng-show="showErrorDoubleParser">{{'CANT_ADD_SAME_SERVICE' | i18n}}</span>
+          </div>
           <ul class="services-proposes">
-            <li ng-repeat="service in servicesInColumn">
+            <li ng-repeat="service in column.unifiedRequests">
               <div class="input-service" ng-show="service.hasArguments" ng-repeat="arg in service.args ">
                 <img class="img-service" ng-src="assets/img/brand/{{service.providerName}}.png" alt="{{service.providerName}}" width="24" height="24">
                 <!--<span class="type-service {{service.providerName}}">
@@ -38,7 +47,7 @@
           <ul class="services-proposes">
             <li ng-repeat="provider in providersAvailable">
               <div class="social-network-link">
-                <a class="btn {{provider.selected}}" href="#" ng-click="addSocialNetwork(provider)" ref="{{'ADD_STREAM_FOR_SOCIAL_NETWORK' | i18n}} {{provider.name}}">
+                <a class="btn {{provider.selected}}" href="#" ng-click="selectSocialNetwork(provider)" ref="{{'ADD_STREAM_FOR_SOCIAL_NETWORK' | i18n}} {{provider.name}}">
                   <img class="social-network-active {{service.hasParser}}" ng-src="assets/img/brand/{{provider.name}}.png" alt="{{provider.name}}" width="32" height="32"></a>
               </div>
             </li>
@@ -58,7 +67,9 @@
         </div>
         <div class="controls-new"> 
           <a href="#" class="btn delete-link" ng-click="cancelCreateColumn()">{{'CANCEL' | i18n}}</a>
-          <input ng-show="servicesInColumn.length > 0" type="button" ng-click="changeColumn(c);" value="{{'CREATE' | i18n}}"/>
+          <a href="#" class="btn delete-link" ng-click="deleteColumn(c)" ng-hide="column.newColumn">{{'DELETE' | i18n}}</a>
+          <input type="button" ng-click="validate()" value="{{'CHANGE' | i18n}}" ng-hide="column.newColumn"/>
+          <input ng-show="column.unifiedRequests.length > 0 && column.newColumn" type="button" ng-click="validate()" value="{{'CREATE' | i18n}}"/>
       </div>
     </div>
   </div>

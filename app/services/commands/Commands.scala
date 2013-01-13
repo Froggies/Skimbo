@@ -36,7 +36,7 @@ object Commands {
         val newColumn = Json.fromJson[Column](cmd.body.get).get
         UserDao.addColumn(idUser, newColumn)
         UserInfosActor.startProfiderFor(idUser, newColumn)
-        UserInfosActor.sendTo(idUser, Json.toJson(Command(cmd.name, Some(JsString("Ok")))))
+        UserInfosActor.sendTo(idUser, Json.toJson(Command(cmd.name, Some(cmd.body.get))))
       }
       case "modColumn" => {
         val modColumnTitle = (cmd.body.get \ "title").as[String]
@@ -44,7 +44,7 @@ object Commands {
         UserDao.updateColumn(idUser, modColumnTitle, modColumn)
         ProviderActor.killActorsForUserAndColumn(idUser, modColumnTitle)
         UserInfosActor.startProfiderFor(idUser, modColumn)
-        UserInfosActor.sendTo(idUser, Json.toJson(Command(cmd.name, Some(JsString("Ok")))))
+        UserInfosActor.sendTo(idUser, Json.toJson(Command(cmd.name, Some(cmd.body.get))))
       }
       case "modColumnsOrder" => {
         val columnsOrder = (cmd.body.get \ "columns").as[List[String]]
@@ -66,7 +66,7 @@ object Commands {
         val delColumnTitle = (cmd.body.get \ "title").as[String]
         UserDao.deleteColumn(idUser, delColumnTitle)
         ProviderActor.killActorsForUserAndColumn(idUser, delColumnTitle)
-        UserInfosActor.sendTo(idUser, Json.toJson(Command(cmd.name, Some(JsString("Ok")))))
+        UserInfosActor.sendTo(idUser, Json.toJson(Command(cmd.name, Some(cmd.body.get))))
       }
       case "resizeColumn" => {
         val columnTitle = (cmd.body.get \ "columnTitle").as[String]
