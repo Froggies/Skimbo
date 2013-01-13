@@ -6,6 +6,7 @@ import play.api.libs.functional.syntax._
 import json.Skimbo
 import services.auth.providers.GitHub
 import org.joda.time.format.DateTimeFormat
+import json.SkimboJsPath._
 
 case class GithubWallMessage(
   id: String,
@@ -88,13 +89,13 @@ object GithubWallParser extends GenericParser {
 
   def buildMsg(e: GithubWallMessage) = {
     e.typeGithub match {
-      case "ForkEvent" => "Fork of " + e.fork.get.repoName
+      case "ForkEvent" => "Fork of " + e.fork.map(_.repoName).getOrElse("")
       case "PushEvent" => "Push on " + e.repoName + ": " + e.push.get.head.message
       case "IssuesEvent" => "Issue [" + e.issues.get.title + "] > " + e.issues.get.state + ": " + e.issues.get.body
       case "IssueCommentEvent" => "Issue [" + e.issues.get.title + "] > " + e.issueComment.get.body
       case "CommitCommentEvent" => "Comment on commit : " + e.issueComment.get.body
-      case "DeleteEvent" => "Delete " + e.refType.get + " " + e.refName.get
-      case "CreateEvent" => "Create " + e.refType.get + " " + e.refName.get
+      case "DeleteEvent" => "Delete " + e.refType.getOrElse("") + " " + e.refName.getOrElse("")
+      case "CreateEvent" => "Create " + e.refType.getOrElse("") + " " + e.refName.getOrElse("")
       case "DownloadEvent" =>
         if (!e.download.get.description.isEmpty()) {
           "New download (" + e.download.get.description + ") : " + e.download.get.name
@@ -104,7 +105,7 @@ object GithubWallParser extends GenericParser {
       case "WatchEvent" => "Watch " + e.repoName
       case "GollumEvent" => "Has " + e.gollum.get.action + " " + e.gollum.get.pageName + " on wiki"
       case "PullRequestEvent" => "PullRequest : " + e.pullRequest.get.body
-      case "PullRequestReviewCommentEvent" => "Comment on pull : " + e.pullRequestComment.get.body
+      case "PullRequestReviewCommentEvent" => "Comment on pull : " + e.pullRequestComment.map(_.body).getOrElse("")
       case _ => "TODO type on " + e.repoName + " : " + e.typeGithub
     }
   }
@@ -114,7 +115,7 @@ object GithubWallParser extends GenericParser {
 
   def buildLink(e: GithubWallMessage) = {
     e.typeGithub match {
-      case "ForkEvent"          => e.fork.get.url
+      case "ForkEvent"          => e.fork.flatMap(_.url)
       case "PushEvent"          => Some(gitPushUrl.format(e.repoName, e.head.get))
       case "DownloadEvent"      => Some(e.download.get.url)
       case "IssuesEvent"        => Some(e.issues.get.htmlUrl)
@@ -125,7 +126,7 @@ object GithubWallParser extends GenericParser {
       case "WatchEvent"         => Some(gitRepoUrl.format(e.repoName))
       case "GollumEvent"        => Some(e.gollum.get.pageUrl)
       case "PullRequestEvent"   => Some(e.pullRequest.get.url)
-      case "PullRequestReviewCommentEvent" => Some(e.pullRequestComment.get.htmlUrl.get)
+      case "PullRequestReviewCommentEvent" => e.pullRequestComment.flatMap(_.htmlUrl)
       case _ => None
     }
   }
@@ -171,7 +172,7 @@ object GithubPullRequestReviewCommentEvent {
   implicit val githubReader: Reads[GithubPullRequestReviewCommentEvent] = (
     (__ \ "id").read[Int] and
     (__ \ "body").read[String] and
-    (__ \ "_links" \ "html" \ "href").readNullable[String])(GithubPullRequestReviewCommentEvent.apply _)
+    (__ \ "_links" \ "html" \ "href").tryReadNullable[String])(GithubPullRequestReviewCommentEvent.apply _)
 }
 
 object GithubGollumEvent {
@@ -195,7 +196,7 @@ object GithubWallMessage {
     (__ \ "id").read[String] and
     (__ \ "actor" \ "login").read[String] and
     (__ \ "type").read[String] and
-    (__).readNullable[GithubForkeEvent] and
+    (__).tryReadNullable[GithubForkeEvent] and
     (__ \ "payload" \ "head").readNullable[String] and
     (__ \ "payload" \ "commits").readNullable[List[GithubPushEvent]] and
     (__ \ "created_at").read[DateTime](Reads.jodaDateReads(datePattern)) and
@@ -204,7 +205,7 @@ object GithubWallMessage {
     (__ \ "payload" \ "issue").readNullable[GithubIssuesEvent] and
     (__ \ "payload" \ "comment").readNullable[GithubCommentEvent] and
     (__ \ "payload" \ "download").readNullable[GithubDownloadEvent] and
-    ((__ \ "payload" \ "pages")(0)).readNullable[GithubGollumEvent] and
+    ((__ \ "payload" \ "pages")(0)).tryReadNullable[GithubGollumEvent] and
     (__ \ "payload" \ "pull_request").readNullable[GithubPullRequestEvent] and
     (__ \ "payload" \ "comment").readNullable[GithubPullRequestReviewCommentEvent] and
     (__ \ "payload" \ "ref_type").readNullable[String] and
