@@ -2,7 +2,7 @@
   <input id="modifButton" type="button" ng-click="newColumn()" value="{{'ADD_NEW_COLUMN' | i18n}}" />
   <div id="content-div-add-column" ng-show="showModifyColumn">
     <div id="column-title">
-      {{'COLUMN_TITLE' | i18n}} <input class="title-input error" type="text" ng-show="showModifyColumn" value="test AFAIRE" />
+      {{'COLUMN_TITLE' | i18n}} <input class="title-input error" type="text" ng-show="showModifyColumn" value="{{titleColumn}}" />
     </div>
     <div id="choose-service-provider">
         <div id="services-in-column" ng-show="servicesInColumn.length > 0">

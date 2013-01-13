@@ -29,6 +29,7 @@ app.controller('ModifColumnController', [
     }
 
     $scope.showModifyColumn = false;
+    $scope.titleColumn = "";
     $scope.availableSocialNetworksWidth = "90%";
 
     $rootScope.$on('allUnifiedRequests', function(evt, providers) {
@@ -59,6 +60,9 @@ app.controller('ModifColumnController', [
         $scope.servicesInColumn = [];
       }
       $scope.servicesInColumn.push(service);
+      if($scope.titleColumn == "") {
+        $scope.titleColumn = service.providerName + " " + service.serviceName;
+      }
     }
 
     $scope.cancelCreateColumn = function() {
