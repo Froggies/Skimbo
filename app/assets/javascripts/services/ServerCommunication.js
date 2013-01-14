@@ -129,7 +129,7 @@ app.factory("ServerCommunication", [
         error.isError = true;
         broadcast('error', error);
       } else if (data.cmd == "disconnect") {
-        body = {};
+        var body = {};
         body.title = "You have been disconnected from";
         body.footer = "Click here to be connected again.";
         body.isError = false;

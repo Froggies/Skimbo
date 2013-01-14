@@ -12,7 +12,7 @@ app.factory("Network", ["$http", "$timeout", "ServerCommunication",
   var socket = undefined;//ws mode
   var source = undefined;//sse mode
   var nbError = 0;
-  var nbErrorMax = 10;
+  var nbErrorMax = 5;
   var dataReceivedByWS = false;
 
   function webSocketMode() {
@@ -90,7 +90,9 @@ app.factory("Network", ["$http", "$timeout", "ServerCommunication",
         $timeout(function() {
           if(nbError < nbErrorMax) {
             sseMode();
-          } 
+          } else {
+            $serverCommunication.cmd({'cmd':'disconnect'});
+          }
         }, 800);
         console.log('sse error : nb = ', nbError);
       }, false);
