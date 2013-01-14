@@ -4,16 +4,10 @@
 					 ng-include src="'assets/app/views/notification.html'">
 	</section>
 
-	<section class="column" 
+	<section id="column_{{$index}}" class="column" 
 			ng-repeat="c in columns"
-		  	id="column_{{$index}}"
-			draggable="true"
-			ondragstart="dragStart(this,event)"
-			ondragend="dragEnd(this,event)"
-			ondragenter="dragEnter(this,event)"
-			ondragleave="dragLeave(this,event)"
-			ondragover="dragOver(this,event)"
-			ondrop="drop(this,event)"
+			drag="" dragStyle="columnDrag"
+      drop="" dropStyle="columnDrop"
 			style="width:{{c.csswidth}};height:{{c.cssheight}}">
 		<header class="column-title">
 			<div class="title" ng-hide="c.showModifyColumn">{{c.title}}</div>

@@ -117,11 +117,6 @@ app.controller('ColumnController', [
       $columnSize.resizeColumn(column, height, width);
     }
 
-    $scope.send = function(json) {
-      //helper for drag&drop service, remove it when drag&drop muted in directive
-      $network.send(json);
-    }
-
     function getColumnByName(name) {
       if($scope.columns !== undefined) {
         for (var i = 0; i < $scope.columns.length; i++) {
