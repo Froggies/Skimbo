@@ -197,7 +197,6 @@ app.controller('ModifColumnController', [
           $scope.showErrorTitleRequired == false &&
           $scope.showErrorTitleAlreadyExist == false) {
         $scope.showModifyColumn = !$scope.showModifyColumn;
-        console.log("send", json);
         $network.send(json);
       }
     }

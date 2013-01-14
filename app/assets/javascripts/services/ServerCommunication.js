@@ -79,7 +79,20 @@ app.factory("ServerCommunication", [
       } else if(data.cmd == "delColumn") {
         broadcast('delColumn', data.body);
       } else if(data.cmd == "addColumn") {
-        broadcast('addColumn', data.body);
+        var originalColumn = data.body;
+        var clientColumn = {};
+        clientColumn.title = originalColumn.title;
+        clientColumn.unifiedRequests = [];
+        clientColumn.index = originalColumn.index;
+        clientColumn.width = originalColumn.width;
+        clientColumn.height = originalColumn.height;
+        for (var j = 0; j < originalColumn.unifiedRequests.length; j++) {
+          var unifiedRequest = originalColumn.unifiedRequests[j];
+          var clientUnifiedRequest = $unifiedRequestUtils.serverToClientUnifiedRequest(unifiedRequest);
+          clientUnifiedRequest.fromServer = true;
+          clientColumn.unifiedRequests.push(clientUnifiedRequest);
+        };
+        broadcast('addColumn', clientColumn);
       } else if(data.cmd == "modColumn") {
         var originalColumn = data.body.column;
         var clientColumn = {};
@@ -94,6 +107,7 @@ app.factory("ServerCommunication", [
           clientUnifiedRequest.fromServer = true;
           clientColumn.unifiedRequests.push(clientUnifiedRequest);
         };
+        data.body.column = clientColumn;
         broadcast('modColumn', data.body);
       } else if(data.cmd == "userInfos") {
         data.body.avatar = $imagesUtils.checkExistingImage(data.body.avatar);
