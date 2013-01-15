@@ -31,6 +31,8 @@ app.controller('ModifColumnController', [
     $scope.showModifyColumn = false;
     $scope.availableSocialNetworksWidth = "90%";
     $scope.column = undefined;
+    $scope.selectedSocialNetwork = undefined;
+    $scope.providers = undefined;
     $scope.columnsTitle = [];
 
     $rootScope.$on('allColumns', function(evt, columns) {
@@ -44,18 +46,26 @@ app.controller('ModifColumnController', [
 
     $rootScope.$on('allUnifiedRequests', function(evt, providers) {
       $scope.$apply(function() {
-        $scope.providersAndServices = providers;
-      });
-    });
-
-    $rootScope.$on('allProviders', function(evt, providers) {
-      $scope.$apply(function() {
-        $scope.providersAvailable = providers;
+        $scope.providers = providers;
+        for (var i = 0; i < providers.length; i++) {
+          var provider = providers[i];
+          provider.selected = false;
+          provider.name = provider.endpoint;
+          for (var j = 0; j < provider.services.length; j++) {
+            var service = provider.services[j];
+            var unifiedRequest = $unifiedRequestUtils.serverToUnifiedRequest(service);
+            provider.services[j] = unifiedRequest;
+          };
+          if($scope.selectedSocialNetwork != undefined && $scope.selectedSocialNetwork.name == provider.name) {
+            $scope.selectedSocialNetwork = provider;
+            $scope.selectedSocialNetwork.selected = true;
+          }
+        };
       });
     });
 
     $rootScope.$on('clientModifyColumn', function(evt, column) {
-      $scope.newColumn(column);//reset view & download providers (if needed)
+      $scope.show(column);//reset view & download providers (if needed)
     });
 
     $rootScope.$on('addColumn', function(evt, column) {
@@ -75,30 +85,50 @@ app.controller('ModifColumnController', [
       });
     });
 
+    $scope.show = function(column) {
+      resetView();
+      $scope.showModifyColumn = !$scope.showModifyColumn;
+      if ($scope.showModifyColumn == true) {
+        if($scope.providers == undefined) {
+          $network.send({cmd:"allUnifiedRequests"});
+        }
+        if(column !== undefined) {//modif column
+          $scope.column = column;
+          $scope.column.newColumn = false;
+          $scope.column.oldTitle = $scope.column.title;
+        } else {//new column
+          $scope.column = {};
+          $scope.column.newColumn = true;
+          $scope.column.title = "";
+          $scope.column.unifiedRequests = [];
+        }
+      }
+    };
+
     $scope.selectSocialNetwork = function(socialNetwork) {
+      if($scope.selectedSocialNetwork != undefined) {
+        $scope.selectedSocialNetwork.selected = false;
+      }
+      $scope.selectedSocialNetwork = socialNetwork;
+      $scope.selectedSocialNetwork.selected = true;
       $scope.availableSocialNetworksWidth = "";
-      var indexOfLastSelected = $arrayUtils.indexOfWith($scope.providersAvailable, undefined, function(inArray, data) {
-          return inArray.selected == true;
-      });
-      if($scope.providersAvailable[indexOfLastSelected] != undefined) {
-        if($scope.providersAvailable[indexOfLastSelected] != socialNetwork) {
-          $scope.providersAvailable[indexOfLastSelected].selected = false;
-        }
-      }
-      var indexOfSocialNetwork = $arrayUtils.indexOf($scope.providersAvailable, socialNetwork, "name");
-      $scope.providersAvailable[indexOfSocialNetwork].selected = true;
-      var indexOfSocialNetworkInProvidersAndServices = $arrayUtils.indexOfWith($scope.providersAndServices, socialNetwork, function(inArray, data){
-        return inArray.endpoint == socialNetwork.name;
-      });
-      if($scope.providersAndServices[indexOfSocialNetworkInProvidersAndServices] != undefined) {
-        $scope.servicesAvailable = [];
-        for(var i=0; i < $scope.providersAndServices[indexOfSocialNetworkInProvidersAndServices].services.length; i++) {
-          $scope.servicesAvailable.push($unifiedRequestUtils.serverToUnifiedRequest($scope.providersAndServices[indexOfSocialNetworkInProvidersAndServices].services[i]));
-        }
-      }
     }
 
     $scope.addService = function(service) {
+      if(service.hasParser == true) {
+        if($scope.selectedSocialNetwork.hasToken == true) {
+          addService(service);
+        } else {
+          $popupProvider.openPopup($scope.selectedSocialNetwork, function() {
+            addService(service);
+          });
+        }
+        
+      }
+    }
+
+    function addService(service) {
+      service.fromServer = false;
       $scope.column.unifiedRequests.push(service);
       if($scope.column.title == "") {
         $scope.column.title = service.providerName + " " + service.serviceName;
@@ -129,29 +159,6 @@ app.controller('ModifColumnController', [
         }
       }
     }
-
-    $scope.newColumn = function(column) {
-      resetView();
-      $scope.showModifyColumn = !$scope.showModifyColumn;
-      if ($scope.showModifyColumn == true) {
-        if($scope.providersAvailable == undefined) {
-          $network.send({cmd:"allProviders"});
-        }
-        if($scope.providersAndServices == undefined) {
-          $network.send({cmd:"allUnifiedRequests"});
-        }
-        if(column !== undefined) {//modif column
-          $scope.column = column;
-          $scope.column.newColumn = false;
-          $scope.column.oldTitle = $scope.column.title;
-        } else {//new column
-          $scope.column = {};
-          $scope.column.newColumn = true;
-          $scope.column.title = "";
-          $scope.column.unifiedRequests = [];
-        }
-      }
-    };
 
     $scope.validate = function() {
       var json = "";
@@ -210,26 +217,24 @@ app.controller('ModifColumnController', [
     }
 
     function resetView() {
-      $scope.column = undefined;
       $scope.availableSocialNetworksWidth = "90%";
-      $scope.servicesAvailable = [];
+      if($scope.selectedSocialNetwork != undefined) {
+        $scope.selectedSocialNetwork.selected = false;
+      }
+      $scope.selectedSocialNetwork = undefined;
       $scope.showErrorBlankArg = false;
       $scope.showErrorDoubleParser = false;
       $scope.showErrorTitleRequired = false;
       $scope.showErrorTitleAlreadyExist = false;
-      if($scope.providersAvailable != undefined) {
-        for (var i = 0; i < $scope.providersAvailable.length; i++) {
-          $scope.providersAvailable[i].selected = false;
-        };
-      }
       if($scope.column !== undefined) {
-        $scope.column.title = column.oldTitle;
+        $scope.column.title = $scope.column.oldTitle;
         for (var i = $scope.column.unifiedRequests.length - 1; i >= 0; i--) {
           if($scope.column.unifiedRequests[i].fromServer == false) {
             $scope.column.unifiedRequests.splice(i, 1);
           }
         };
       }
+      $scope.column = undefined;
     }
 
     // ################################### 

@@ -45,7 +45,7 @@ app.controller('NotificationController', [
 
     $scope.clickOnNotification = function(notification) {
       if(notification.isError == false && notification.providerName != "skimbo") {
-        $popupProvider.openPopup({"socialNetwork": notification.providerName});
+        $popupProvider.openPopup({"name": notification.providerName});
       } else if(notification.isError == false && notification.providerName == "skimbo") {
         window.location.href = "/";
       } else {

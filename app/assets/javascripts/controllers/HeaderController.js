@@ -3,8 +3,8 @@
 define(["app"], function(app) {
 
 app.controller('HeaderController', [
-  "$scope", "$rootScope", "$http", "ArrayUtils", "ImagesUtils",
-  function($scope, $rootScope, $http, $arrayUtils, $imagesUtils) {
+  "$scope", "$rootScope", "$http", "ArrayUtils", "ImagesUtils", "Network",
+  function($scope, $rootScope, $http, $arrayUtils, $imagesUtils, $network) {
 
   $scope.loading = true;
   $scope.loadingMsg = "COLUMNS";
@@ -65,6 +65,7 @@ app.controller('HeaderController', [
         for (var i = 0; i < $scope.userInfos.length; i++) {
 	        if($scope.userInfos[i].socialType == providerName) {
 	          $scope.userInfos.splice(i,1);
+            $network.send({cmd:"allUnifiedRequests"});
 	          break;
 	        }
       	}

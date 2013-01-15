@@ -2,6 +2,7 @@
 
 require([
   'app',
+  'filters/translation', 
   'services/StringUtils', 
   'services/ArrayUtils', 
   'services/UnifiedRequestUtils', 
@@ -11,7 +12,6 @@ require([
   'services/Network', 
   'services/PopupProvider', 
   'services/ServerCommunication', 
-  'filters/translation', 
   'directives/DragAndDrop',
   'controllers/NotificationController', 
   'controllers/MainController', 

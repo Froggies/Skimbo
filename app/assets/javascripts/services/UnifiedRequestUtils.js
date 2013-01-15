@@ -25,6 +25,7 @@ app.factory("UnifiedRequestUtils", function() {
       clientUnifiedRequest.service = unifiedRequest.service;
       clientUnifiedRequest.providerName = unifiedRequest.service.split(".")[0];
       clientUnifiedRequest.serviceName = unifiedRequest.service.split(".")[1];
+      clientUnifiedRequest.hasParser = unifiedRequest.hasParser;
       clientUnifiedRequest.args = []
       for (var index in unifiedRequest.args) {
         var key = unifiedRequest.args[index];
@@ -48,19 +49,15 @@ app.factory("UnifiedRequestUtils", function() {
     fillExplainService: function(typeService, socialNetwork) {
       if(typeService == "group") {
         return "Click here to display a specific Facebook group.";
-      }
-      else if(typeService == "user") {
+      } else if(typeService == "user") {
         if(socialNetwork == "twitter") {
           return "Click here to display tweets of a specific Twitter user.";
-        }
-        else {
+        } else {
           return "Click here to display the wall of a specific Facebook user.";
         }
-      }
-      else if (typeService == "hashtag") {
+      } else if (typeService == "hashtag") {
         return "Click here to display tweets of a specific Twitter hashtag.";
-      }
-      else {
+      } else {
         return "Click here to display your "+socialNetwork+" "+typeService+".";
       }
     }

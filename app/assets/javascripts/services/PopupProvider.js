@@ -5,11 +5,11 @@ define(["app"], function(app) {
 app.factory("PopupProvider", ["Network", function($network) {
 
   return {
-    openPopup: function(service, optionalCallback) {
+    openPopup: function(socialNetwork, optionalCallback) {
       var width = 500;
       var height = 500;
 
-      switch(service.socialNetwork) {
+      switch(socialNetwork.name) {
         case "github":
           width = 960;
           height = 430;
@@ -40,7 +40,7 @@ app.factory("PopupProvider", ["Network", function($network) {
          var top = (document.body.clientHeight-height)/2;
       }
       
-      var newwindow = window.open("/auth/"+service.socialNetwork, 'Connection', 'height='+height+', width='+width+', left='+left+', top='+top);
+      var newwindow = window.open("/auth/"+socialNetwork.name, 'Connection', 'height='+height+', width='+width+', left='+left+', top='+top);
       window.callMeToRefresh = function() {
         $network.send({cmd:"allUnifiedRequests"});
         if(optionalCallback !== undefined) {
