@@ -2,8 +2,23 @@ package services.endpoints
 
 import services.auth.GenericProvider
 import services.auth.providers
-import json.parser._
 import org.joda.time.format.DateTimeFormat
+import parser.GenericParser
+import parser.json.providers.BetaseriesTimelineParser
+import parser.json.providers.GithubWallParser
+import parser.json.providers.FacebookWallParser
+import parser.json.providers.FacebookInboxParser
+import parser.json.providers.TwitterDirectMessageParser
+import parser.json.providers.BetaseriesPlanningParser
+import parser.json.providers.GoogleplusWallParser
+import parser.json.providers.TrelloWallParser
+import parser.json.providers.ViadeoWallParser
+import parser.json.providers.TwitterTimelineParser
+import parser.json.providers.TwitterHashtagParser
+import parser.json.providers.LinkedInWallParser
+import parser.xml.AtomParser
+import services.auth.NoAuth
+import parser.xml.RssParser
 
 object Configuration {
 
@@ -180,6 +195,22 @@ object Configuration {
       override val manualNextResults = true
       override val mustBeReordered = true
       override val parser = Some(BetaseriesTimelineParser)
+      override val delay = 600
+    }
+  }
+  object Rss {
+    object atom extends EndpointConfig {
+      override val url = ":url"
+      override val requiredParams = List("url")
+      override val provider = NoAuth
+      override val parser = Some(AtomParser)
+      override val delay = 600
+    }
+    object rss2 extends EndpointConfig {
+      override val url = ":url"
+      override val requiredParams = List("url")
+      override val provider = NoAuth
+      override val parser = Some(RssParser)
       override val delay = 600
     }
   }

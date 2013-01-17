@@ -1,14 +1,14 @@
-package json.parser
+package parser.json.providers
 
 import org.joda.time._
 import play.api.libs.json._
 import play.api.libs.functional.syntax._
 import org.joda.time.format._
-import java.util.Locale
-import org.joda.time.tz.UTCProvider
+import parser.json.GenericJsonParser
+import models.Skimbo
 import java.text.SimpleDateFormat
 import services.auth.providers.Twitter
-import json.Skimbo
+import java.util.Locale
 
 case class Tweet(
   id: Long,
@@ -28,7 +28,7 @@ case class TwitterTag(text: String, indices: List[Int])
 case class TwitterUrl(shortUrl: String, url: String, indices: List[Int])
 case class TwitterMention(authorName: String, authorScreenName: String, indices: List[Int])
 
-object TwitterTimelineParser extends GenericParser {
+object TwitterTimelineParser extends GenericJsonParser {
 
   val tweetDetailUrl = "http://twitter.com/%s/status/%s";
 
@@ -62,7 +62,7 @@ object TwitterTimelineParser extends GenericParser {
 
 }
 
-object TwitterHashtagParser extends GenericParser {
+object TwitterHashtagParser extends GenericJsonParser {
   val tweetDetailUrl = TwitterTimelineParser.tweetDetailUrl
   override def asSkimbo(json: JsValue): Option[Skimbo] = TwitterTimelineParser.asSkimbo(json)
   override def cut(json: JsValue): List[JsValue] = super.cut(json \ "statuses")

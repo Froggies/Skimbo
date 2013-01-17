@@ -33,8 +33,7 @@ object Util extends Controller with Authentication {
       Endpoints.getConfig(service).flatMap { config =>
         Endpoints.genererUrl(service, Map.empty, None).map { url =>
           config.provider.fetch(url).get.map { response =>
-            val arrayjs = config.parser.get.cut(config.provider.resultAsJson(response))
-            val res = arrayjs.map(config.parser.get.asSkimboSafe(_).get)
+            val res = config.parser.get.getSkimboMsg(response, config.provider)
             Ok(res.map(Json.toJson(_)).toString)
           }
         }

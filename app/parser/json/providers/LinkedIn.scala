@@ -1,9 +1,11 @@
-package json.parser
+package parser.json.providers
 
 import org.joda.time.DateTime
 import play.api.libs.json._
 import play.api.libs.functional.syntax._
-import json.Skimbo
+import parser.GenericParser
+import parser.json.GenericJsonParser
+import models.Skimbo
 import services.auth.providers.LinkedIn
 
 case class LinkedInWallMessage(
@@ -13,7 +15,8 @@ case class LinkedInWallMessage(
   updateKey: String,
   person: Option[PersonLinkedIn],
   companyName: Option[String],
-  companyPerson: Option[CompanyPersonLinkedIn])
+  companyPerson: Option[CompanyPersonLinkedIn]
+)
 
 case class PersonLinkedIn(
   currentStatus: Option[String],
@@ -35,7 +38,7 @@ case class ConnectionLinkedIn(
   headLine: Option[String]
 )
 
-object LinkedInWallParser extends GenericParser {
+object LinkedInWallParser extends GenericJsonParser {
 
   override def asSkimbo(json: JsValue): Option[Skimbo] = {
     Json.fromJson[LinkedInWallMessage](json).fold(

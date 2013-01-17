@@ -1,9 +1,11 @@
-package json.parser
+package parser.json.providers
 
 import org.joda.time.DateTime
 import play.api.libs.json._
 import play.api.libs.functional.syntax._
-import json.Skimbo
+import parser.GenericParser
+import parser.json.GenericJsonParser
+import models.Skimbo
 import services.auth.providers.Facebook
 
 case class FacebookWallMessage(
@@ -18,9 +20,10 @@ case class FacebookWallMessage(
   link: Option[String],
   message: Option[String],
   story: Option[String],
-  picture: Option[String])
+  picture: Option[String]
+)
 
-object FacebookWallParser extends GenericParser {
+object FacebookWallParser extends GenericJsonParser {
 
   override def asSkimbo(json:JsValue): Option[Skimbo] = {
     Json.fromJson[FacebookWallMessage](json).fold(

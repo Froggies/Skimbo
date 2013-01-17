@@ -1,12 +1,11 @@
-package json.parser
+package parser.json.providers
 
-import org.joda.time.DateTime
-import play.api.Logger
 import play.api.libs.json._
 import play.api.libs.functional.syntax._
-import json.Skimbo
+import models.Skimbo
 import services.auth.providers.Viadeo
-import org.joda.time.format.DateTimeParser
+import parser.json.GenericJsonParser
+import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
 
 case class ViadeoWallMessage(
@@ -23,7 +22,7 @@ case class ViadeoWallMessage(
   infeedLink:Option[String]
 )
     
-object ViadeoWallParser extends GenericParser {
+object ViadeoWallParser extends GenericJsonParser {
 
   override def asSkimbo(json: JsValue): Option[Skimbo] = {
     Json.fromJson[ViadeoWallMessage](json).fold(

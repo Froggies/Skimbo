@@ -1,14 +1,12 @@
-package json.parser
+package parser.json.providers
 
 import org.joda.time._
 import play.api.libs.json._
 import play.api.libs.functional.syntax._
 import org.joda.time.format._
-import java.util.Locale
-import org.joda.time.tz.UTCProvider
-import java.text.SimpleDateFormat
+import models.Skimbo
+import parser.json.GenericJsonParser
 import services.auth.providers.Twitter
-import json.Skimbo
 
 case class TwitterDirectMessage(
   id: Long,
@@ -19,7 +17,7 @@ case class TwitterDirectMessage(
   createdAt: DateTime
 )
 
-object TwitterDirectMessageParser extends GenericParser {
+object TwitterDirectMessageParser extends GenericJsonParser {
 
   override def asSkimbo(json: JsValue): Option[Skimbo] = {
     Json.fromJson[TwitterDirectMessage](json).fold(
@@ -38,13 +36,13 @@ object TwitterDirectMessageParser extends GenericParser {
   }
   
   override def nextSinceId(sinceId:String, sinceId2:String): String = 
-    json.parser.TwitterTimelineParser.nextSinceId(sinceId, sinceId2)
+    TwitterTimelineParser.nextSinceId(sinceId, sinceId2)
 
 }
 
 object TwitterDirectMessage {
-  val twitterDatePattern = json.parser.Tweet.twitterDatePattern
-  val twitterDateReader = json.parser.Tweet.twitterDateReader
+  val twitterDatePattern = Tweet.twitterDatePattern
+  val twitterDateReader = Tweet.twitterDateReader
 
   implicit val tweetReader: Reads[TwitterDirectMessage] = (
     (__ \ "id").read[Long] and

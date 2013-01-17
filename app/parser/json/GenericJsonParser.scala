@@ -1,18 +1,28 @@
-package json.parser
+package parser.json
 
-import json.Skimbo
 import play.api.libs.json._
 import play.api.Logger
 import play.api.data.validation.ValidationError
 import services.auth.GenericProvider
+import models.Skimbo
+import parser.GenericParser
+import play.api.libs.ws.Response
 
-trait GenericParser {
+trait GenericJsonParser extends GenericParser {
 
+  override def getSkimboMsg(response:Response, provider: GenericProvider): Option[List[Skimbo]] = {
+    val explodedMsgs = cutSafe(response, provider)
+    if(explodedMsgs.isEmpty) {
+      None
+    } else {
+      val skimboMsgs = explodedMsgs.get.map(jsonMsg => asSkimboSafe(jsonMsg)).flatten
+      Some(skimboMsgs)
+    }
+  }
+  
   def cut(json: String): List[JsValue] = cut(Json.parse(json))
 
   protected def asSkimbo(json:JsValue): Option[Skimbo]
-
-  def nextSinceId(sinceId:String, sinceId2:String): String = sinceId 
 
   def asSkimboSafe(json: JsValue) : Option[Skimbo] = {
     try {

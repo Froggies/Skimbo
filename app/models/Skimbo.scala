@@ -1,9 +1,9 @@
-package json
+package models
 
 import org.joda.time._
-import scala.util.parsing.json.JSONObject
 import play.api.libs.json._
 import services.auth.GenericProvider
+import play.api.libs.json.Json.toJsFieldJsValueWrapper
 
 /**
 * Common format between social networks

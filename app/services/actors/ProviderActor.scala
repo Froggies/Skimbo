@@ -4,16 +4,13 @@ import scala.Option.option2Iterable
 import scala.concurrent.duration.DurationInt
 import scala.util.Failure
 import scala.util.Success
-
 import org.joda.time.DateTime
-
 import akka.actor.Actor
 import akka.actor.ActorSystem
 import akka.actor.Props
 import akka.actor.ReceiveTimeout
 import akka.actor.actorRef2Scala
-import json.Skimbo
-import json.parser.GenericParser
+import parser.GenericParser
 import models.command.Command
 import models.command.Error
 import models.command.TokenInvalid
@@ -34,6 +31,7 @@ import services.auth.GenericProvider
 import services.endpoints.EndpointConfig
 import services.endpoints.Endpoints
 import services.endpoints.JsonRequest.UnifiedRequest
+import models.Skimbo
 
 sealed case class Dead(idUser: String)
 sealed case class DeadColumn(idUser: String, columnTitle: String)
@@ -124,14 +122,13 @@ class ProviderActor(channel: Concurrent.Channel[JsValue],
                   self ! Dead(idUser)
                 }
               } else {
-                val explodedMsgs = parser.get.cutSafe(response, provider)
-                if (explodedMsgs.isEmpty) {
+                val skimboMsgs = parser.get.getSkimboMsg(response, provider)
+                if (skimboMsgs.isEmpty) {
                   log.error("[" + unifiedRequest.service + "] Unexpected result")
                   log.info(response.body.toString)
                   channel.push(Json.toJson(Error(provider.name, "Unexpected result on")))
                 } else {
-                  val skimboMsgs = explodedMsgs.get.map(jsonMsg => parser.get.asSkimboSafe(jsonMsg)).flatten
-                  val listJson = if (config.manualNextResults || config.mustBeReordered) reorderMessagesByDate(skimboMsgs) else skimboMsgs
+                  val listJson = if (config.manualNextResults || config.mustBeReordered) reorderMessagesByDate(skimboMsgs.get) else skimboMsgs.get
                   val messagesEnumerators = Enumerator.enumerate(listJson)
                   val pusherIteratee = pushNewMessagesIteratee(config)
                   messagesEnumerators(pusherIteratee)
@@ -144,6 +141,9 @@ class ProviderActor(channel: Concurrent.Channel[JsValue],
               channel.push(Json.toJson(Error(provider.name, "Timeout on")))
             }
           }
+        } else {
+          log.error("[" + unifiedRequest.service + "] Bad url" + unifiedRequest.args)
+          self ! Dead(idUser)
         }
       } else if (!provider.hasToken(request)) {
         channel.push(Json.toJson(TokenInvalid(provider.name)))

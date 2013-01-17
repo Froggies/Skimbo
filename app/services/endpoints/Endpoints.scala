@@ -8,6 +8,7 @@ import services.auth.GenericProvider
 import services.auth.providers._
 import services.endpoints.JsonRequest.UnifiedRequest
 import services.endpoints.JsonRequest.unifiedRequestReader
+import services.auth.NoAuth
 
 case class Service(service: String, configuration: EndpointConfig)
 case class Endpoint(provider: GenericProvider, services: Seq[Service])
@@ -43,7 +44,11 @@ object Endpoints {
     Endpoint(BetaSeries, Seq(
       Service("betaseries.notifications", Configuration.BetaSeries.notifications),
       Service("betaseries.planning", Configuration.BetaSeries.planning),
-      Service("betaseries.timeline", Configuration.BetaSeries.timeline))))
+      Service("betaseries.timeline", Configuration.BetaSeries.timeline))),
+    Endpoint(NoAuth, Seq(
+      Service("rss.atom", Configuration.Rss.atom),
+      Service("rss.rss2", Configuration.Rss.rss2)))
+  )
 
   def getAll: Seq[Endpoint] = {
     endpoints

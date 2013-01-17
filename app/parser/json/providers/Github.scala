@@ -1,12 +1,12 @@
-package json.parser
+package parser.json.providers
 
 import org.joda.time.DateTime
 import play.api.libs.json._
 import play.api.libs.functional.syntax._
-import json.Skimbo
+import parser.json.SkimboJsPath._
+import models.Skimbo
+import parser.json.GenericJsonParser
 import services.auth.providers.GitHub
-import org.joda.time.format.DateTimeFormat
-import json.SkimboJsPath._
 
 case class GithubWallMessage(
   id: String,
@@ -69,7 +69,7 @@ case class GithubPullRequestEvent(
   url:String
 )
 
-object GithubWallParser extends GenericParser {
+object GithubWallParser extends GenericJsonParser {
 
   override def asSkimbo(json: JsValue): Option[Skimbo] = {
     Json.fromJson[GithubWallMessage](json).fold(

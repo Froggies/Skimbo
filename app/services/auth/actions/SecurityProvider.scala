@@ -14,7 +14,7 @@ trait SecurityProvider {
   /**
    * Retrieve security token
    */
-  def getToken(implicit request: RequestHeader): Option[Any]
+  def getToken(implicit request: RequestHeader): Option[Any] = None
 
   /**
    * Delete security token

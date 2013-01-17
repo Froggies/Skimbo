@@ -1,9 +1,16 @@
-package json.parser
+package parser.json.providers
 
-import play.api.libs.json._
-import play.api.libs.functional.syntax._
-import json.Skimbo
 import org.joda.time.DateTime
+
+import models.Skimbo
+import parser.json.GenericJsonParser
+import play.api.libs.functional.syntax.functionalCanBuildApplicative
+import play.api.libs.functional.syntax.toFunctionalBuilderOps
+import play.api.libs.json.JsArray
+import play.api.libs.json.JsValue
+import play.api.libs.json.Json
+import play.api.libs.json.Reads
+import play.api.libs.json.__
 import services.auth.providers.BetaSeries
 
 case class BetaseriesPlanningMessage(
@@ -13,7 +20,7 @@ case class BetaseriesPlanningMessage(
   number: String,
   title: String)
 
-object BetaseriesPlanningParser extends GenericParser {
+object BetaseriesPlanningParser extends GenericJsonParser {
 
   override def asSkimbo(json: JsValue): Option[Skimbo] = {
     Json.fromJson[BetaseriesPlanningMessage](json).fold(

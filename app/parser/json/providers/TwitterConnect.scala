@@ -1,14 +1,15 @@
-package json.parser
+package parser.json.providers
 
 import play.api.libs.json._
-import json.Skimbo
+import models.Skimbo
+import parser.json.GenericJsonParser
 import services.auth.providers.Twitter
 
 object TwitterConnect {
 
 }
 
-object TwitterConnectParser extends GenericParser {
+object TwitterConnectParser extends GenericJsonParser {
 
   val tweetDetailUrl = "http://twitter.com/%s/status/%s";
 

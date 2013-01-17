@@ -1,11 +1,12 @@
-package json.parser
+package parser.json.providers
 
 import org.joda.time.DateTime
 import play.api.libs.json._
 import play.api.libs.functional.syntax._
-import json.Skimbo
-import services.auth.providers.GooglePlus
 import org.joda.time.format.DateTimeFormat
+import parser.json.GenericJsonParser
+import models.Skimbo
+import services.auth.providers.GooglePlus
 
 case class GoogleplusWallMessage(
   id:String,
@@ -15,9 +16,9 @@ case class GoogleplusWallMessage(
   plusoners:Int,
   url:Option[String],
   actorImage:Option[String]
-    )
+)
 
-object GoogleplusWallParser extends GenericParser {
+object GoogleplusWallParser extends GenericJsonParser {
 
   override def asSkimbo(json: JsValue): Option[Skimbo] = {
     Json.fromJson[GoogleplusWallMessage](json).fold(

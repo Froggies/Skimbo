@@ -80,7 +80,7 @@ class UserInfosActor(idUser: String, channelOut: Concurrent.Channel[JsValue])(im
           .map(user => start(user))
           .getOrElse(
             ProviderDispatcher.listAll.map(provider =>
-              provider.getToken.map(token =>
+              if(provider.hasToken) {
                 provider.getUser.map(providerUser =>
                   providerUser.map(pUser =>
                     UserDao.findByIdProvider(provider.name, pUser.id).map(optUser =>
@@ -91,7 +91,10 @@ class UserInfosActor(idUser: String, channelOut: Concurrent.Channel[JsValue])(im
                         val user = User(Seq(Account(idUser, new Date())), Some(Seq(pUser)))
                         UserDao.add(user)
                         start(user)
-                      })).getOrElse(log.error("User hasn't id in " + provider.name + " ! WTF ?")))).getOrElse(log.info("User hasn't token for " + provider.name))))
+                      })).getOrElse(log.error("User hasn't id in " + provider.name + " ! WTF ?")))
+              } else {
+                log.info("User hasn't token for " + provider.name)
+              }))
       }
     }
     case StartProvider(id: String, unifiedRequests) => {

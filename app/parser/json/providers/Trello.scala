@@ -1,9 +1,10 @@
-package json.parser
+package parser.json.providers
 
 import org.joda.time.DateTime
 import play.api.libs.json._
 import play.api.libs.functional.syntax._
-import json.Skimbo
+import parser.json.GenericJsonParser
+import models.Skimbo
 import services.auth.providers.Trello
 
 case class TrelloWallMessage(
@@ -13,7 +14,8 @@ case class TrelloWallMessage(
   date: DateTime,
   data: DataTrello,
   idMemberCreator: String,
-  memberCreator: MemberCreatorTrello)
+  memberCreator: MemberCreatorTrello
+)
 
 case class DataTrello(
   text: Option[String],
@@ -36,7 +38,7 @@ case class MemberCreatorTrello(
   initials: String,
   username: String)
 
-object TrelloWallParser extends GenericParser {
+object TrelloWallParser extends GenericJsonParser {
 
   val avatarUrl = "https://trello-avatars.s3.amazonaws.com/%s/30.png"
   val urlBoard = "https://trello.com/board/%s"

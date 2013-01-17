@@ -55,6 +55,7 @@ app.controller('ColumnController', [
         var column = getColumnByName(msg.column);
         if(column.messages == undefined) {
           column.messages = [];
+          console.log(msg);
         }
         column.messages.push(msg.msg);
         $arrayUtils.sortMsg(column.messages);
