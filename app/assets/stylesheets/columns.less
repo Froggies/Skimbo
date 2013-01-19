@@ -1,3 +1,38 @@
+.userNoColumn {
+  margin-top: 14px;
+  width: 50%;
+  background-color: #FAFAFA;
+  position: relative;
+  border: 1px solid #B6B6B6;
+  border-radius: 5px;
+  left: 50%;
+  margin-left: -25%;
+  padding: 25px 20px 25px 0;
+}
+
+.userNoColumn:after, .userNoColumn:before {
+  border: solid transparent;
+  content: ' ';
+  height: 0;
+  bottom: 100%;
+  position: absolute;
+  width: 0;
+}
+
+.userNoColumn:after {
+  border-width: 9px;
+  border-bottom-color: #FAFAFA;
+  left: 30%;
+  margin-left: -9px;
+}
+
+.userNoColumn:before {
+  border-width: 10px;
+  border-bottom-color: #B6B6B6;
+  left: 30%;
+  margin-left: -10px;
+}
+
 [draggable] {
   -moz-user-select: none;
   -khtml-user-select: none;

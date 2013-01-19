@@ -30,6 +30,7 @@ app.controller('ColumnController', [
     }
 
     $scope.columns = [];
+    $scope.userNoColumn = false;
 
     $rootScope.$on('availableServices', function(evt, serviceProposes) {
       if(!$scope.$$phase) {
@@ -47,6 +48,7 @@ app.controller('ColumnController', [
         $columnSize.setSize(columns);
         $columnSize.buildSizeCompo(columns);
         $scope.columns = columns;
+        $scope.userNoColumn = $scope.columns.length === 0;
       });
     });
 
@@ -92,6 +94,7 @@ app.controller('ColumnController', [
       $columnSize.setSize([column]);
       $columnSize.buildSizeCompo([column]);
       $scope.columns.push(column);
+      $scope.userNoColumn = $scope.columns.length === 0;
     });
 
     $rootScope.$on('modColumn', function(evt, column) {

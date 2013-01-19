@@ -4,7 +4,17 @@
 					 ng-include src="'assets/app/views/notification.html'">
 	</section>
 
-	<section id="column_{{$index}}" class="column" 
+	<div class="userNoColumn animated bounceInDown" ng-show="userNoColumn">
+		<center>{{'ADD_FIRST_COLUMN_SENTENCE' | i18n}}</center><br />
+		<ul>
+			<li>{{'ADD_FIRST_SERVICE_SENTENCE' | i18n}}</li>
+			<li>{{'ADD_FIRST_MODIF_SENTENCE' | i18n}}</li>
+			<li>{{'ADD_FIRST_SIZE_SENTENCE' | i18n}}</li>
+		</ul>
+	</div>
+
+	<section id="column_{{$index}}" 
+			class="column" 
 			ng-repeat="c in columns"
 			drag="" dragStyle="columnDrag"
       drop="" dropStyle="columnDrop"
