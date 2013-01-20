@@ -93,6 +93,10 @@ class ProviderActor(channel: Concurrent.Channel[JsValue],
   val scheduler = Akka.system.scheduler.schedule(0 second, delay second) {
     self ! ReceiveTimeout
   }
+  
+  override def postStop() = {
+    scheduler.cancel
+  }
 
   def receive = {
     case ReceiveTimeout => {
