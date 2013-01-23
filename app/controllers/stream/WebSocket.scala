@@ -19,8 +19,8 @@ object WebSocket extends Controller {
     val userId = request.session.get("id").getOrElse(throw new PlayException("Security Runtime Error", "Unallowed websocket connection"))
 
     val (out, channelClient) = Concurrent.broadcast[JsValue]
+    
     UserInfosActor.create(userId, channelClient)
-
     UserDao.updateLastUse(userId)
     
     val in = Iteratee.foreach[JsValue](cmd => Commands.interpret(userId, cmd))

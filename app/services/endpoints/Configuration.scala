@@ -16,9 +16,8 @@ import parser.json.providers.ViadeoWallParser
 import parser.json.providers.TwitterTimelineParser
 import parser.json.providers.TwitterHashtagParser
 import parser.json.providers.LinkedInWallParser
-import parser.xml.AtomParser
-import services.auth.NoAuth
-import parser.xml.RssParser
+import services.auth.RssProvider
+import parser.xml.GenericRssParser
 
 object Configuration {
 
@@ -199,19 +198,14 @@ object Configuration {
     }
   }
   object Rss {
-    object atom extends EndpointConfig {
+    object rss extends EndpointConfig {
       override val url = ":url"
       override val requiredParams = List("url")
-      override val provider = NoAuth
-      override val parser = Some(AtomParser)
-      override val delay = 600
-    }
-    object rss2 extends EndpointConfig {
-      override val url = ":url"
-      override val requiredParams = List("url")
-      override val provider = NoAuth
-      override val parser = Some(RssParser)
-      override val delay = 600
+      override val provider = RssProvider
+      override val manualNextResults = true
+      override val mustBeReordered = true
+      override val parser = Some(GenericRssParser)
+      override val delay = 500
     }
   }
 }

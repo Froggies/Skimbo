@@ -28,7 +28,7 @@ case class RefreshInfosUser(userId: String, provider: GenericProvider)
 
 object UserInfosActor {
 
-  private val system: ActorSystem = ActorSystem("userInfos");
+  private val system = ActorSystem("userInfos")
 
   def create(idUser: String, channelOut: Concurrent.Channel[JsValue])(implicit request: RequestHeader) = {
     val actor = system.actorOf(Props(new UserInfosActor(idUser, channelOut)))
