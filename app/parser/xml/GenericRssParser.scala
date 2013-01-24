@@ -15,12 +15,12 @@ object GenericRssParser extends GenericXmlParser {
     }
   }
   
-  def asSkimbo(node: scala.xml.Node, global: scala.xml.Elem) : Option[Skimbo] = {
+  def asSkimbo(node: scala.xml.Node) : Option[Skimbo] = {
     val isAtom = node exists ( _.label == "entry" )
     if(isAtom) {
-      AtomParser.asSkimbo(node, global)
+      AtomParser.asSkimbo(node)
     } else {
-      RssParser.asSkimbo(node, global)
+      RssParser.asSkimbo(node)
     }
   }
   

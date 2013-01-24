@@ -45,8 +45,12 @@ app.factory("ServerCommunication", [
       } else if(data.cmd == "msg") {
         data.body.msg.authorAvatar = $imagesUtils.checkExistingImage(data.body.msg.authorAvatar);
         data.body.msg.original = data.body.msg.message;
-        data.body.msg.message = $stringUtils.truncateString(data.body.msg.message);
-        data.body.msg.message = $stringUtils.urlify(data.body.msg);
+        if(data.body.msg.from !== "rss") {//no urlify for rss because almost are in html
+          data.body.msg.message = $stringUtils.truncateString(data.body.msg.message);
+          data.body.msg.message = $stringUtils.urlify(data.body.msg);
+        } else {
+          data.body.msg.message = data.body.msg.message;
+        }
         broadcast('msg', data.body);
       } else if(data.cmd == "allColumns") {
         var columns = [];

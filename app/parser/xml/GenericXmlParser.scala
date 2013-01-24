@@ -15,7 +15,7 @@ trait GenericXmlParser extends GenericParser {
     if(explodedMsgs.isEmpty) {
       None
     } else {
-      val skimboMsgs = explodedMsgs.get.map(xmlMsg => asSkimboSafe(xmlMsg, response.xml)).flatten
+      val skimboMsgs = explodedMsgs.get.map(xmlMsg => asSkimboSafe(xmlMsg)).flatten
       Some(skimboMsgs.toList)
     }
   }
@@ -34,11 +34,11 @@ trait GenericXmlParser extends GenericParser {
   
   def cut(xml: scala.xml.Elem) : NodeSeq
   
-  protected def asSkimbo(node: scala.xml.Node, global: scala.xml.Elem) : Option[Skimbo]
+  protected def asSkimbo(node: scala.xml.Node) : Option[Skimbo]
 
-  def asSkimboSafe(node: scala.xml.Node, global: scala.xml.Elem) : Option[Skimbo] = {
+  def asSkimboSafe(node: scala.xml.Node) : Option[Skimbo] = {
     try {
-      asSkimbo(node, global)
+      asSkimbo(node)
     } catch {
       case ex : Throwable => {
         Logger.error("Error during parsing this message", ex)
