@@ -1,3 +1,5 @@
+@import "util.less";
+
 .userNoColumn {
   margin-top: 14px;
   width: 50%;
@@ -43,10 +45,7 @@
 .container {
   height: 99%;
   padding-top: 45px;
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  -ms-box-sizing: border-box;
-  box-sizing: border-box;
+  .boxSizing;
 }
 
 #content {
@@ -67,10 +66,7 @@
   -webkit-box-shadow: 0 1px 3px #C1C1C1;
   box-shadow: 0 1px 3px #C1C1C1;
   overflow: hidden;
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  -ms-box-sizing: border-box;
-  box-sizing: border-box;
+  .boxSizing;
 }
 
 .columnDrag {
@@ -140,14 +136,11 @@ header.column-title {
 }
 
 .column-content {
-  padding:5px;
+  padding:0 0 0 5px;
   overflow: auto;
-  height: 93.7%;
+  height: 100%;
   width: 100%;
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  -ms-box-sizing: border-box;
-  box-sizing: border-box;
+  .boxSizing;
 }
 
 .column-content ul {
@@ -166,7 +159,7 @@ header.column-title {
  font-size: 13px;
 }
 
-.column-content li img {
+.column-content-mini-img {
   margin-right: 5px;
   float:left;
 }

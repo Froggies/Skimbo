@@ -43,7 +43,10 @@
 						<div class="rond {{m.from}}"></div>
 					</div>
 					<div class="message-content">
-						<img ng-src="{{m.authorAvatar}}" title="{{m.authorScreenName}}" width="32" height="32">
+						<img ng-src="{{m.authorAvatar}}" 
+								title="{{m.authorScreenName}}" 
+								class="column-content-mini-img"
+								width="32" height="32">
 						<a href="{{m.directLink}}" class="author-name {{m.from}}" target="_blank">{{m.authorName}}</a>
 						<p class="date-creation">{{m.dateAgo}}</p>
 						<div class="message" ng-bind-html="m.message" title="{{m.original}}">
