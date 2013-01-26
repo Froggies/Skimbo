@@ -8,13 +8,11 @@ object ApplicationBuild extends Build {
     val appVersion      = "0.1-SNAPSHOT"
 
 	val appDependencies = Seq(
-	    "reactivemongo" %% "reactivemongo" % "0.1-SNAPSHOT" cross CrossVersion.full,
-	    "play.modules.reactivemongo" %% "play2-reactivemongo" % "0.1-SNAPSHOT" cross CrossVersion.full
+	    "org.reactivemongo" %% "play2-reactivemongo" % "0.8"
 	)
 	
 	val main = play.Project(appName, appVersion, appDependencies).settings(
 	    scalacOptions ++= Seq("-language:postfixOps", "-deprecation","-unchecked","-feature"),
-	    resolvers += "sgodbillon" at "https://bitbucket.org/sgodbillon/repository/raw/master/snapshots/",
 	    requireJs += "main.js"
 	)
 
