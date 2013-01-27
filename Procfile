@@ -1,1 +1,1 @@
-web: target/start -Dhttp.port=${PORT} -Dmongodb.uri=$MONGOHQ_URL -Dsocial.betaseries.secret=$BETASERIES_SECRET ${JAVA_OPTS}
+web: target/start -Dhttp.port=${PORT} -Dmongodb.uri=$MONGOHQ_URL -Dsocial.betaseries.secret=$BETASERIES_SECRET -Dsocial.twitter.clientId=$TWITTER_CLIENTID -Dsocial.twitter.secret=$TWITTER_SECRET ${JAVA_OPTS}
