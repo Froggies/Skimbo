@@ -2,7 +2,6 @@ package services.actors
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration.DurationInt
-
 import akka.actor.Actor
 import akka.actor.ActorSystem
 import akka.actor.Cancellable
@@ -13,6 +12,7 @@ import play.api.libs.iteratee.Concurrent
 import play.api.libs.json.JsValue
 import play.api.libs.json.Json
 import play.libs.Akka
+import services.commands.CmdToUser
 
 case class Ping(idUser: String)
 case class Ask()
@@ -46,7 +46,7 @@ class PingActor(idUser: String) extends Actor {
 
   def receive = {
     case Ask => {
-      UserInfosActor.sendTo(idUser, Json.toJson(Command("ping")))
+      CmdToUser.sendTo(idUser, Command("ping"))
       if (schedulerKill == null || schedulerKill.isCancelled) {
         schedulerKill = Akka.system.scheduler.scheduleOnce(60 second) {
           self ! Dead
@@ -59,8 +59,8 @@ class PingActor(idUser: String) extends Actor {
       }
     }
     case Dead => {
-      UserInfosActor.sendTo(idUser, Json.toJson(Command("disconnect")))
-      UserInfosActor.killActorsForUser(idUser);
+      CmdToUser.sendTo(idUser, Command("disconnect"))
+      UserInfosActor.killActorsForUser(idUser)
       scheduler.cancel()
       context.stop(self)
     }

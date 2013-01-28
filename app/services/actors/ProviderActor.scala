@@ -33,6 +33,7 @@ import services.endpoints.Endpoints
 import services.endpoints.JsonRequest.UnifiedRequest
 import models.Skimbo
 import services.auth.AuthProvider
+import services.commands.CmdToUser
 
 sealed case class Dead(idUser: String)
 sealed case class DeadColumn(idUser: String, columnTitle: String)
@@ -42,7 +43,7 @@ object ProviderActor {
 
   private val system: ActorSystem = ActorSystem("providers");
 
-  def create(channel: Concurrent.Channel[JsValue], userId: String, column: Column)(implicit request: RequestHeader) {
+  def create(userId: String, column: Column)(implicit request: RequestHeader) {
     column.unifiedRequests.foreach { unifiedRequest =>
       val endpoint = for (
         provider <- Endpoints.getProvider(unifiedRequest.service);
@@ -53,7 +54,7 @@ object ProviderActor {
       endpoint match {
         case Some((provider, time, parser)) => {
           val actor = system.actorOf(Props(
-            new ProviderActor(channel, provider, unifiedRequest, time, userId, parser, column)))
+            new ProviderActor(provider, unifiedRequest, time, userId, parser, column)))
           system.eventStream.subscribe(actor, classOf[Dead])
           system.eventStream.subscribe(actor, classOf[DeadColumn])
           system.eventStream.subscribe(actor, classOf[Ping])
@@ -79,7 +80,7 @@ object ProviderActor {
 
 }
 
-class ProviderActor(channel: Concurrent.Channel[JsValue],
+class ProviderActor(
   provider: GenericProvider,
   unifiedRequest: UnifiedRequest,
   delay: Int,
@@ -118,12 +119,12 @@ class ProviderActor(channel: Concurrent.Channel[JsValue],
                 log.error("[" + unifiedRequest.service + "] HTTP Error " + response.status)
                 log.info(response.body.toString)
                 if (provider.isInvalidToken(response)) {
-                  channel.push(Json.toJson(TokenInvalid(provider.name)))
+                  CmdToUser.sendTo(idUser, TokenInvalid(provider.name))
                   self ! Dead(idUser)
                 } else if (provider.isRateLimiteError(response)) {
-                  channel.push(Json.toJson(Error(provider.name, "Rate limite exceeded on")))
+                  CmdToUser.sendTo(idUser, Error(provider.name, "Rate limite exceeded on"))
                 } else {
-                  channel.push(Json.toJson(Error(provider.name, "Error in column "+column.title+" with")))
+                  CmdToUser.sendTo(idUser, Error(provider.name, "Error in column "+column.title+" with"))
                   self ! Dead(idUser)
                 }
               } else {
@@ -131,7 +132,7 @@ class ProviderActor(channel: Concurrent.Channel[JsValue],
                 if (skimboMsgs.isEmpty) {
                   log.error("[" + unifiedRequest.service + "] Unexpected result")
                   log.info(response.body.toString)
-                  channel.push(Json.toJson(Error(provider.name, "Unexpected result on")))
+                  CmdToUser.sendTo(idUser, Error(provider.name, "Unexpected result on"))
                 } else {
                   val listJson = if (config.manualNextResults || config.mustBeReordered) reorderMessagesByDate(skimboMsgs.get) else skimboMsgs.get
                   val messagesEnumerators = Enumerator.enumerate(listJson)
@@ -143,7 +144,7 @@ class ProviderActor(channel: Concurrent.Channel[JsValue],
 
             case Failure(error) => {
               log.error("[" + unifiedRequest.service + "] Timeout HTTP", error)
-              channel.push(Json.toJson(Error(provider.name, "Timeout on")))
+              CmdToUser.sendTo(idUser, Error(provider.name, "Timeout on"))
             }
           }
         } else {
@@ -151,12 +152,12 @@ class ProviderActor(channel: Concurrent.Channel[JsValue],
           self ! Dead(idUser)
         }
       } else if (provider.isAuthProvider && !provider.canStart) {
-        channel.push(Json.toJson(TokenInvalid(provider.name)))
+        CmdToUser.sendTo(idUser, TokenInvalid(provider.name))
         log.info("[" + unifiedRequest.service + "] No Token")
         self ! Dead(idUser)
       } else {
         log.error("Provider " + provider.name + " havn't parser for " + unifiedRequest.service)
-        channel.push(Json.toJson(Error(provider.name, "No parser on")))
+        CmdToUser.sendTo(idUser, Error(provider.name, "No parser on"))
         self ! Dead(idUser)
       }
     }
@@ -189,12 +190,12 @@ class ProviderActor(channel: Concurrent.Channel[JsValue],
       val msg = Json.obj("column" -> column.title, "msg" -> skimboMsg)
       if (config.manualNextResults) {
         if (skimboMsg.createdAt.isAfter(sinceDate)) {
-          channel.push(Json.toJson(Command("msg", Some(msg))))
+          CmdToUser.sendTo(idUser, Command("msg", Some(msg)))
           sinceDate = skimboMsg.createdAt
         }
       } else {
         sinceId = parser.get.nextSinceId(skimboMsg.sinceId, sinceId)
-        channel.push(Json.toJson(Command("msg", Some(msg))))
+        CmdToUser.sendTo(idUser, Command("msg", Some(msg)))
       }
     }
   }

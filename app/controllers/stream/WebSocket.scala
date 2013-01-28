@@ -9,6 +9,7 @@ import services.actors.UserInfosActor
 import play.api.PlayException
 import services.UserDao
 import services.commands.CmdFromUser
+import services.commands.CmdToUser
 
 object WebSocket extends Controller {
 
@@ -16,15 +17,16 @@ object WebSocket extends Controller {
   
   def connect() = play.api.mvc.WebSocket.using[JsValue] { implicit request =>
     
-    val userId = request.session.get("id").getOrElse(throw new PlayException("Security Runtime Error", "Unallowed websocket connection"))
+    val idUser = request.session.get("id").getOrElse(throw new PlayException("Security Runtime Error", "Unallowed websocket connection"))
 
     val (out, channelClient) = Concurrent.broadcast[JsValue]
     
-    UserInfosActor.create(userId, channelClient)
-    UserDao.updateLastUse(userId)
+    CmdToUser.userConnected(idUser, channelClient)
+    UserInfosActor.create(idUser)
+    UserDao.updateLastUse(idUser)
     
-    val in = Iteratee.foreach[JsValue](cmd => CmdFromUser.interpret(userId, cmd))
-              .mapDone( _ => UserInfosActor.killActorsForUser(userId))
+    val in = Iteratee.foreach[JsValue](cmd => CmdFromUser.interpret(idUser, cmd))
+              .mapDone( _ => UserInfosActor.killActorsForUser(idUser))
 
     (in, out)
   }

@@ -26,9 +26,9 @@ object CmdFromUser {
       case "allColumns" => {
         UserDao.findOneById(idUser).map(_.map { user =>
           user.columns.map(columns =>
-            UserInfosActor.sendTo(idUser, Json.toJson(Command(cmd.name, Some(Json.toJson(columns)))))
+            CmdToUser.sendTo(idUser, Command(cmd.name, Some(Json.toJson(columns))))
           ).getOrElse(
-            UserInfosActor.sendTo(idUser, Json.toJson(Command(cmd.name, Some(Json.toJson(new JsArray)))))
+            CmdToUser.sendTo(idUser, Command(cmd.name, Some(Json.toJson(new JsArray))))
           )
         })
       }
@@ -36,7 +36,7 @@ object CmdFromUser {
         val newColumn = Json.fromJson[Column](cmd.body.get).get
         UserDao.addColumn(idUser, newColumn)
         UserInfosActor.startProfiderFor(idUser, newColumn)
-        UserInfosActor.sendTo(idUser, Json.toJson(Command(cmd.name, Some(cmd.body.get))))
+        CmdToUser.sendTo(idUser, Command(cmd.name, Some(cmd.body.get)))
       }
       case "modColumn" => {
         val modColumnTitle = (cmd.body.get \ "title").as[String]
@@ -44,7 +44,7 @@ object CmdFromUser {
         UserDao.updateColumn(idUser, modColumnTitle, modColumn)
         ProviderActor.killActorsForUserAndColumn(idUser, modColumnTitle)
         UserInfosActor.startProfiderFor(idUser, modColumn)
-        UserInfosActor.sendTo(idUser, Json.toJson(Command(cmd.name, Some(cmd.body.get))))
+        CmdToUser.sendTo(idUser, Command(cmd.name, Some(cmd.body.get)))
       }
       case "modColumnsOrder" => {
         val columnsOrder = (cmd.body.get \ "columns").as[List[String]]
@@ -66,7 +66,7 @@ object CmdFromUser {
         val delColumnTitle = (cmd.body.get \ "title").as[String]
         UserDao.deleteColumn(idUser, delColumnTitle)
         ProviderActor.killActorsForUserAndColumn(idUser, delColumnTitle)
-        UserInfosActor.sendTo(idUser, Json.toJson(Command(cmd.name, Some(cmd.body.get))))
+        CmdToUser.sendTo(idUser, Command(cmd.name, Some(cmd.body.get)))
       }
       case "resizeColumn" => {
         val columnTitle = (cmd.body.get \ "columnTitle").as[String]
@@ -87,10 +87,10 @@ object CmdFromUser {
         })
       }
       case "allUnifiedRequests" => {
-        UserInfosActor.sendTo(idUser, Json.toJson(Command(cmd.name, Some(Service.toJsonWithUnifiedRequest))))
+        CmdToUser.sendTo(idUser, Command(cmd.name, Some(Service.toJsonWithUnifiedRequest)))
       }
       case "allProviders" => {
-        UserInfosActor.sendTo(idUser, Json.toJson(Command(cmd.name, Some(Service.toJson))))
+        CmdToUser.sendTo(idUser, Command(cmd.name, Some(Service.toJson)))
       }
       case "deleteProvider" => {
         val providerName = (cmd.body.get \ "provider").as[String]
@@ -98,7 +98,7 @@ object CmdFromUser {
         interpretCmd(idUser, Command("allUnifiedRequests"))
       }
       case "newToken" => {
-        UserInfosActor.sendTo(idUser, Json.toJson(cmd))
+        CmdToUser.sendTo(idUser, cmd)
       }
       case "pong" => {
         PingActor.ping(idUser);

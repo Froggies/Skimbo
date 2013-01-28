@@ -18,9 +18,9 @@ import services.auth.ProviderDispatcher
 import services.auth.AuthProvider
 import models.command.Error
 import services.commands.CmdFromUser
+import services.commands.CmdToUser
 
 case object Retreive
-case class Send(userId: String, json: JsValue)
 case class StartProvider(userId: String, column: Column)
 case class CheckAccounts(idUser: String)
 case class AddInfosUser(providerUser: ProviderUser)
@@ -30,19 +30,14 @@ object UserInfosActor {
 
   private val system = ActorSystem("userInfos")
 
-  def create(idUser: String, channelOut: Concurrent.Channel[JsValue])(implicit request: RequestHeader) = {
-    val actor = system.actorOf(Props(new UserInfosActor(idUser, channelOut)))
+  def create(idUser: String)(implicit request: RequestHeader) = {
+    val actor = system.actorOf(Props(new UserInfosActor(idUser)))
     system.eventStream.subscribe(actor, Retreive.getClass())
-    system.eventStream.subscribe(actor, classOf[Send])
     system.eventStream.subscribe(actor, classOf[StartProvider])
     system.eventStream.subscribe(actor, classOf[Dead])
     system.eventStream.subscribe(actor, classOf[RefreshInfosUser])
     actor ! Retreive
     actor
-  }
-
-  def sendTo(userId: String, json: JsValue) = {
-    system.eventStream.publish(Send(userId, json))
   }
 
   def startProfiderFor(userId: String, column: Column) = {
@@ -68,7 +63,7 @@ object UserInfosActor {
 
 }
 
-class UserInfosActor(idUser: String, channelOut: Concurrent.Channel[JsValue])(implicit request: RequestHeader) extends Actor {
+class UserInfosActor(idUser: String)(implicit request: RequestHeader) extends Actor {
 
   import scala.concurrent.ExecutionContext.Implicits.global
   val log = Logger(classOf[UserInfosActor])
@@ -80,25 +75,21 @@ class UserInfosActor(idUser: String, channelOut: Concurrent.Channel[JsValue])(im
           .map(user => start(user))
           .getOrElse {
             log.error("user haven't id in bd, WTF !?")
-            channelOut.push(Json.toJson(Command("disconnect")))
+            CmdToUser.sendTo(idUser, Command("disconnect"))
             self ! Dead(idUser)
           }
       }
     }
     case StartProvider(id: String, unifiedRequests) => {
       if (id == idUser) {
-        ProviderActor.create(channelOut, idUser, unifiedRequests)
+        ProviderActor.create(idUser, unifiedRequests)
         self ! CheckAccounts(id)
-      }
-    }
-    case Send(id: String, json: JsValue) => {
-      if (id == idUser) {
-        channelOut.push(json)
       }
     }
     case Dead(id) => {
       if (idUser == id) {
         ProviderActor.killActorsForUser(idUser)
+        CmdToUser.userDeco(idUser)
         context.stop(self)
       }
     }
@@ -118,7 +109,7 @@ class UserInfosActor(idUser: String, channelOut: Concurrent.Channel[JsValue])(im
                   self ! AddInfosUser(ProviderUser(providerUser.get.id, provider.name, None))
                 }
                 if (providerUser.isDefined) {
-                  self ! Send(idUser, Json.toJson(Command("userInfos", Some(Json.toJson(providerUser.get)))))
+                  CmdToUser.sendTo(idUser, Command("userInfos", Some(Json.toJson(providerUser.get))))
                 }
               }
             }
@@ -146,7 +137,7 @@ class UserInfosActor(idUser: String, channelOut: Concurrent.Channel[JsValue])(im
                   UserDao.merge(idUser, originalUser.accounts.head.id, {
                     CmdFromUser.interpretCmd(idUser, Command("allColumns"))
                     originalUser.columns.map(_.foreach(self ! StartProvider(idUser, _)))
-                    self ! Send(idUser, Json.toJson(Command("userInfos", Some(Json.toJson(providerUser.get)))))
+                    CmdToUser.sendTo(idUser, Command("userInfos", Some(Json.toJson(providerUser.get))))
                   })
                 }.getOrElse {
                   CmdFromUser.interpretCmd(idUser, Command("allColumns"))

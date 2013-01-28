@@ -10,6 +10,7 @@ import play.api.libs.json.Json
 import services.security.Authentication
 import services.UserDao
 import services.commands.CmdFromUser
+import services.commands.CmdToUser
 
 object Sse extends Controller with Authentication {
 
@@ -26,12 +27,13 @@ object Sse extends Controller with Authentication {
   }
 
   def connect() = Authenticated { user => implicit request =>
-    val userId = user.accounts.head.id
+    val idUser = user.accounts.head.id
     val (out, channelClient) = Concurrent.broadcast[JsValue]
     
-    UserInfosActor.create(userId, channelClient)
-    PingActor.create(userId, channelClient)
-    UserDao.updateLastUse(userId)
+    CmdToUser.userConnected(idUser, channelClient)
+    UserInfosActor.create(idUser)
+    PingActor.create(idUser, channelClient)
+    UserDao.updateLastUse(idUser)
     
     Ok.stream(out &> EventSource()).as(play.api.http.ContentTypes.EVENT_STREAM)
   }
