@@ -14,7 +14,7 @@ import services.UserDao
 import services.actors.UserInfosActor
 import services.commands.Commands
 
-trait OAuthProvider extends GenericProvider {
+trait OAuthProvider extends AuthProvider {
 
   lazy val KEY = ConsumerKey(config.getString("clientId").get, config.getString("secret").get)
 

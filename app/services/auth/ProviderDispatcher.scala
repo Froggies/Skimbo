@@ -5,7 +5,7 @@ import play.api.mvc.RequestHeader
 
 object ProviderDispatcher {
 
-  private val providers = Seq(
+  private val providers: Seq[AuthProvider] = Seq(
     Twitter,
     Facebook,
     GitHub,
@@ -19,15 +19,15 @@ object ProviderDispatcher {
 
   def apply(providerName: String) = get(providerName)
 
-  def get(providerName: String): Option[GenericProvider] =
+  def get(providerName: String): Option[AuthProvider] =
     providers.find(_.name == providerName)
 
   def atLeastOneIsConnected(implicit req: RequestHeader): Boolean =
     providers.exists(_.hasToken)
 
-  def listAll: Seq[GenericProvider] = providers
+  def listAll: Seq[AuthProvider] = providers
 
-  def listConnecteds(implicit req: RequestHeader): Seq[GenericProvider] =
+  def listConnecteds(implicit req: RequestHeader): Seq[AuthProvider] =
     providers.filter(_.hasToken)
 
 }

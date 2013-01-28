@@ -27,7 +27,7 @@ trait SecurityProvider {
   protected def generateUniqueId(session: Session) = {
     session + ("id" -> session.get("id").getOrElse(UUID.randomUUID().toString))
   }
-
+  
   /**
    * Has the client a token on this service
    */

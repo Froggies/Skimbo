@@ -1,9 +1,7 @@
 package services.actors
 
 import java.util.Date
-
 import scala.concurrent.ExecutionContext.Implicits.global
-
 import akka.actor._
 import models.User
 import models.command.Command
@@ -18,6 +16,8 @@ import services.UserDao
 import services.auth.GenericProvider
 import services.auth.ProviderDispatcher
 import services.commands.Commands
+import services.auth.AuthProvider
+import models.command.Error
 
 case object Retreive
 case class Send(userId: String, json: JsValue)
@@ -78,23 +78,11 @@ class UserInfosActor(idUser: String, channelOut: Concurrent.Channel[JsValue])(im
       UserDao.findOneById(idUser).map { optionUser =>
         optionUser
           .map(user => start(user))
-          .getOrElse(
-            ProviderDispatcher.listAll.map(provider =>
-              if(provider.hasToken) {
-                provider.getUser.map(providerUser =>
-                  providerUser.map(pUser =>
-                    UserDao.findByIdProvider(provider.name, pUser.id).map(optUser =>
-                      optUser.map { user =>
-                        UserDao.addAccount(idUser, Account(idUser, new Date()))
-                        start(user)
-                      }.getOrElse {
-                        val user = User(Seq(Account(idUser, new Date())), Some(Seq(pUser)))
-                        UserDao.add(user)
-                        start(user)
-                      })).getOrElse(log.error("User hasn't id in " + provider.name + " ! WTF ?")))
-              } else {
-                log.info("User hasn't token for " + provider.name)
-              }))
+          .getOrElse {
+            log.error("user haven't id in bd, WTF !?")
+            channelOut.push(Json.toJson(Command("disconnect")))
+            self ! Dead(idUser)
+          }
       }
     }
     case StartProvider(id: String, unifiedRequests) => {
@@ -123,8 +111,8 @@ class UserInfosActor(idUser: String, channelOut: Concurrent.Channel[JsValue])(im
       if (id == idUser) {
         UserDao.findOneById(idUser).map {
           _.map { user =>
-            if (provider.hasToken(request)) {
-              provider.getUser.map { providerUser =>
+            if (provider.isAuthProvider && provider.canStart) {
+              (provider.asInstanceOf[AuthProvider]).getUser.map { providerUser =>
                 if (providerUser.isDefined && !user.distants.exists(
                   _.exists(pu => pu.socialType == provider.name && pu.id == providerUser.get.id))) {
                   self ! AddInfosUser(ProviderUser(providerUser.get.id, provider.name, None))

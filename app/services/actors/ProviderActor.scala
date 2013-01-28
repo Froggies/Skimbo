@@ -32,6 +32,7 @@ import services.endpoints.EndpointConfig
 import services.endpoints.Endpoints
 import services.endpoints.JsonRequest.UnifiedRequest
 import models.Skimbo
+import services.auth.AuthProvider
 
 sealed case class Dead(idUser: String)
 sealed case class DeadColumn(idUser: String, columnTitle: String)
@@ -102,7 +103,7 @@ class ProviderActor(channel: Concurrent.Channel[JsValue],
     case ReceiveTimeout => {
       log.info("[" + unifiedRequest.service + "] Fetching")
 
-      if (provider.hasToken(request) && parser.isDefined) {
+      if (provider.canStart) {
         val optSinceId = if (sinceId.isEmpty) None else Some(sinceId)
         val url = Endpoints.genererUrl(unifiedRequest.service, unifiedRequest.args.getOrElse(Map.empty), optSinceId);
         val config = Endpoints.getConfig(unifiedRequest.service).get
@@ -149,7 +150,7 @@ class ProviderActor(channel: Concurrent.Channel[JsValue],
           log.error("[" + unifiedRequest.service + "] Bad url" + unifiedRequest.args)
           self ! Dead(idUser)
         }
-      } else if (!provider.hasToken(request)) {
+      } else if (provider.isAuthProvider && !provider.canStart) {
         channel.push(Json.toJson(TokenInvalid(provider.name)))
         log.info("[" + unifiedRequest.service + "] No Token")
         self ! Dead(idUser)

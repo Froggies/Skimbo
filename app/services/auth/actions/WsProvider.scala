@@ -11,7 +11,7 @@ trait WsProvider {
    * Create a basic webservice call and sign the request with token
    */
   def fetch(url: String)(implicit request: RequestHeader): WSRequestHolder
-
+  
   def resultAsJson(response: Response): JsValue = response.json
 
   def isInvalidToken(response: Response): Boolean = response.body.contains("token")

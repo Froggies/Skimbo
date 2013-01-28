@@ -2,27 +2,32 @@ package services.auth
 
 import play.api.Play.current
 import play.api.mvc._
-import services.auth.actions._
-import services.UserDao
+import play.api.libs.ws.WS.WSRequestHolder
+import services.auth.actions.WsProvider
 
-trait GenericProvider extends Results with WsProvider with AccountWsProvider with SecurityProvider {
+trait GenericProvider extends Results with WsProvider {
 
   // Generic provider settings (override it)
   def name: String
   protected def namespace: String
 
-  protected def permissions: Seq[String] = Seq.empty
-  protected def permissionsSep = ","
-
   // From config file
   protected lazy val config = current.configuration.getConfig("social." + name).get
-  protected lazy val logo = config.getString("urlLogo").get
-
-  // Common config
-  lazy val authRoute: Call = controllers.routes.Application.authenticate(name)
   
-  override def deleteToken(implicit request: RequestHeader) = {
-    UserDao.removeToken(request.session("id"), this)
+  //TODO remove this because rss provider hasn't token
+  //def hasToken(implicit request: play.api.mvc.RequestHeader) = true
+  
+  def needToken():Boolean = this.isInstanceOf[AuthProvider]
+  
+  def isAuthProvider:Boolean = this.isInstanceOf[AuthProvider]
+  
+  def canStart(implicit request: RequestHeader):Boolean = {
+    if(needToken) {
+      this.asInstanceOf[AuthProvider].hasToken
+    } else {
+      true
+    }
   }
-
+  
+  
 }

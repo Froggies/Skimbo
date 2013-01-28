@@ -2,7 +2,6 @@ package services.auth.providers
 
 import scala.concurrent.Await
 import scala.concurrent.duration.DurationInt
-
 import models.command.NewToken
 import models.user.ProviderUser
 import models.user.SkimboToken
@@ -14,10 +13,10 @@ import play.api.mvc.RequestHeader
 import play.api.mvc.Result
 import services.UserDao
 import services.actors.UserInfosActor
-import services.auth.GenericProvider
 import services.commands.Commands
+import services.auth.AuthProvider
 
-object BetaSeries extends GenericProvider {
+object BetaSeries extends AuthProvider {
 
   override val name = "betaseries"
   override val namespace = "bs"

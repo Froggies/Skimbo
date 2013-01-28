@@ -16,7 +16,7 @@ import services.actors.UserInfosActor
 import services.commands.Commands
 import scala.concurrent.duration.Duration
 
-trait OAuth2Provider extends GenericProvider {
+trait OAuth2Provider extends AuthProvider {
 
   // OAuth2 provider settings (override these)
   def method: Verb = Get
