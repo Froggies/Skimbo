@@ -5,11 +5,11 @@ import play.api.libs.json.JsValue
 import play.api.mvc.Controller
 import services.actors._
 import play.api.libs.EventSource
-import services.commands.Commands
 import models.command.Command
 import play.api.libs.json.Json
 import services.security.Authentication
 import services.UserDao
+import services.commands.CmdFromUser
 
 object Sse extends Controller with Authentication {
 
@@ -20,7 +20,7 @@ object Sse extends Controller with Authentication {
 
   def command() = Authenticated { user => implicit request =>
     val userId = user.accounts.head.id
-    request.body.asJson.map(js => Commands.interpret(userId, js))
+    request.body.asJson.map(js => CmdFromUser.interpret(userId, js))
     PingActor.ping(user.accounts.last.id)
     Ok("ok")
   }

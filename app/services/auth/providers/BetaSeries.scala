@@ -12,8 +12,6 @@ import play.api.mvc.Call
 import play.api.mvc.RequestHeader
 import play.api.mvc.Result
 import services.UserDao
-import services.actors.UserInfosActor
-import services.commands.Commands
 import services.auth.AuthProvider
 
 object BetaSeries extends AuthProvider {
@@ -40,13 +38,7 @@ object BetaSeries extends AuthProvider {
         }
       }
       case Some(token) => {
-        val session = generateUniqueId(request.session)
-        //TODO rework this, same lignes in OAuthProvider and OAuthProvider2 and BetaSeries
-        UserDao.setToken(session("id"), this, SkimboToken(token))
-        Commands.interpretCmd(session("id"), NewToken.asCommand(this))
-        UserInfosActor.refreshInfosUser(session("id"), this)
-        UserInfosActor.restartProviderColumns(session("id"), this)
-        Redirect(redirectRoute).withSession(session)
+        startUser(SkimboToken(token), redirectRoute)
       }
     }
   }

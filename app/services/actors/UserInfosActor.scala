@@ -15,9 +15,9 @@ import play.api.mvc.RequestHeader
 import services.UserDao
 import services.auth.GenericProvider
 import services.auth.ProviderDispatcher
-import services.commands.Commands
 import services.auth.AuthProvider
 import models.command.Error
+import services.commands.CmdFromUser
 
 case object Retreive
 case class Send(userId: String, json: JsValue)
@@ -136,7 +136,7 @@ class UserInfosActor(idUser: String, channelOut: Concurrent.Channel[JsValue])(im
     if (user.columns.map(_.isEmpty).getOrElse(true)) {
       val providers = ProviderDispatcher.listAll.filter(_.hasToken)
       if (providers.isEmpty) {
-        Commands.interpretCmd(idUser, Command("allColumns"))
+        CmdFromUser.interpretCmd(idUser, Command("allColumns"))
       } else {
         providers.map { provider =>
           provider.getUser.map { providerUser =>
@@ -144,12 +144,12 @@ class UserInfosActor(idUser: String, channelOut: Concurrent.Channel[JsValue])(im
               UserDao.findByIdProvider(provider.name, pUser.id).map(optUser =>
                 optUser.map { originalUser =>
                   UserDao.merge(idUser, originalUser.accounts.head.id, {
-                    Commands.interpretCmd(idUser, Command("allColumns"))
+                    CmdFromUser.interpretCmd(idUser, Command("allColumns"))
                     originalUser.columns.map(_.foreach(self ! StartProvider(idUser, _)))
                     self ! Send(idUser, Json.toJson(Command("userInfos", Some(Json.toJson(providerUser.get)))))
                   })
                 }.getOrElse {
-                  Commands.interpretCmd(idUser, Command("allColumns"))
+                  CmdFromUser.interpretCmd(idUser, Command("allColumns"))
                   self ! CheckAccounts(idUser)
                 }))
           }
@@ -157,7 +157,7 @@ class UserInfosActor(idUser: String, channelOut: Concurrent.Channel[JsValue])(im
       }
     } else {
       user.columns.map(_.foreach(self ! StartProvider(idUser, _)))
-      Commands.interpretCmd(idUser, Command("allColumns"))
+      CmdFromUser.interpretCmd(idUser, Command("allColumns"))
     }
   }
 

@@ -11,8 +11,6 @@ import play.api.mvc.Call
 import play.api.mvc.RequestHeader
 import play.api.mvc.Result
 import services.UserDao
-import services.actors.UserInfosActor
-import services.commands.Commands
 
 trait OAuthProvider extends AuthProvider {
 
@@ -47,13 +45,7 @@ trait OAuthProvider extends AuthProvider {
       case Some(verifier) =>
         service.retrieveAccessToken(getSessionToken, verifier) match {
           case Right(t) => {
-            val session = generateUniqueId(request.session)
-            //TODO rework this, same lignes in OAuthProvider and OAuthProvider2 and BetaSeries
-            UserDao.setToken(session("id"), this, SkimboToken(t.token, Some(t.secret)))
-            Commands.interpretCmd(session("id"), NewToken.asCommand(this))
-            UserInfosActor.refreshInfosUser(session("id"), this)
-            UserInfosActor.restartProviderColumns(session("id"), this)
-            Redirect(redirectRoute).withSession(session)
+            startUser(SkimboToken(t.token, Some(t.secret)), redirectRoute)
           }
           case Left(e) => Redirect(redirectRoute).flashing("login-error" -> name)
         }

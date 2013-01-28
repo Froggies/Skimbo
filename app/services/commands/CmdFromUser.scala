@@ -12,7 +12,7 @@ import services.actors.UserInfosActor
 import services.actors.ProviderActor
 import services.actors.PingActor
 
-object Commands {
+object CmdFromUser {
 
   import play.api.libs.concurrent.Execution.Implicits._
 
