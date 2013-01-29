@@ -26,7 +26,10 @@ object WebSocket extends Controller {
     UserDao.updateLastUse(idUser)
     
     val in = Iteratee.foreach[JsValue](cmd => CmdFromUser.interpret(idUser, cmd))
-              .mapDone( _ => UserInfosActor.killActorsForUser(idUser))
+              .mapDone { _ => 
+                UserInfosActor.killActorsForUser(idUser)
+                CmdToUser.userDeco(idUser, channelClient)
+              }
 
     (in, out)
   }

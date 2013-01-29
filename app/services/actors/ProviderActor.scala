@@ -34,6 +34,7 @@ import services.endpoints.JsonRequest.UnifiedRequest
 import models.Skimbo
 import services.auth.AuthProvider
 import services.commands.CmdToUser
+import akka.actor.ActorRef
 
 sealed case class Dead(idUser: String)
 sealed case class DeadColumn(idUser: String, columnTitle: String)
@@ -42,8 +43,9 @@ sealed case class DeadProvider(idUser: String, providerName: String)
 object ProviderActor {
 
   private val system: ActorSystem = ActorSystem("providers");
+  private val actors = new ActorHelper[ActorRef]
 
-  def create(userId: String, column: Column)(implicit request: RequestHeader) {
+  def create(idUser: String, column: Column)(implicit request: RequestHeader) {
     column.unifiedRequests.foreach { unifiedRequest =>
       val endpoint = for (
         provider <- Endpoints.getProvider(unifiedRequest.service);
@@ -53,16 +55,18 @@ object ProviderActor {
 
       endpoint match {
         case Some((provider, time, parser)) => {
-          val actor = system.actorOf(Props(
-            new ProviderActor(provider, unifiedRequest, time, userId, parser, column)))
-          system.eventStream.subscribe(actor, classOf[Dead])
-          system.eventStream.subscribe(actor, classOf[DeadColumn])
-          system.eventStream.subscribe(actor, classOf[Ping])
-          system.eventStream.subscribe(actor, classOf[DeadProvider])
+          actors.foundOrCreate(idUser, {
+            val actor = system.actorOf(Props(
+              new ProviderActor(provider, unifiedRequest, time, idUser, parser, column)))
+            system.eventStream.subscribe(actor, classOf[Dead])
+            system.eventStream.subscribe(actor, classOf[DeadColumn])
+            system.eventStream.subscribe(actor, classOf[Ping])
+            system.eventStream.subscribe(actor, classOf[DeadProvider])
+            actor
+          }, { (id, actor) => })
         }
         case _ => Logger.error("Provider or Url not found for " + unifiedRequest.service + " :: args = " + unifiedRequest.args)
       }
-
     }
   }
 

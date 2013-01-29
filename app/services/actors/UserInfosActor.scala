@@ -19,6 +19,7 @@ import services.auth.AuthProvider
 import models.command.Error
 import services.commands.CmdFromUser
 import services.commands.CmdToUser
+import scala.collection.mutable.HashMap
 
 case object Retreive
 case class StartProvider(userId: String, column: Column)
@@ -29,15 +30,23 @@ case class RefreshInfosUser(userId: String, provider: GenericProvider)
 object UserInfosActor {
 
   private val system = ActorSystem("userInfos")
+  private val actors = new ActorHelper[ActorRef]
 
   def create(idUser: String)(implicit request: RequestHeader) = {
-    val actor = system.actorOf(Props(new UserInfosActor(idUser)))
-    system.eventStream.subscribe(actor, Retreive.getClass())
-    system.eventStream.subscribe(actor, classOf[StartProvider])
-    system.eventStream.subscribe(actor, classOf[Dead])
-    system.eventStream.subscribe(actor, classOf[RefreshInfosUser])
-    actor ! Retreive
-    actor
+    actors.foundOrCreate(idUser, {
+      println("UserInfosActor NEW !")
+      val actor = system.actorOf(Props(new UserInfosActor(idUser)))
+      system.eventStream.subscribe(actor, Retreive.getClass())
+      system.eventStream.subscribe(actor, classOf[StartProvider])
+      system.eventStream.subscribe(actor, classOf[Dead])
+      system.eventStream.subscribe(actor, classOf[RefreshInfosUser])
+      actor ! Retreive
+      actor
+    }, { (id, actor) => 
+      println("UserInfosActor EXIST !")
+      CmdFromUser.interpretCmd(id, Command("allColumns"))
+      actor ! CheckAccounts(id)
+    })
   }
 
   def startProfiderFor(userId: String, column: Column) = {
@@ -89,7 +98,6 @@ class UserInfosActor(idUser: String)(implicit request: RequestHeader) extends Ac
     case Dead(id) => {
       if (idUser == id) {
         ProviderActor.killActorsForUser(idUser)
-        CmdToUser.userDeco(idUser)
         context.stop(self)
       }
     }

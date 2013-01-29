@@ -25,7 +25,7 @@ object PingActor {
   private val system: ActorSystem = ActorSystem("userInfos");
 
   def create(idUser: String, channelOut: Concurrent.Channel[JsValue]) = {
-    val actor = system.actorOf(Props(new PingActor(idUser)))
+    val actor = system.actorOf(Props(new PingActor(idUser, channelOut)))
     system.eventStream.subscribe(actor, classOf[Ping])
     actor
   }
@@ -36,7 +36,7 @@ object PingActor {
 
 }
 
-class PingActor(idUser: String) extends Actor {
+class PingActor(idUser: String, channel:Concurrent.Channel[JsValue]) extends Actor {
 
   val scheduler = Akka.system.scheduler.schedule(0 second, 30 second) {
     self ! Ask
@@ -61,6 +61,7 @@ class PingActor(idUser: String) extends Actor {
     case Dead => {
       CmdToUser.sendTo(idUser, Command("disconnect"))
       UserInfosActor.killActorsForUser(idUser)
+      CmdToUser.userDeco(idUser, channel)
       scheduler.cancel()
       context.stop(self)
     }
