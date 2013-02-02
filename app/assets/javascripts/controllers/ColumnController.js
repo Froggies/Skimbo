@@ -91,10 +91,12 @@ app.controller('ColumnController', [
     });
 
     $rootScope.$on('addColumn', function(evt, column) {
-      $columnSize.setSize([column]);
-      $columnSize.buildSizeCompo([column]);
-      $scope.columns.push(column);
-      $scope.userNoColumn = $scope.columns.length === 0;
+      $scope.$apply(function() {
+        $columnSize.setSize([column]);
+        $columnSize.buildSizeCompo([column]);
+        $scope.columns.push(column);
+        $scope.userNoColumn = $scope.columns.length === 0;
+      });
     });
 
     $rootScope.$on('modColumn', function(evt, column) {

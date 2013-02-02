@@ -29,8 +29,8 @@ trait GenericJsonParser extends GenericParser {
       asSkimbo(json)
     } catch {
       case ex : Throwable => {
-        Logger.error("Error during parsing this message", ex)
-        Logger.info(json.toString)
+        //Logger.error("Error during parsing this message", ex)
+        //Logger.info(json.toString)
         None
       }
     }

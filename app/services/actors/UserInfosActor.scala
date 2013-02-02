@@ -28,37 +28,22 @@ case class AddInfosUser(providerUser: ProviderUser)
 case class RefreshInfosUser(userId: String, provider: GenericProvider)
 
 object UserInfosActor {
-
-  private val system = ActorSystem("userInfos")
-  private val actors = new ActorHelper[ActorRef]
-
+  
   def create(idUser: String)(implicit request: RequestHeader) = {
-    actors.foundOrCreate(idUser, {
-      println("UserInfosActor NEW !")
-      val actor = system.actorOf(Props(new UserInfosActor(idUser)))
-      system.eventStream.subscribe(actor, Retreive.getClass())
-      system.eventStream.subscribe(actor, classOf[StartProvider])
-      system.eventStream.subscribe(actor, classOf[Dead])
-      system.eventStream.subscribe(actor, classOf[RefreshInfosUser])
-      actor ! Retreive
-      actor
-    }, { (id, actor) => 
-      println("UserInfosActor EXIST !")
-      CmdFromUser.interpretCmd(id, Command("allColumns"))
-      actor ! CheckAccounts(id)
-    })
+    println("UserInfosActor == CREATE")
+    HelperUserInfosActor.foundOrCreate(idUser)
   }
 
   def startProfiderFor(userId: String, column: Column) = {
-    system.eventStream.publish(StartProvider(userId, column))
+    HelperUserInfosActor.system.eventStream.publish(StartProvider(userId, column))
   }
 
   def killActorsForUser(userId: String) = {
-    system.eventStream.publish(Dead(userId))
+    HelperUserInfosActor.system.eventStream.publish(Dead(userId))
   }
 
   def refreshInfosUser(userId: String, provider: GenericProvider) = {
-    system.eventStream.publish(RefreshInfosUser(userId, provider))
+    HelperUserInfosActor.system.eventStream.publish(RefreshInfosUser(userId, provider))
   }
 
   def restartProviderColumns(userId: String, provider: GenericProvider) = {
@@ -74,11 +59,17 @@ object UserInfosActor {
 
 class UserInfosActor(idUser: String)(implicit request: RequestHeader) extends Actor {
 
-  import scala.concurrent.ExecutionContext.Implicits.global
   val log = Logger(classOf[UserInfosActor])
+  
+  def getIdUser = idUser
+  
+  override def preStart() = {
+    self ! Retreive
+  }
 
   def receive() = {
     case Retreive => {
+      log.info("Retreive")
       UserDao.findOneById(idUser).map { optionUser =>
         optionUser
           .map(user => start(user))

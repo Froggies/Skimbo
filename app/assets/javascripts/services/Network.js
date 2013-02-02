@@ -57,7 +57,7 @@ app.factory("Network", ["$http", "$timeout", "ServerCommunication",
         command(data);
       }
       $timeout(function() {
-        if(dataReceivedByWS == false) {
+        if(dataReceivedByWS == false && source == undefined) {
           console.log("no data after 5sc !");
           //chrome doesn't fire error on proxy network !
           socket = undefined;

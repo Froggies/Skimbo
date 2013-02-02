@@ -36,14 +36,23 @@ import services.auth.AuthProvider
 import services.commands.CmdToUser
 import akka.actor.ActorRef
 
+sealed case class ProviderActorParameter(provider: GenericProvider,
+  unifiedRequest: UnifiedRequest,
+  delay: Int,
+  idUser: String,
+  parser: Option[GenericParser] = None,
+  column: Column
+)
+
 sealed case class Dead(idUser: String)
 sealed case class DeadColumn(idUser: String, columnTitle: String)
 sealed case class DeadProvider(idUser: String, providerName: String)
+sealed case class Restart(idUser: String)
 
 object ProviderActor {
 
   private val system: ActorSystem = ActorSystem("providers");
-  private val actors = new ActorHelper[ActorRef]
+  private val helper = new HelperProviderActor(system)
 
   def create(idUser: String, column: Column)(implicit request: RequestHeader) {
     column.unifiedRequests.foreach { unifiedRequest =>
@@ -55,19 +64,15 @@ object ProviderActor {
 
       endpoint match {
         case Some((provider, time, parser)) => {
-          actors.foundOrCreate(idUser, {
-            val actor = system.actorOf(Props(
-              new ProviderActor(provider, unifiedRequest, time, idUser, parser, column)))
-            system.eventStream.subscribe(actor, classOf[Dead])
-            system.eventStream.subscribe(actor, classOf[DeadColumn])
-            system.eventStream.subscribe(actor, classOf[Ping])
-            system.eventStream.subscribe(actor, classOf[DeadProvider])
-            actor
-          }, { (id, actor) => })
+          helper.foundOrCreate(idUser, ProviderActorParameter(provider, unifiedRequest, time, idUser, parser, column))
         }
         case _ => Logger.error("Provider or Url not found for " + unifiedRequest.service + " :: args = " + unifiedRequest.args)
       }
     }
+  }
+  
+  def restart(idUser: String) = {
+    system.eventStream.publish(Restart(idUser))
   }
 
   def killActorsForUser(userId: String) = {
@@ -84,18 +89,20 @@ object ProviderActor {
 
 }
 
-class ProviderActor(
-  provider: GenericProvider,
-  unifiedRequest: UnifiedRequest,
-  delay: Int,
-  idUser: String,
-  parser: Option[GenericParser] = None,
-  column: Column)(implicit request: RequestHeader) extends Actor {
+class ProviderActor(parameter:ProviderActorParameter)(implicit request: RequestHeader) extends Actor {
 
   val log = Logger(ProviderActor.getClass())
+  
+  val delay = parameter.delay
+  val provider = parameter.provider
+  val unifiedRequest = parameter.unifiedRequest
+  val idUser = parameter.idUser
+  val parser = parameter.parser
+  val column = parameter.column
+  
   var sinceId = ""
   var sinceDate = new DateTime().minusYears(1)
-
+  
   val scheduler = Akka.system.scheduler.schedule(0 second, delay second) {
     self ! ReceiveTimeout
   }
@@ -180,6 +187,14 @@ class ProviderActor(
     case DeadProvider(id: String, providerName: String) => {
       if (providerName == provider.name && id == idUser) {
         self ! Dead(idUser)
+      }
+    }
+    case Restart(id: String) => {
+      if(id == idUser) {
+        sinceId = ""
+        sinceDate = new DateTime().minusYears(1)
+        self ! ReceiveTimeout
+        log.info("ProviderActor RESTART")
       }
     }
     case e: Exception => throw new UnexpectedException(Some("Incorrect message receive"), Some(e))
