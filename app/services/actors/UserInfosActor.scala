@@ -89,6 +89,7 @@ class UserInfosActor(idUser: String)(implicit request: RequestHeader) extends Ac
     case Dead(id) => {
       if (idUser == id) {
         ProviderActor.killActorsForUser(idUser)
+        HelperUserInfosActor.delete(idUser)
         context.stop(self)
       }
     }

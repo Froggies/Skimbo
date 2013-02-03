@@ -20,8 +20,7 @@
       drop="" dropStyle="columnDrop"
 			style="width:{{c.csswidth}};height:{{c.cssheight}}">
 		<header class="column-title">
-			<div class="title" ng-hide="c.showModifyColumn">{{c.title}}</div>
-			<input class="title-input error {{c.showErrorTitleAlreadyExist}} {{c.showErrorTitleRequired}}" type="text" ng-model="c.title" ng-show="c.showModifyColumn" value="{{c.title}}" onfocus="if (this.value.indexOf('What is here ?') != -1) this.value='';" />
+			<div class="title">{{c.title}}</div>
 			<div class="configure">
 				<a href="#" ng-click="c.show_size_column=!c.show_size_column">⤭</a>
 				<div class="column-size" ng-show="c.show_size_column">
@@ -35,7 +34,7 @@
 				<a href="#" ng-click="modifyColumn(c)">⚙</a>
 			</div>
 		</header>
-		<div class="column-content" ng-hide="c.showModifyColumn">
+		<div class="column-content">
 			<ul>
 				<li class="element" ng-repeat="m in c.messages | filter:$parent.$parent.query">
 					<div class="timeline">

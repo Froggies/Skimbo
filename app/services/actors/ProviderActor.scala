@@ -51,9 +51,6 @@ sealed case class Restart(idUser: String)
 
 object ProviderActor {
 
-  private val system: ActorSystem = ActorSystem("providers");
-  private val helper = new HelperProviderActor(system)
-
   def create(idUser: String, column: Column)(implicit request: RequestHeader) {
     column.unifiedRequests.foreach { unifiedRequest =>
       val endpoint = for (
@@ -64,7 +61,7 @@ object ProviderActor {
 
       endpoint match {
         case Some((provider, time, parser)) => {
-          helper.foundOrCreate(idUser, ProviderActorParameter(provider, unifiedRequest, time, idUser, parser, column))
+          HelperProviderActor.foundOrCreate(idUser, ProviderActorParameter(provider, unifiedRequest, time, idUser, parser, column))
         }
         case _ => Logger.error("Provider or Url not found for " + unifiedRequest.service + " :: args = " + unifiedRequest.args)
       }
@@ -72,19 +69,19 @@ object ProviderActor {
   }
   
   def restart(idUser: String) = {
-    system.eventStream.publish(Restart(idUser))
+    HelperProviderActor.system.eventStream.publish(Restart(idUser))
   }
 
   def killActorsForUser(userId: String) = {
-    system.eventStream.publish(Dead(userId))
+    HelperProviderActor.system.eventStream.publish(Dead(userId))
   }
 
   def killActorsForUserAndColumn(userId: String, columnTitle: String) = {
-    system.eventStream.publish(DeadColumn(userId, columnTitle))
+    HelperProviderActor.system.eventStream.publish(DeadColumn(userId, columnTitle))
   }
 
   def killProvider(idUser: String, providerName: String) = {
-    system.eventStream.publish(DeadProvider(idUser, providerName))
+    HelperProviderActor.system.eventStream.publish(DeadProvider(idUser, providerName))
   }
 
 }
@@ -176,6 +173,7 @@ class ProviderActor(parameter:ProviderActorParameter)(implicit request: RequestH
     case Dead(id) => {
       if (id == idUser) {
         scheduler.cancel()
+        HelperProviderActor.delete(idUser, parameter)
         context.stop(self)
       }
     }

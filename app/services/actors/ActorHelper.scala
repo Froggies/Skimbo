@@ -27,8 +27,15 @@ trait ActorHelper[P] {
     actors.get(idUser)
   }
   
-  def delete(idUser: String) = {
-    actors.remove(idUser)
+  def delete(idUser: String, p:P) = {
+    found(idUser).map { list =>
+      val notRemove = list.filterNot(otherP => same(p, otherP._2))
+      if(!notRemove.isEmpty) {
+        actors.put(idUser, notRemove)
+      } else {
+        actors.remove(idUser)
+      }
+    }
   }
   
   protected def same(p:P, otherP: P):Boolean
@@ -86,6 +93,10 @@ object HelperUserInfosActor extends ActorHelper[String] {
     super.foundOrCreate(idUser, idUser);
   }
   
+  def delete(idUser:String) = {
+    actors.remove(idUser)
+  }
+  
   protected def same(idUser:String, otherId:String) = {
     println("HelperUserInfos eq : "+idUser+" == "+otherId+ " = "+(idUser == otherId))
     true//for speed : because in ActorHelper check in daouser.found so don't need to re-check
@@ -110,7 +121,9 @@ object HelperUserInfosActor extends ActorHelper[String] {
   
 }
 
-class HelperProviderActor(system: ActorSystem) extends ActorHelper[ProviderActorParameter] {
+object HelperProviderActor extends ActorHelper[ProviderActorParameter] {
+  
+  val system = ActorSystem("providers")
   
   protected def same(parameter:ProviderActorParameter, other:ProviderActorParameter) = {
     parameter.provider.name == other.provider.name &&

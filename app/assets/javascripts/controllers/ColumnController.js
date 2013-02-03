@@ -101,8 +101,8 @@ app.controller('ColumnController', [
 
     $rootScope.$on('modColumn', function(evt, column) {
       $scope.$apply(function() {
-        var c = getColumnByName(column.title);
-        c.title = column.column.title;
+        console.log(column);
+        var c = getColumnByName(column.column.title);
         c.unifiedRequests = column.column.unifiedRequests;
         c.messages = [];
       });
