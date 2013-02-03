@@ -42,8 +42,8 @@ object BetaseriesTimelineParser extends GenericJsonParser {
 
   def buildUrl(e: BetaseriesTimelineMessage) = {
     e.betatype match {
-      case "add_serie" => Some("http://www.betaseries.com/serie/" + e.dataUrl)
-      case "markas" => Some("http://www.betaseries.com/serie/" + e.dataUrl + "/" + e.dataNumber)
+      case "add_serie" => Some("http://www.betaseries.com/serie/" + e.dataUrl.getOrElse(""))
+      case "markas" => Some("http://www.betaseries.com/serie/" + e.dataUrl.getOrElse("") + "/" + e.dataNumber.getOrElse(""))
       case _ => None
     }
   }
