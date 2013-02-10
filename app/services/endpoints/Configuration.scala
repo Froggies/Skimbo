@@ -18,6 +18,7 @@ import parser.json.providers.TwitterHashtagParser
 import parser.json.providers.LinkedInWallParser
 import services.auth.RssProvider
 import parser.xml.GenericRssParser
+import parser.json.providers.ScoopitWallParser
 
 object Configuration {
 
@@ -167,10 +168,11 @@ object Configuration {
   }
 
   object Scoopit {
-    object notifications extends EndpointConfig {
-      override val url = "http://www.scoop.it/api/1/notifications"
-      override val since = "?since=:since" // ts
+    object wall extends EndpointConfig {
+      override val url = withLimit("http://www.scoop.it/api/1/compilation?count=:limit")
+      override val since = "&since=:since" // ts
       override val provider = providers.Scoopit
+      override val parser = Some(ScoopitWallParser)
     }
   }
   

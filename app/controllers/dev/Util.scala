@@ -70,8 +70,8 @@ object Util extends Controller with Authentication {
   def staticResScoopit() = Action { implicit request =>
     import scala.concurrent.ExecutionContext.Implicits.global
     Async {
-      Endpoints.getConfig("scoopit.notifications").flatMap { config =>
-        Endpoints.genererUrl("scoopit.notifications", Map.empty, None).map { url =>
+      Endpoints.getConfig("scoopit.wall").flatMap { config =>
+        Endpoints.genererUrl("scoopit.wall", Map.empty, None).map { url =>
           config.provider.fetch(url).get.map { response =>
             Ok(config.provider.resultAsJson(response))
           }
