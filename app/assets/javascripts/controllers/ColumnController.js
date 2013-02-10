@@ -123,6 +123,27 @@ app.controller('ColumnController', [
       $columnSize.resizeColumn(column, height, width);
     }
 
+    $scope.messagesNoView = function(column) {
+      var nb = 0;
+      if(column != undefined && column.messages != undefined) {
+        for(var i=0; i<column.messages.length; i++) {
+          if(column.messages[i].isView == false) {
+            nb++;
+          }
+        }
+      }
+      return nb;
+    }
+
+    $scope.markAllAsView = function(column) {
+      $rootScope.$broadcast("scrollManagerGoTop", column);
+      if(column != undefined && column.messages != undefined) {
+        for(var i=0; i<column.messages.length; i++) {
+          column.messages[i].isView = true;
+        }
+      }
+    }
+
     function getColumnByName(name) {
       if($scope.columns !== undefined) {
         for (var i = 0; i < $scope.columns.length; i++) {

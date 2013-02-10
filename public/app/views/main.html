@@ -14,13 +14,17 @@
 	</div>
 
 	<section id="column_{{$index}}" 
-			class="column" 
+			class="column"
 			ng-repeat="c in columns"
 			drag="" dragStyle="columnDrag"
       drop="" dropStyle="columnDrop"
 			style="width:{{c.csswidth}};height:{{c.cssheight}}">
 		<header class="column-title">
-			<div class="title">{{c.title}}</div>
+			<div class="title">
+				<a class="linkNbMsg" ng-show="messagesNoView(c) > 0" ng-click="markAllAsView(c)">
+					[{{messagesNoView(c)}}]
+				</a> {{c.title}}
+			</div>
 			<div class="configure">
 				<a href="#" ng-click="c.show_size_column=!c.show_size_column">⤭</a>
 				<div class="column-size" ng-show="c.show_size_column">
@@ -34,9 +38,9 @@
 				<a href="#" ng-click="modifyColumn(c)">⚙</a>
 			</div>
 		</header>
-		<div class="column-content">
+		<div class="column-content" scrollmanager="onlyTop" scrolldata="c">
 			<ul>
-				<li class="element" ng-repeat="m in c.messages | filter:$parent.$parent.query">
+				<li class="element" scrollmanager="m" ng-repeat="m in c.messages | filter:$parent.$parent.query">
 					<div class="timeline">
 						<div class="from-social-network vertical-text {{m.from}}">{{m.from}}</div>
 						<div class="rond {{m.from}}"></div>

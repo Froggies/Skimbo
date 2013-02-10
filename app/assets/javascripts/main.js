@@ -13,6 +13,7 @@ require([
   'services/PopupProvider', 
   'services/ServerCommunication', 
   'directives/DragAndDrop',
+  'directives/ScrollManager',
   'controllers/NotificationController', 
   'controllers/MainController', 
   'controllers/ModifColumnController', 
