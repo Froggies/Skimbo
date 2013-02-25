@@ -11,6 +11,7 @@ import services.security.Authentication
 import services.UserDao
 import services.commands.CmdFromUser
 import services.commands.CmdToUser
+import play.api.libs.concurrent.Execution.Implicits.defaultContext
 
 object Sse extends Controller with Authentication {
 
@@ -30,10 +31,11 @@ object Sse extends Controller with Authentication {
     val idUser = user.accounts.head.id
     val (out, channelClient) = Concurrent.broadcast[JsValue]
     
-    CmdToUser.userConnected(idUser, channelClient)
-    UserInfosActor.create(idUser)
-    PingActor.create(idUser, channelClient)
-    UserDao.updateLastUse(idUser)
+    CmdToUser.userConnected(idUser, channelClient).map { preferedChannel =>
+      UserInfosActor.create(idUser)
+      PingActor.create(idUser, preferedChannel)
+      UserDao.updateLastUse(idUser)
+    }
     
     Ok.stream(out &> EventSource()).as(play.api.http.ContentTypes.EVENT_STREAM)
   }

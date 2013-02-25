@@ -53,9 +53,9 @@ trait ActorHelper[P] {
     } else {
       log.info("find with other account")
       UserDao.findOneById(idUser).map(_.map { user =>
-        log.info("find user "+user)
+        log.info("find user ")
         val alreadyRun = user.accounts.filter( account => found(account.id).isDefined)
-        log.info("find user "+alreadyRun)
+        log.info("find account "+alreadyRun)
         val alreadyP = found(alreadyRun.headOption.getOrElse(Account("", new Date())).id)
         val isSame = alreadyP.getOrElse(List.empty).filter(o => same(p, o._2))
         if(!isSame.isEmpty) {

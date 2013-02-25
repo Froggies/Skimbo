@@ -10,6 +10,7 @@ import models.command.Error
 import services.UserDao
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import play.api.Logger
+import scala.concurrent.Future
 
 object CmdToUser {
 
@@ -21,23 +22,27 @@ object CmdToUser {
     userToUser.get(idUser).getOrElse(idUser)
   }
 
-  def userConnected(idUser: String, channel: Concurrent.Channel[JsValue]) = {
+  def userConnected(idUser: String, channel: Concurrent.Channel[JsValue]):Future[Concurrent.Channel[JsValue]] = {
     val optChannels = channelUser.get(idUser)
     if (optChannels.isDefined) { //user deco/reco or other tab in navigator
       log.info("user deco/reco")
-      channelUser.put(idUser, channelUser.get(idUser).get ++ Seq(channel))
+      channelUser.put(idUser, optChannels.get ++ Seq(channel))
+      Future(optChannels.get.head)
     } else {
       UserDao.findOneById(idUser).map(_.map { user =>
         val account = user.accounts.filter(account => channelUser.get(account.id).isDefined).headOption
         if (account.isDefined) { //another account, probably another browser
           log.info("another account")
-          channelUser.put(account.get.id, channelUser.get(account.get.id).get ++ Seq(channel))
+          val oldChannels = channelUser.get(account.get.id).get
+          channelUser.put(account.get.id, oldChannels ++ Seq(channel))
           userToUser.put(idUser, account.get.id)
+          oldChannels.head
         } else { //really new user
           log.info("new connexion")
           channelUser.put(idUser, Seq(channel))
+          channel
         }
-      })
+      }.getOrElse(channel))
     }
   }
 

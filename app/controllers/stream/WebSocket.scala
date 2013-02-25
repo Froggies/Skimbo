@@ -21,9 +21,10 @@ object WebSocket extends Controller {
 
     val (out, channelClient) = Concurrent.broadcast[JsValue]
     
-    CmdToUser.userConnected(idUser, channelClient)
-    UserInfosActor.create(idUser)
-    UserDao.updateLastUse(idUser)
+    CmdToUser.userConnected(idUser, channelClient).map { preferedChannel =>
+      UserInfosActor.create(idUser)
+      UserDao.updateLastUse(idUser)
+    }
     
     val in = Iteratee.foreach[JsValue](cmd => CmdFromUser.interpret(idUser, cmd))
               .mapDone { _ => 
