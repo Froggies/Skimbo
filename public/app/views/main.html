@@ -52,7 +52,9 @@
 								width="32" height="32">
 						<a href="{{m.directLink}}" class="author-name {{m.from}}" target="_blank">{{m.authorName}}</a>
 						<p class="date-creation">{{m.dateAgo}}</p>
-						<div class="message" ng-bind-html="m.message" title="{{m.original}}">
+						<div class="message" ng-bind-html="m.message" title="{{m.original}}"></div>
+						<div class="message-footer" ng-show="m.shared >= 0">
+							<span class="message-shared">★{{m.shared}}</span>
 						</div>
 					</div>
 				</li>

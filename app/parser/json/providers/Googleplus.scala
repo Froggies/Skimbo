@@ -22,7 +22,7 @@ object GoogleplusWallParser extends GenericJsonParser {
 
   override def asSkimbo(json: JsValue): Option[Skimbo] = {
     Json.fromJson[GoogleplusWallMessage](json).fold(
-      error => logParseError(json, error, "ViadeoWallMessage"),
+      error => logParseError(json, error, "GoogleplusWallParser"),
       e => Some(Skimbo(
         e.displayName,
         e.displayName,

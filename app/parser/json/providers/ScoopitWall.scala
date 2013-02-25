@@ -15,6 +15,7 @@ case class ScoopitPost (
     text: String,
     createdDate: Long,
     url: String,
+    reactionCount: Int,
     displayName: String,
     avatarUrl : String
 )
@@ -32,7 +33,7 @@ object ScoopitWallParser extends GenericJsonParser {
         post.title + "<br />" + post.text,
         new DateTime(post.createdDate, DateTimeZone.UTC),
         Nil,
-        -1,
+        post.reactionCount,
         Some(post.url),
         post.createdDate.toString,
         Some(post.avatarUrl),
@@ -50,6 +51,7 @@ object ScoopitPost {
     (__ \ "htmlContent").read[String] and
     (__ \ "publicationDate").read[Long] and
     (__ \ "url").read[String] and
+    (__ \ "reactionsCount").read[Int] and
     (__ \ "author" \ "name").read[String] and
     (__ \ "author" \ "avatarUrl").read[String])(ScoopitPost.apply _)
 }

@@ -1,7 +1,6 @@
 package parser.json.providers
 
 import org.joda.time.DateTime
-
 import models.Skimbo
 import parser.json.GenericJsonParser
 import play.api.libs.functional.syntax.functionalCanBuildApplicative
@@ -12,6 +11,8 @@ import play.api.libs.json.Json
 import play.api.libs.json.Reads
 import play.api.libs.json.__
 import services.auth.providers.BetaSeries
+import play.api.libs.json.JsPath
+import play.api.libs.json.JsObject
 
 case class BetaseriesPlanningMessage(
   date: Long,
@@ -31,7 +32,7 @@ object BetaseriesPlanningParser extends GenericJsonParser {
         e.number + ":" + e.title,
         new DateTime(e.date * 1000l),
         Nil,
-        0,
+        -1,
         Some("http://www.betaseries.com/serie/" + e.url + "/" + e.number),
         e.date.toString,
         None,
@@ -39,22 +40,7 @@ object BetaseriesPlanningParser extends GenericJsonParser {
   }
 
   override def cut(json: JsValue) = {
-    val array =
-      JsArray(
-        Seq(
-          // TODO : smell not good, please help me to make better
-          json \ "root" \ "planning" \ "0",
-          json \ "root" \ "planning" \ "1",
-          json \ "root" \ "planning" \ "2",
-          json \ "root" \ "planning" \ "3",
-          json \ "root" \ "planning" \ "4",
-          json \ "root" \ "planning" \ "5",
-          json \ "root" \ "planning" \ "6",
-          json \ "root" \ "planning" \ "7",
-          json \ "root" \ "planning" \ "8",
-          json \ "root" \ "planning" \ "9",
-          json \ "root" \ "planning" \ "10"))
-
+    val array = JsArray((json \ "root" \ "planning").asInstanceOf[JsObject].values.toSeq)
     super.cut(array)
   }
 

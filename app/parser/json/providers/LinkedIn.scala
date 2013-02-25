@@ -7,6 +7,7 @@ import parser.GenericParser
 import parser.json.GenericJsonParser
 import models.Skimbo
 import services.auth.providers.LinkedIn
+import parser.json.PathDefaultReads
 
 case class LinkedInWallMessage(
   numLikes: Option[Int],
@@ -14,7 +15,7 @@ case class LinkedInWallMessage(
   updateType: String,
   updateKey: String,
   person: Option[PersonLinkedIn],
-  companyName: Option[String],
+  companyName: String,
   companyPerson: Option[CompanyPersonLinkedIn]
 )
 
@@ -25,7 +26,7 @@ case class PersonLinkedIn(
   id: String,
   lastName: String,
   pictureUrl: Option[String],
-  directLink: Option[String],
+  directLink: String,
   connections: List[ConnectionLinkedIn])
 
 case class CompanyPersonLinkedIn(
@@ -42,7 +43,7 @@ object LinkedInWallParser extends GenericJsonParser {
 
   override def asSkimbo(json: JsValue): Option[Skimbo] = {
     Json.fromJson[LinkedInWallMessage](json).fold(
-      error => logParseError(json, error, "ViadeoWallMessage"),
+      error => logParseError(json, error, "LinkedInWallParser"),
       e => 
         if (mustBeIgnored(e)) 
           None
@@ -52,8 +53,8 @@ object LinkedInWallParser extends GenericJsonParser {
           generateText(e),
           e.timestamp,
           Nil,
-          e.numLikes.getOrElse(-1),
-          e.person.getOrElse(e.companyPerson.get.person).directLink,
+          e.numLikes.getOrElse(0),
+          Some(e.person.getOrElse(e.companyPerson.get.person).directLink),
           e.timestamp.toInstant().getMillis().toString(),
           e.person.getOrElse(e.companyPerson.get.person).pictureUrl,
           LinkedIn)))
@@ -85,7 +86,7 @@ object LinkedInWallParser extends GenericJsonParser {
         "New connexion" // TODO
       }
       case "MSFC" => {
-        "Follow " + e.companyName.get
+        "Follow " + e.companyName
       }
       case "JGRP" => {
         val p = e.person.get
@@ -128,8 +129,8 @@ object PersonLinkedIn {
     (__ \ "id").read[String] and
     (__ \ "lastName").read[String] and
     (__ \ "pictureUrl").readNullable[String] and
-    (__ \ "siteStandardProfileRequest" \ "url").readNullable[String] and
-    (__ \ "connections" \ "values").readNullable[List[ConnectionLinkedIn]].map(_.getOrElse(List.empty)))(PersonLinkedIn.apply _)
+    PathDefaultReads.default((__ \ "siteStandardProfileRequest" \ "url"), "") and
+    PathDefaultReads.default[List[ConnectionLinkedIn]]((__ \ "connections" \ "values"), List.empty))(PersonLinkedIn.apply _)
 }
 
 object CompanyPersonLinkedIn {
@@ -145,7 +146,7 @@ object LinkedInWallMessage {
     (__ \ "updateType").read[String] and
     (__ \ "updateKey").read[String] and
     (__ \ "updateContent" \ "person").readNullable[PersonLinkedIn] and
-    (__ \ "updateContent" \ "company" \ "name").readNullable[String] and
+    PathDefaultReads.default((__ \ "updateContent" \ "company" \ "name"), "") and
     (__ \ "updateContent" \ "companyPersonUpdate").readNullable[CompanyPersonLinkedIn])(LinkedInWallMessage.apply _)
 }
 

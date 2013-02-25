@@ -16,12 +16,13 @@ object GooglePlus extends OAuth2Provider {
     "https://www.googleapis.com/auth/userinfo.email", // View your email address
     "https://www.googleapis.com/auth/plus.me") // Know who you are on Google
 
-  override def processToken(response: play.api.libs.ws.Response) =
+  override def processToken(response: play.api.libs.ws.Response) = 
     Token((response.json \ "access_token").asOpt[String], (response.json \ "expires_in").asOpt[Int])
 
   override def distantUserToSkimboUser(ident: String, response: play.api.libs.ws.Response)(implicit request: RequestHeader): Option[ProviderUser] = {
     try {
       val me = response.json // TODO : En faire un parser
+      Logger("G+Provider").info(me.toString)
       val id = (me \ "id").as[String]
       val username = (me \ "displayName").asOpt[String]
       val name = (me \ "name" \ "familyName").asOpt[String]
@@ -36,8 +37,8 @@ object GooglePlus extends OAuth2Provider {
           description, 
           profileImage))
     } catch {
-      case _:Throwable => {
-        Logger.error("Error during fetching user details G+")
+      case t:Throwable => {
+        Logger("G+Provider").error("Error during fetching user details G+ "+t.getMessage())
         None
       }
     }

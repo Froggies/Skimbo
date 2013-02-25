@@ -7,13 +7,14 @@ import services.auth.providers.Viadeo
 import parser.json.GenericJsonParser
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
+import parser.json.PathDefaultReads
 
 case class ViadeoWallMessage(
   id:String,
   typeViadeo:String,
   fromName:String,
-  onTitle: Option[String],
-  onMessage:Option[String],
+  onTitle: String,
+  onMessage:String,
   likeCount:Int,
   title: Option[String],
   message:Option[String],
@@ -45,12 +46,12 @@ object ViadeoWallParser extends GenericJsonParser {
     if(e.message.isDefined && !e.message.get.isEmpty()) { // TODO JLA
       e.message.get
     }
-    else if(e.onMessage.isDefined && !e.onMessage.get.isEmpty()) {
-      e.onMessage.get
+    else if(!e.onMessage.isEmpty()) {
+      e.onMessage
     } else if(e.title.isDefined && !e.title.get.isEmpty()) {
       e.title.get
-    } else if(e.onTitle.isDefined && !e.onTitle.get.isEmpty()) {
-      e.onTitle.get
+    } else if(!e.onTitle.isEmpty()) {
+      e.onTitle
     } else {
       "Msg not decrypted !"
     }
@@ -82,8 +83,8 @@ object ViadeoWallMessage {
     (__ \ "id").read[String] and
     (__ \ "type").read[String] and
     ((__ \ "from" \ "name").read[String] or (__ \ "on" \ "from" \ "name").read[String] or (__ \ "type").read[String]) and
-    (__ \ "on" \ "title").readNullable[String] and
-    (__ \ "on" \ "message").readNullable[String] and
+    PathDefaultReads.default((__ \ "on" \ "title"), "") and
+    PathDefaultReads.default((__ \ "on" \ "message"), "") and
     (__ \ "like_count").read[Int] and
     (__ \ "title").readNullable[String] and
     (__ \ "message").readNullable[String] and

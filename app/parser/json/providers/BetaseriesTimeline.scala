@@ -33,7 +33,7 @@ object BetaseriesTimelineParser extends GenericJsonParser {
         e.text,
         new DateTime(e.date.toLong * 1000l),
         Nil,
-        0,
+        -1,
         buildUrl(e),
         e.date,
         None,
