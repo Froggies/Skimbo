@@ -7,6 +7,7 @@ import parser.GenericParser
 import parser.json.GenericJsonParser
 import models.Skimbo
 import services.auth.providers.Facebook
+import parser.json.PathDefaultReads
 
 case class FacebookWallMessage(
   id: String,
@@ -17,14 +18,14 @@ case class FacebookWallMessage(
   nbLikes: Int,
   nbComments: Int,
   createdAt: DateTime,
-  link: Option[String],
+  link: String,
   message: Option[String],
   story: Option[String],
   picture: Option[String]
 )
 
 object FacebookWallParser extends GenericJsonParser {
-
+  
   override def asSkimbo(json:JsValue): Option[Skimbo] = {
     Json.fromJson[FacebookWallMessage](json).fold(
       error => logParseError(json, error, "FacebookWallMessage"),
@@ -36,7 +37,7 @@ object FacebookWallParser extends GenericJsonParser {
           e.createdAt,
           Nil,
           e.nbLikes,
-          e.link,
+          Some(e.link),
           (e.createdAt.getMillis() / 1000).toInt.toString,
           e.picture,
           Facebook))
@@ -61,10 +62,10 @@ object FacebookWallMessage {
     (__ \ "from" \ "id").read[String].map(_.toLong) and
     (__ \ "type").read[String] and
     (__ \ "status_type").readNullable[String] and
-    (__ \ "likes" \ "count").readNullable[Int].map(e => e.getOrElse(0)) and
+    PathDefaultReads.default((__ \ "likes" \ "count"), 0) and
     (__ \ "comments" \ "count").readNullable[Int].map(e => e.getOrElse(0)) and
     (__ \ "created_time").read[DateTime](Reads.jodaDateReads("yyyy-MM-dd'T'HH:mm:ssZZ")) and
-    ((__ \ "actions")(0) \\ "link").readNullable[String] and
+    PathDefaultReads.default(((__ \ "actions")(0) \\ "link"), "") and
     (__ \ "message").readNullable[String] and
     (__ \ "story").readNullable[String] and
     (__ \ "picture").readNullable[String])(FacebookWallMessage.apply _)
