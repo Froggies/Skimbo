@@ -2,9 +2,12 @@ package services.auth.providers
 
 import play.api._
 import play.api.mvc._
+import play.api.libs.json._
 import services.auth._
 import models.user.ProviderUser
 import models.user.SkimboToken
+import parser.json.PathDefaultReads
+import play.api.libs.functional.syntax._
 
 object GooglePlus extends OAuth2Provider {
 
@@ -44,7 +47,9 @@ object GooglePlus extends OAuth2Provider {
     }
   }
   
-  override def isInvalidToken(response: play.api.libs.ws.Response): Boolean = response.status == 401
+  override def isInvalidToken(response: play.api.libs.ws.Response): Boolean = {
+    (response.json \ "error" \ "code").asOpt[Int].getOrElse(0) == 401
+  }
 
 }
 

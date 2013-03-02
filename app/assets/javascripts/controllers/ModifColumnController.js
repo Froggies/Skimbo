@@ -123,7 +123,6 @@ app.controller('ModifColumnController', [
             addService(service);
           });
         }
-        
       }
     }
 

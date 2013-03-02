@@ -140,6 +140,8 @@ app.factory("ServerCommunication", [
         body.footer = "Click here to be connected again.";
         body.isError = false;
         broadcast('disconnect', body);
+      } else if (data.cmd == "allPosters") {
+        broadcast('allPosters', data.body);
       } else {
         console.log("Command not yet implemented: ", data);
       }

@@ -38,5 +38,5 @@ object Viadeo extends OAuth2Provider {
       }
     }
   }
-
+  
 }

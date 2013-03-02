@@ -6,15 +6,17 @@ import services.auth._
 import models.user.ProviderUser
 import models.user.SkimboToken
 import play.api.libs.ws.Response
+import java.net.URLEncoder
 
 object Facebook extends OAuth2Provider {
 
   override val name = "facebook"
   override val namespace = "fb"
   override val permissions: Seq[String] = Seq(
-    "email",       // Get user email
-    "read_stream", // Get wall activity
-    "read_mailbox" // Get perso mails
+    "email",          // Get user email
+    "read_stream",    // Get wall activity
+    "read_mailbox",   // Get perso mails
+    "publish_actions" // Post messages
   )
   override val additionalAccreditationParameters = Map(
     "display" -> "popup"
@@ -47,6 +49,14 @@ object Facebook extends OAuth2Provider {
         None
       }
     }
+  }
+  
+  override def urlToPost(post:models.Post) = "https://graph.facebook.com/me/feed"
+  
+  override def postParams(post:models.Post):Seq[(String, String)] = {
+    Seq("message" -> post.message) ++ 
+    post.url.map(url => Seq("link" -> url)).getOrElse(Seq.empty) ++
+    post.url_image.map(url => Seq("picture" -> url)).getOrElse(Seq.empty)
   }
 
 }

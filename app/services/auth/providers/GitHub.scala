@@ -12,6 +12,9 @@ object GitHub extends OAuth2Provider {
   override val namespace = "gh"
   override val method = Post
   override val accessTokenHeaders = Seq("Accept" -> "application/json")
+  override val permissions: Seq[String] = Seq(
+    "gist"          // Read/write gist
+  )
 
   override def processToken(response: play.api.libs.ws.Response) =
     Token((response.json \ "access_token").asOpt[String], None)
@@ -38,6 +41,20 @@ object GitHub extends OAuth2Provider {
         None
       }
     }
+  }
+  
+  override def urlToPost(post:models.Post) = "https://api.github.com/gists"
+  
+  override def postContent(post:models.Post):String = {
+    """{
+      "description": """"+post.title+"""",
+      "public": true,
+      "files": {
+        """"+post.title+"""": {
+          "content": """"+post.message+""""
+        }
+      }
+    }"""
   }
     
 }

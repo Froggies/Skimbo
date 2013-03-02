@@ -6,6 +6,7 @@ import models.user.ProviderUser
 import services.auth._
 import play.api.libs.ws.Response
 import models.user.SkimboToken
+import java.net.URLEncoder
 
 object Twitter extends OAuthProvider {
 
@@ -40,6 +41,9 @@ object Twitter extends OAuthProvider {
   override def isInvalidToken(response: Response): Boolean = response.status != 429
   
   override def isRateLimiteError(response: Response): Boolean = response.status == 429
-
+  
+  override def urlToPost(post:models.Post) = 
+    "https://api.twitter.com/1.1/statuses/update.json?status="+URLEncoder.encode(post.message, "UTF-8")
+  
 }
 

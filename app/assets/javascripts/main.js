@@ -18,7 +18,8 @@ require([
   'controllers/MainController', 
   'controllers/ModifColumnController', 
   'controllers/HeaderController', 
-  'controllers/ColumnController'
+  'controllers/ColumnController',
+  'controllers/PostController'
 ], function(app) {
   window.angular.bootstrap(window.document.getElementById('publicApp'), ['publicApp']);
 });

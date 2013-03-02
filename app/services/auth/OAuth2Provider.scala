@@ -12,8 +12,11 @@ import play.api.mvc.Call
 import play.api.mvc.RequestHeader
 import play.api.mvc.Result
 import services.UserDao
+import services.post.Poster
+import scala.util.Success
+import scala.util.Failure
 
-trait OAuth2Provider extends AuthProvider {
+trait OAuth2Provider extends AuthProvider with Poster {
 
   // OAuth2 provider settings (override these)
   def method: Verb = Get
@@ -143,6 +146,22 @@ trait OAuth2Provider extends AuthProvider {
         Logger.info(response.body)
         Token(None, None)
       }
+    }
+  }
+  
+  override def post(post:models.Post)(implicit request: RequestHeader) = {
+    println("POST "+name+" = "+post)
+    val queryString = postParams(post) ++ Seq("access_token" -> getToken.get.token)
+    WS.url(urlToPost(post))
+      .withQueryString( queryString:_* )
+      .post(postContent(post))
+      .onComplete {
+        case Success(response) => {
+          println(response.body.toString)
+        }
+        case Failure(error) => {
+          println(error)
+        }
     }
   }
 

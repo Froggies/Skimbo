@@ -66,6 +66,7 @@ app.controller('HeaderController', [
 	        if($scope.userInfos[i].socialType == providerName) {
 	          $scope.userInfos.splice(i,1);
             $network.send({cmd:"allUnifiedRequests"});
+            $network.send({cmd:"allPosters"});
 	          break;
 	        }
       	}

@@ -5,6 +5,7 @@ import play.api.mvc._
 import services.auth._
 import models.user.ProviderUser
 import models.user.SkimboToken
+import java.net.URLEncoder
 
 object Scoopit extends OAuthProvider {
 
@@ -33,6 +34,18 @@ object Scoopit extends OAuthProvider {
         None
       }
     }
+  }
+  
+  override def urlToPost(post:models.Post) = "http://www.scoop.it/api/1/post"
+  
+  override def postParams(post:models.Post):Seq[(String, String)] = {
+    Seq(
+      "action" -> "create",
+      "title" -> URLEncoder.encode(post.title, "UTF-8"),
+      "url" -> URLEncoder.encode(post.url.getOrElse(""), "UTF-8"),
+      "imageUrl" -> URLEncoder.encode(post.url_image.getOrElse(""), "UTF-8"),
+      "content" -> URLEncoder.encode(post.message, "UTF-8")
+    )
   }
 
 }

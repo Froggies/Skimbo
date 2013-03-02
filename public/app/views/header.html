@@ -8,11 +8,8 @@
 
 	<div class="separateur-gris"></div>
 
-	<!--<input id="skimber" type="button" value="Skimber !" title="Coming soon...">-->
-
-	<div>
-		<div ng-include src="'assets/app/views/modifColumn.html'" />
-	</div>
+	<div style="display:inline-block" ng-include src="'assets/app/views/post.html'"></div>
+	<div style="display:inline-block" ng-include src="'assets/app/views/modifColumn.html'"></div>
 
 	<div id="recherche-et-profil">
 		<input type="search" placeholder="Live search" results="5" name="test" ng-model="$parent.$parent.query">

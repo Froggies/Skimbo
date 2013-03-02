@@ -11,6 +11,8 @@ import play.api.mvc.RequestHeader
 import services.actors.UserInfosActor
 import services.actors.ProviderActor
 import services.actors.PingActor
+import services.auth.ProviderDispatcher
+import services.post.Posters
 
 object CmdFromUser {
 
@@ -102,7 +104,17 @@ object CmdFromUser {
         CmdToUser.sendTo(internalIdUser, cmd)
       }
       case "pong" => {
-        PingActor.ping(internalIdUser);
+        PingActor.ping(internalIdUser)
+      }
+      case "allPosters" => {
+        CmdToUser.sendTo(internalIdUser, Command(cmd.name, Some(Posters.toJson)))
+      }
+      case "post" => {
+        val providersName = (cmd.body.get \ "providers").as[Seq[String]]
+        providersName.map { providerName =>
+          val poster = Posters.getPoster(providerName)
+          poster.map( _.post(Json.fromJson[Post]((cmd.body.get \ "post").as[JsValue]).get))
+        }
       }
       case _ => {
         Logger.error("Command not found " + cmd)

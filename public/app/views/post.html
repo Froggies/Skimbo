@@ -1,0 +1,27 @@
+<div ng-controller="PostMessageController">
+  <input id="skimber" type="button" value="Skimber !" ng-click="show()">
+  <div id="content-div-post-message" ng-show="showPost">
+    <div class="error-div">
+      <span class="error-message" ng-show="showErrorTitleRequired">{{'TITLE_REQUIRED' | i18n}}</span>
+      <br ng-show="showErrorTitleRequired"/>
+      <span class="error-message" ng-show="showErrorContentRequired">{{'CONTENT_REQUIRED' | i18n}}</span>
+      <br ng-show="showErrorContentRequired"/>
+      <span class="error-message" ng-show="showErrorPosterRequired">{{'POSTER_REQUIRED' | i18n}}</span>
+    </div>
+    <p class="post-title">title : <input type="text" ng-model="title" value="{{title}}" /></p>
+    <textarea class="post-message" ng-model="message">{{message}}</textarea>
+    <p class="post-title">url : <input type="text" ng-model="url" value="{{url}}" /></p>
+    <p class="post-title">image : <input type="text" ng-model="image" value="{{image}}" /></p>
+    <div>
+      <ul class="posters-proposes">
+        <li ng-repeat="provider in providers">
+          <div class="social-network-link">
+            <a class="btn {{provider.selected}}" href="#" ng-click="selectPoster(provider)" ref="{{'ADD_STREAM_FOR_SOCIAL_NETWORK' | i18n}} {{provider.name}}">
+              <img class="social-network-active" ng-src="assets/img/brand/{{provider.name}}.png" alt="{{provider.name}}" width="16" height="16"></a>
+          </div>
+        </li>
+      </ul>
+      <input type="button" value="Ok" ng-click="post()" />
+    </div>
+  <div>
+</div>
