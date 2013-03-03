@@ -26,7 +26,7 @@ object Application extends Controller {
 
     providerOpt.map(provider => 
       userOpt.map(_ => provider.auth(routes.Application.closePopup))
-      .getOrElse(provider.auth(routes.Application.index)))
+      .getOrElse(provider.auth(routes.Application.index))) 
     .getOrElse(BadRequest)
   }
 
