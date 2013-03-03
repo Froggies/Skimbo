@@ -1,5 +1,5 @@
 <div ng-controller="ModifColumnController">
-  <input id="modifButton" type="button" ng-click="show()" value="{{'ADD_NEW_COLUMN' | i18n}}" />
+  <input id="modifButton" class="button" type="button" ng-click="show()" value="{{'ADD_NEW_COLUMN' | i18n}}" />
   <div id="content-div-add-column" ng-show="showModifyColumn">
     <div class="error-div">
       <span class="error-message" ng-show="showErrorTitleRequired">{{'TITLE_REQUIRED' | i18n}}</span>
@@ -42,7 +42,7 @@
         <ul class="services-proposes">
           <li ng-repeat="provider in providers">
             <div class="social-network-link">
-              <a class="btn {{provider.selected}}" href="#" ng-click="selectSocialNetwork(provider)" ref="{{'ADD_STREAM_FOR_SOCIAL_NETWORK' | i18n}} {{provider.name}}">
+              <a class="btn {{provider.selected}}" href="#" ng-click="selectSocialNetwork(provider)">
                 <img class="social-network-active" ng-src="assets/img/brand/{{provider.name}}.png" alt="{{provider.name}}" width="32" height="32"></a>
             </div>
           </li>
@@ -53,7 +53,7 @@
         <ul class="services-proposes">
           <li ng-repeat="service in selectedSocialNetwork.services">
             <div class="social-network-link {{service.hasParser}}">
-              <a class="btn" href="#" ng-click="addService(service)" ref="{{'ADD_STREAM_FOR_SOCIAL_NETWORK' | i18n}} {{service.service}}">
+              <a class="btn" href="#" ng-click="addService(service)">
                 {{service.serviceName}}
               </a> 
             </div>
@@ -64,8 +64,8 @@
     <div class="controls-new"> 
       <a href="#" class="btn delete-link" ng-click="cancelCreateColumn()">{{'CANCEL' | i18n}}</a>
       <a href="#" class="btn delete-link" ng-click="deleteColumn(c)" ng-hide="column.newColumn">{{'DELETE' | i18n}}</a>
-      <input type="button" ng-click="validate()" value="{{'CHANGE' | i18n}}" ng-hide="column.newColumn"/>
-      <input ng-show="column.unifiedRequests.length > 0 && column.newColumn" type="button" ng-click="validate()" value="{{'CREATE' | i18n}}"/>
+      <input class="button" type="button" ng-click="validate()" value="{{'CHANGE' | i18n}}" ng-hide="column.newColumn"/>
+      <input ng-show="column.unifiedRequests.length > 0 && column.newColumn" class="button" type="button" ng-click="validate()" value="{{'CREATE' | i18n}}"/>
     </div>
   </div>
 </div>

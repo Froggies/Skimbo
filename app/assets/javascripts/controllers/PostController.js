@@ -28,14 +28,30 @@ app.controller('PostMessageController', [
     }
 
     $scope.showPost = false;
+    $scope.showHelp = false;
     resetView();
 
     $rootScope.$on('allPosters', function(evt, providers) {
       $scope.$apply(function() {
+        $scope.providersWithTitle = [];
+        $scope.providersWithUrl = [];
+        $scope.providersWithImage = [];
         $scope.providers = providers;
         for (var i = 0; i < providers.length; i++) {
           var provider = providers[i];
           provider.selected = false;
+          if(provider.name == "linkedin" || provider.name == "github" ||
+             provider.name == "scoopit") {
+            $scope.providersWithTitle.push(provider);
+          }
+          if(provider.name == "linkedin" || provider.name == "facebook" ||
+             provider.name == "scoopit") {
+            $scope.providersWithUrl.push(provider);
+          }
+          if(provider.name == "linkedin" || provider.name == "facebook" ||
+             provider.name == "scoopit") {
+            $scope.providersWithImage.push(provider);
+          }
         }
       });
     });
@@ -81,19 +97,18 @@ app.controller('PostMessageController', [
         $scope.showErrorTitleRequired = false;
         $scope.showErrorContentRequired = true;
       } else {
-        var o = 
-          {
-            cmd:"post",
-            body: {
-              providers:selectedProviders,
-              post: {
-                title: $scope.title,
-                message: $scope.message,
-                url: $scope.url,
-                url_image: $scope.image
-              }
+        var o = {
+          cmd:"post",
+          body: {
+            providers:selectedProviders,
+            post: {
+              title: $scope.title,
+              message: $scope.message,
+              url: $scope.url,
+              url_image: $scope.image
             }
           }
+        }
         $network.send(o);
         console.log(o);
         $scope.showPost = false;
@@ -102,10 +117,10 @@ app.controller('PostMessageController', [
     };
 
     function resetView() {
-      $scope.title = "titre";
-      $scope.message = "test";
-      $scope.url = "http://";
-      $scope.image = "http://";
+      $scope.title = "";
+      $scope.message = "";
+      $scope.url = "";
+      $scope.image = "";
       $scope.showErrorPosterRequired = false;
       $scope.showErrorTitleRequired = false;
       $scope.showErrorContentRequired = false;

@@ -2,7 +2,7 @@
   position: fixed;
   background-color: white;
   top: 45px;
-  right: 50%;
+  max-width: 400px;
   width: 80%;
   margin-right: -40%;
   padding: 5px;
@@ -24,19 +24,46 @@
   display: inline-block;
 }
 
-.posters-proposes li{
+.posters-proposes-help {
+  margin: 0;
+  padding: 0px 10px 0px 10px;
+  display: inline-block;
+}
+
+.posters-proposes li, .posters-proposes-help li {
   display: inline-block;
   list-style-type: none;
   padding: 2px;
 }
 
 .post-title {
-  margin: 0 5%;
   text-align: left;
   line-height: 20px;
 }
 
 .post-message {
-  width: 90%;
-  height: 50px;
+  height: 90px;
+}
+
+.inputfalse {
+  width: 85%;
+  max-width: 400px;
+  margin: 10px 5%;
+  border-radius: 5px;
+}
+
+.inputtrue {
+  width: 50%;
+  max-width: 400px;
+  margin: 10px 5%;
+  border-radius: 5px;
+}
+
+.post-help {
+  position: absolute;
+  border-radius: 25px;
+  width: 25px;
+  height: 25px;
+  right: 5px;
+  top: 0;
 }
