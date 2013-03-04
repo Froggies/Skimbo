@@ -59,8 +59,7 @@ app.controller('ColumnController', [
           column.messages = [];
           console.log(msg);
         }
-        column.messages.push(msg.msg);
-        $arrayUtils.sortMsg(column.messages);
+        $arrayUtils.sortMsg(column.messages, msg.msg);
         $visibility.notifyNewMessage();
       });
     });

@@ -42,14 +42,19 @@ app.factory("ArrayUtils", function() {
       return index;
     },
 
-    sortMsg: function(sortMe) {
-      for(var i=0, j, tmp; i<sortMe.length; ++i ) {
-        tmp = sortMe[i];
-        tmp.dateAgo = moment(moment(Number(tmp.createdAt)), "YYYYMMDD").fromNow();
-        for(j=i-1; j>=0 && sortMe[j].createdAt < tmp.createdAt; --j) {
-          sortMe[j+1] = sortMe[j];
+    sortMsg: function(sortMe, newMsg) {
+      var inserted = false;
+      newMsg.dateAgo = moment(moment(Number(newMsg.createdAt)), "YYYYMMDD").fromNow();
+      for(var i=0; i<sortMe.length; ++i ) {
+        if(sortMe[i].createdAt < newMsg.createdAt && inserted == false) {
+          sortMe.splice(i, 0, newMsg);
+          inserted = true;
         }
-        sortMe[j+1] = tmp;
+        //refresh time
+        sortMe[i].dateAgo = moment(moment(Number(sortMe[i].createdAt)), "YYYYMMDD").fromNow();
+      }
+      if(inserted == false) {
+        sortMe.push(newMsg);
       }
     }
 
