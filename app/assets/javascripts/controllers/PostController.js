@@ -41,15 +41,15 @@ app.controller('PostMessageController', [
           var provider = providers[i];
           provider.selected = false;
           if(provider.name == "linkedin" || provider.name == "github" ||
-             provider.name == "scoopit") {
+             provider.name == "scoopit" || provider.name == "viadeo") {
             $scope.providersWithTitle.push(provider);
           }
           if(provider.name == "linkedin" || provider.name == "facebook" ||
-             provider.name == "scoopit") {
+             provider.name == "scoopit" || provider.name == "viadeo") {
             $scope.providersWithUrl.push(provider);
           }
           if(provider.name == "linkedin" || provider.name == "facebook" ||
-             provider.name == "scoopit") {
+             provider.name == "scoopit" || provider.name == "viadeo") {
             $scope.providersWithImage.push(provider);
           }
         }

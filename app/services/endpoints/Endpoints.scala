@@ -30,7 +30,8 @@ object Endpoints {
       Service("facebook.group", Configuration.Facebook.group),
       Service("facebook.message", Configuration.Facebook.message))),
     Endpoint(Viadeo, Seq(
-      Service("viadeo.wall", Configuration.Viadeo.wall))),
+      Service("viadeo.smartNews", Configuration.Viadeo.smartNews),
+      Service("viadeo.newsfeed", Configuration.Viadeo.newsfeed))),
     Endpoint(LinkedIn, Seq(
       Service("linkedin.wall", Configuration.Linkedin.wall))),
     Endpoint(GooglePlus, Seq(
