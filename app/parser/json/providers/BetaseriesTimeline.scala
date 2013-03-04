@@ -30,6 +30,7 @@ object BetaseriesTimelineParser extends GenericJsonParser {
     Json.fromJson[BetaseriesTimelineMessage](json).fold(
       error => logParseError(json, error, "BetaseriesTimelineMessage"),
       e => Some(Skimbo(
+        e.date,
         e.login,
         e.login,
         e.text,

@@ -19,6 +19,7 @@ object RssParser extends GenericXmlParser {
   
   def asSkimbo(node: scala.xml.Node) : Option[Skimbo] = {
     Some(Skimbo(
+        "",
         foundAuthor(node),
         foundAuthor(node),
         foundText(node),

@@ -18,6 +18,7 @@ object AtomParser extends GenericXmlParser {
   def asSkimbo(node: scala.xml.Node) : Option[Skimbo] = {
     println(new DateTime().toString(dateTimeFormatter2))
     Some(Skimbo(
+        "",
         (node \ "author" \ "name").text,
         (node \ "author" \ "name").text,
         (node \ "title").text,

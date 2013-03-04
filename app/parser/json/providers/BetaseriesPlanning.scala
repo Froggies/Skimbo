@@ -27,6 +27,7 @@ object BetaseriesPlanningParser extends GenericJsonParser {
     Json.fromJson[BetaseriesPlanningMessage](json).fold(
       error => logParseError(json, error, "BetaseriesPlanningMessage"),
       e => Some(Skimbo(
+        e.number,
         e.show,
         e.show,
         e.number + ":" + e.title,

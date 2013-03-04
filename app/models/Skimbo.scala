@@ -9,6 +9,7 @@ import play.api.libs.json.Json.toJsFieldJsValueWrapper
 * Common format between social networks
 */
 case class Skimbo(
+  idProvider:String,
   authorName: String,
   authorScreenName: String,
   message: String,
@@ -25,6 +26,7 @@ object Skimbo {
   implicit val writes = new Writes[Skimbo] {
     def writes(skimbo: Skimbo) = {
       Json.obj(
+        "idProvider" -> skimbo.idProvider,
         "authorName" -> skimbo.authorName,
         "authorScreenName" -> skimbo.authorScreenName,
         "message" -> skimbo.message,

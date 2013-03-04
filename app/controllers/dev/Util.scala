@@ -13,6 +13,9 @@ import play.api.Play.current
 import models.user.SkimboToken
 import views.html.defaultpages.badRequest
 import play.api.libs.iteratee.Enumerator
+import scala.util.Success
+import scala.util.Failure
+import scala.concurrent.Await
 
 object Util extends Controller with Authentication {
 
@@ -54,29 +57,12 @@ object Util extends Controller with Authentication {
     }
   }
   
-  def staticResBetaseries() = Action { implicit request =>
+  def urlTest(id:String) = Action { implicit request =>
     import scala.concurrent.ExecutionContext.Implicits.global
     Async {
-      Endpoints.getConfig("betaseries.planning").flatMap { config =>
-        Endpoints.genererUrl("betaseries.planning", Map.empty, None).map { url =>
-          config.provider.fetch(url).get.map { response =>
-            Ok(response.body)
-          }
-        }
-      }.getOrElse(future(BadRequest("Service not found")))
-    }
-  }
-  
-  def staticResScoopit() = Action { implicit request =>
-    import scala.concurrent.ExecutionContext.Implicits.global
-    Async {
-      Endpoints.getConfig("scoopit.wall").flatMap { config =>
-        Endpoints.genererUrl("scoopit.wall", Map.empty, None).map { url =>
-          config.provider.fetch(url).get.map { response =>
-            Ok(config.provider.resultAsJson(response))
-          }
-        }
-      }.getOrElse(future(BadRequest("Service not found")))
+      Twitter.fetch("https://api.twitter.com/1.1/statuses/show.json?id="+id).withTimeout(6000).get.map { response =>
+        Ok(response.json)
+      }
     }
   }
 

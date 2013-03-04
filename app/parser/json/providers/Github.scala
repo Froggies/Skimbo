@@ -75,6 +75,7 @@ object GithubWallParser extends GenericJsonParser {
     Json.fromJson[GithubWallMessage](json).fold(
       error => logParseError(json, error, "GithubWallMessage"),
       e => Some(Skimbo(
+        e.id,
         e.actorLogin,
         e.actorLogin,
         buildMsg(e),

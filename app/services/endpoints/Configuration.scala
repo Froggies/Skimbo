@@ -4,26 +4,13 @@ import services.auth.GenericProvider
 import services.auth.providers
 import org.joda.time.format.DateTimeFormat
 import parser.GenericParser
-import parser.json.providers.BetaseriesTimelineParser
-import parser.json.providers.GithubWallParser
-import parser.json.providers.FacebookWallParser
-import parser.json.providers.FacebookInboxParser
-import parser.json.providers.TwitterDirectMessageParser
-import parser.json.providers.BetaseriesPlanningParser
-import parser.json.providers.GoogleplusWallParser
-import parser.json.providers.TrelloWallParser
-import parser.json.providers.ViadeoWallParser
-import parser.json.providers.TwitterTimelineParser
-import parser.json.providers.TwitterHashtagParser
-import parser.json.providers.LinkedInWallParser
+import parser.json.providers._
 import services.auth.RssProvider
 import parser.xml.GenericRssParser
-import parser.json.providers.ScoopitWallParser
 
 object Configuration {
 
   object Twitter {
-
     object wall extends EndpointConfig {
       override val url = withLimit("https://api.twitter.com/1.1/statuses/home_timeline.json?count=:limit")
       override val since = "&since_id=:since"//ID
@@ -230,6 +217,7 @@ trait EndpointConfig {
   val manualNextResults = false
   val parser: Option[GenericParser] = None
   val mustBeReordered = false
+  val parserDetails : Option[GenericParser] = None
 
   def withLimit(url: String) = url.replace(":limit", limit.toString)
 }

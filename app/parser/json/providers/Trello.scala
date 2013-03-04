@@ -48,6 +48,7 @@ object TrelloWallParser extends GenericJsonParser {
     Json.fromJson[TrelloWallMessage](json).fold(
       error => logParseError(json, error, "ViadeoWallMessage"),
       e => Some(Skimbo(
+        e.id,
         e.memberCreator.fullName,
         e.memberCreator.username,
         generateText(e),

@@ -24,6 +24,7 @@ object GoogleplusWallParser extends GenericJsonParser {
     Json.fromJson[GoogleplusWallMessage](json).fold(
       error => logParseError(json, error, "GoogleplusWallParser"),
       e => Some(Skimbo(
+        e.id,
         e.displayName,
         e.displayName,
         e.title,

@@ -11,7 +11,7 @@ import services.auth.providers.Twitter
 import java.util.Locale
 
 case class Tweet(
-  id: Long,
+  id: String,
   text: String,
   source: String,
   hashTags: List[TwitterTag],
@@ -36,6 +36,7 @@ object TwitterTimelineParser extends GenericJsonParser {
     Json.fromJson[Tweet](json).fold(
       error => logParseError(json, error, "TwitterTimelineParser"),
       tweet => Some(Skimbo(
+        tweet.id,
         tweet.authorName,
         tweet.screenName,
         tweet.text,
@@ -106,7 +107,7 @@ object Tweet {
   }
 
   implicit val tweetReader: Reads[Tweet] = (
-    (__ \ "id").read[Long] and
+    (__ \ "id_str").read[String] and
     (__ \ "text").read[String] and
     (__ \ "source").read[String] and
     (__ \ "entities" \ "hashtags").read[List[TwitterTag]] and

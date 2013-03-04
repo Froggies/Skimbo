@@ -29,6 +29,7 @@ object ViadeoWallParser extends GenericJsonParser {
     Json.fromJson[ViadeoWallMessage](json).fold(
       error => logParseError(json, error, "ViadeoWallMessage"),
       msg => Some(Skimbo(
+        msg.id,
         msg.fromName,
         msg.fromName,
         generateMsg(msg),

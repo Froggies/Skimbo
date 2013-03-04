@@ -13,6 +13,7 @@ import services.actors.ProviderActor
 import services.actors.PingActor
 import services.auth.ProviderDispatcher
 import services.post.Posters
+import services.endpoints.Endpoints
 
 object CmdFromUser {
 
@@ -114,6 +115,14 @@ object CmdFromUser {
         providersName.map { providerName =>
           val poster = Posters.getPoster(providerName)
           poster.map( _.post(Json.fromJson[Post]((cmd.body.get \ "post").as[JsValue]).get))
+        }
+      }
+      case "detailsSkimbo" => {
+        val service = (cmd.body.get \ "service").as[String]
+        Endpoints.getConfig(service).map { service =>
+          service.parser.map { parser =>
+            
+          }
         }
       }
       case _ => {

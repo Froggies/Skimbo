@@ -9,7 +9,7 @@ import parser.json.GenericJsonParser
 import services.auth.providers.Twitter
 
 case class TwitterDirectMessage(
-  id: Long,
+  id: String,
   text: String,
   authorName: String,
   screenName: String,
@@ -23,6 +23,7 @@ object TwitterDirectMessageParser extends GenericJsonParser {
     Json.fromJson[TwitterDirectMessage](json).fold(
       error => logParseError(json, error, "TwitterTimelineParser"),
       tweet => Some(Skimbo(
+        tweet.id,
         tweet.authorName,
         tweet.screenName,
         tweet.text,
@@ -45,7 +46,7 @@ object TwitterDirectMessage {
   val twitterDateReader = Tweet.twitterDateReader
 
   implicit val tweetReader: Reads[TwitterDirectMessage] = (
-    (__ \ "id").read[Long] and
+    (__ \ "id_str").read[String] and
     (__ \ "text").read[String] and
     (__ \ "sender" \ "name").read[String] and
     (__ \ "sender" \ "screen_name").read[String] and

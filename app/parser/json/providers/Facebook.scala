@@ -31,6 +31,7 @@ object FacebookWallParser extends GenericJsonParser {
       error => logParseError(json, error, "FacebookWallMessage"),
       e => if (e.message.isDefined || e.story.isDefined) {
         Some(Skimbo(
+          e.id,
           e.fromName,
           e.fromName,
           generateMessage(e).get,

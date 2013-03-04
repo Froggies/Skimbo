@@ -28,6 +28,7 @@ object ScoopitWallParser extends GenericJsonParser {
     Json.fromJson[ScoopitPost](json).fold(
       error => logParseError(json, error, "ScoopitWallParser"),
       post => Some(Skimbo(
+        post.id.toString,
         post.displayName,
         post.displayName,
         post.title + "<br />" + post.text,

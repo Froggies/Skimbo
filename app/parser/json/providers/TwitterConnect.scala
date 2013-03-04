@@ -17,6 +17,7 @@ object TwitterConnectParser extends GenericJsonParser {
     Json.fromJson[Tweet](json).fold(
       error => logParseError(json, error, "TwitterTimelineParser"),
       tweet => Some(Skimbo(
+        "",
         tweet.authorName,
         tweet.screenName,
         tweet.text,

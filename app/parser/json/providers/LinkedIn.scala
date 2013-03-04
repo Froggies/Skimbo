@@ -48,6 +48,7 @@ object LinkedInWallParser extends GenericJsonParser {
         if (mustBeIgnored(e)) 
           None
         else Some(Skimbo(
+          e.updateKey,
           getName(e),
           getName(e),
           generateText(e),

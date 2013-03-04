@@ -31,6 +31,7 @@ object FacebookInboxParser extends GenericJsonParser {
     Json.fromJson[FacebookInboxMessage](json).fold(
       error => logParseError(json, error, "FacebookInboxMessage"),
       e => Some(Skimbo(
+          e.id,
           getFrom(e.users),
           getFrom(e.users),
           generateMessage(e),
