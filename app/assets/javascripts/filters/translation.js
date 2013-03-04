@@ -8,8 +8,11 @@ app.filter('i18n', ['$rootScope', function($rootScope) {
       'fr' : {
         'ADD_FIRST_COLUMN_SENTENCE' : 'Créez votre première colonne !',
         'ADD_FIRST_SERVICE_SENTENCE' : 'Ajoutez-y autant de services que vous souhaitez.',
-        'ADD_FIRST_MODIF_SENTENCE' : 'Par la suite cliquez sur ⚙ (en haut à droite de la colonne) pour la modifier.',
-        'ADD_FIRST_SIZE_SENTENCE' : 'Vous pouvez également cliquer sur ⤭ (à gauche de ⚙) pour modifier sa taille.',
+        'ADD_FIRST_MODIF_SENTENCE_BEFORE_ICON' : 'Par la suite cliquez sur ',
+        'ADD_FIRST_MODIF_SENTENCE_AFTER_ICON' : ' (en haut à droite de la colonne) pour la modifier.',
+        'ADD_FIRST_SIZE_SENTENCE_BEFORE_ICON1' : 'Vous pouvez également cliquer sur ',
+        'ADD_FIRST_SIZE_SENTENCE_AFTER_ICON1' : ' (à gauche de ',
+        'ADD_FIRST_SIZE_SENTENCE_AFTER_ICON2' : ') pour modifier sa taille.',
         'ADD_NEW_COLUMN' : 'Ajouter une colonne',
         'ADD_STREAM_FOR_SOCIAL_NETWORK' : 'Ajouter un flux pour : ',
         'ALL_FIELD_REQUIRED' : 'Tous les champs sont requis.',
@@ -21,11 +24,14 @@ app.filter('i18n', ['$rootScope', function($rootScope) {
         'CHANGE' : 'Modifier',
         'COLUMN_TITLE' : 'Titre de la colonne :',
         'COLUMNS' : 'Colonnes',
+        'CONFIGURATION_COLUMN' : 'Préférences de la colonne',
         'CONTENT_REQUIRED' : 'Le message est requis.',
         'CREATE' : 'Créer !',
         'DELETE' : 'Supprimer',
         'MESSAGES' : 'Messages',
+        'NEW_MGS_UNREAD' : 'nouveaux messages. Click pour tout lire.',
         'POSTER_REQUIRED' : 'Au moins un réseau est requis.',
+        'RESIZE_COLUMN' : 'Modifier la taille de la colonne.',
         'TITLE_ALREADY_EXISTS' : 'Ce titre existe déjà.',
         'TITLE_REQUIRED' : 'Le titre est requis.',
         'TO_ADD_STREAM_IN_COLUMN' : 'Pour ajouter un flux à cette colonne, sélectionnez un ou plusieurs services ci-dessus.',
@@ -34,8 +40,11 @@ app.filter('i18n', ['$rootScope', function($rootScope) {
       'en' : {
         'ADD_FIRST_COLUMN_SENTENCE' : 'Create your first column !',
         'ADD_FIRST_SERVICE_SENTENCE' : 'Add services as you want.',
-        'ADD_FIRST_MODIF_SENTENCE' : 'After that, click ⚙ (top right column) to change it.',
-        'ADD_FIRST_SIZE_SENTENCE' : 'You can also click ⤭ (left ⚙) to change its size.',
+        'ADD_FIRST_MODIF_SENTENCE_BEFORE_ICON' : 'After that, click ',
+        'ADD_FIRST_MODIF_SENTENCE_AFTER_ICON' : ' (top right column) to change it.',
+        'ADD_FIRST_SIZE_SENTENCE_BEFORE_ICON1' : 'You can also click ',
+        'ADD_FIRST_SIZE_SENTENCE_AFTER_ICON1' : ' (left ',
+        'ADD_FIRST_SIZE_SENTENCE_AFTER_ICON2' : ') to change its size.',
         'ADD_NEW_COLUMN' : 'Add new column',
         'ADD_STREAM_FOR_SOCIAL_NETWORK' : 'Add a stream for this social network :',
         'ALL_FIELD_REQUIRED' : 'All fields are required.',
@@ -47,11 +56,14 @@ app.filter('i18n', ['$rootScope', function($rootScope) {
         'CHANGE' : 'Change',
         'COLUMN_TITLE' : 'Column title :',
         'COLUMNS' : 'Columns',
+        'CONFIGURATION_COLUMN' : 'Column\'s configuration.',
         'CONTENT_REQUIRED' : 'The message is required !',
         'CREATE' : 'Create !',
         'DELETE' : 'Delete',
         'MESSAGES' : 'Messages',
+        'NEW_MGS_UNREAD' : 'new messages. Click to read all.',
         'POSTER_REQUIRED' : 'At least one network is required.',
+        'RESIZE_COLUMN' : 'Resize column',
         'TITLE_ALREADY_EXISTS' : 'This title already exists.',
         'TITLE_REQUIRED' : 'The title is required !',
         'TO_ADD_STREAM_IN_COLUMN' : 'To add a stream in this column, select one or many services above.',
@@ -59,7 +71,12 @@ app.filter('i18n', ['$rootScope', function($rootScope) {
       }
     },
     currentLanguage = $rootScope.currentLanguage || 'en';
-    return translations[currentLanguage][input];
+    if(translations[currentLanguage] != undefined && 
+        translations[currentLanguage][input] != undefined) {
+        return translations[currentLanguage][input];
+    } else {
+        return translations["en"][input];
+    }
   }
 
 }]);

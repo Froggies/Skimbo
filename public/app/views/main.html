@@ -8,8 +8,8 @@
 		<center>{{'ADD_FIRST_COLUMN_SENTENCE' | i18n}}</center><br />
 		<ul>
 			<li>{{'ADD_FIRST_SERVICE_SENTENCE' | i18n}}</li>
-			<li>{{'ADD_FIRST_MODIF_SENTENCE' | i18n}}</li>
-			<li>{{'ADD_FIRST_SIZE_SENTENCE' | i18n}}</li>
+			<li>{{'ADD_FIRST_MODIF_SENTENCE_BEFORE_ICON' | i18n}}<span class="icon-cog" />{{'ADD_FIRST_MODIF_SENTENCE_AFTER_ICON' | i18n}}</li>
+			<li>{{'ADD_FIRST_SIZE_SENTENCE_BEFORE_ICON1' | i18n}}<span class="icon-resize-full" />{{'ADD_FIRST_SIZE_SENTENCE_AFTER_ICON1' | i18n}}<span class="icon-cog" />{{'ADD_FIRST_SIZE_SENTENCE_AFTER_ICON2' | i18n}}</li>
 		</ul>
 	</div>
 
@@ -20,13 +20,17 @@
       drop="" dropStyle="columnDrop"
 			style="width:{{c.csswidth}};height:{{c.cssheight}}">
 		<header class="column-title">
+			<div class="containerNbMsg">
+				<a class="linkNbMsgIcon icon-eye-1" ng-show="messagesNoView(c) > 0" ng-click="markAllAsView(c)"></a>
+				<a class="linkNbMsg" ng-show="messagesNoView(c) > 0" ng-click="markAllAsView(c)" title="{{messagesNoView(c)}} {{'NEW_MGS_UNREAD' | i18n}}">
+					{{messagesNoView(c)}}
+				</a>
+			</div>
 			<div class="title">
-				<a class="linkNbMsg" ng-show="messagesNoView(c) > 0" ng-click="markAllAsView(c)">
-					[{{messagesNoView(c)}}]
-				</a> {{c.title}}
+				{{c.title}}
 			</div>
 			<div class="configure">
-				<a href="#" ng-click="c.show_size_column=!c.show_size_column">⤭</a>
+				<a href="#" class="icon-resize-full" title="{{'RESIZE_COLUMN' | i18n}}" ng-click="c.show_size_column=!c.show_size_column"></a>
 				<div class="column-size" ng-show="c.show_size_column">
 					<div ng-repeat="h in c.compoSize">
 						<a href="#" style="{{w.selectedStyle}}"
@@ -35,7 +39,7 @@
 					</div>
 					<br />
 				</div>
-				<a href="#" ng-click="modifyColumn(c)">⚙</a>
+				<a href="#" class="icon-cog" title="{{'CONFIGURATION_COLUMN' | i18n}}" ng-click="modifyColumn(c)"></a>
 			</div>
 		</header>
 		<div class="column-content" scrollmanager="onlyTop" scrolldata="c">
@@ -54,7 +58,7 @@
 						<p class="date-creation">{{m.dateAgo}}</p>
 						<div class="message" ng-bind-html="m.message" title="{{m.original}}"></div>
 						<div class="message-footer" ng-show="m.shared >= 0">
-							<span class="message-shared">★{{m.shared}}</span>
+							<span class="message-shared icon-star">{{m.shared}}</span>
 						</div>
 					</div>
 				</li>
