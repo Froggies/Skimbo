@@ -52,7 +52,7 @@ app.factory("ArrayUtils", function() {
         var isOldMsg = false;
         newMsg.dateAgo = moment(moment(Number(newMsg.createdAt)), "YYYYMMDD").fromNow();
         for(var i=0, len=sortMe.length; i<len; ++i ) {
-          if(sortMe[i].createdAt < newMsg.createdAt) {
+          if(sortMe[i].createdAt < newMsg.createdAt && index == -1) {
             index = i;
           }
           if(sortMe[i].idProvider == newMsg.idProvider || 
