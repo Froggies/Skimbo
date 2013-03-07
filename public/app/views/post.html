@@ -21,7 +21,7 @@
       </ul>
     </span>
     <textarea class="post-message inputfalse" ng-model="message" placeholder="message">{{message}}</textarea>
-    <span>
+    <div class="icon-link">
       <input class="post-title input{{showHelp}}" type="text" ng-model="url" value="{{url}}" placeholder="url" />
       <ul class="posters-proposes-help" ng-show="showHelp">
         <li ng-repeat="provider in providersWithUrl">
@@ -31,8 +31,8 @@
           </div>
         </li>
       </ul>
-    </span>
-    <span>
+    </div>
+    <div class="icon-camera">
       <input class="post-title input{{showHelp}}" type="text" ng-model="image" value="{{image}}" placeholder="urlImage" />
       <ul class="posters-proposes-help" ng-show="showHelp">
         <li ng-repeat="provider in providersWithImage">
@@ -42,7 +42,7 @@
           </div>
         </li>
       </ul>
-    </span>
+    </div>
     <div>
       <ul class="posters-proposes">
         <li ng-repeat="provider in providers">
