@@ -47,7 +47,9 @@ app.controller('ColumnController', [
       $scope.$apply(function() {
         $columnSize.setSize(columns);
         $columnSize.buildSizeCompo(columns);
-        $scope.columns = columns;
+        if($scope.columns.length == 0) {
+          $scope.columns = columns;
+        }
         $scope.userNoColumn = $scope.columns.length === 0;
       });
     });
