@@ -4,6 +4,9 @@ define(["app"], function(app) {
 
 app.factory("ArrayUtils", function() {
 
+  var insertedMsgInProgress = false;
+  var msgToBeInserted = [];
+
   return {
 
     exist: function(array, object, field) {
@@ -43,18 +46,44 @@ app.factory("ArrayUtils", function() {
     },
 
     sortMsg: function(sortMe, newMsg) {
-      var inserted = false;
-      newMsg.dateAgo = moment(moment(Number(newMsg.createdAt)), "YYYYMMDD").fromNow();
-      for(var i=0; i<sortMe.length; ++i ) {
-        if(sortMe[i].createdAt < newMsg.createdAt && inserted == false) {
-          sortMe.splice(i, 0, newMsg);
-          inserted = true;
+      if(insertedMsgInProgress == false) {
+        insertedMsgInProgress = true;
+        var index = -1;
+        var isOldMsg = false;
+        newMsg.dateAgo = moment(moment(Number(newMsg.createdAt)), "YYYYMMDD").fromNow();
+        for(var i=0, len=sortMe.length; i<len; ++i ) {
+          if(sortMe[i].createdAt < newMsg.createdAt) {
+            index = i;
+          }
+          if(sortMe[i].idProvider == newMsg.idProvider || 
+            (sortMe[i].authorName == newMsg.authorName && sortMe[i].message == newMsg.message)) {
+            isOldMsg = true;
+            //update old msg
+            if(newMsg.shared !== undefined) {
+              sortMe[i].shared = newMsg.shared;
+            }
+          }
+          //refresh time
+          sortMe[i].dateAgo = moment(moment(Number(sortMe[i].createdAt)), "YYYYMMDD").fromNow();
         }
-        //refresh time
-        sortMe[i].dateAgo = moment(moment(Number(sortMe[i].createdAt)), "YYYYMMDD").fromNow();
-      }
-      if(inserted == false) {
-        sortMe.push(newMsg);
+        //insert data
+        if(index > -1 && isOldMsg == false) {
+          sortMe.splice(index, 0, newMsg);
+        } else if(isOldMsg == false) {
+          sortMe.push(newMsg);
+        }
+        //recursion powa
+        if(msgToBeInserted.length == 0) {
+          insertedMsgInProgress = false;
+        } else {
+          var toBeInserted = msgToBeInserted.shift();
+          this.sortMsg(toBeInserted.tab, toBeInserted.msg);
+        }
+      } else {
+        msgToBeInserted.push({
+          tab: sortMe,
+          msg: newMsg
+        })
       }
     }
 
