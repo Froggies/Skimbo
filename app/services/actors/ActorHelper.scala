@@ -1,7 +1,7 @@
 package services.actors
 
 import scala.collection.mutable.HashMap
-import services.UserDao
+import services.dao.UserDao
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import scala.concurrent.Future
 import akka.actor.ActorSystem

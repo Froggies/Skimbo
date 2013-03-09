@@ -1,7 +1,7 @@
 package services.auth
 
 import services.auth.actions._
-import services.UserDao
+import services.dao.UserDao
 import play.api.mvc._
 import models.user.SkimboToken
 import services.commands.CmdFromUser

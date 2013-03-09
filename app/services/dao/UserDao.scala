@@ -1,4 +1,4 @@
-package services;
+package services.dao;
 
 import java.util.Date
 import scala.concurrent.Future
@@ -16,7 +16,6 @@ import reactivemongo.bson.handlers.DefaultBSONHandlers.DefaultBSONDocumentWriter
 import reactivemongo.bson.handlers.DefaultBSONHandlers.DefaultBSONReaderHandler
 import services.auth.GenericProvider
 import services.auth.ProviderDispatcher
-import reactivemongo.bson.BSONInteger
 
 object UserDao {
 

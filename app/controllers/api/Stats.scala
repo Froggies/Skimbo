@@ -3,7 +3,7 @@ package controllers.api
 import org.joda.time.DateTime
 import models.User
 import play.api.mvc._
-import services.UserDao
+import services.dao.UserDao
 import services.auth.ProviderDispatcher
 
 object Stats extends Controller {

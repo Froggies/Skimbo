@@ -3,7 +3,7 @@ package updateDb._20121215
 import org.specs2.mutable._
 import play.api.test._
 import play.api.test.Helpers._
-import services.UserDao
+import services.dao.UserDao
 import reactivemongo.api._
 import reactivemongo.bson._
 import reactivemongo.bson.handlers.DefaultBSONHandlers.DefaultBSONDocumentWriter

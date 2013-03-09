@@ -11,7 +11,7 @@ import play.api.libs.ws.WS
 import play.api.mvc.Call
 import play.api.mvc.RequestHeader
 import play.api.mvc.Result
-import services.UserDao
+import services.dao.UserDao
 import services.post.Poster
 import scala.util.Success
 import scala.util.Failure

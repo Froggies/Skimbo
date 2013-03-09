@@ -7,7 +7,7 @@ import play.api.libs.json.JsValue
 import play.api.mvc.Controller
 import services.actors.UserInfosActor
 import play.api.PlayException
-import services.UserDao
+import services.dao.UserDao
 import services.commands.CmdFromUser
 import services.commands.CmdToUser
 

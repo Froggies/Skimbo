@@ -7,7 +7,7 @@ import play.api.libs.json.JsValue
 import play.api.libs.json.Json
 import models.command.TokenInvalid
 import models.command.Error
-import services.UserDao
+import services.dao.UserDao
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import play.api.Logger
 import scala.concurrent.Future

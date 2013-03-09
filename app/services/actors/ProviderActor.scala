@@ -96,6 +96,7 @@ class ProviderActor(parameter:ProviderActorParameter)(implicit request: RequestH
   val idUser = parameter.idUser
   val parser = parameter.parser
   val column = parameter.column
+  val config = Endpoints.getConfig(unifiedRequest.service).get
   
   var sinceId = ""
   var sinceDate = new DateTime().minusYears(1)
@@ -110,63 +111,15 @@ class ProviderActor(parameter:ProviderActorParameter)(implicit request: RequestH
 
   def receive = {
     case ReceiveTimeout => {
-      log.info("[" + unifiedRequest.service + "] Fetching")
-
-      if (provider.canStart) {
-        val optSinceId = if (sinceId.isEmpty) None else Some(sinceId)
-        val url = Endpoints.genererUrl(unifiedRequest.service, unifiedRequest.args.getOrElse(Map.empty), optSinceId);
-        val config = Endpoints.getConfig(unifiedRequest.service).get
-
-        log.info("[" + unifiedRequest.service + "] " + url.get)
-
-        if (url.isDefined) {
-          provider.fetch(url.get).withTimeout(config.delay * 1000).get.onComplete {
-            case Success(response) => {
-
-              if (response.status != Status.OK) {
-                log.error("[" + unifiedRequest.service + "] HTTP Error " + response.status)
-                log.info(response.body.toString)
-                if (provider.isInvalidToken(response)) {
-                  CmdToUser.sendTo(idUser, TokenInvalid(provider.name))
-                  self ! Dead(idUser)
-                } else if (provider.isRateLimiteError(response)) {
-                  CmdToUser.sendTo(idUser, Error(provider.name, "Rate limite exceeded on"))
-                } else {
-                  CmdToUser.sendTo(idUser, Error(provider.name, "Error in column "+column.title+" with"))
-                  self ! Dead(idUser)
-                }
-              } else {
-                val skimboMsgs = parser.get.getSkimboMsg(response, provider)
-                if (skimboMsgs.isEmpty) {
-                  log.error("[" + unifiedRequest.service + "] Unexpected result")
-                  log.info(response.body.toString)
-                  CmdToUser.sendTo(idUser, Error(provider.name, "Unexpected result on"))
-                } else {
-                  val listJson = if (config.manualNextResults || config.mustBeReordered) reorderMessagesByDate(skimboMsgs.get) else skimboMsgs.get
-                  val messagesEnumerators = Enumerator.enumerate(listJson)
-                  val pusherIteratee = pushNewMessagesIteratee(config)
-                  messagesEnumerators(pusherIteratee)
-                }
-              }
-            }
-
-            case Failure(error) => {
-              log.error("[" + unifiedRequest.service + "] Timeout HTTP", error)
-              CmdToUser.sendTo(idUser, Error(provider.name, "Timeout on"))
-            }
-          }
-        } else {
-          log.error("[" + unifiedRequest.service + "] Bad url" + unifiedRequest.args)
+      Fetcher(parameter, sinceId).map { listSkimbo =>
+        if(!listSkimbo.isDefined) {
           self ! Dead(idUser)
+        } else {
+          val listJson = if (config.manualNextResults || config.mustBeReordered) reorderMessagesByDate(listSkimbo.get) else listSkimbo.get
+          val messagesEnumerators = Enumerator.enumerate(listJson)
+          val pusherIteratee = pushNewMessagesIteratee(config)
+          messagesEnumerators(pusherIteratee)
         }
-      } else if (provider.isAuthProvider && !provider.canStart) {
-        CmdToUser.sendTo(idUser, TokenInvalid(provider.name))
-        log.info("[" + unifiedRequest.service + "] No Token")
-        self ! Dead(idUser)
-      } else {
-        log.error("Provider " + provider.name + " havn't parser for " + unifiedRequest.service)
-        CmdToUser.sendTo(idUser, Error(provider.name, "No parser on"))
-        self ! Dead(idUser)
       }
     }
 

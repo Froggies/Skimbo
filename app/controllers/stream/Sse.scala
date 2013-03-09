@@ -8,7 +8,7 @@ import play.api.libs.EventSource
 import models.command.Command
 import play.api.libs.json.Json
 import services.security.Authentication
-import services.UserDao
+import services.dao.UserDao
 import services.commands.CmdFromUser
 import services.commands.CmdToUser
 import play.api.libs.concurrent.Execution.Implicits.defaultContext

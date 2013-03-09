@@ -10,44 +10,41 @@ import services.endpoints.JsonRequest.UnifiedRequest
 import services.endpoints.JsonRequest.unifiedRequestReader
 import services.auth.RssProvider
 
-case class Service(service: String, configuration: EndpointConfig)
-case class Endpoint(provider: GenericProvider, services: Seq[Service])
+case class Endpoint(provider: GenericProvider, services: Seq[EndpointConfig])
 
 object Endpoints {
 
   // Activated endpoints
   private val endpoints = Seq[Endpoint](
     Endpoint(Twitter, Seq(
-      Service("twitter.wall", Configuration.Twitter.wall),
-      Service("twitter.hashtag", Configuration.Twitter.hashtag),
-      Service("twitter.user", Configuration.Twitter.user),
-      Service("twitter.directMessage", Configuration.Twitter.directMessage),
-      Service("twitter.messageToMe", Configuration.Twitter.messageToMe),
-      Service("twitter.connect", Configuration.Twitter.connect))),
+      Configuration.Twitter.wall,
+      Configuration.Twitter.hashtag,
+      Configuration.Twitter.user,
+      Configuration.Twitter.directMessage,
+      Configuration.Twitter.messageToMe)),
     Endpoint(Facebook, Seq(
-      Service("facebook.wall", Configuration.Facebook.wall),
-      Service("facebook.user", Configuration.Facebook.user),
-      Service("facebook.group", Configuration.Facebook.group),
-      Service("facebook.message", Configuration.Facebook.message))),
+      Configuration.Facebook.wall,
+      Configuration.Facebook.user,
+      Configuration.Facebook.group,
+      Configuration.Facebook.message)),
     Endpoint(Viadeo, Seq(
-      Service("viadeo.smartNews", Configuration.Viadeo.smartNews),
-      Service("viadeo.newsfeed", Configuration.Viadeo.newsfeed))),
+      Configuration.Viadeo.smartNews,
+      Configuration.Viadeo.newsfeed)),
     Endpoint(LinkedIn, Seq(
-      Service("linkedin.wall", Configuration.Linkedin.wall))),
+      Configuration.Linkedin.wall)),
     Endpoint(GooglePlus, Seq(
-      Service("googleplus.wall", Configuration.GooglePlus.wall))),
+      Configuration.GooglePlus.wall)),
     Endpoint(GitHub, Seq(
-      Service("github.notifications", Configuration.Github.notifications))),
+      Configuration.Github.notifications)),
     Endpoint(Trello, Seq(
-      Service("trello.notifications", Configuration.Trello.notifications))),
+      Configuration.Trello.notifications)),
     Endpoint(Scoopit, Seq(
-      Service("scoopit.wall", Configuration.Scoopit.wall))),
+      Configuration.Scoopit.wall)),
     Endpoint(BetaSeries, Seq(
-      Service("betaseries.notifications", Configuration.BetaSeries.notifications),
-      Service("betaseries.planning", Configuration.BetaSeries.planning),
-      Service("betaseries.timeline", Configuration.BetaSeries.timeline))),
+      Configuration.BetaSeries.planning,
+      Configuration.BetaSeries.timeline)),
     Endpoint(RssProvider, Seq(
-      Service("rss.rss", Configuration.Rss.rss)))
+      Configuration.Rss.rss))
   )
 
   def getAll: Seq[Endpoint] = {
@@ -55,7 +52,7 @@ object Endpoints {
   }
 
   def getProvider(service: String): Option[GenericProvider] = {
-    val found = endpoints.filter { _.services.filter { _.service == service }.size > 0 }
+    val found = endpoints.filter { _.services.filter { _.uniqueName == service }.size > 0 }
     if (found.size > 0) {
       Some(found.head.provider)
     } else {
@@ -66,14 +63,10 @@ object Endpoints {
   def getConfig(service: String): Option[EndpointConfig] = {
     val found = endpoints.flatMap {
       _.services.filter { endServ =>
-        endServ.service == service
+        endServ.uniqueName == service
       }
     }
-    if (found.size > 0) {
-      Some(found.head.configuration)
-    } else {
-      None
-    }
+    found.headOption
   }
 
   def genererUrl(endpoint: String, param: Map[String, String], sinceOpt: Option[String]): Option[String] = {

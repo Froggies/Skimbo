@@ -12,7 +12,7 @@ import play.api.libs.iteratee.Concurrent
 import play.api.libs.json.JsValue
 import play.api.libs.json.Json
 import play.api.mvc.RequestHeader
-import services.UserDao
+import services.dao.UserDao
 import services.auth.GenericProvider
 import services.auth.ProviderDispatcher
 import services.auth.AuthProvider
