@@ -4,6 +4,7 @@ import play.api.libs.json._
 import models.Skimbo
 import parser.json.GenericJsonParser
 import services.auth.providers.Twitter
+import services.endpoints.Configuration
 
 object TwitterConnect {
 
@@ -27,7 +28,7 @@ object TwitterConnectParser extends GenericJsonParser {
         Some(tweetDetailUrl.format(tweet.screenName, tweet.id)),
         tweet.id.toString,
         tweet.profileImageUrl,
-        Twitter)))
+        Configuration.Twitter.wall)))
   }
   
   override def nextSinceId(sinceId:String, sinceId2:String): String = {

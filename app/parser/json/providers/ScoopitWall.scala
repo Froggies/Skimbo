@@ -8,6 +8,7 @@ import parser.json.GenericJsonParser
 import models.Skimbo
 import services.auth.providers.Scoopit
 import org.joda.time.DateTimeZone
+import services.endpoints.Configuration
 
 case class ScoopitPost (
     id: Long,
@@ -38,7 +39,7 @@ object ScoopitWallParser extends GenericJsonParser {
         Some(post.url),
         post.createdDate.toString,
         Some(post.avatarUrl),
-        Scoopit)))
+        Configuration.Scoopit.wall)))
   }
   
   override def nextSinceId(sinceId:String, sinceId2:String): String = 

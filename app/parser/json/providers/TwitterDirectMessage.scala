@@ -7,6 +7,7 @@ import org.joda.time.format._
 import models.Skimbo
 import parser.json.GenericJsonParser
 import services.auth.providers.Twitter
+import services.endpoints.Configuration
 
 case class TwitterDirectMessage(
   id: String,
@@ -33,7 +34,7 @@ object TwitterDirectMessageParser extends GenericJsonParser {
         Some("http://twitter.com/"),
         tweet.id.toString,
         tweet.profileImageUrl,
-        Twitter)))
+        Configuration.Twitter.directMessage)))
   }
   
   override def nextSinceId(sinceId:String, sinceId2:String): String = 

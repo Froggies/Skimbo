@@ -7,6 +7,7 @@ import parser.GenericParser
 import models.Skimbo
 import parser.json.GenericJsonParser
 import services.auth.providers.Facebook
+import services.endpoints.Configuration
 
 case class FacebookInboxMessage(
   id: String,
@@ -41,7 +42,7 @@ object FacebookInboxParser extends GenericJsonParser {
           Some("http://www.facebook.com/messages/"+e.id),
           (e.updatedAt.getMillis() / 1000).toInt.toString,
           None,
-          Facebook))
+          Configuration.Facebook.message))
     )
   }
 

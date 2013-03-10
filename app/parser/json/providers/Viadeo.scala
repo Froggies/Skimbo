@@ -8,6 +8,7 @@ import parser.json.GenericJsonParser
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
 import parser.json.PathDefaultReads
+import services.endpoints.Configuration
 
 case class ViadeoWallMessage(
   id:String,
@@ -39,8 +40,7 @@ object ViadeoWallParser extends GenericJsonParser {
         msg.infeedLink,
         msg.updatedTime.toString(ViadeoWallMessage.datePattern),
         msg.pictureUrl,
-        Viadeo))
-      )
+        Configuration.Viadeo.smartNews)))
   }
   
   def generateMsg(e: ViadeoWallMessage) = {

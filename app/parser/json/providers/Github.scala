@@ -7,6 +7,7 @@ import parser.json.SkimboJsPath._
 import models.Skimbo
 import parser.json.GenericJsonParser
 import services.auth.providers.GitHub
+import services.endpoints.Configuration
 
 case class GithubWallMessage(
   id: String,
@@ -85,7 +86,7 @@ object GithubWallParser extends GenericJsonParser {
         buildLink(e),
         e.createdAt.toString(GithubWallMessage.datePattern),
         e.avatarUser,
-        GitHub)))
+        Configuration.Github.notifications)))
   }
 
   def buildMsg(e: GithubWallMessage) = {

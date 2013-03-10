@@ -8,6 +8,7 @@ import parser.json.GenericJsonParser
 import models.Skimbo
 import services.auth.providers.LinkedIn
 import parser.json.PathDefaultReads
+import services.endpoints.Configuration
 
 case class LinkedInWallMessage(
   numLikes: Option[Int],
@@ -58,7 +59,7 @@ object LinkedInWallParser extends GenericJsonParser {
           Some(e.person.getOrElse(e.companyPerson.get.person).directLink),
           e.timestamp.toInstant().getMillis().toString(),
           e.person.getOrElse(e.companyPerson.get.person).pictureUrl,
-          LinkedIn)))
+          Configuration.Linkedin.wall)))
   }
   
   def getName(msg: LinkedInWallMessage) = {

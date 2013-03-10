@@ -5,8 +5,10 @@ import services.auth.providers
 import org.joda.time.format.DateTimeFormat
 import parser.GenericParser
 import parser.json.providers._
+import parser.json.detail._
 import services.auth.RssProvider
 import parser.xml.GenericRssParser
+import parser.GenericParser
 
 object Configuration {
 
@@ -18,6 +20,8 @@ object Configuration {
       override val provider = providers.Twitter
       override val parser = Some(TwitterTimelineParser)
       override val uniqueName = "twitter.wall"
+      override val parserDetails = Some(TweetDetails)
+      override val urlDetails = "https://api.twitter.com/1.1/statuses/show.json?id=:id"
     }
     object user extends EndpointConfig {
       override val url = withLimit("https://api.twitter.com/1.1/statuses/user_timeline.json?count=:limit&screen_name=:username")
@@ -233,6 +237,7 @@ trait EndpointConfig {
   val mustBeReordered = false
   val parserDetails : Option[GenericParser] = None
   val uniqueName: String
+  val urlDetails:String = ""
 
   def withLimit(url: String) = url.replace(":limit", limit.toString)
 }

@@ -36,7 +36,8 @@ import services.auth.AuthProvider
 import services.commands.CmdToUser
 import akka.actor.ActorRef
 
-sealed case class ProviderActorParameter(provider: GenericProvider,
+sealed case class ProviderActorParameter(
+  provider: GenericProvider,
   unifiedRequest: UnifiedRequest,
   delay: Int,
   idUser: String,
@@ -111,7 +112,16 @@ class ProviderActor(parameter:ProviderActorParameter)(implicit request: RequestH
 
   def receive = {
     case ReceiveTimeout => {
-      Fetcher(parameter, sinceId).map { listSkimbo =>
+      val optSinceId = if (sinceId.isEmpty) None else Some(sinceId)
+      val url = Endpoints.genererUrl(unifiedRequest.service, unifiedRequest.args.getOrElse(Map.empty), optSinceId);
+      Fetcher(FetcherParameter(
+          provider, 
+          parser, 
+          url,
+          idUser,
+          column.title,
+          unifiedRequest.service,
+          config.delay)).map { listSkimbo =>
         if(!listSkimbo.isDefined) {
           self ! Dead(idUser)
         } else {

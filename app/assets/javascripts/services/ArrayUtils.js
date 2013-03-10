@@ -62,6 +62,7 @@ app.factory("ArrayUtils", function() {
             if(newMsg.shared !== undefined) {
               sortMe[i].shared = newMsg.shared;
             }
+            sortMe[i].styleRefresh = "";
           }
           //refresh time
           sortMe[i].dateAgo = moment(moment(Number(sortMe[i].createdAt)), "YYYYMMDD").fromNow();

@@ -13,6 +13,7 @@ import play.api.libs.json.__
 import services.auth.providers.BetaSeries
 import play.api.libs.json.JsPath
 import play.api.libs.json.JsObject
+import services.endpoints.Configuration
 
 case class BetaseriesPlanningMessage(
   date: Long,
@@ -37,7 +38,7 @@ object BetaseriesPlanningParser extends GenericJsonParser {
         Some("http://www.betaseries.com/serie/" + e.url + "/" + e.number),
         e.date.toString,
         None,
-        BetaSeries)))
+        Configuration.BetaSeries.planning)))
   }
 
   override def cut(json: JsValue) = {

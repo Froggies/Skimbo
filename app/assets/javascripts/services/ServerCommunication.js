@@ -40,6 +40,7 @@ app.factory("ServerCommunication", [
             serviceProposes.push(service);
           }
         };
+        console.log(data.body);
         broadcast('availableServices', serviceProposes);
         broadcast('allUnifiedRequests', data.body);
       } else if(data.cmd == "msg") {

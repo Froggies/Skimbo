@@ -145,6 +145,17 @@ app.controller('ColumnController', [
       }
     }
 
+    $scope.getDetails = function(message, column) {
+      message.styleRefresh = "rotate";
+      $network.send({
+        cmd: "detailsSkimbo", 
+        body: {
+          "serviceName": message.service,
+          "id": message.idProvider,
+          "columnTitle": column.title
+      }});
+    }
+
     function getColumnByName(name) {
       if($scope.columns !== undefined) {
         for (var i = 0; i < $scope.columns.length; i++) {

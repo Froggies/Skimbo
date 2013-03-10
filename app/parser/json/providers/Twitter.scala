@@ -9,6 +9,7 @@ import models.Skimbo
 import java.text.SimpleDateFormat
 import services.auth.providers.Twitter
 import java.util.Locale
+import services.endpoints.Configuration
 
 case class Tweet(
   id: String,
@@ -46,7 +47,7 @@ object TwitterTimelineParser extends GenericJsonParser {
         Some(tweetDetailUrl.format(tweet.screenName, tweet.id)),
         tweet.id.toString,
         tweet.profileImageUrl,
-        Twitter)))
+        Configuration.Twitter.wall)))
   }
   
   override def nextSinceId(sinceId:String, sinceId2:String): String = {

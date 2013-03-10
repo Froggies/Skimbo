@@ -8,6 +8,7 @@ import parser.json.GenericJsonParser
 import models.Skimbo
 import services.auth.providers.Facebook
 import parser.json.PathDefaultReads
+import services.endpoints.Configuration
 
 case class FacebookWallMessage(
   id: String,
@@ -41,7 +42,7 @@ object FacebookWallParser extends GenericJsonParser {
           Some(e.link),
           (e.createdAt.getMillis() / 1000).toInt.toString,
           e.picture,
-          Facebook))
+          Configuration.Facebook.wall))
       } else {
         None
       }

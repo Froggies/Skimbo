@@ -6,6 +6,7 @@ import org.joda.time.DateTime
 import services.auth.RssProvider
 import org.joda.time.format.DateTimeFormat
 import java.util.Locale
+import services.endpoints.Configuration
 
 object RssParser extends GenericXmlParser {
 
@@ -29,7 +30,7 @@ object RssParser extends GenericXmlParser {
         Some((node \ "link").text),
         "",
         RssHelper.foundImg(node),
-        RssProvider
+        Configuration.Rss.rss
     ))
   }
   

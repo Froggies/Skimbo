@@ -7,6 +7,7 @@ import org.joda.time.format.DateTimeFormat
 import parser.json.GenericJsonParser
 import models.Skimbo
 import services.auth.providers.GooglePlus
+import services.endpoints.Configuration
 
 case class GoogleplusWallMessage(
   id:String,
@@ -34,7 +35,7 @@ object GoogleplusWallParser extends GenericJsonParser {
         e.url,
         e.publishedDate.toString(GoogleplusWallMessage.datePattern),
         e.actorImage,
-        GooglePlus)))
+        Configuration.GooglePlus.wall)))
   }
   
   override def cut(json: JsValue): List[JsValue] = super.cut(json \ "items")

@@ -6,6 +6,7 @@ import play.api.libs.functional.syntax._
 import parser.json.GenericJsonParser
 import models.Skimbo
 import services.auth.providers.Trello
+import services.endpoints.Configuration
 
 case class TrelloWallMessage(
   id: String,
@@ -58,7 +59,7 @@ object TrelloWallParser extends GenericJsonParser {
         generateLink(e),
         e.id,
         generateAvatarUrl(e),
-        Trello)))
+        Configuration.Trello.notifications)))
   }
 
   def generateText(e: TrelloWallMessage) = {

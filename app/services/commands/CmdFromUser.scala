@@ -14,6 +14,10 @@ import services.actors.PingActor
 import services.auth.ProviderDispatcher
 import services.post.Posters
 import services.endpoints.Endpoints
+import services.actors.Fetcher
+import services.actors.ProviderActorParameter
+import services.endpoints.JsonRequest.UnifiedRequest
+import services.actors.FetcherParameter
 
 object CmdFromUser {
 
@@ -118,10 +122,22 @@ object CmdFromUser {
         }
       }
       case "detailsSkimbo" => {
-        val service = (cmd.body.get \ "service").as[String]
-        Endpoints.getConfig(service).map { service =>
-          service.parser.map { parser =>
-            
+        val serviceName = (cmd.body.get \ "serviceName").as[String]
+        val idMsg = (cmd.body.get \ "id").as[String]
+        val columnTitle = (cmd.body.get \ "columnTitle").as[String]
+        Endpoints.getConfig(serviceName).map { service =>
+          service.parserDetails.map { parser =>
+            Fetcher(FetcherParameter(
+              service.provider,
+              Some(parser),
+              Some(service.urlDetails.replace(":id", idMsg)),
+              internalIdUser,
+              columnTitle,
+              serviceName
+            )).map( _.map { listMsg =>
+              val msg = Json.obj("column" -> columnTitle, "msg" -> listMsg.head)
+              CmdToUser.sendTo(internalIdUser, Command("msg", Some(msg)))
+            })
           }
         }
       }

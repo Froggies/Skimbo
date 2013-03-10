@@ -13,6 +13,7 @@ import services.auth.providers.BetaSeries
 import parser.json.GenericJsonParser
 import play.api.libs.json.JsArray
 import play.api.libs.json.JsObject
+import services.endpoints.Configuration
 
 case class BetaseriesTimelineMessage(
   date: String,
@@ -40,7 +41,7 @@ object BetaseriesTimelineParser extends GenericJsonParser {
         buildUrl(e),
         e.date,
         None,
-        BetaSeries)))
+        Configuration.BetaSeries.timeline)))
   }
 
   def buildUrl(e: BetaseriesTimelineMessage) = {

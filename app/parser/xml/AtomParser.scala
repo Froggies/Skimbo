@@ -5,6 +5,7 @@ import models.Skimbo
 import org.joda.time.DateTime
 import services.auth.RssProvider
 import org.joda.time.format.DateTimeFormat
+import services.endpoints.Configuration
 
 object AtomParser extends GenericXmlParser {
 
@@ -28,7 +29,7 @@ object AtomParser extends GenericXmlParser {
         Some((node \ "link" \ "@href").text),
         foundDateTime(node).toDate().getTime().toString,
         RssHelper.foundImg(node),
-        RssProvider
+        Configuration.Rss.rss
     ))
   }
   

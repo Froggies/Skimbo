@@ -13,32 +13,47 @@ import models.command.TokenInvalid
 import models.Skimbo
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import scala.concurrent.Future
+import services.auth.GenericProvider
+import parser.GenericParser
+
+case class FetcherParameter(
+  provider:GenericProvider,
+  parser:Option[GenericParser],
+  url:Option[String], 
+  idUser:String, 
+  columnName: String,
+  serviceName: String= "",
+  delay: Int = 6
+)
 
 object Fetcher {
 
   val log = Logger(Fetcher.getClass())
 
-  def apply(parameter: ProviderActorParameter, sinceId: String)(implicit request: RequestHeader): Future[Option[List[Skimbo]]] = {
+  def apply(parameter:FetcherParameter)(implicit request: RequestHeader): Future[Option[List[Skimbo]]] = {
 
     val provider = parameter.provider
-    val unifiedRequest = parameter.unifiedRequest
-    val idUser = parameter.idUser
     val parser = parameter.parser
-    val column = parameter.column
-
-    log.info("[" + unifiedRequest.service + "] Fetching")
+    val url = parameter.url
+    val idUser = parameter.idUser
+    
+    log.info("[" + parameter.serviceName + "] Fetching")
 
     if (provider.canStart) {
-      val optSinceId = if (sinceId.isEmpty) None else Some(sinceId)
-      val url = Endpoints.genererUrl(unifiedRequest.service, unifiedRequest.args.getOrElse(Map.empty), optSinceId);
-      val config = Endpoints.getConfig(unifiedRequest.service).get
 
-      log.info("[" + unifiedRequest.service + "] " + url.get)
+      log.info("[" + parameter.serviceName + "] " + url.get)
 
       if (url.isDefined) {
-        provider.fetch(url.get).withTimeout(config.delay * 1000).get.map { response =>
+        val get = provider.fetch(url.get).withTimeout(parameter.delay * 1000).get
+        get.onFailure { 
+          case e:Throwable => {
+            log.error("[" + parameter.serviceName + "] Timeout HTTP", e)
+            CmdToUser.sendTo(idUser, Error(provider.name, "Timeout on"))
+          }
+        }
+        get.map { response =>
           if (response.status != Status.OK) {
-            log.error("[" + unifiedRequest.service + "] HTTP Error " + response.status)
+            log.error("[" + parameter.serviceName + "] HTTP Error " + response.status)
             log.info(response.body.toString)
             if (provider.isInvalidToken(response)) {
               CmdToUser.sendTo(idUser, TokenInvalid(provider.name))
@@ -47,13 +62,13 @@ object Fetcher {
               CmdToUser.sendTo(idUser, Error(provider.name, "Rate limite exceeded on"))
               Some(List.empty[Skimbo])
             } else {
-              CmdToUser.sendTo(idUser, Error(provider.name, "Error in column " + column.title + " with"))
+              CmdToUser.sendTo(idUser, Error(provider.name, "Error in column " + parameter.columnName + " with"))
               None
             }
           } else {
             val skimboMsgs = parser.get.getSkimboMsg(response, provider)
             if (skimboMsgs.isEmpty) {
-              log.error("[" + unifiedRequest.service + "] Unexpected result")
+              log.error("[" + parameter.serviceName + "] Unexpected result")
               log.info(response.body.toString)
               CmdToUser.sendTo(idUser, Error(provider.name, "Unexpected result on"))
               None
@@ -63,15 +78,15 @@ object Fetcher {
           }
         }
       } else {
-        log.error("[" + unifiedRequest.service + "] Bad url" + unifiedRequest.args)
+        log.error("[" + parameter.serviceName + "] Bad url" + url)
         Future(None)
       }
     } else if (provider.isAuthProvider && !provider.canStart) {
       CmdToUser.sendTo(idUser, TokenInvalid(provider.name))
-      log.info("[" + unifiedRequest.service + "] No Token")
+      log.info("[" + parameter.serviceName + "] No Token")
       Future(None)
     } else {
-      log.error("Provider " + provider.name + " havn't parser for " + unifiedRequest.service)
+      log.error("Provider " + provider.name + " havn't parser for " + parameter.serviceName)
       CmdToUser.sendTo(idUser, Error(provider.name, "No parser on"))
       Future(None)
     }

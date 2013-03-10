@@ -57,8 +57,12 @@
 						<a href="{{m.directLink}}" class="author-name {{m.from}}" target="_blank">{{m.authorName}}</a>
 						<p class="date-creation">{{m.dateAgo}}</p>
 						<div class="message" ng-bind-html="m.message" title="{{m.original}}"></div>
-						<div class="message-footer" ng-show="m.shared >= 0">
-							<span class="message-shared icon-star">{{m.shared}}</span>
+						<div class="message-footer">
+							<span class="message-footer-content"></span>
+							<div class="message-footer-content message-footer-loader {{m.styleRefresh}}" 
+										ng-click="getDetails(m, c)" 
+										ng-show="m.hasDetails"></div>
+							<span class="message-shared icon-star" ng-show="m.shared >= 0">{{m.shared}}</span>
 						</div>
 					</div>
 				</li>

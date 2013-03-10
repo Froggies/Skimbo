@@ -4,6 +4,7 @@ import org.joda.time._
 import play.api.libs.json._
 import services.auth.GenericProvider
 import play.api.libs.json.Json.toJsFieldJsValueWrapper
+import services.endpoints.EndpointConfig
 
 /**
 * Common format between social networks
@@ -19,7 +20,7 @@ case class Skimbo(
   directLink: Option[String],
   sinceId: String,
   authorAvatar:Option[String],
-  from: GenericProvider
+  config: EndpointConfig
 )
 
 object Skimbo {
@@ -36,7 +37,9 @@ object Skimbo {
         "directLink" -> skimbo.directLink,
         "sinceId" -> skimbo.sinceId,
         "authorAvatar" -> skimbo.authorAvatar,
-        "from" -> skimbo.from.name
+        "from" -> skimbo.config.provider.name,
+        "service" -> skimbo.config.uniqueName,
+        "hasDetails" -> skimbo.config.parserDetails.isDefined
       )
     }
   }
