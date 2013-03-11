@@ -15,6 +15,7 @@ require([
   'directives/DragAndDrop',
   'directives/ScrollManager',
   'directives/ShowOnHoverParent',
+  'directives/OnKeyPress',
   'controllers/NotificationController', 
   'controllers/MainController', 
   'controllers/ModifColumnController', 

@@ -1,4 +1,4 @@
-<section id="content">
+<section id="content" on-key-press="98" on-key-press-exec="switchBlur()">
 	<section class="notifications" 
 					 ng-controller="NotificationController"
 					 ng-include src="'assets/app/views/notification.html'">
@@ -56,7 +56,7 @@
 								width="32" height="32">
 						<a href="{{m.directLink}}" class="author-name {{m.from}}" target="_blank">{{m.authorName}}</a>
 						<p class="date-creation">{{m.dateAgo}}</p>
-						<div class="message" ng-bind-html="m.message" title="{{m.original}}"></div>
+						<div class="message blur-text {{blurText}}" ng-bind-html="m.message" title="{{m.original}}"></div>
 						<div class="message-footer" showonhoverparent>
 							<span class="message-footer-content"
 										ng-click="dispatchMsg(m)"

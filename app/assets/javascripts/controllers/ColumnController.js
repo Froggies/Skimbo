@@ -160,6 +160,15 @@ app.controller('ColumnController', [
       $rootScope.$broadcast("dispatchMsg", message);
     }
 
+    $scope.blurText = false;
+
+    $scope.switchBlur = function() {
+      console.log("switch");
+      $scope.$apply(function() {
+        $scope.blurText = !$scope.blurText;
+      });
+    };
+
     function getColumnByName(name) {
       if($scope.columns !== undefined) {
         for (var i = 0; i < $scope.columns.length; i++) {
