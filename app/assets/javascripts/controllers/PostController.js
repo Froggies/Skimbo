@@ -41,7 +41,8 @@ app.controller('PostMessageController', [
           var provider = providers[i];
           provider.selected = false;
           if(provider.name == "linkedin" || provider.name == "github" ||
-             provider.name == "scoopit" || provider.name == "viadeo") {
+             provider.name == "scoopit" || provider.name == "viadeo" || 
+             provider.name == "googleplus") {
             $scope.providersWithTitle.push(provider);
           }
           if(provider.name == "linkedin" || provider.name == "facebook" ||
@@ -49,7 +50,8 @@ app.controller('PostMessageController', [
             $scope.providersWithUrl.push(provider);
           }
           if(provider.name == "linkedin" || provider.name == "facebook" ||
-             provider.name == "scoopit" || provider.name == "viadeo") {
+             provider.name == "scoopit" || provider.name == "viadeo" || 
+             provider.name == "googleplus") {
             $scope.providersWithImage.push(provider);
           }
         }
