@@ -58,10 +58,13 @@
 						<p class="date-creation">{{m.dateAgo}}</p>
 						<div class="message" ng-bind-html="m.message" title="{{m.original}}"></div>
 						<div class="message-footer">
-							<span class="message-footer-content"></span>
+							<span class="message-footer-content"
+										ng-click="dispatchMsg(m)"
+										title="{{'SHARE' | i18n}}"></span>
 							<div class="message-footer-content message-footer-loader {{m.styleRefresh}}" 
 										ng-click="getDetails(m, c)" 
-										ng-show="m.hasDetails"></div>
+										ng-show="m.hasDetails"
+										title="{{'REFRESH_DETAILS' | i18n}}"></div>
 							<span class="message-shared icon-star" ng-show="m.shared >= 0">{{m.shared}}</span>
 						</div>
 					</div>

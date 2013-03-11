@@ -56,6 +56,16 @@ app.controller('PostMessageController', [
       });
     });
 
+    $rootScope.$on('dispatchMsg', function(evt, message) {
+      resetView();
+      $scope.show();
+      $scope.showPost = true;//force show
+      $scope.title = "";
+      $scope.message = message.original;
+      $scope.url = message.directLink;
+      $scope.image = "";
+    });
+
     $scope.show = function() {
       $scope.showPost = !$scope.showPost;
       if ($scope.showPost == true) {

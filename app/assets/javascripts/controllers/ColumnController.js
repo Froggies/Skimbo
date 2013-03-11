@@ -156,6 +156,10 @@ app.controller('ColumnController', [
       }});
     }
 
+    $scope.dispatchMsg = function(message) {
+      $rootScope.$broadcast("dispatchMsg", message);
+    }
+
     function getColumnByName(name) {
       if($scope.columns !== undefined) {
         for (var i = 0; i < $scope.columns.length; i++) {
