@@ -14,6 +14,7 @@ require([
   'services/ServerCommunication', 
   'directives/DragAndDrop',
   'directives/ScrollManager',
+  'directives/ShowOnHoverParent',
   'controllers/NotificationController', 
   'controllers/MainController', 
   'controllers/ModifColumnController', 

@@ -57,7 +57,7 @@
 						<a href="{{m.directLink}}" class="author-name {{m.from}}" target="_blank">{{m.authorName}}</a>
 						<p class="date-creation">{{m.dateAgo}}</p>
 						<div class="message" ng-bind-html="m.message" title="{{m.original}}"></div>
-						<div class="message-footer">
+						<div class="message-footer" showonhoverparent>
 							<span class="message-footer-content"
 										ng-click="dispatchMsg(m)"
 										title="{{'SHARE' | i18n}}"></span>

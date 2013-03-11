@@ -76,6 +76,8 @@ object Configuration {
       override val parser = Some(FacebookWallParser)
       override val mustBeReordered = true
       override val uniqueName = "facebook.wall"
+      override val parserDetails = Some(FacebookPostDetails)
+      override val urlDetails = "https://graph.facebook.com/:id"
     }
     object user extends EndpointConfig {
       override val url = withLimit("https://graph.facebook.com/:username/feed?limit=:limit")
@@ -188,6 +190,8 @@ object Configuration {
       override val provider = providers.Scoopit
       override val parser = Some(ScoopitWallParser)
       override val uniqueName = "scoopit.wall"
+      override val parserDetails = Some(ScoopitPostDetails)
+      override val urlDetails = "http://www.scoop.it/api/1/post?id=:id"
     }
   }
   
