@@ -15,6 +15,8 @@ trait Poster {
   
   def urlToPost(post:Post):String = ""
   
+  def postHeaderParams():Seq[(String, String)] = Seq.empty
+    
   def postParams(post:Post):Seq[(String, String)] = Seq.empty
   
   def postContent(post:Post):String = ""
@@ -29,7 +31,8 @@ object Posters {
       services.auth.providers.Twitter, 
       services.auth.providers.Facebook,
       services.auth.providers.LinkedIn,
-      services.auth.providers.GitHub)
+      services.auth.providers.GitHub,
+      services.auth.providers.GooglePlus)
       //services.auth.providers.Viadeo)      --> "Insufficient accreditation level" ! mais pas trouvé où le setter !!??
       //                                     --> recommended only for premium user
       //TODO services.auth.providers.Scoopit --> missing topicId !!??

@@ -79,7 +79,8 @@ trait OAuth2Provider extends AuthProvider with Poster {
 
     val url = (redirectQueryString ++ additionalAccreditationParameters)
       .foldLeft(authorizeUrl + "?")((url, qs) => url + qs._1 + "=" + qs._2 + "&")
-
+    
+    Logger("OAuth2provider").info("URL => "+url)
     Redirect(url).withSession(request.session + (fieldCsrf -> csrf))
   }
 
@@ -154,6 +155,7 @@ trait OAuth2Provider extends AuthProvider with Poster {
     val queryString = postParams(post) ++ Seq("access_token" -> getToken.get.token)
     WS.url(urlToPost(post))
       .withQueryString( queryString:_* )
+      .withHeaders(postHeaderParams:_*)
       .post(postContent(post))
       .onComplete {
         case Success(response) => {
