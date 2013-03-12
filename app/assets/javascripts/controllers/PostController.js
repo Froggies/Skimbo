@@ -84,6 +84,8 @@ app.controller('PostMessageController', [
       } else {
         $popupProvider.openPopup(poster, function() {
           poster.selected = !poster.selected;
+          $network.send({cmd:"allUnifiedRequests"});
+          $network.send({cmd:"allPosters"});
         });
       }
       

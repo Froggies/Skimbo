@@ -121,6 +121,8 @@ app.controller('ModifColumnController', [
         } else {
           $popupProvider.openPopup($scope.selectedSocialNetwork, function() {
             addService(service);
+            $network.send({cmd:"allUnifiedRequests"});
+            $network.send({cmd:"allPosters"});
           });
         }
       }
