@@ -20,14 +20,18 @@
         </li>
       </ul>
     </span>
-    <textarea class="post-message inputfalse" ng-model="message" placeholder="message">{{message}}</textarea>
+    <div>
+      <textarea class="post-message inputmessage{{showHelp}}" ng-model="message" placeholder="message">{{message}}</textarea>
+      <div class="post-message-help" ng-show="showHelp"><img class="social-network-active" ng-src="assets/img/brand/twitter.png" alt="{{provider.name}}" width="16" height="16">{{140 - message.length}}</div>
+    </div>
     <div class="icon-link">
       <input class="post-title input{{showHelp}}" type="text" ng-model="url" value="{{url}}" placeholder="url" />
       <ul class="posters-proposes-help" ng-show="showHelp">
         <li ng-repeat="provider in providersWithUrl">
           <div class="social-network-link">
             <a class="btn {{provider.selected}}" href="#">
-              <img class="social-network-active" ng-src="assets/img/brand/{{provider.name}}.png" alt="{{provider.name}}" width="16" height="16"></a>
+              <img class="social-network-active" ng-src="assets/img/brand/{{provider.name}}.png" alt="{{provider.name}}" width="16" height="16">
+            </a>
           </div>
         </li>
       </ul>
