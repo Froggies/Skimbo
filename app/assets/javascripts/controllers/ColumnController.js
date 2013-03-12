@@ -163,7 +163,6 @@ app.controller('ColumnController', [
     $scope.blurText = false;
 
     $scope.switchBlur = function() {
-      console.log("switch");
       $scope.$apply(function() {
         $scope.blurText = !$scope.blurText;
       });
