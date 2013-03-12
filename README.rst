@@ -73,7 +73,7 @@ Follow us on twitter :
 - RmManeschi_
 - studiodev_
 - vp3n_
-- Laurent Dufour (This guy is not on twitter !!)
+- LaurentDufour_
 - Skimbo_
 
 Licence
@@ -92,4 +92,5 @@ Unless required by applicable law or agreed to in writing, software distributed 
 .. _RmManeschi: https://twitter.com/RmManeschi
 .. _studiodev: https://twitter.com/studiodev
 .. _vp3n: https://twitter.com/vp3n
+.. _LaurentDufour : https://twitter.com/_LaurentDufour 
 .. _skimbo: https://twitter.com/skimbo34
