@@ -161,7 +161,8 @@ object Configuration {
   object Github {
     object notifications extends EndpointConfig {
       override val url = "https://api.github.com/users/:username/received_events"
-      override val manualNextResults = true
+      //override val manualNextResults = true
+      override val mustBeReordered = true
       override val provider = providers.GitHub
       override val requiredParams = List("username")
       override val parser = Some(GithubWallParser)
