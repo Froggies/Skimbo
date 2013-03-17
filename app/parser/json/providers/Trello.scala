@@ -95,14 +95,14 @@ object TrelloWallParser extends GenericJsonParser {
       })
   }
 
-  override def nextSinceId(sinceId: String, compareSinceId: String): String = {
-    if (compareSinceId.isEmpty()) {
+  override def nextSinceId(sinceId: String, compareSinceIdOpt: Option[String]): String = {
+    if (compareSinceIdOpt.isEmpty) {
       sinceId
     } else {
-      if ((sinceId compareTo compareSinceId) > 1) {
+      if ((sinceId compareTo compareSinceIdOpt.get) > 1) {
         sinceId
       } else {
-        compareSinceId
+        compareSinceIdOpt.get
       }
     }
   }

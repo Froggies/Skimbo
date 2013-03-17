@@ -15,7 +15,7 @@ object Configuration {
   object Twitter {
     object wall extends EndpointConfig {
       override val url = withLimit("https://api.twitter.com/1.1/statuses/home_timeline.json?count=:limit")
-      override val since = "&since_id=:since"//ID
+      override val since = Some("&since_id=:since")//ID
       override val delay = 80
       override val provider = providers.Twitter
       override val parser = Some(TwitterTimelineParser)
@@ -53,7 +53,7 @@ object Configuration {
     }
     object messageToMe extends EndpointConfig {
       override val url = withLimit("https://api.twitter.com/1.1/statuses/mentions_timeline.json?count=:limit")
-      override val since = "&since_id=:since"//ID
+      override val since = wall.since
       override val delay = 80
       override val provider = providers.Twitter
       override val parser = Some(TwitterTimelineParser)
@@ -70,7 +70,7 @@ object Configuration {
   object Facebook {
     object wall extends EndpointConfig {
       override val url = withLimit("https://graph.facebook.com/me/home?limit=:limit")
-      override val since = "&since=:since"
+      override val since = Some("&since=:since")
       override val delay = 30
       override val provider = providers.Facebook
       override val parser = Some(FacebookWallParser)
@@ -114,7 +114,7 @@ object Configuration {
     object smartNews extends EndpointConfig {
       override val limit = 30
       override val url = withLimit("https://api.viadeo.com/me/smart_news.json?limit=:limit")
-      override val since = "&since=:since"
+      override val since = Some("&since=:since")
       override val provider = providers.Viadeo
       override val parser = Some(ViadeoWallParser)
       override val uniqueName = "viadeo.smartNews"
@@ -122,7 +122,7 @@ object Configuration {
     object newsfeed extends EndpointConfig {
       override val limit = 30
       override val url = withLimit("https://api.viadeo.com/newsfeed.json?limit=:limit")
-      override val since = "&since=:since"
+      override val since = smartNews.since
       override val provider = providers.Viadeo
       override val parser = Some(ViadeoWallParser)
       override val uniqueName = "viadeo.newsfeed"
@@ -132,8 +132,7 @@ object Configuration {
   object Linkedin {
     object wall extends EndpointConfig {
       override val url = withLimit("http://api.linkedin.com/v1/people/~/network/updates?count=:limit")
-      override val manualNextResults = true // double result bug
-      override val since = "&after=:since"
+      override val since = Some("&after=:since")
       override val provider = providers.LinkedIn
       override val parser = Some(LinkedInWallParser)
       override val uniqueName = "linkedin.wall"
@@ -143,7 +142,6 @@ object Configuration {
   object GooglePlus {
     object wall extends EndpointConfig {
       override val url = withLimit("https://www.googleapis.com/plus/v1/people/me/activities/public?maxResults=:limit")
-      override val manualNextResults = true // Fuck Google+, there is no "since" key... Must be handle in actor with cache...
       override val provider = providers.GooglePlus
       override val parser = Some(GoogleplusWallParser)
       override val uniqueName = "googleplus.wall"
@@ -161,6 +159,7 @@ object Configuration {
   object Github {
     object notifications extends EndpointConfig {
       override val url = "https://api.github.com/users/:username/received_events"
+      // override val since = need perso header ETag
       override val mustBeReordered = true
       override val provider = providers.GitHub
       override val requiredParams = List("username")
@@ -172,7 +171,7 @@ object Configuration {
   object Trello {
     object notifications extends EndpointConfig {
       override val url = withLimit("https://api.trello.com/1/members/me/notifications?limit=:limit")
-      override val since = "&since=:since" // id
+      override val since = Some("&since=:since") // id
       override val mustBeReordered = true
       override val provider = providers.Trello
       override val parser = Some(TrelloWallParser)
@@ -187,7 +186,7 @@ object Configuration {
   object Scoopit {
     object wall extends EndpointConfig {
       override val url = withLimit("http://www.scoop.it/api/1/compilation?count=:limit")
-      override val since = "&since=:since" // ts
+      override val since = Some("&since=:since") // ts
       override val provider = providers.Scoopit
       override val parser = Some(ScoopitWallParser)
       override val uniqueName = "scoopit.wall"
@@ -200,7 +199,7 @@ object Configuration {
     object planning extends EndpointConfig {
       override val url = "http://api.betaseries.com/planning/member.json"
       override val provider = providers.BetaSeries
-      override val manualNextResults = true
+      override val mustBeReordered = true
       override val parser = Some(BetaseriesPlanningParser)
       override val delay = 600
       override val uniqueName = "betaseries.planning"
@@ -208,7 +207,6 @@ object Configuration {
     object timeline extends EndpointConfig {
       override val url = withLimit("http://api.betaseries.com/timeline/friends.json?number=:limit")
       override val provider = providers.BetaSeries
-      override val manualNextResults = true
       override val mustBeReordered = true
       override val parser = Some(BetaseriesTimelineParser)
       override val delay = 600
@@ -231,12 +229,11 @@ object Configuration {
 
 trait EndpointConfig {
   val url: String
-  val since: String = ""
+  val since: Option[String] = None
   val delay: Int = 60
   val provider: GenericProvider
   val requiredParams : List[String] = List.empty
   val limit = 20
-  val manualNextResults = false
   val parser: Option[GenericParser] = None
   val mustBeReordered = false
   val parserDetails : Option[GenericParser] = None

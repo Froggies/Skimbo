@@ -99,7 +99,7 @@ class ProviderActor(parameter:ProviderActorParameter)(implicit request: RequestH
   val column = parameter.column
   val config = Endpoints.getConfig(unifiedRequest.service).get
   
-  var sinceId = ""
+  var sinceId:Option[String] = None
   var sinceDate = new DateTime().minusYears(1)
   
   val scheduler = Akka.system.scheduler.schedule(0 second, delay second) {
@@ -112,8 +112,7 @@ class ProviderActor(parameter:ProviderActorParameter)(implicit request: RequestH
 
   def receive = {
     case ReceiveTimeout => {
-      val optSinceId = if (sinceId.isEmpty) None else Some(sinceId)
-      val url = Endpoints.genererUrl(unifiedRequest.service, unifiedRequest.args.getOrElse(Map.empty), optSinceId);
+      val url = Endpoints.genererUrl(unifiedRequest.service, unifiedRequest.args.getOrElse(Map.empty), sinceId);
       Fetcher(FetcherParameter(
           provider, 
           parser, 
@@ -125,7 +124,7 @@ class ProviderActor(parameter:ProviderActorParameter)(implicit request: RequestH
         if(!listSkimbo.isDefined) {
           self ! Dead(idUser)
         } else {
-          val listJson = if (config.manualNextResults || config.mustBeReordered) reorderMessagesByDate(listSkimbo.get) else listSkimbo.get
+          val listJson = if (config.mustBeReordered) reorderMessagesByDate(listSkimbo.get) else listSkimbo.get
           val messagesEnumerators = Enumerator.enumerate(listJson)
           val pusherIteratee = pushNewMessagesIteratee(config)
           messagesEnumerators(pusherIteratee)
@@ -152,7 +151,7 @@ class ProviderActor(parameter:ProviderActorParameter)(implicit request: RequestH
     }
     case Restart(id: String) => {
       if(id == idUser) {
-        sinceId = ""
+        sinceId = None
         sinceDate = new DateTime().minusYears(1)
         self ! ReceiveTimeout
         log.info("ProviderActor RESTART")
@@ -168,13 +167,13 @@ class ProviderActor(parameter:ProviderActorParameter)(implicit request: RequestH
   def pushNewMessagesIteratee(config: EndpointConfig) = {
     Iteratee.foreach { skimboMsg: Skimbo =>
       val msg = Json.obj("column" -> column.title, "msg" -> skimboMsg)
-      if (!config.manualNextResults) {
+      if (config.since.isEmpty /* == None */) {
         if (skimboMsg.createdAt.isAfter(sinceDate)) {
           CmdToUser.sendTo(idUser, Command("msg", Some(msg)))
           sinceDate = skimboMsg.createdAt
         }
       } else {
-        sinceId = parser.get.nextSinceId(skimboMsg.sinceId, sinceId)
+        sinceId = Some(parser.get.nextSinceId(skimboMsg.sinceId, sinceId))
         CmdToUser.sendTo(idUser, Command("msg", Some(msg)))
       }
     }

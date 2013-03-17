@@ -31,16 +31,6 @@ object TwitterConnectParser extends GenericJsonParser {
         Configuration.Twitter.wall)))
   }
   
-  override def nextSinceId(sinceId:String, sinceId2:String): String = {
-    if(sinceId2.isEmpty()) {
-      sinceId
-    } else {
-      if(sinceId.toLong > sinceId2.toLong) {
-        sinceId
-      } else {
-        sinceId2
-      }
-    }
-  }
+  override def nextSinceId(sinceId:String, sinceId2:Option[String]): String = TwitterTimelineParser.nextSinceId(sinceId, sinceId2)
 
 }

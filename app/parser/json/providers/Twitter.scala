@@ -50,14 +50,14 @@ object TwitterTimelineParser extends GenericJsonParser {
         Configuration.Twitter.wall)))
   }
   
-  override def nextSinceId(sinceId:String, sinceId2:String): String = {
-    if(sinceId2.isEmpty()) {
+  override def nextSinceId(sinceId:String, sinceId2:Option[String]): String = {
+    if (sinceId2.isEmpty) {
       sinceId
     } else {
-      if(sinceId.toLong > sinceId2.toLong) {
+      if (sinceId.toLong > sinceId2.get.toLong) {
         sinceId
       } else {
-        sinceId2
+        sinceId2.get
       }
     }
   }

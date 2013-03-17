@@ -23,7 +23,7 @@ case class FacebookUser(
 
 case class FacebookInboxData(
   from: Option[FacebookUser],
-  message: String
+  message: Option[String]
 )
 
 object FacebookInboxParser extends GenericJsonParser {
@@ -66,7 +66,7 @@ object FacebookInboxParser extends GenericJsonParser {
         res ++= "<li>"
         res ++= msg.from.map(_.name).getOrElse("private")
         res ++= " : "
-        res ++= msg.message
+        res ++= msg.message.getOrElse("")
         res ++= "</li>"
       }
       res ++= "</ul></div>"
@@ -85,7 +85,7 @@ object FacebookUser {
 object FacebookInboxData {
   implicit val facebookDataReader: Reads[FacebookInboxData] = (
     (__ \ "from").readNullable[FacebookUser] and
-    (__ \ "message").read[String])(FacebookInboxData.apply _)
+    (__ \ "message").readNullable[String])(FacebookInboxData.apply _)
 }
 
 object FacebookInboxMessage {

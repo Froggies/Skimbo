@@ -42,7 +42,7 @@ object ScoopitWallParser extends GenericJsonParser {
         Configuration.Scoopit.wall)))
   }
   
-  override def nextSinceId(sinceId:String, sinceId2:String): String = 
+  override def nextSinceId(sinceId:String, sinceId2:Option[String]): String = 
     DateTime.now(DateTimeZone.UTC).toInstant().getMillis().toString
 }
 

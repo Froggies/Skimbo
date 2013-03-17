@@ -37,7 +37,7 @@ object TwitterDirectMessageParser extends GenericJsonParser {
         Configuration.Twitter.directMessage)))
   }
   
-  override def nextSinceId(sinceId:String, sinceId2:String): String = 
+  override def nextSinceId(sinceId:String, sinceId2:Option[String]): String = 
     TwitterTimelineParser.nextSinceId(sinceId, sinceId2)
 
 }

@@ -46,15 +46,15 @@ object BetaseriesPlanningParser extends GenericJsonParser {
     super.cut(array)
   }
 
-  override def nextSinceId(sinceId: String, compareSinceId: String): String = {
-    if (compareSinceId.isEmpty()) {
-      sinceId
-    } else {
+  override def nextSinceId(sinceId: String, compareSinceIdOpt: Option[String]): String = {
+    compareSinceIdOpt.map { compareSinceId =>
       if ((sinceId compareTo compareSinceId) > 1) {
         sinceId
       } else {
         compareSinceId
       }
+    }.getOrElse {
+      sinceId
     }
   }
 

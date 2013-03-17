@@ -104,7 +104,6 @@ app.controller('ColumnController', [
         console.log(column);
         var c = getColumnByName(column.column.title);
         c.unifiedRequests = column.column.unifiedRequests;
-        c.messages = [];
       });
     });
 

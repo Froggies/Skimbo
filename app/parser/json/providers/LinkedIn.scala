@@ -109,14 +109,14 @@ object LinkedInWallParser extends GenericJsonParser {
     }
   }
   
-  override def nextSinceId(sinceId: String, compareSinceId: String): String = {
-    if (compareSinceId.isEmpty()) {
+  override def nextSinceId(sinceId: String, compareSinceIdOpt: Option[String]): String = {
+    if (compareSinceIdOpt.isEmpty) {
       sinceId
     } else {
-      if (sinceId.toLong > compareSinceId.toLong) {
+      if (sinceId.toLong > compareSinceIdOpt.get.toLong) {
         sinceId
       } else {
-        compareSinceId
+        compareSinceIdOpt.get
       }
     }
   }

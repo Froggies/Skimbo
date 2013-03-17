@@ -57,17 +57,7 @@ object BetaseriesTimelineParser extends GenericJsonParser {
     super.cut(array)
   }
 
-  override def nextSinceId(sinceId: String, compareSinceId: String): String = {
-    if (compareSinceId.isEmpty()) {
-      sinceId
-    } else {
-      if ((sinceId compareTo compareSinceId) > 1) {
-        sinceId
-      } else {
-        compareSinceId
-      }
-    }
-  }
+  override def nextSinceId(sinceId: String, compareSinceIdOpt: Option[String]): String = BetaseriesPlanningParser.nextSinceId(sinceId, compareSinceIdOpt)
 
 }
 
