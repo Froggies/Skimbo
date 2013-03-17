@@ -37,7 +37,14 @@ app.filter('i18n', ['$rootScope', function($rootScope) {
         'TITLE_ALREADY_EXISTS' : 'Ce titre existe déjà.',
         'TITLE_REQUIRED' : 'Le titre est requis.',
         'TO_ADD_STREAM_IN_COLUMN' : 'Pour ajouter un flux à cette colonne, sélectionnez un ou plusieurs services ci-dessus.',
-        'YOU_ARE_RECEIVING' : 'Vous recevez'
+        'YOU_ARE_RECEIVING' : 'Vous recevez',
+        //GOOGLE READER
+        'GR_PARSE' : 'Parser les flux',
+        'GR_1_BEFORE_LINK' : 'Aller sur ',
+        'GR_1_LINK' : 'mes flux dans google reader',
+        'GR_1_AFTER_LINK' : ' et copier le contenu.',
+        'GR_2' : 'Coller le contenu dans le champ ci-dessus.',
+        'GR_3' : 'Cliquer sur "Parser les flux" et gérer les flux pour cette colonne.'
       },
       'en' : {
         'ADD_FIRST_COLUMN_SENTENCE' : 'Create your first column !',
@@ -71,7 +78,14 @@ app.filter('i18n', ['$rootScope', function($rootScope) {
         'TITLE_ALREADY_EXISTS' : 'This title already exists.',
         'TITLE_REQUIRED' : 'The title is required !',
         'TO_ADD_STREAM_IN_COLUMN' : 'To add a stream in this column, select one or many services above.',
-        'YOU_ARE_RECEIVING' : 'You are receiving'
+        'YOU_ARE_RECEIVING' : 'You are receiving',
+        //GOOGLE READER
+        'GR_PARSE' : 'Parse feeds',
+        'GR_1_BEFORE_LINK' : 'Go on ',
+        'GR_1_LINK' : 'my google reader subscriptions',
+        'GR_1_AFTER_LINK' : ' and copy content.',
+        'GR_2' : 'Past content in text field above.',
+        'GR_3' : 'Click on "Parse feeds" and manage feeds for this column.'
       }
     },
     currentLanguage = $rootScope.currentLanguage || 'en';

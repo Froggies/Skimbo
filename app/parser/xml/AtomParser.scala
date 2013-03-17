@@ -17,13 +17,13 @@ object AtomParser extends GenericXmlParser {
   }
   
   def asSkimbo(node: scala.xml.Node) : Option[Skimbo] = {
-    println(new DateTime().toString(dateTimeFormatter2))
+    val date = foundDateTime(node)
     Some(Skimbo(
-        "",
+        date.toDate().getTime().toString,
         (node \ "author" \ "name").text,
         (node \ "author" \ "name").text,
         (node \ "title").text,
-        foundDateTime(node),
+        date,
         List(),
         -1,
         Some((node \ "link" \ "@href").text),

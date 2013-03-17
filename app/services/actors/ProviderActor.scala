@@ -168,7 +168,7 @@ class ProviderActor(parameter:ProviderActorParameter)(implicit request: RequestH
   def pushNewMessagesIteratee(config: EndpointConfig) = {
     Iteratee.foreach { skimboMsg: Skimbo =>
       val msg = Json.obj("column" -> column.title, "msg" -> skimboMsg)
-      if (config.manualNextResults) {
+      if (!config.manualNextResults) {
         if (skimboMsg.createdAt.isAfter(sinceDate)) {
           CmdToUser.sendTo(idUser, Command("msg", Some(msg)))
           sinceDate = skimboMsg.createdAt

@@ -3,8 +3,10 @@
 define(["app"], function(app) {
 
 app.controller('ModifColumnController', [
-  "$scope", "Network", "$rootScope", "UnifiedRequestUtils", "Visibility", "PopupProvider", "ArrayUtils",
-  function($scope, $network, $rootScope, $unifiedRequestUtils, $visibility, $popupProvider, $arrayUtils) {
+  "$scope", "Network", "$rootScope", "UnifiedRequestUtils", "Visibility", 
+  "PopupProvider", "ArrayUtils", "$http",
+  function($scope, $network, $rootScope, $unifiedRequestUtils, $visibility, 
+    $popupProvider, $arrayUtils, $http) {
 
     //chrome memory leak !!!
     $scope.$destroy= function() {
@@ -61,6 +63,7 @@ app.controller('ModifColumnController', [
             $scope.selectedSocialNetwork.selected = true;
           }
         };
+        addGoogleReader();
       });
     });
 
@@ -112,6 +115,9 @@ app.controller('ModifColumnController', [
       $scope.selectedSocialNetwork = socialNetwork;
       $scope.selectedSocialNetwork.selected = true;
       $scope.availableSocialNetworksWidth = "";
+      if(socialNetwork.name == "greader") {
+        selectGreader();
+      }
     }
 
     $scope.addService = function(service) {
@@ -129,6 +135,7 @@ app.controller('ModifColumnController', [
     }
 
     function addService(service) {
+      console.log(service);
       service.fromServer = false;
       $scope.column.unifiedRequests.push(service);
       if($scope.column.title == "") {
@@ -303,6 +310,46 @@ app.controller('ModifColumnController', [
         }
       };
       return false;
+    }
+
+    //GOOGLE READER HACK
+
+    $scope.googleReaderSelected = false;
+    $scope.googleReaderFeeds = "";
+
+    function addGoogleReader() {
+      $scope.providers.push({
+        endpoint: "greader",
+        hasToken: true,
+        name: "greader",
+        selected: false,
+        services:[]
+      });
+    }
+
+    function selectGreader() {
+      console.log("show");
+      $scope.googleReaderSelected = true;
+    }
+
+    $scope.parseGoogleReader = function() {
+      console.log("parse");
+      var feeds = JSON.parse($scope.googleReaderFeeds).subscriptions;
+      for (var i = 0; i < feeds.length; i++) {
+        var url = feeds[i].id.substring(5, feeds[i].id.length);
+        addService({
+          fromServer: false,
+          hasArguments: true,
+          hasParser: true,
+          providerName: "rss",
+          service: "rss.rss",
+          serviceName: "rss",
+          args: [{
+            key: "url",
+            value: url
+          }]
+        });
+      };
     }
 
 }]);

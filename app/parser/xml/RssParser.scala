@@ -19,14 +19,15 @@ object RssParser extends GenericXmlParser {
   }
   
   def asSkimbo(node: scala.xml.Node) : Option[Skimbo] = {
+    val date = foundDateTime(node)
     Some(Skimbo(
-        "",
+        date.toDate().getTime().toString,
         foundAuthor(node),
         foundAuthor(node),
         foundText(node),
-        foundDateTime(node),
+        date,
         List(),
-        0,
+        -1,
         Some((node \ "link").text),
         "",
         RssHelper.foundImg(node),

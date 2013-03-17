@@ -59,7 +59,6 @@ app.controller('ColumnController', [
         var column = getColumnByName(msg.column);
         if(column.messages == undefined) {
           column.messages = [];
-          console.log(msg);
         }
         $arrayUtils.sortMsg(column.messages, msg.msg);
         $visibility.notifyNewMessage();

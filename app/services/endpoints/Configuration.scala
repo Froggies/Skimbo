@@ -219,7 +219,6 @@ object Configuration {
       override val url = ":url"
       override val requiredParams = List("url")
       override val provider = RssProvider
-      override val manualNextResults = true
       override val mustBeReordered = true
       override val parser = Some(GenericRssParser)
       override val delay = 500
