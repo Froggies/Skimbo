@@ -161,7 +161,6 @@ object Configuration {
   object Github {
     object notifications extends EndpointConfig {
       override val url = "https://api.github.com/users/:username/received_events"
-      //override val manualNextResults = true
       override val mustBeReordered = true
       override val provider = providers.GitHub
       override val requiredParams = List("username")
@@ -174,6 +173,7 @@ object Configuration {
     object notifications extends EndpointConfig {
       override val url = withLimit("https://api.trello.com/1/members/me/notifications?limit=:limit")
       override val since = "&since=:since" // id
+      override val mustBeReordered = true
       override val provider = providers.Trello
       override val parser = Some(TrelloWallParser)
       override val uniqueName = "trello.notifications"
