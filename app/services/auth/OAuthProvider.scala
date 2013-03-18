@@ -14,8 +14,9 @@ import services.post.Poster
 import scala.util.Success
 import scala.util.Failure
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
+import services.post.Starer
 
-trait OAuthProvider extends AuthProvider with Poster {
+trait OAuthProvider extends AuthProvider with Poster with Starer {
 
   lazy val KEY = ConsumerKey(config.getString("clientId").get, config.getString("secret").get)
 
@@ -81,7 +82,13 @@ trait OAuthProvider extends AuthProvider with Poster {
         case Failure(error) => {
           println(error)
         }
-    }
+      }
+  }
+  
+  override def star(idProvider: String)(implicit request: RequestHeader) = {
+    WS.url(urlToStar(idProvider))
+      .sign(OAuthCalculator(KEY, getToken.get))
+      .post("")
   }
   
 }

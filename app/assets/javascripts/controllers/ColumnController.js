@@ -158,6 +158,18 @@ app.controller('ColumnController', [
       $rootScope.$broadcast("dispatchMsg", message);
     }
 
+    $scope.star = function(message, column) {
+      message.styleRefresh = "rotate";
+      $network.send({
+        cmd: "star",
+        body: {
+          "serviceName": message.service,
+          "id": message.idProvider,
+          "columnTitle": column.title
+        }
+      });
+    }
+
     $scope.blurText = false;
 
     $scope.switchBlur = function() {

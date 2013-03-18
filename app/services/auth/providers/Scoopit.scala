@@ -47,5 +47,7 @@ object Scoopit extends OAuthProvider {
       "content" -> URLEncoder.encode(post.message, "UTF-8")
     )
   }
+  
+  override def urlToStar(idProvider:String) = "http://www.scoop.it/api/1/post?action=thank&id="+idProvider
 
 }

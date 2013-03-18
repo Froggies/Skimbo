@@ -59,9 +59,10 @@ app.factory("ArrayUtils", function() {
             (sortMe[i].authorName == newMsg.authorName && sortMe[i].message == newMsg.message)) {
             isOldMsg = true;
             //update old msg
-            if(newMsg.shared !== undefined) {
-              sortMe[i].shared = newMsg.shared;
+            if(newMsg.stared !== undefined) {
+              sortMe[i].stared = newMsg.stared;
             }
+            sortMe[i].iStared = newMsg.iStared;
             sortMe[i].styleRefresh = "";
           }
           //refresh time

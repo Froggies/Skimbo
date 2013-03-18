@@ -7,6 +7,7 @@ import services.auth._
 import play.api.libs.ws.Response
 import models.user.SkimboToken
 import java.net.URLEncoder
+import services.post.Starer
 
 object Twitter extends OAuthProvider {
 
@@ -44,6 +45,8 @@ object Twitter extends OAuthProvider {
   
   override def urlToPost(post:models.Post) = 
     "https://api.twitter.com/1.1/statuses/update.json?status="+URLEncoder.encode(post.message, "UTF-8")
+  
+  override def urlToStar(idProvider:String) = "https://api.twitter.com/1.1/statuses/retweet/"+idProvider+".json"
   
 }
 

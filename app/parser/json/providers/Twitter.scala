@@ -20,6 +20,7 @@ case class Tweet(
   mentions: List[TwitterMention],
   favorited: Boolean,
   retweets: Int,
+  retweeted: Boolean,
   authorName: String,
   screenName: String,
   profileImageUrl: Option[String],
@@ -47,7 +48,8 @@ object TwitterTimelineParser extends GenericJsonParser {
         Some(tweetDetailUrl.format(tweet.screenName, tweet.id)),
         tweet.id.toString,
         tweet.profileImageUrl,
-        Configuration.Twitter.wall)))
+        Configuration.Twitter.wall,
+        tweet.retweeted)))
   }
   
   override def nextSinceId(sinceId:String, sinceId2:Option[String]): String = {
@@ -116,6 +118,7 @@ object Tweet {
     (__ \ "entities" \ "user_mentions").read[List[TwitterMention]] and
     (__ \ "favorited").read[Boolean] and
     (__ \ "retweet_count").read[Int] and
+    (__ \ "retweeted").read[Boolean] and
     (__ \ "user" \ "name").read[String] and
     (__ \ "user" \ "screen_name").read[String] and
     (__ \ "user" \ "profile_image_url").readNullable[String] and

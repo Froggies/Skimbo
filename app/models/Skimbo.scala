@@ -20,7 +20,8 @@ case class Skimbo(
   directLink: Option[String],
   sinceId: String,
   authorAvatar:Option[String],
-  config: EndpointConfig
+  config: EndpointConfig,
+  iStared: Boolean = false
 )
 
 object Skimbo {
@@ -39,7 +40,9 @@ object Skimbo {
         "authorAvatar" -> skimbo.authorAvatar,
         "from" -> skimbo.config.provider.name,
         "service" -> skimbo.config.uniqueName,
-        "hasDetails" -> skimbo.config.parserDetails.isDefined
+        "hasDetails" -> skimbo.config.parserDetails.isDefined,
+        "canStar" -> skimbo.config.starer.isDefined,
+        "iStared" -> skimbo.iStared
       )
     }
   }

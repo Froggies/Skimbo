@@ -125,24 +125,47 @@ object CmdFromUser {
         val serviceName = (cmd.body.get \ "serviceName").as[String]
         val idMsg = (cmd.body.get \ "id").as[String]
         val columnTitle = (cmd.body.get \ "columnTitle").as[String]
+        detailsSkimbo(internalIdUser, serviceName, idMsg, columnTitle)
+      }
+      case "star" => {
+        val serviceName = (cmd.body.get \ "serviceName").as[String]
+        val idMsg = (cmd.body.get \ "id").as[String]
+        val columnTitle = (cmd.body.get \ "columnTitle").as[String]
         Endpoints.getConfig(serviceName).map { service =>
           service.parserDetails.map { parser =>
-            Fetcher(FetcherParameter(
-              service.provider,
-              Some(parser),
-              Some(service.urlDetails.replace(":id", idMsg)),
-              internalIdUser,
-              columnTitle,
-              serviceName
-            )).map( _.map { listMsg =>
-              val msg = Json.obj("column" -> columnTitle, "msg" -> listMsg.head)
-              CmdToUser.sendTo(internalIdUser, Command("msg", Some(msg)))
+            service.starer.map( _.star(idMsg).map { response =>
+              detailsSkimbo(internalIdUser, serviceName, idMsg, columnTitle)
+              Logger(CmdFromUser.getClass).info(response.body.toString)
+              if(service.canParseResultStar) {
+                parser.getSkimboMsg(response, service.provider).map { listMsg =>
+                  val msg = Json.obj("column" -> columnTitle, "msg" -> listMsg.head)
+                  CmdToUser.sendTo(internalIdUser, Command("msg", Some(msg)))
+                }
+              }
             })
           }
         }
       }
       case _ => {
-        Logger.error("Command not found " + cmd)
+        Logger(CmdFromUser.getClass).error("Command not found " + cmd)
+      }
+    }
+  }
+  
+  def detailsSkimbo(internalIdUser:String, serviceName:String, idMsg:String, columnTitle:String)(implicit req: RequestHeader) = {
+    Endpoints.getConfig(serviceName).map { service =>
+      service.parserDetails.map { parser =>
+        Fetcher(FetcherParameter(
+          service.provider,
+          Some(parser),
+          Some(service.urlDetails.replace(":id", idMsg)),
+          internalIdUser,
+          columnTitle,
+          serviceName
+        )).map( _.map { listMsg =>
+          val msg = Json.obj("column" -> columnTitle, "msg" -> listMsg.head)
+          CmdToUser.sendTo(internalIdUser, Command("msg", Some(msg)))
+        })
       }
     }
   }

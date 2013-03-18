@@ -50,7 +50,7 @@ object Endpoints {
   def getAll: Seq[Endpoint] = {
     endpoints
   }
-
+  
   def getProvider(service: String): Option[GenericProvider] = {
     val found = endpoints.filter { _.services.filter { _.uniqueName == service }.size > 0 }
     if (found.size > 0) {

@@ -15,8 +15,9 @@ import services.dao.UserDao
 import services.post.Poster
 import scala.util.Success
 import scala.util.Failure
+import services.post.Starer
 
-trait OAuth2Provider extends AuthProvider with Poster {
+trait OAuth2Provider extends AuthProvider with Poster with Starer {
 
   // OAuth2 provider settings (override these)
   def method: Verb = Get
@@ -165,6 +166,14 @@ trait OAuth2Provider extends AuthProvider with Poster {
           println(error)
         }
     }
+  }
+  
+  override def star(idProvider: String)(implicit request: RequestHeader) = {
+    val queryString = Seq("access_token" -> getToken.get.token)
+    WS.url(urlToStar(idProvider))
+      .withQueryString( queryString:_* )
+      .withHeaders(postHeaderParams:_*)
+      .post("")
   }
 
 }

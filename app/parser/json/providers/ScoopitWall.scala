@@ -16,7 +16,8 @@ case class ScoopitPost (
     text: String,
     createdDate: Long,
     url: String,
-    reactionCount: Int,
+    thanksCount: Int,
+    iThanked: Boolean,
     displayName: String,
     avatarUrl : String
 )
@@ -35,11 +36,12 @@ object ScoopitWallParser extends GenericJsonParser {
         post.title + "<br />" + post.text,
         new DateTime(post.createdDate, DateTimeZone.UTC),
         Nil,
-        post.reactionCount,
+        post.thanksCount,
         Some(post.url),
         post.createdDate.toString,
         Some(post.avatarUrl),
-        Configuration.Scoopit.wall)))
+        Configuration.Scoopit.wall,
+        post.iThanked)))
   }
   
   override def nextSinceId(sinceId:String, sinceId2:Option[String]): String = 
@@ -53,7 +55,8 @@ object ScoopitPost {
     (__ \ "htmlContent").read[String] and
     (__ \ "publicationDate").read[Long] and
     (__ \ "url").read[String] and
-    (__ \ "reactionsCount").read[Int] and
+    (__ \ "thanksCount").read[Int] and
+    (__ \ "thanked").read[Boolean] and
     (__ \ "author" \ "name").read[String] and
     (__ \ "author" \ "avatarUrl").read[String])(ScoopitPost.apply _)
 }

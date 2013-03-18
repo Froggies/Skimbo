@@ -65,7 +65,9 @@
 										ng-click="getDetails(m, c)" 
 										ng-show="m.hasDetails"
 										title="{{'REFRESH_DETAILS' | i18n}}"></div>
-							<span class="icon-star" ng-show="m.stared >= 0">{{m.stared}}</span>
+							<span class="message-footer-content message-footer-star {{m.iStared}}"
+										ng-click="star(m, c)" 
+										ng-show="m.stared >= 0">★{{m.stared}}</span>
 						</div>
 					</div>
 				</li>

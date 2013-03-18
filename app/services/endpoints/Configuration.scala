@@ -9,6 +9,7 @@ import parser.json.detail._
 import services.auth.RssProvider
 import parser.xml.GenericRssParser
 import parser.GenericParser
+import services.post.Starer
 
 object Configuration {
 
@@ -22,6 +23,8 @@ object Configuration {
       override val uniqueName = "twitter.wall"
       override val parserDetails = Some(TweetDetails)
       override val urlDetails = "https://api.twitter.com/1.1/statuses/show.json?id=:id"
+      override val starer = Some(providers.Twitter)
+      override val canParseResultStar = true
     }
     object user extends EndpointConfig {
       override val url = withLimit("https://api.twitter.com/1.1/statuses/user_timeline.json?count=:limit&screen_name=:username")
@@ -78,6 +81,7 @@ object Configuration {
       override val uniqueName = "facebook.wall"
       override val parserDetails = Some(FacebookPostDetails)
       override val urlDetails = "https://graph.facebook.com/:id"
+      override val starer = Some(providers.Facebook)
     }
     object user extends EndpointConfig {
       override val url = withLimit("https://graph.facebook.com/:username/feed?limit=:limit")
@@ -171,7 +175,8 @@ object Configuration {
   object Trello {
     object notifications extends EndpointConfig {
       override val url = withLimit("https://api.trello.com/1/members/me/notifications?limit=:limit")
-      override val since = Some("&since=:since") // id
+      //DON'T REMOVE THIS COMMENT BECAUSE TRELLO SINCEID BUG AND RETURN SAME POST MULTIPLE TIME
+      //override val since = Some("&since=:since") //id 
       override val mustBeReordered = true
       override val provider = providers.Trello
       override val parser = Some(TrelloWallParser)
@@ -192,6 +197,7 @@ object Configuration {
       override val uniqueName = "scoopit.wall"
       override val parserDetails = Some(ScoopitPostDetails)
       override val urlDetails = "http://www.scoop.it/api/1/post?id=:id"
+      override val starer = Some(providers.Scoopit)
     }
   }
   
@@ -239,6 +245,8 @@ trait EndpointConfig {
   val parserDetails : Option[GenericParser] = None
   val uniqueName: String
   val urlDetails:String = ""
+  val starer: Option[Starer] = None
+  val canParseResultStar: Boolean = false
 
   def withLimit(url: String) = url.replace(":limit", limit.toString)
 }

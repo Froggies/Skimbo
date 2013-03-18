@@ -58,5 +58,7 @@ object Facebook extends OAuth2Provider {
     post.url.map(url => Seq("link" -> url)).getOrElse(Seq.empty) ++
     post.url_image.map(url => Seq("picture" -> url)).getOrElse(Seq.empty)
   }
+  
+  override def urlToStar(idProvider:String) = "https://graph.facebook.com/"+idProvider+"/likes"
 
 }
