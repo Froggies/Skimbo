@@ -146,6 +146,26 @@ object CmdFromUser {
           }
         }
       }
+      case "paramHelperSearch" => {
+        val serviceName = (cmd.body.get \ "serviceName").as[String]
+        val search = (cmd.body.get \ "search").as[String]
+        println("paramHelperSearch")
+        Endpoints.getConfig(serviceName).map { service =>
+          println("paramHelperSearch :: "+service)
+          service.paramParserHelper.map { parser =>
+            println("paramHelperSearch :: "+parser)
+            service.paramUrlHelper.map { url =>
+              println("paramHelperSearch :: "+url.replace(":search", search))
+              service.provider.fetch(url.replace(":search", search)).withTimeout(service.delay * 1000).get.map { response =>
+                parser.getProviderUser(response, service.provider).map { users =>
+                  val msg = Json.obj("serviceName" -> serviceName, "values" -> users)
+                  CmdToUser.sendTo(internalIdUser, Command("paramHelperSearch", Some(msg)))
+                }
+              }
+            }
+          }
+        }
+      }
       case _ => {
         Logger(CmdFromUser.getClass).error("Command not found " + cmd)
       }

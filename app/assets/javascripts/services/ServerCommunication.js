@@ -27,7 +27,8 @@ app.factory("ServerCommunication", [
               explainService:"",
               args:{},
               service:services[j],
-              hasParser:services[j].hasParser
+              hasParser:services[j].hasParser,
+              hasHelper:services[j].hasHelper
             };
             service.explainService = $unifiedRequestUtils.fillExplainService(service.typeService, service.socialNetwork);
             if(service.hasParser == false) {

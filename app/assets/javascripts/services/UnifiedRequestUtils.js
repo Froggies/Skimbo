@@ -26,6 +26,7 @@ app.factory("UnifiedRequestUtils", function() {
       clientUnifiedRequest.providerName = unifiedRequest.service.split(".")[0];
       clientUnifiedRequest.serviceName = unifiedRequest.service.split(".")[1];
       clientUnifiedRequest.hasParser = unifiedRequest.hasParser;
+      clientUnifiedRequest.hasHelper = unifiedRequest.hasHelper;
       clientUnifiedRequest.args = []
       for (var index in unifiedRequest.args) {
         var key = unifiedRequest.args[index];

@@ -59,7 +59,7 @@ object GoogleplusWallMessage {
   
   val datePattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
   
-  implicit val githubReader: Reads[GoogleplusWallMessage] = (
+  implicit val googlePlusReader: Reads[GoogleplusWallMessage] = (
     (__ \ "id").read[String] and
     (__ \ "actor" \ "displayName").read[String] and
     (__ \ "title").read[String] and

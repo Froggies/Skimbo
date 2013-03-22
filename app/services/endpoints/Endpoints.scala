@@ -33,7 +33,8 @@ object Endpoints {
     Endpoint(LinkedIn, Seq(
       Configuration.Linkedin.wall)),
     Endpoint(GooglePlus, Seq(
-      Configuration.GooglePlus.wall)),
+      Configuration.GooglePlus.wall,
+      Configuration.GooglePlus.user)),
     Endpoint(GitHub, Seq(
       Configuration.Github.notifications)),
     Endpoint(Trello, Seq(

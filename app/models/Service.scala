@@ -30,7 +30,8 @@ object Service {
         "services" -> endpoint.services.map(service => Json.obj(
           "service" -> service.uniqueName,
           "args" -> service.requiredParams,
-          "hasParser" -> service.parser.isDefined
+          "hasParser" -> service.parser.isDefined,
+          "hasHelper" -> service.paramParserHelper.isDefined
         )),
         "hasToken" -> endpoint.provider.canStart
       )

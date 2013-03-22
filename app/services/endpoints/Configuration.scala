@@ -10,6 +10,7 @@ import services.auth.RssProvider
 import parser.xml.GenericRssParser
 import parser.GenericParser
 import services.post.Starer
+import parser.GenericParserUser
 
 object Configuration {
 
@@ -150,14 +151,15 @@ object Configuration {
       override val parser = Some(GoogleplusWallParser)
       override val uniqueName = "googleplus.wall"
     }
-//    object user extends EndpointConfig {
-//      override val url = withLimit("https://www.googleapis.com/plus/v1/people/:username/activities/public?maxResults=:limit")
-//      override val manualNextResults = true
-//      override val provider = providers.GooglePlus
-//      override val requiredParams = List("username")
-//      override val parser = GoogleplusWallParser
-//      override val uniqueName = ""
-//    }
+    object user extends EndpointConfig {
+      override val url = withLimit("https://www.googleapis.com/plus/v1/people/:username/activities/public?maxResults=:limit")
+      override val provider = providers.GooglePlus
+      override val requiredParams = List("username")
+      override val parser = Some(GoogleplusWallParser)
+      override val uniqueName = "googleplus.user"
+      override val paramParserHelper = Some(GoogleplusUser)
+      override val paramUrlHelper = Some("https://www.googleapis.com/plus/v1/people?query=:search")
+    }
   }
 
   object Github {
@@ -247,6 +249,8 @@ trait EndpointConfig {
   val urlDetails:String = ""
   val starer: Option[Starer] = None
   val canParseResultStar: Boolean = false
+  val paramParserHelper: Option[GenericParserUser] = None
+  val paramUrlHelper: Option[String] = None
 
   def withLimit(url: String) = url.replace(":limit", limit.toString)
 }

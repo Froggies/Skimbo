@@ -9,6 +9,7 @@ import models.user.SkimboToken
 import parser.json.PathDefaultReads
 import play.api.libs.functional.syntax._
 import java.net.URLEncoder
+import parser.json.providers.GoogleplusUser
 
 object GooglePlus extends OAuth2Provider {
 
@@ -27,24 +28,11 @@ object GooglePlus extends OAuth2Provider {
   
   override def distantUserToSkimboUser(ident: String, response: play.api.libs.ws.Response)(implicit request: RequestHeader): Option[ProviderUser] = {
     try {
-      val me = response.json // TODO : En faire un parser
-      Logger("G+Provider").info(me.toString)
-      val id = (me \ "id").as[String]
-      val username = (me \ "displayName").asOpt[String]
-      val name = (me \ "name" \ "familyName").asOpt[String]
-      val description = Some("")
-      val profileImage = (me \ "image" \ "url").asOpt[String]
-      Some(ProviderUser(
-          id, 
-          this.name, 
-          Some(SkimboToken(getToken.get.token, None)), 
-          username, 
-          name, 
-          description, 
-          profileImage))
+      GoogleplusUser.asProviderUser(response.json)
     } catch {
       case t:Throwable => {
         Logger("G+Provider").error("Error during fetching user details G+ "+t.getMessage())
+        Logger("G+Provider").error(response.json.toString)
         None
       }
     }
