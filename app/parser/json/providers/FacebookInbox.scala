@@ -12,17 +12,17 @@ import services.endpoints.Configuration
 case class FacebookInboxMessage(
   id: String,
   updatedAt: DateTime,
-  users: Seq[FacebookUser],
+  users: Seq[FacebookInBoxUser],
   data: Option[Seq[FacebookInboxData]] = None
 )
 
-case class FacebookUser(
+case class FacebookInBoxUser(
   id:String,
   name:String
 )
 
 case class FacebookInboxData(
-  from: Option[FacebookUser],
+  from: Option[FacebookInBoxUser],
   message: Option[String]
 )
 
@@ -48,7 +48,7 @@ object FacebookInboxParser extends GenericJsonParser {
 
   override def cut(json: JsValue) = super.cut(json \ "data")
 
-  def getFrom(users:Seq[FacebookUser]) = {
+  def getFrom(users:Seq[FacebookInBoxUser]) = {
     if(users.size > 1) {
       users(1).name
     } else if(users.size > 0) {
@@ -76,15 +76,15 @@ object FacebookInboxParser extends GenericJsonParser {
   
 }
 
-object FacebookUser {
-  implicit val facebookuserReader: Reads[FacebookUser] = (
+object FacebookInBoxUser {
+  implicit val facebookuserReader: Reads[FacebookInBoxUser] = (
     (__ \ "id").read[String] and
-    (__ \ "name").read[String])(FacebookUser.apply _)
+    (__ \ "name").read[String])(FacebookInBoxUser.apply _)
 }
 
 object FacebookInboxData {
   implicit val facebookDataReader: Reads[FacebookInboxData] = (
-    (__ \ "from").readNullable[FacebookUser] and
+    (__ \ "from").readNullable[FacebookInBoxUser] and
     (__ \ "message").readNullable[String])(FacebookInboxData.apply _)
 }
 
@@ -92,6 +92,6 @@ object FacebookInboxMessage {
   implicit val facebookInBoxReader: Reads[FacebookInboxMessage] = (
     (__ \ "id").read[String] and
     (__ \ "updated_time").read[DateTime](Reads.jodaDateReads("yyyy-MM-dd'T'HH:mm:ssZZ")) and
-    (__ \ "to" \ "data").read[Seq[FacebookUser]] and
+    (__ \ "to" \ "data").read[Seq[FacebookInBoxUser]] and
     (__ \ "comments" \ "data").readNullable[Seq[FacebookInboxData]])(FacebookInboxMessage.apply _)
 }

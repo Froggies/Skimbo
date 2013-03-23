@@ -95,6 +95,8 @@ object Configuration {
       override val parser = Some(FacebookWallParser)
       override val mustBeReordered = true
       override val uniqueName = "facebook.user"
+      override val paramParserHelper = Some(FacebookUser)
+      override val paramUrlHelper = Some("https://graph.facebook.com/search?q=:search&limit=10&type=user&fields=name,picture")
     }
     object group extends EndpointConfig {
       override val url = withLimit("https://graph.facebook.com/:groupId/feed?limit=:limit")

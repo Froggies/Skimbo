@@ -7,6 +7,8 @@ import models.user.ProviderUser
 import models.user.SkimboToken
 import play.api.libs.ws.Response
 import java.net.URLEncoder
+import services.commands.CmdToUser
+import parser.json.providers.FacebookUser
 
 object Facebook extends OAuth2Provider {
 
@@ -31,22 +33,18 @@ object Facebook extends OAuth2Provider {
   }
   
   override def distantUserToSkimboUser(ident: String, response: play.api.libs.ws.Response)(implicit request: RequestHeader): Option[ProviderUser] = {
-    try {
-      val me = response.json
-      val id = (me \ "id").as[String]
-      val name = (me \ "name").asOpt[String]
-      Some(ProviderUser(
-          id, 
-          this.name, 
-          Some(SkimboToken(getToken.get.token, None)), 
-          name, 
-          name, 
-          None, 
-          None))
-    } catch {
-      case _ : Throwable => {
-        Logger.error("Error during fetching user details LINKEDIN")
-        None
+    if(isInvalidToken(ident, response)) {
+      CmdToUser.sendTo(ident, models.command.TokenInvalid(name))
+      None
+    } else {
+      try {
+        FacebookUser.asProviderUser(response.json)
+      } catch {
+        case t:Throwable => {
+          Logger.error("Error during fetching user details FACEBOOK")
+          Logger.error(response.json.toString)
+          None
+        }
       }
     }
   }
