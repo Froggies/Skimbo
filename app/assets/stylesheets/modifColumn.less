@@ -78,6 +78,7 @@
 .input-service {
   white-space: nowrap;
   line-height: 0;
+  position: relative;
 }
 
 .social-network-active {
@@ -210,4 +211,35 @@
 .error-div {
   text-align: center;
   margin-top: 10px;
+}
+
+.container-oracle {
+  position: absolute;
+  left: 0;
+  top: 30px;
+  background-color: white;
+  z-index: 100;
+  border-left: 1px solid #CCC;
+  border-right: 1px solid #CCC;
+  border-bottom: 1px solid #CCC;
+  border-bottom-right-radius: 5px;
+  border-bottom-left-radius: 5px;
+}
+
+.container-oracle ul {
+  padding: 0;
+}
+
+.container-oracle li {
+  display: block;
+}
+
+.value-oracle {
+  display: block;
+  line-height: 15px;
+  cursor: pointer;
+}
+
+.value-oracle:hover {
+  background-color: #999;
 }

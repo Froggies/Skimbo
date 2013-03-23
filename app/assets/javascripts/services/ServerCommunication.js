@@ -143,6 +143,8 @@ app.factory("ServerCommunication", [
         broadcast('disconnect', body);
       } else if (data.cmd == "allPosters") {
         broadcast('allPosters', data.body);
+      } else if (data.cmd == "paramHelperSearch") {
+        broadcast('paramHelperSearch', data.body);
       } else {
         console.log("Command not yet implemented: ", data);
       }

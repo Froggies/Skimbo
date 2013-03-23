@@ -28,7 +28,7 @@ object Configuration {
       override val canParseResultStar = true
     }
     object user extends EndpointConfig {
-      override val url = withLimit("https://api.twitter.com/1.1/statuses/user_timeline.json?count=:limit&screen_name=:username")
+      override val url = withLimit("https://api.twitter.com/1.1/statuses/user_timeline.json?count=:limit&user_id=:username")
       override val since = wall.since
       override val delay = 80
       override val provider = providers.Twitter
@@ -36,6 +36,8 @@ object Configuration {
       override val parser = Some(TwitterTimelineParser)
       override val mustBeReordered = true
       override val uniqueName = "twitter.user"
+      override val paramParserHelper = Some(TwitterUser)
+      override val paramUrlHelper = Some("https://api.twitter.com/1.1/users/search.json?q=:search&count=10")
     }
     object hashtag extends EndpointConfig {
       override val url = withLimit("https://api.twitter.com/1.1/search/tweets.json?count=:limit&result_type=mixed&q=%23:hashtag")
@@ -147,18 +149,22 @@ object Configuration {
   object GooglePlus {
     object wall extends EndpointConfig {
       override val url = withLimit("https://www.googleapis.com/plus/v1/people/me/activities/public?maxResults=:limit")
+      override val mustBeReordered = true
       override val provider = providers.GooglePlus
       override val parser = Some(GoogleplusWallParser)
       override val uniqueName = "googleplus.wall"
+      override val delay = 600
     }
     object user extends EndpointConfig {
       override val url = withLimit("https://www.googleapis.com/plus/v1/people/:username/activities/public?maxResults=:limit")
+      override val mustBeReordered = true
       override val provider = providers.GooglePlus
       override val requiredParams = List("username")
       override val parser = Some(GoogleplusWallParser)
       override val uniqueName = "googleplus.user"
       override val paramParserHelper = Some(GoogleplusUser)
       override val paramUrlHelper = Some("https://www.googleapis.com/plus/v1/people?query=:search")
+      override val delay = 600
     }
   }
 

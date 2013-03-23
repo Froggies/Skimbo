@@ -141,15 +141,11 @@ app.controller('ModifColumnController', [
       if($scope.column.title == "") {
         $scope.column.title = service.providerName + " " + service.serviceName;
       }
-      if(service.hasHelper == true) {
-        $network.send({
-          cmd: "paramHelperSearch",
-          body: {
-            serviceName: "googleplus.user",
-            search: "Novak"
-          }
-        });
-      }
+    }
+
+    $scope.selectOracle = function(arg, value) {
+      arg.possibleValues = [];
+      arg.value = value.id;
     }
 
     $scope.cancelCreateColumn = function() {

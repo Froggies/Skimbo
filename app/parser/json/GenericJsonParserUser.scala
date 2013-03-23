@@ -29,7 +29,7 @@ trait GenericJsonParserUser extends GenericParserUser {
     } catch {
       case err: play.api.libs.json.JsResultException => {
         log.error("Invalid message", err)
-        log.info(response.json.toString)
+        log.info(response.status + response.json.toString)
         None
       }
       case err: Throwable => {

@@ -14,7 +14,8 @@ trait WsProvider {
   
   def resultAsJson(response: Response): JsValue = response.json
 
-  def isInvalidToken(response: Response): Boolean = response.body.contains("token")
+  def isInvalidToken(idUser:String, response: play.api.libs.ws.Response)(implicit request: RequestHeader): Boolean = 
+    response.body.contains("token")
 
   def isRateLimiteError(response: Response): Boolean = response.body.contains("rate")
 

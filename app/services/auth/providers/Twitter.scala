@@ -8,6 +8,8 @@ import play.api.libs.ws.Response
 import models.user.SkimboToken
 import java.net.URLEncoder
 import services.post.Starer
+import parser.json.providers.TwitterUser
+import services.commands.CmdToUser
 
 object Twitter extends OAuthProvider {
 
@@ -15,31 +17,24 @@ object Twitter extends OAuthProvider {
   override val namespace = "tw"
 
   override def distantUserToSkimboUser(ident: String, response: play.api.libs.ws.Response)(implicit request: RequestHeader): Option[ProviderUser] = {
-    try {
-      val me = response.json
-      val id = (me \ "id").as[Int].toString
-      val username = (me \ "screen_name").asOpt[String]
-      val name = (me \ "name").asOpt[String]
-      val description = (me \ "description").asOpt[String]
-      val profileImage = (me \ "profile_image_url").asOpt[String]
-      Some(ProviderUser(
-          id, 
-          this.name, 
-          Some(SkimboToken(getToken.get.token, Some(getToken.get.secret))), 
-          username, 
-          name, 
-          description, 
-          profileImage))
-    } catch {
-      case _ : Throwable => {
-        Logger.error("Error during fetching user details TWITTER (certainly Rate Limit Exceeded)")
-        Logger.error(response.json.toString)
-        None
+    if(isInvalidToken(ident, response)) {
+      CmdToUser.sendTo(ident, models.command.TokenInvalid(name))
+      None
+    } else {
+      try {
+        TwitterUser.asProviderUser(response.json)
+      } catch {
+        case t:Throwable => {
+          Logger.error("Error during fetching user details TWITTER (certainly Rate Limit Exceeded)")
+          Logger.error(response.json.toString)
+          None
+        }
       }
     }
   }
   
-  override def isInvalidToken(response: Response): Boolean = response.status != 429
+  override def isInvalidToken(idUser:String, response: play.api.libs.ws.Response)(implicit request: RequestHeader): Boolean = 
+    response.status != 200 && response.status != 429 && response.status != 404
   
   override def isRateLimiteError(response: Response): Boolean = response.status == 429
   

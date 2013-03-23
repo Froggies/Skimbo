@@ -55,12 +55,12 @@ object Fetcher {
           if (response.status != Status.OK) {
             log.error("[" + parameter.serviceName + "] HTTP Error " + response.status)
             log.info(response.body.toString)
-            if (provider.isInvalidToken(response)) {
+            if (provider.isInvalidToken(idUser, response)) {
               CmdToUser.sendTo(idUser, TokenInvalid(provider.name))
               None
             } else if (provider.isRateLimiteError(response)) {
               CmdToUser.sendTo(idUser, Error(provider.name, "Rate limite exceeded on"))
-              Some(List.empty[Skimbo])
+              Some(List.empty)
             } else {
               CmdToUser.sendTo(idUser, Error(provider.name, "Error in column " + parameter.columnName + " with"))
               None

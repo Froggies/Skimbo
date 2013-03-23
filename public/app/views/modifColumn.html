@@ -20,13 +20,22 @@
           <li ng-repeat="service in column.unifiedRequests">
             <div class="input-service" ng-show="service.hasArguments" ng-repeat="arg in service.args ">
               <img class="img-service" ng-src="assets/img/brand/{{service.providerName}}.png" alt="{{service.providerName}}" width="24" height="24">
-              <input class="arg-service" type="text" ng-model="arg.value" placeholder="{{arg.key}}" pattern="[ a-zA-Z0-9]*"/>
+              <input class="arg-service" type="text" ng-model="arg.value" placeholder="{{arg.key}}" pattern="[ a-zA-Z0-9]*" oracle="service"/>
               <a href="#" 
                 class="delete-service {{service.providerName}}"
                 ng-click="deleteService(service,arg)"
               >✘</a>
+              <div class="container-oracle" ng-show="arg.possibleValues.length > 0">
+                <ul>
+                  <li class="value-oracle" 
+                    ng-repeat="val in arg.possibleValues"
+                    ng-click="selectOracle(arg, val)">
+                    <img ng-src="{{val.avatar}}" width="24" height="24"/>{{val.username}}
+                  </li>
+                </ul>
+              </div>
             </div>
-            <div class="input-service" ng-show="!service.hasArguments">
+            <div class="input-service" ng-hide="service.hasArguments">
               <img class="img-service" ng-src="assets/img/brand/{{service.providerName}}.png" alt="{{service.providerName}}" width="24" height="24">
               <span class="receving-service">{{service.serviceName}}</span>
               <a href="#" 

@@ -102,8 +102,8 @@ trait OAuth2Provider extends AuthProvider with Poster with Starer {
           processTokenSafe(response) match {
 
             // Provider return token
-            case Token(Some(token), _) => {
-              startUser(SkimboToken(token), redirectRoute)
+            case Token(Some(token), _, refresh) => {
+              startUser(SkimboToken(token, refresh), redirectRoute)
             }
 
             // Provider return nothing > an error has occurred during authentication
@@ -139,7 +139,7 @@ trait OAuth2Provider extends AuthProvider with Poster with Starer {
     }
   }
 
-  private def processTokenSafe(response: play.api.libs.ws.Response): Token = {
+  protected def processTokenSafe(response: play.api.libs.ws.Response): Token = {
     try {
       processToken(response)
     } catch {
@@ -181,7 +181,7 @@ trait OAuth2Provider extends AuthProvider with Poster with Starer {
 /**
  * Token send from provider
  */
-sealed case class Token(token: Option[String], expires: Option[Int])
+sealed case class Token(token: Option[String], expires: Option[Int], refreshToken: Option[String] = None)
 
 sealed abstract class Verb
 case object Get extends Verb

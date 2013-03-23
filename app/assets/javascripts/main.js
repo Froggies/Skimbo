@@ -16,6 +16,7 @@ require([
   'directives/ScrollManager',
   'directives/ShowOnHoverParent',
   'directives/OnKeyPress',
+  'directives/Oracle',
   'controllers/NotificationController', 
   'controllers/MainController', 
   'controllers/ModifColumnController', 

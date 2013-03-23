@@ -18,6 +18,7 @@ import services.actors.Fetcher
 import services.actors.ProviderActorParameter
 import services.endpoints.JsonRequest.UnifiedRequest
 import services.actors.FetcherParameter
+import java.net.URLEncoder
 
 object CmdFromUser {
 
@@ -156,7 +157,7 @@ object CmdFromUser {
             println("paramHelperSearch :: "+parser)
             service.paramUrlHelper.map { url =>
               println("paramHelperSearch :: "+url.replace(":search", search))
-              service.provider.fetch(url.replace(":search", search)).withTimeout(service.delay * 1000).get.map { response =>
+              service.provider.fetch(url.replace(":search", URLEncoder.encode(search, "UTF-8"))).withTimeout(service.delay * 1000).get.map { response =>
                 parser.getProviderUser(response, service.provider).map { users =>
                   val msg = Json.obj("serviceName" -> serviceName, "values" -> users)
                   CmdToUser.sendTo(internalIdUser, Command("paramHelperSearch", Some(msg)))
