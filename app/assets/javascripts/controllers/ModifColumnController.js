@@ -117,6 +117,8 @@ app.controller('ModifColumnController', [
       $scope.availableSocialNetworksWidth = "";
       if(socialNetwork.name == "greader") {
         selectGreader();
+      } else {
+        $scope.googleReaderSelected = false;
       }
     }
 

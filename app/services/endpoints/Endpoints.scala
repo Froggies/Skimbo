@@ -26,6 +26,7 @@ object Endpoints {
       Configuration.Facebook.wall,
       Configuration.Facebook.user,
       Configuration.Facebook.group,
+      Configuration.Facebook.page,
       Configuration.Facebook.message)),
     Endpoint(Viadeo, Seq(
       Configuration.Viadeo.smartNews,

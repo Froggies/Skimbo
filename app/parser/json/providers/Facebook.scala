@@ -27,6 +27,8 @@ case class FacebookWallMessage(
 
 object FacebookWallParser extends GenericJsonParser {
   
+  val imageUrl = "https://graph.facebook.com/:id/picture"
+  
   override def asSkimbo(json:JsValue): Option[Skimbo] = {
     Json.fromJson[FacebookWallMessage](json).fold(
       error => logParseError(json, error, "FacebookWallMessage"),
@@ -41,7 +43,7 @@ object FacebookWallParser extends GenericJsonParser {
           e.nbLikes,
           Some(e.link),
           (e.createdAt.getMillis() / 1000).toInt.toString,
-          e.picture,
+          e.picture.orElse(Some(imageUrl.replace(":id", e.fromId.toString))),
           Configuration.Facebook.wall))
       } else {
         None

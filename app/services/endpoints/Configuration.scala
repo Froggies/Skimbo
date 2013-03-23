@@ -75,7 +75,7 @@ object Configuration {
 
   object Facebook {
     object wall extends EndpointConfig {
-      override val url = withLimit("https://graph.facebook.com/me/home?limit=:limit")
+      override val url = withLimit("https://graph.facebook.com/me/home?limit=:limit&fields=from,type,status_type,comments,message,story,picture")
       override val since = Some("&since=:since")
       override val delay = 30
       override val provider = providers.Facebook
@@ -107,6 +107,20 @@ object Configuration {
       override val parser = Some(FacebookWallParser)
       override val mustBeReordered = true
       override val uniqueName = "facebook.group"
+      override val paramParserHelper = Some(FacebookUser)
+      override val paramUrlHelper = Some("https://graph.facebook.com/search?q=:search&limit=10&type=group&fields=name,picture")
+    }
+    object page extends EndpointConfig {
+      override val url = withLimit("https://graph.facebook.com/:pageId/feed?limit=:limit")
+      override val since = wall.since
+      override val delay = 30
+      override val provider = providers.Facebook
+      override val requiredParams = List("pageId")
+      override val parser = Some(FacebookWallParser)
+      override val mustBeReordered = true
+      override val uniqueName = "facebook.page"
+      override val paramParserHelper = Some(FacebookUser)
+      override val paramUrlHelper = Some("https://graph.facebook.com/search?q=:search&limit=10&type=page&fields=name,picture")
     }
     object message extends EndpointConfig {
       override val url = withLimit("https://graph.facebook.com/me/inbox?limit=:limit")
