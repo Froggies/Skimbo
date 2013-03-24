@@ -11,30 +11,26 @@ import play.api.mvc.RequestHeader
 
 trait GenericJsonParserUser extends GenericParserUser {
 
-  val log = Logger("GenericJsonParserUser")
-  
-  def getProviderUser(response:play.api.libs.ws.Response, provider: GenericProvider)(implicit request: RequestHeader):Option[List[models.user.ProviderUser]] = {
+  override def getProviderUser(response:play.api.libs.ws.Response, provider: GenericProvider)(implicit request: RequestHeader):Option[List[models.user.ProviderUser]] = {
     cutSafe(response, provider).map { exploded =>
       exploded.map(json => asProviderUserSafe(json)).flatten
     }
   }
   
-  def cut(json: String): List[JsValue] = cut(Json.parse(json))
-
   def cut(json: JsValue) = json.as[List[JsValue]]
 
-  def cutSafe(response: play.api.libs.ws.Response, provider: GenericProvider): Option[List[JsValue]] = {
+  private def cutSafe(response: play.api.libs.ws.Response, provider: GenericProvider): Option[List[JsValue]] = {
     try {
       Some(cut(provider.resultAsJson(response)))
     } catch {
       case err: play.api.libs.json.JsResultException => {
-        log.error("Invalid message", err)
-        log.info(response.status + response.json.toString)
+        Logger("GenericJsonParserUser").error("Invalid message", err)
+        Logger("GenericJsonParserUser").info(response.status + response.json.toString)
         None
       }
       case err: Throwable => {
-        log.error("Unexpected message", err)
-        log.info(response.body)
+        Logger("GenericJsonParserUser").error("Unexpected message", err)
+        Logger("GenericJsonParserUser").info(response.body)
         None
       }
     }
@@ -45,8 +41,8 @@ trait GenericJsonParserUser extends GenericParserUser {
       asProviderUser(json)
     } catch {
       case ex : Throwable => {
-        log.error("Error during parsing this message", ex)
-        log.info(json.toString)
+        Logger("GenericJsonParserUser").error("Error during parsing this message", ex)
+        Logger("GenericJsonParserUser").info(json.toString)
         None
       }
     }

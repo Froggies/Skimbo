@@ -7,7 +7,8 @@ case class Post (
   title:String,
   message:String,
   url:Option[String] = None,
-  url_image:Option[String] = None
+  url_image:Option[String] = None,
+  toPageId:Option[String] = None
 )
 
 object Post {
@@ -15,5 +16,6 @@ object Post {
     (__ \ "title").read[String] and
     (__ \ "message").read[String] and
     (__ \ "url").readNullable[String] and
-    (__ \ "url_image").readNullable[String])(Post.apply _)
+    (__ \ "url_image").readNullable[String] and
+    (__ \ "toPageId").readNullable[String])(Post.apply _)
 }

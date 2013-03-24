@@ -38,9 +38,6 @@ object Twitter extends OAuthProvider {
   
   override def isRateLimiteError(response: Response): Boolean = response.status == 429
   
-  override def urlToPost(post:models.Post) = 
-    "https://api.twitter.com/1.1/statuses/update.json?status="+URLEncoder.encode(post.message, "UTF-8")
-  
   override def urlToStar(idProvider:String) = "https://api.twitter.com/1.1/statuses/retweet/"+idProvider+".json"
   
 }

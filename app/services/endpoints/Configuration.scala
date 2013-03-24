@@ -11,6 +11,7 @@ import parser.xml.GenericRssParser
 import parser.GenericParser
 import services.post.Starer
 import parser.GenericParserUser
+import parser.GenericParserParamHelper
 
 object Configuration {
 
@@ -75,7 +76,7 @@ object Configuration {
 
   object Facebook {
     object wall extends EndpointConfig {
-      override val url = withLimit("https://graph.facebook.com/me/home?limit=:limit&fields=from,type,status_type,comments,message,story,picture")
+      override val url = withLimit("https://graph.facebook.com/me/home?limit=:limit&fields=from,type,status_type,comments,message,story,picture,likes,actions")
       override val since = Some("&since=:since")
       override val delay = 30
       override val provider = providers.Facebook
@@ -185,14 +186,16 @@ object Configuration {
   }
 
   object Github {
-    object notifications extends EndpointConfig {
+    object userEvents extends EndpointConfig {
       override val url = "https://api.github.com/users/:username/received_events"
       // override val since = need perso header ETag
       override val mustBeReordered = true
       override val provider = providers.GitHub
       override val requiredParams = List("username")
       override val parser = Some(GithubWallParser)
-      override val uniqueName = "github.notifications"
+      override val uniqueName = "github.userEvents"
+      override val paramParserHelper = Some(GithubUser)
+      override val paramUrlHelper = Some("https://api.github.com/legacy/user/search/:search")
     }
   }
 
@@ -271,7 +274,7 @@ trait EndpointConfig {
   val urlDetails:String = ""
   val starer: Option[Starer] = None
   val canParseResultStar: Boolean = false
-  val paramParserHelper: Option[GenericParserUser] = None
+  val paramParserHelper: Option[GenericParserParamHelper] = None
   val paramUrlHelper: Option[String] = None
 
   def withLimit(url: String) = url.replace(":limit", limit.toString)

@@ -6,9 +6,13 @@ import services.auth.providers.Twitter
 import models.user.SkimboToken
 import parser.json.GenericJsonParserUser
 import play.api.libs.json.JsValue
+import parser.json.GenericJsonParserParamHelper
+import models.ParamHelper
 
-object TwitterUser extends GenericJsonParserUser {
+object TwitterUser extends GenericJsonParserUser with GenericJsonParserParamHelper {
 
+  override def cut(json: JsValue) = json.as[List[JsValue]]
+  
   override def asProviderUser(json: JsValue)(implicit request: RequestHeader): Option[models.user.ProviderUser] = {
       val id = (json \ "id").as[Int].toString
       val username = (json \ "screen_name").asOpt[String]
@@ -24,6 +28,10 @@ object TwitterUser extends GenericJsonParserUser {
           name, 
           description, 
           profileImage))
+  }
+  
+  override def asParamHelper(json: JsValue)(implicit request: RequestHeader) : Option[models.ParamHelper] = {
+    asProviderUser(json).map( user => ParamHelper.fromProviderUser(user))
   }
 
 }

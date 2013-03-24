@@ -17,7 +17,7 @@ import scala.util.Success
 import scala.util.Failure
 import services.post.Starer
 
-trait OAuth2Provider extends AuthProvider with Poster with Starer {
+trait OAuth2Provider extends AuthProvider with Starer {
 
   // OAuth2 provider settings (override these)
   def method: Verb = Get
@@ -151,28 +151,18 @@ trait OAuth2Provider extends AuthProvider with Poster with Starer {
     }
   }
   
-  override def post(post:models.Post)(implicit request: RequestHeader) = {
-    println("POST "+name+" = "+post)
-    val queryString = postParams(post) ++ Seq("access_token" -> getToken.get.token)
-    WS.url(urlToPost(post))
-      .withQueryString( queryString:_* )
-      .withHeaders(postHeaderParams:_*)
-      .post(postContent(post))
-      .onComplete {
-        case Success(response) => {
-          println(response.body.toString)
-        }
-        case Failure(error) => {
-          println(error)
-        }
-    }
+  override def post(url:String, queryString:Seq[(String, String)], headers:Seq[(String, String)], content:String)(implicit request: RequestHeader) = {
+    val queryS = queryString ++ Seq("access_token" -> getToken.get.token)
+    WS.url(url)
+      .withQueryString( queryS:_* )
+      .withHeaders(headers:_*)
+      .post(content)
   }
   
   override def star(idProvider: String)(implicit request: RequestHeader) = {
     val queryString = Seq("access_token" -> getToken.get.token)
     WS.url(urlToStar(idProvider))
       .withQueryString( queryString:_* )
-      .withHeaders(postHeaderParams:_*)
       .post("")
   }
 

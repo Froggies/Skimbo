@@ -7,6 +7,7 @@ import models.user.SkimboToken
 import services.commands.CmdFromUser
 import services.actors.UserInfosActor
 import models.command.NewToken
+import scala.concurrent.Future
 
 trait AuthProvider extends GenericProvider with AccountWsProvider with SecurityProvider {
 
@@ -28,5 +29,10 @@ trait AuthProvider extends GenericProvider with AccountWsProvider with SecurityP
     UserInfosActor.restartProviderColumns(session("id"), this)
     Redirect(redirectRoute).withSession(session)
   }
+  
+  def post(url:String, 
+      queryString:Seq[(String, String)], 
+      headers:Seq[(String, String)], 
+      content:String)(implicit request: RequestHeader): Future[play.api.libs.ws.Response]
   
 }

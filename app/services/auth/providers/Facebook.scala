@@ -9,6 +9,13 @@ import play.api.libs.ws.Response
 import java.net.URLEncoder
 import services.commands.CmdToUser
 import parser.json.providers.FacebookUser
+import play.api.libs.ws.WS
+import play.api.libs.concurrent.Execution.Implicits.defaultContext
+import play.api.libs.json.JsArray
+import scala.concurrent.Future
+import scala.concurrent.Await
+import scala.concurrent.duration.Duration
+import play.api.libs.json.JsValue
 
 object Facebook extends OAuth2Provider {
 
@@ -18,16 +25,23 @@ object Facebook extends OAuth2Provider {
     "email",          // Get user email
     "read_stream",    // Get wall activity
     "read_mailbox",   // Get perso mails
-    "publish_actions" // Post messages
+    "publish_actions",// Post messages
+    "manage_pages",   // Post on pages
+    "publish_stream"  // Post on pages
   )
+  
   override val additionalAccreditationParameters = Map(
-    "display" -> "popup"
+    "display" -> "popup",
+    "auth_type" -> "reauthenticate"
   )
 
   override def processToken(response: play.api.libs.ws.Response) = {
     val AuthQueryStringParser = """access_token=(.*)&expires=(.*)""".r
+    val AuthQueryStringParser2 = """access_token=(.*)&auth_type=reauthenticate""".r
+    println("FACEBOOK token "+response.body.toString)
     response.body match {
-      case AuthQueryStringParser(token, expires) => Token(Some(token), Some(expires.toInt))
+      case AuthQueryStringParser(token, expires) => Token(Some(token), Some(expires.toInt), None)
+      case AuthQueryStringParser2(token)         => Token(Some(token), None, None)
       case _                                     => Token(None, None)
     }
   }
@@ -47,14 +61,6 @@ object Facebook extends OAuth2Provider {
         }
       }
     }
-  }
-  
-  override def urlToPost(post:models.Post) = "https://graph.facebook.com/me/feed"
-  
-  override def postParams(post:models.Post):Seq[(String, String)] = {
-    Seq("message" -> post.message) ++ 
-    post.url.map(url => Seq("link" -> url)).getOrElse(Seq.empty) ++
-    post.url_image.map(url => Seq("picture" -> url)).getOrElse(Seq.empty)
   }
   
   override def urlToStar(idProvider:String) = "https://graph.facebook.com/"+idProvider+"/likes"

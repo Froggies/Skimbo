@@ -6,18 +6,21 @@ import services.auth.OAuthProvider
 import models.Post
 import play.api.mvc.RequestHeader
 import play.api.libs.json.Json
+import services.auth.AuthProvider
 
 trait Poster {
 
-  def name: String
+  val authProvider:AuthProvider
   
-  def hasToken(implicit request: RequestHeader):Boolean
+  lazy val name: String = authProvider.name
+  
+  def hasToken(implicit request: RequestHeader):Boolean = authProvider.hasToken
   
   def urlToPost(post:Post):String = ""
   
   def postHeaderParams():Seq[(String, String)] = Seq.empty
     
-  def postParams(post:Post):Seq[(String, String)] = Seq.empty
+  def postParams(post:Post)(implicit request: RequestHeader):Seq[(String, String)] = Seq.empty
   
   def postContent(post:Post):String = ""
   
@@ -28,11 +31,11 @@ trait Poster {
 object Posters {
   
   val posters:Seq[Poster] = Seq(
-      services.auth.providers.Twitter, 
-      services.auth.providers.Facebook,
-      services.auth.providers.LinkedIn,
-      services.auth.providers.GitHub,
-      services.auth.providers.GooglePlus)
+      services.post.TwitterPoster, 
+      services.post.FacebookPoster,
+      services.post.LinkedinPoster,
+      services.post.GithubPoster,
+      services.post.GoogleplusPoster)
       //services.auth.providers.Viadeo)      --> "Insufficient accreditation level" ! mais pas trouvé où le setter !!??
       //                                     --> recommended only for premium user
       //TODO services.auth.providers.Scoopit --> missing topicId !!??

@@ -6,8 +6,10 @@ import services.auth.providers.GooglePlus
 import models.user.SkimboToken
 import parser.json.GenericJsonParserUser
 import play.api.libs.json.JsValue
+import parser.json.GenericJsonParserParamHelper
+import models.ParamHelper
 
-object GoogleplusUser extends GenericJsonParserUser {
+object GoogleplusUser extends GenericJsonParserUser with GenericJsonParserParamHelper {
 
   override def cut(json: JsValue) = super.cut(json \ "items")
   
@@ -25,6 +27,10 @@ object GoogleplusUser extends GenericJsonParserUser {
         name, 
         description, 
         profileImage))
+  }
+  
+  override def asParamHelper(json: JsValue)(implicit request: RequestHeader) : Option[models.ParamHelper] = {
+    asProviderUser(json).map( user => ParamHelper.fromProviderUser(user))
   }
   
 }

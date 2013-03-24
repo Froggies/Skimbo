@@ -6,13 +6,15 @@ import services.auth.providers.Facebook
 import models.user.SkimboToken
 import parser.json.GenericJsonParserUser
 import play.api.libs.json.JsValue
+import parser.json.GenericJsonParserParamHelper
+import models.ParamHelper
 
 case class FacebookUser(
     id: String,
     name: String
 )
 
-object FacebookUser extends GenericJsonParserUser {
+object FacebookUser extends GenericJsonParserUser with GenericJsonParserParamHelper {
 
   override def cut(json: JsValue) = super.cut(json \ "data")
   
@@ -29,6 +31,10 @@ object FacebookUser extends GenericJsonParserUser {
           name, 
           None, 
           picture))
+  }
+  
+  override def asParamHelper(json: JsValue)(implicit request: RequestHeader) : Option[models.ParamHelper] = {
+    asProviderUser(json).map( user => ParamHelper.fromProviderUser(user))
   }
 
 }

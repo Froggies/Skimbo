@@ -46,6 +46,15 @@ object BetaSeries extends AuthProvider {
   override def fetch(url: String)(implicit request: RequestHeader) = {
     WS.url(url).withQueryString("key" -> secret, "token" -> getToken.get.token)
   }
+  
+  //TODO not tested because nothing to post :D
+  override def post(url:String, queryString:Seq[(String, String)], headers:Seq[(String, String)], content:String)(implicit request: RequestHeader) = {
+   val queryS = queryString ++ Seq("key" -> secret, "token" -> getToken.get.token)
+    WS.url(url)
+      .withQueryString( queryS:_* )
+      .withHeaders(headers:_*)
+      .post(content)
+  }
 
   override def distantUserToSkimboUser(id: String, response: play.api.libs.ws.Response)(implicit request: RequestHeader): Option[ProviderUser] = {
     try {

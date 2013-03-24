@@ -147,7 +147,7 @@ app.controller('ModifColumnController', [
 
     $scope.selectOracle = function(arg, value) {
       arg.possibleValues = [];
-      arg.value = value.id;
+      arg.value = value.call;
     }
 
     $scope.cancelCreateColumn = function() {

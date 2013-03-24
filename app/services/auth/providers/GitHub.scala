@@ -5,6 +5,8 @@ import play.api.mvc._
 import services.auth._
 import models.user.ProviderUser
 import models.user.SkimboToken
+import services.commands.CmdToUser
+import parser.json.providers.GithubUser
 
 object GitHub extends OAuth2Provider {
 
@@ -20,41 +22,20 @@ object GitHub extends OAuth2Provider {
     Token((response.json \ "access_token").asOpt[String], None)
 
   override def distantUserToSkimboUser(ident: String, response: play.api.libs.ws.Response)(implicit request: RequestHeader): Option[ProviderUser] = {
-    try {
-      val me = response.json
-      val id = (me \ "id").as[Int].toString
-      val username = (me \ "login").asOpt[String]
-      val name = (me \ "name").asOpt[String]
-      val description = (me \ "bio").asOpt[String]
-      val profileImage = (me \ "avatar_url").asOpt[String]
-      Some(ProviderUser(
-          id, 
-          this.name, 
-          Some(SkimboToken(getToken.get.token, None)), 
-          username, 
-          name, 
-          description, 
-          profileImage))
-    } catch {
-      case _ : Throwable => {
-        Logger.error("Error during fetching user details GITHUB")
-        None
+    if(isInvalidToken(ident, response)) {
+      CmdToUser.sendTo(ident, models.command.TokenInvalid(name))
+      None
+    } else {
+      try {
+      GithubUser.asProviderUser(response.json)
+      } catch {
+        case t:Throwable => {
+          Logger("G+Provider").error("Error during fetching user details Github "+t.getMessage())
+          Logger("G+Provider").error(response.json.toString)
+          None
+        }
       }
     }
   }
   
-  override def urlToPost(post:models.Post) = "https://api.github.com/gists"
-  
-  override def postContent(post:models.Post):String = {
-    """{
-      "description": """"+post.title+"""",
-      "public": true,
-      "files": {
-        """"+post.title+"""": {
-          "content": """"+post.message+""""
-        }
-      }
-    }"""
-  }
-    
 }

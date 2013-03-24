@@ -36,18 +36,6 @@ object Scoopit extends OAuthProvider {
     }
   }
   
-  override def urlToPost(post:models.Post) = "http://www.scoop.it/api/1/post"
-  
-  override def postParams(post:models.Post):Seq[(String, String)] = {
-    Seq(
-      "action" -> "create",
-      "title" -> URLEncoder.encode(post.title, "UTF-8"),
-      "url" -> URLEncoder.encode(post.url.getOrElse(""), "UTF-8"),
-      "imageUrl" -> URLEncoder.encode(post.url_image.getOrElse(""), "UTF-8"),
-      "content" -> URLEncoder.encode(post.message, "UTF-8")
-    )
-  }
-  
   override def urlToStar(idProvider:String) = "http://www.scoop.it/api/1/post?action=thank&id="+idProvider
 
 }

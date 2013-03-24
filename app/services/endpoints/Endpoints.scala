@@ -37,7 +37,7 @@ object Endpoints {
       Configuration.GooglePlus.wall,
       Configuration.GooglePlus.user)),
     Endpoint(GitHub, Seq(
-      Configuration.Github.notifications)),
+      Configuration.Github.userEvents)),
     Endpoint(Trello, Seq(
       Configuration.Trello.notifications)),
     Endpoint(Scoopit, Seq(

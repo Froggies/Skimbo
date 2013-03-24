@@ -86,7 +86,7 @@ object GithubWallParser extends GenericJsonParser {
         buildLink(e),
         e.createdAt.toString(GithubWallMessage.datePattern),
         e.avatarUser,
-        Configuration.Github.notifications)))
+        Configuration.Github.userEvents)))
   }
 
   def buildMsg(e: GithubWallMessage) = {
