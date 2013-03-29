@@ -52,7 +52,23 @@
         <li ng-repeat="provider in providers">
           <div class="social-network-link">
             <a class="btn {{provider.selected}}" href="#" ng-click="selectPoster(provider)">
-              <img class="social-network-active" ng-src="assets/img/brand/{{provider.name}}.png" alt="{{provider.name}}" width="16" height="16"></a>
+              <img class="social-network-active" ng-src="assets/img/brand/{{provider.service}}.png" alt="{{provider.service}}" width="16" height="16">
+              <input 
+                class="post-param-input" 
+                ng-model="provider.toPageId" 
+                ng-show="provider.canHavePageId"
+                value="{{provider.toPageId}}"
+                oracle="provider" oracle-type="paramPostHelperSearch" oracle-store="provider"/>
+            </a>
+            <div class="container-oracle" ng-show="provider.possibleValues.length > 0">
+              <ul>
+                <li class="value-oracle" 
+                  ng-repeat="val in provider.possibleValues"
+                  ng-click="selectOracle(provider, val)">
+                  <img ng-src="{{val.avatarUrl}}" width="24" height="24"/>{{val.display}}
+                </li>
+              </ul>
+            </div>
           </div>
         </li>
       </ul>

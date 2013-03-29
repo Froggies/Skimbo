@@ -37,8 +37,8 @@ app.controller('PostMessageController', [
         $scope.providersWithUrl = [];
         $scope.providersWithImage = [];
         $scope.providers = providers;
-        for (var i = 0; i < providers.length; i++) {
-          var provider = providers[i];
+        for (var i = 0; i < $scope.providers.length; i++) {
+          var provider = $scope.providers[i];
           provider.selected = false;
           if(provider.name == "linkedin" || provider.name == "github" ||
              provider.name == "scoopit" || provider.name == "viadeo" || 
@@ -53,6 +53,10 @@ app.controller('PostMessageController', [
              provider.name == "scoopit" || provider.name == "viadeo" || 
              provider.name == "googleplus") {
             $scope.providersWithImage.push(provider);
+          }
+          if(provider.canHavePageId == true) {
+            provider.arg = {};
+            provider.arg.possibleValues = [];
           }
         }
       });
@@ -124,11 +128,15 @@ app.controller('PostMessageController', [
           }
         }
         $network.send(o);
-        console.log(o);
         $scope.showPost = false;
         resetView();
       }
     };
+
+    $scope.selectOracle = function (provider, val) {
+      provider.toPageId = val.call;
+      provider.possibleValues = [];
+    }
 
     function resetView() {
       $scope.title = "";

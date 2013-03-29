@@ -7,12 +7,17 @@ import models.Post
 import play.api.mvc.RequestHeader
 import play.api.libs.json.Json
 import services.auth.AuthProvider
+import models.ParamHelper
+import scala.concurrent.Future
+import play.api.libs.concurrent.Execution.Implicits.defaultContext
 
 trait Poster {
 
   val authProvider:AuthProvider
   
   lazy val name: String = authProvider.name
+  
+  val canHavePageId: Boolean = false
   
   def hasToken(implicit request: RequestHeader):Boolean = authProvider.hasToken
   
@@ -26,16 +31,19 @@ trait Poster {
   
   def post(post:Post)(implicit request: RequestHeader)
   
+  def helperPageId(search: String)(implicit request: RequestHeader):Future[Seq[ParamHelper]] = Future(Seq.empty)
+  
 }
 
 object Posters {
   
   val posters:Seq[Poster] = Seq(
-      services.post.TwitterPoster, 
-      services.post.FacebookPoster,
-      services.post.LinkedinPoster,
-      services.post.GithubPoster,
-      services.post.GoogleplusPoster)
+      TwitterPoster, 
+      FacebookPoster,
+      FacebookPagePoster,
+      LinkedinPoster,
+      GithubPoster,
+      GoogleplusPoster)
       //services.auth.providers.Viadeo)      --> "Insufficient accreditation level" ! mais pas trouvé où le setter !!??
       //                                     --> recommended only for premium user
       //TODO services.auth.providers.Scoopit --> missing topicId !!??
@@ -47,8 +55,9 @@ object Posters {
   def toJson(implicit request: RequestHeader) = {
     val services = posters.map { service =>
       Json.obj(
-        "name" -> service.name,
-        "hasToken" -> service.hasToken
+        "service" -> service.name,
+        "hasToken" -> service.hasToken,
+        "canHavePageId" -> service.canHavePageId
       )
     }
     Json.toJson(services)

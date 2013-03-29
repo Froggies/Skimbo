@@ -2,50 +2,57 @@
 
 define(["app"], function(app) {
 
-  app.directive('oracle', ['Network', '$rootScope', '$timeout', function($network, $rootScope, $timeout) {
+  app.directive('oracle', ['Network', '$rootScope', '$timeout', 
+    function($network, $rootScope, $timeout) {
 
-    var service, element, scope, lastSend, lastTimeout = undefined;
+    var lastSend, lastTimeout = undefined;
 
-    $rootScope.$on('paramHelperSearch', function(evt, objRes) {
-      if(service !== undefined && element != undefined && service.service == objRes.serviceName) {
-        console.log(objRes);
-        scope.$apply(function() {
-          scope.arg.possibleValues = objRes.values;
-        });
-      }
-    });
+    function initListen(type, service, element, scope, putResIn) {
+      $rootScope.$on(type, function(evt, objRes) {
+        if(service !== undefined && element != undefined && service.service == objRes.serviceName) {
+          scope.$apply(function() {
+            putResIn.possibleValues = objRes.values;
+          });
+        }
+      });
+    }
 
-    function send(serviceName, search) {
+    function send(type, serviceName, search) {
       if(search != lastSend) {
-        $network.send({
-          cmd: "paramHelperSearch",
+        var s = {
+          cmd: type,
           body: {
             serviceName: serviceName,
             search: search
           }
-        });
+        };
+        $network.send(s);
       }
       lastSend = search;
     }
 
     return {
-      link : function(sc, elmt, attrs) {
-        scope = sc;
-        console.log(scope);
-        service = scope[attrs["oracle"]];
-        element = elmt;
-        if(service.hasHelper == true) {
+      link : function(scope, element, attrs) {
+        var service = scope[attrs["oracle"]];
+        if(service.hasHelper == true || service.canHavePageId == true) {
+          var type = attrs["oracleType"];
+          var putResIn = scope[attrs["oracleStore"]];
+          initListen(type, service, element, scope, putResIn);
           element.bind('keyup', function() {
             if(lastTimeout != undefined) {
               $timeout.cancel(lastTimeout);
             }
             lastTimeout = $timeout(function() {
+              console.log(service, element[0].value);
               if(element[0].value !== "") {
-                send(service.service, element[0].value);
+                send(type, service.service, element[0].value);
               } else {
-                scope.arg.possibleValues = [];
+                putResIn.possibleValues = [];
               }
             }, 500);
+          });
+          element.bind("$destroy", function() {
+            element.unbind('keyup');
           });
         }
       }

@@ -145,6 +145,8 @@ app.factory("ServerCommunication", [
         broadcast('allPosters', data.body);
       } else if (data.cmd == "paramHelperSearch") {
         broadcast('paramHelperSearch', data.body);
+      } else if (data.cmd == "paramPostHelperSearch") {
+        broadcast('paramPostHelperSearch', data.body);
       } else {
         console.log("Command not yet implemented: ", data);
       }

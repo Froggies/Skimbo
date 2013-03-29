@@ -20,7 +20,7 @@
           <li ng-repeat="service in column.unifiedRequests">
             <div class="input-service" ng-show="service.hasArguments" ng-repeat="arg in service.args ">
               <img class="img-service" ng-src="assets/img/brand/{{service.providerName}}.png" alt="{{service.providerName}}" width="24" height="24">
-              <input class="arg-service" type="text" ng-model="arg.value" placeholder="{{arg.key}}" pattern="[ a-zA-Z0-9]*" oracle="service"/>
+              <input class="arg-service" type="text" ng-model="arg.value" placeholder="{{arg.key}}" pattern="[ a-zA-Z0-9]*" oracle="service" oracle-type="paramHelperSearch" oracle-store="arg"/>
               <a href="#" 
                 class="delete-service {{service.providerName}}"
                 ng-click="deleteService(service,arg)"

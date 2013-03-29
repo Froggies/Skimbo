@@ -58,13 +58,13 @@ object GooglePlus extends OAuth2Provider {
       val data = Map(
         "client_id" -> clientId,
         "client_secret" -> secret,
-        "grant_type" -> "authorization_code",
+        "grant_type" -> "refresh_token",
         "refresh_token" -> getToken.get.secret.get)
   
       val req = WS.url(accessTokenUrl).withHeaders(accessTokenHeaders: _*)
   
       val res = Await.result(req.post(data.mapValues(Seq(_))), Duration("5 seconds"))
-      processTokenSafe(response) match {
+      processTokenSafe(res) match {
         // Provider return token
         case Token(Some(token), _, refresh) => {
           UserDao.setToken(idUser, this, SkimboToken(token, refresh))
