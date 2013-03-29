@@ -10,6 +10,7 @@ define(["app"], function(app) {
       restrict: 'A',
       link: function(scope, elmt, attrs)  {
         var element = elmt[0];
+        var timeout = undefined;
         if(attrs["scrollmanager"] === "onlyTop") {
           var scroller = angular.element(element); 
           $rootScope.$on("scrollManagerGoTop", function(evt, column) {
@@ -25,9 +26,13 @@ define(["app"], function(app) {
             if(object.isView == false) {
               userScroll = false;
               scroller[0].scrollTop += element.clientHeight;
-              $timeout(function() {
+              if(timeout != undefined) {
+                $timeout.cancel(timeout);
+              }
+              timeout = $timeout(function() {
                 userScroll = true;
-              }, 0);
+                timeout = undefined;
+              }, 500);
             }
           });
           
