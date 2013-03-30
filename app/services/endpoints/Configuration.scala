@@ -171,6 +171,8 @@ object Configuration {
       override val parser = Some(GoogleplusWallParser)
       override val uniqueName = "googleplus.wall"
       override val delay = 600
+      override val parserDetails = Some(GoogleplusDetails)
+      override val urlDetails = "https://www.googleapis.com/plus/v1/activities/:id"
     }
     object user extends EndpointConfig {
       override val url = withLimit("https://www.googleapis.com/plus/v1/people/:username/activities/public?maxResults=:limit")
