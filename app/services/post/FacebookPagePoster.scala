@@ -26,18 +26,14 @@ object FacebookPagePoster extends GenericPoster {
   
   override def helperPageId(search: String)(implicit request: RequestHeader):Future[Seq[ParamHelper]] = {
     Facebook.fetch("https://graph.facebook.com/me/accounts").get.map { response =>
-      println("FACEBOOK PAGE :: "+response.body.toString)
       val pages = (response.json \ "data").as[List[JsValue]]
-      println("FACEBOOK PAGE :: "+pages)
       pages.map { page => 
-        println("FACEBOOK PAGE =: "+page)
         val ph = ParamHelper(
           (page \ "name").as[String],
           (page \ "id").as[String],
           FacebookWallParser.imageUrl.replace(":id", (page \ "id").as[String]),
           None
         )
-        println("FACEBOOK PAGE :: "+ph)
         ph
       }
     }

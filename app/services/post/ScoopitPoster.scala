@@ -23,18 +23,14 @@ object ScoopitPoster extends GenericPoster {
     
   override def helperPageId(search: String)(implicit request: RequestHeader):Future[Seq[ParamHelper]] = {
     Scoopit.fetch("http://www.scoop.it/api/1/profile").get.map { response =>
-      println("SCOOPIT PAGE :: "+response.body.toString)
       val pages = (response.json \ "user" \ "curatedTopics").as[List[JsValue]]
-      println("SCOOPIT PAGE :: "+pages)
       pages.map { page => 
-        println("SCOOPIT PAGE =: "+page)
         val ph = ParamHelper(
           (page \ "name").as[String],
           (page \ "id").as[Long].toString,
           (page \ "smallImageUrl").as[String],
           (page \ "description").asOpt[String]
         )
-        println("SCOOPIT PAGE :: "+ph)
         ph
       }
     }
