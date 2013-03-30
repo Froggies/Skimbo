@@ -39,19 +39,20 @@ app.controller('PostMessageController', [
         $scope.providers = providers;
         for (var i = 0; i < $scope.providers.length; i++) {
           var provider = $scope.providers[i];
+          provider.name = provider.service;
           provider.selected = false;
-          if(provider.name == "linkedin" || provider.name == "github" ||
-             provider.name == "scoopit" || provider.name == "viadeo" || 
-             provider.name == "googleplus") {
+          if(provider.service == "linkedin" || provider.service == "github" ||
+             provider.service == "scoopit" || provider.service == "viadeo" || 
+             provider.service == "googleplus") {
             $scope.providersWithTitle.push(provider);
           }
-          if(provider.name == "linkedin" || provider.name == "facebook" ||
-             provider.name == "scoopit" || provider.name == "viadeo") {
+          if(provider.service == "linkedin" || provider.service == "facebook" ||
+             provider.service == "scoopit" || provider.service == "viadeo") {
             $scope.providersWithUrl.push(provider);
           }
-          if(provider.name == "linkedin" || provider.name == "facebook" ||
-             provider.name == "scoopit" || provider.name == "viadeo" || 
-             provider.name == "googleplus") {
+          if(provider.service == "linkedin" || provider.service == "facebook" ||
+             provider.service == "scoopit" || provider.service == "viadeo" || 
+             provider.service == "googleplus") {
             $scope.providersWithImage.push(provider);
           }
           if(provider.canHavePageId == true) {
@@ -59,6 +60,7 @@ app.controller('PostMessageController', [
             provider.arg.possibleValues = [];
           }
         }
+        console.log($scope.providersWithTitle);
       });
     });
 
@@ -82,7 +84,6 @@ app.controller('PostMessageController', [
     };
 
     $scope.selectPoster = function(poster) {
-      console.log(poster);
       if(poster.hasToken == true) {
         poster.selected = !poster.selected;
       } else {
@@ -100,7 +101,9 @@ app.controller('PostMessageController', [
       for (var i = 0; i < $scope.providers.length; i++) {
         var p = $scope.providers[i];
         if(p.selected == true) {
-          selectedProviders.push(p.name);
+          console.log(p);
+          name = p.name || p.service;
+          selectedProviders.push({name: name, toPageId: p.toPageId});
         }
       };
 
@@ -127,6 +130,7 @@ app.controller('PostMessageController', [
             }
           }
         }
+        console.log(o);
         $network.send(o);
         $scope.showPost = false;
         resetView();

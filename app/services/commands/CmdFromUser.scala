@@ -116,10 +116,15 @@ object CmdFromUser {
         CmdToUser.sendTo(internalIdUser, Command(cmd.name, Some(Posters.toJson)))
       }
       case "post" => {
-        val providersName = (cmd.body.get \ "providers").as[Seq[String]]
-        providersName.map { providerName =>
-          val poster = Posters.getPoster(providerName)
-          poster.map( _.post(Json.fromJson[Post]((cmd.body.get \ "post").as[JsValue]).get))
+        val providers = (cmd.body.get \ "providers").as[Seq[JsObject]]
+        providers.map { jsonProvider =>
+          val providerName = (jsonProvider \ "name").as[String]
+          val providerPageId = (jsonProvider \ "toPageId").asOpt[String]
+          val post = Json.fromJson[Post]((cmd.body.get \ "post").as[JsValue]).get
+          val toPost = Post(post.title, post.message, post.url, post.url_image, providerPageId)
+          Posters.getPoster(providerName).
+            map( _.post(toPost)).
+            getOrElse(Logger(CmdFromUser.getClass).error("not found poster "+providerName))
         }
       }
       case "detailsSkimbo" => {

@@ -44,12 +44,15 @@ object FacebookPagePoster extends GenericPoster {
   }
   
   private def getPageToken(pageId: String)(implicit request: RequestHeader):Seq[(String, String)] = {
+    println("FACEBOOK PAGE :: getPageTOken")
     val token:Future[Option[String]] = Facebook.fetch("https://graph.facebook.com/me/accounts").get.map { response =>
+      println("FACEBOOK PAGE :: response :: "+response.body.toString)
       val pages = (response.json \ "data").as[List[JsValue]]
       val optToken: List[Option[String]] = pages.map { json =>
+        println("FACEBOOK PAGE :: json :: "+json)
         val id = (json \ "id").as[String]
         if (id == pageId) {
-          println("FACEBOOK foudn token")
+          println("FACEBOOK found token")
           (json \ "access_token").asOpt[String]
         } else {
           None

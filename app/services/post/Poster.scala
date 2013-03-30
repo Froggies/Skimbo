@@ -43,10 +43,10 @@ object Posters {
       FacebookPagePoster,
       LinkedinPoster,
       GithubPoster,
-      GoogleplusPoster)
+      GoogleplusPoster,
+      ScoopitPoster)
       //services.auth.providers.Viadeo)      --> "Insufficient accreditation level" ! mais pas trouvé où le setter !!??
       //                                     --> recommended only for premium user
-      //TODO services.auth.providers.Scoopit --> missing topicId !!??
   
   def getPoster(name:String):Option[Poster] = {
     posters.find( _.name == name)

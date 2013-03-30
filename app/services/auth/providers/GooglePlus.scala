@@ -64,6 +64,7 @@ object GooglePlus extends OAuth2Provider {
       val req = WS.url(accessTokenUrl).withHeaders(accessTokenHeaders: _*)
   
       val res = Await.result(req.post(data.mapValues(Seq(_))), Duration("5 seconds"))
+      println("GooglePlusProvider :: isInvalidToken :: "+res.body.toString)
       processTokenSafe(res) match {
         // Provider return token
         case Token(Some(token), _, refresh) => {
