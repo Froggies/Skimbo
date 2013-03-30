@@ -76,8 +76,7 @@ trait OAuth2Provider extends AuthProvider with Starer {
       "redirect_uri" -> authRoute.absoluteURL(false),
       "state" -> csrf,
       "scope" -> permissions.mkString(permissionsSep),
-      "response_type" -> "code",
-      "access_type" -> "offline") // activate refresh token)
+      "response_type" -> "code")
 
     val url = (redirectQueryString ++ additionalAccreditationParameters)
       .foldLeft(authorizeUrl + "?")((url, qs) => url + qs._1 + "=" + qs._2 + "&")

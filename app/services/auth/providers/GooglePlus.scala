@@ -29,7 +29,10 @@ object GooglePlus extends OAuth2Provider {
     "https://www.googleapis.com/auth/userinfo.email", // View your email address
     "https://www.googleapis.com/auth/plus.login") // Know who you are on Google
 
-  override def additionalAccreditationParameters = Map("request_visible_actions" -> "http://schemas.google.com/AddActivity")
+  override def additionalAccreditationParameters = 
+    Map("request_visible_actions" -> "http://schemas.google.com/AddActivity",
+        "approval_prompt" -> "force",
+        "access_type" -> "offline")
     
   override def processToken(response: play.api.libs.ws.Response) = 
     Token((response.json \ "access_token").asOpt[String], 
