@@ -12,6 +12,7 @@ import parser.GenericParser
 import services.post.Starer
 import parser.GenericParserUser
 import parser.GenericParserParamHelper
+import services.auth.providers.Bitbucket
 
 object Configuration {
 
@@ -257,6 +258,18 @@ object Configuration {
       override val parser = Some(GenericRssParser)
       override val delay = 500
       override val uniqueName = "rss.rss"
+    }
+  }
+  object Bitbucket {
+    object eventsRepo extends EndpointConfig {
+      override val url = withLimit("https://api.bitbucket.org/1.0/repositories/:id/events?limit=:limit")
+      override val requiredParams = List("id")
+      override val provider = providers.Bitbucket
+      override val mustBeReordered = true
+      override val parser = Some(BitbucketEventsRepoParser)
+      override val uniqueName = "bitbucket.eventsRepo"
+      override val paramParserHelper = Some(BitbucketRepoParamHelper)
+      override val paramUrlHelper = Some("https://bitbucket.org/xhr/repositories?term=:search")
     }
   }
 }

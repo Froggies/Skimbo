@@ -1,18 +1,17 @@
 package parser.json.providers
 
 import org.joda.time.DateTime
+
 import models.Skimbo
+import parser.json.GenericJsonParser
 import play.api.libs.functional.syntax.functionalCanBuildApplicative
 import play.api.libs.functional.syntax.toFunctionalBuilderOps
 import play.api.libs.json.JsArray
+import play.api.libs.json.JsObject
 import play.api.libs.json.JsValue
 import play.api.libs.json.Json
 import play.api.libs.json.Reads
 import play.api.libs.json.__
-import services.auth.providers.BetaSeries
-import parser.json.GenericJsonParser
-import play.api.libs.json.JsArray
-import play.api.libs.json.JsObject
 import services.endpoints.Configuration
 
 case class BetaseriesTimelineMessage(

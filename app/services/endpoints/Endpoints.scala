@@ -38,6 +38,8 @@ object Endpoints {
       Configuration.GooglePlus.user)),
     Endpoint(GitHub, Seq(
       Configuration.Github.userEvents)),
+    Endpoint(Bitbucket, Seq(
+      Configuration.Bitbucket.eventsRepo)),
     Endpoint(Trello, Seq(
       Configuration.Trello.notifications)),
     Endpoint(Scoopit, Seq(
