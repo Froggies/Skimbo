@@ -101,25 +101,16 @@ object UserDao {
 
   def getToken(idUser: String, provider: GenericProvider): Future[Option[SkimboToken]] = {
     val query = BSONDocument("accounts.id" -> new BSONString(idUser))
-    collection.find(query).headOption().map { optUser =>
-      if (optUser.isDefined) {
-        val distant = optUser.get.distants.getOrElse(Seq()).filter { distant =>
-          distant.socialType == provider.name
-        }
-        if (distant.size == 0) {
-          None
-        } else {
-          distant.head.token
-        }
-      } else {
-        None
-      }
-    }
+    collection.find(query)
+      .headOption().map( _.flatMap( 
+            _.distants.flatMap( 
+                _.filter( _.socialType == provider.name ).headOption.flatMap( 
+                    _.token ))))
   }
 
   def setToken(idUser: String, provider: GenericProvider, token: SkimboToken, distantId: Option[String] = None) = {
     val query = BSONDocument("accounts.id" -> new BSONString(idUser))
-    findOneById(idUser).map { user =>
+    findOneById(idUser).flatMap { user =>
       val toUpdate =
         if (user.isDefined) {
           val exist = user.get.distants.getOrElse(Seq[ProviderUser]()).exists {

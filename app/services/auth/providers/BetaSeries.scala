@@ -38,7 +38,9 @@ object BetaSeries extends AuthProvider {
         }
       }
       case Some(token) => {
-        startUser(SkimboToken(token), redirectRoute)
+        Async {
+          startUser(SkimboToken(token), redirectRoute)
+        }
       }
     }
   }

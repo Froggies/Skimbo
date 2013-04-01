@@ -8,6 +8,9 @@ import services.commands.CmdFromUser
 import services.actors.UserInfosActor
 import models.command.NewToken
 import scala.concurrent.Future
+import scala.util.Right
+import scala.util.Left
+import play.api.libs.concurrent.Execution.Implicits.defaultContext
 
 trait AuthProvider extends GenericProvider with AccountWsProvider with SecurityProvider {
 
@@ -23,11 +26,12 @@ trait AuthProvider extends GenericProvider with AccountWsProvider with SecurityP
   
   protected def startUser(token:SkimboToken, redirectRoute: Call)(implicit request: RequestHeader) = {
     val session = generateUniqueId(request.session)
-    UserDao.setToken(session("id"), this, token)
-    CmdFromUser.interpretCmd(session("id"), NewToken.asCommand(this))
-    UserInfosActor.refreshInfosUser(session("id"), this)
-    UserInfosActor.restartProviderColumns(session("id"), this)
-    Redirect(redirectRoute).withSession(session)
+    UserDao.setToken(session("id"), this, token).map { lastError =>
+      CmdFromUser.interpretCmd(session("id"), NewToken.asCommand(this))
+      UserInfosActor.refreshInfosUser(session("id"), this)
+      UserInfosActor.restartProviderColumns(session("id"), this)
+      Redirect(redirectRoute).withSession(session)
+    }
   }
   
   def post(url:String, 

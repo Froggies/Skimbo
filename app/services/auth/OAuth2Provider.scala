@@ -16,6 +16,7 @@ import services.post.Poster
 import scala.util.Success
 import scala.util.Failure
 import services.post.Starer
+import scala.concurrent.Future
 
 trait OAuth2Provider extends AuthProvider with Starer {
 
@@ -98,7 +99,7 @@ trait OAuth2Provider extends AuthProvider with Starer {
 
       // Send request to retrieve auth token and parse response
       Async {
-        fetchAccessTokenResponse(code).map(response =>
+        fetchAccessTokenResponse(code).flatMap(response =>
           processTokenSafe(response) match {
 
             // Provider return token
@@ -108,7 +109,7 @@ trait OAuth2Provider extends AuthProvider with Starer {
 
             // Provider return nothing > an error has occurred during authentication
             case _ =>
-              Redirect(redirectRoute).flashing("login-error" -> name)
+              Future(Redirect(redirectRoute).flashing("login-error" -> name))
           })
       }
 

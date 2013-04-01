@@ -49,7 +49,9 @@ trait OAuthProvider extends AuthProvider with Starer {
       case Some(verifier) =>
         service.retrieveAccessToken(getSessionToken, verifier) match {
           case Right(t) => {
-            startUser(SkimboToken(t.token, Some(t.secret)), redirectRoute)
+            Async {
+              startUser(SkimboToken(t.token, Some(t.secret)), redirectRoute)
+            }
           }
           case Left(e) => Redirect(redirectRoute).flashing("login-error" -> name)
         }
