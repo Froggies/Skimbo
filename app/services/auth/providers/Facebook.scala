@@ -36,11 +36,10 @@ object Facebook extends OAuth2Provider {
   )
 
   override def processToken(response: play.api.libs.ws.Response) = {
-    val AuthQueryStringParser = """access_token=(.*)&expires=(.*)""".r
     val AuthQueryStringParser2 = """access_token=(.*)&expires=(.*)&auth_type=reauthenticate""".r
     val AuthQueryStringParser3 = """access_token=(.*)&auth_type=reauthenticate""".r
     response.body match {
-      case AuthQueryStringParser(token, expires) => Token(Some(token), Some(expires.toInt), None)
+      //case AuthQueryStringParser(token, expires) => Token(Some(token), Some(expires.toInt), None)
       case AuthQueryStringParser2(token, expires)=> Token(Some(token), Some(expires.toInt), None)
       case AuthQueryStringParser3(token)         => Token(Some(token), None, None)
       case _                                     => Token(None, None)
