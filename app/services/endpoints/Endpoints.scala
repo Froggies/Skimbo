@@ -39,7 +39,8 @@ object Endpoints {
     Endpoint(GitHub, Seq(
       Configuration.Github.userEvents)),
     Endpoint(Bitbucket, Seq(
-      Configuration.Bitbucket.eventsRepo)),
+      Configuration.Bitbucket.eventsRepo,
+      Configuration.Bitbucket.commits)),
     Endpoint(Trello, Seq(
       Configuration.Trello.notifications)),
     Endpoint(Scoopit, Seq(

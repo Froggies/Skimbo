@@ -271,6 +271,17 @@ object Configuration {
       override val paramParserHelper = Some(BitbucketRepoParamHelper)
       override val paramUrlHelper = Some("https://bitbucket.org/xhr/repositories?term=:search")
     }
+    object commits extends EndpointConfig {
+      override val url = withLimit("https://api.bitbucket.org/1.0/repositories/:id/changesets?limit=:limit")
+      override val since = Some("&start=:since") // ts
+      override val requiredParams = List("id")
+      override val provider = providers.Bitbucket
+      override val mustBeReordered = true
+      override val parser = Some(BitbucketCommitParser)
+      override val uniqueName = "bitbucket.commits"
+      override val paramParserHelper = Some(BitbucketRepoParamHelper)
+      override val paramUrlHelper = Some("https://bitbucket.org/xhr/repositories?term=:search")
+    }
   }
 }
 
