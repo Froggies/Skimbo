@@ -102,7 +102,8 @@ app.controller('ColumnController', [
     $rootScope.$on('modColumn', function(evt, column) {
       $scope.$apply(function() {
         console.log(column);
-        var c = getColumnByName(column.column.title);
+        var c = getColumnByName(column.title);
+        c.title = column.column.title;
         c.unifiedRequests = column.column.unifiedRequests;
       });
     });

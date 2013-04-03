@@ -41,7 +41,7 @@ app.controller('ModifColumnController', [
       //to check unique title
       $scope.$apply(function() {
         for (var i = 0; i < columns.length; i++) {
-          $scope.columnsTitle.push(""+columns[i].title);
+          $scope.columnsTitle.push(new String(columns[i].title));
         };
       });
     });
@@ -68,11 +68,11 @@ app.controller('ModifColumnController', [
     });
 
     $rootScope.$on('clientModifyColumn', function(evt, column) {
-      $scope.show(column);//reset view & download providers (if needed)
+      $scope.show(JSON.parse(JSON.stringify(column)));//reset view & download providers (if needed)
     });
 
     $rootScope.$on('addColumn', function(evt, column) {
-      $scope.columnsTitle.push(column.title);
+      $scope.columnsTitle.push(new String(column.title));
     });
 
     $rootScope.$on('modColumn', function(evt, column) {
@@ -81,7 +81,7 @@ app.controller('ModifColumnController', [
         for (var i = 0; i < $scope.columnsTitle.length; i++) {
           if($scope.columnsTitle[i] == column.title) {
             $scope.columnsTitle.splice(i, 1);
-            $scope.columnsTitle.push(column.column.title);
+            $scope.columnsTitle.push(new String(column.column.title));
             break;
           }
         };
@@ -139,7 +139,7 @@ app.controller('ModifColumnController', [
     function addService(service) {
       console.log(service);
       service.fromServer = false;
-      $scope.column.unifiedRequests.push(service);
+      $scope.column.unifiedRequests.push(JSON.parse(JSON.stringify(service)));//clone service
       if($scope.column.title == "") {
         $scope.column.title = service.providerName + " " + service.serviceName;
       }
@@ -256,9 +256,9 @@ app.controller('ModifColumnController', [
     // # ERRORS CHECK : ALL CHECK ERROR RETURN TRUE IF ERROR 
     // ###################################
 
-    function checkErrorEmptyArg(column) {
-      var cleanRegex = /[&\\#,+()$~%'":*?<>{}]/g;
+    var cleanRegex = /[&\\#,+()$~%'":*?<>{}]/g;
 
+    function checkErrorEmptyArg(column) {
       for (var i = 0; i < column.unifiedRequests.length; i++) {
         for (var j = 0; j < column.unifiedRequests[i].args.length; j++) {
           column.unifiedRequests[i].args[j].value = column.unifiedRequests[i].args[j].value.replace(cleanRegex, '');
