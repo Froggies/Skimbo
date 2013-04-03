@@ -9,10 +9,6 @@
     -o-perspective: 2000;
     perspective: 2000;
 }
-    
-.notifications a {
-  color: black;
-}
 
 .notif {
     padding: 10px;
@@ -92,7 +88,11 @@
     background: linear-gradient(top, hsla(0,0%,100%,0.25) 0%,hsla(0,0%,100%,0) 100%);
     filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#42ffffff', endColorstr='#00ffffff',GradientType=0 );
 }
-.notif .head, .notif .text {position: relative;}
+
+.notif .head, .notif .text {
+    position: relative;
+}
+
 .notif .head {
     max-width: 100%;
     min-width: 55%;
@@ -105,16 +105,25 @@
 }
 
 .notif .head {
-    padding-bottom: 4px;
-    color: #f5f5f5;
+  padding-bottom: 4px;
+  color: #f5f5f5;
 }
 
 .notif .text {
   max-width: 100%;
-    min-width: 55%;
-    color: black;
-    font-size: 0.6em;
-    -webkit-animation: text-in 1s 1 ease-out;
+  min-width: 55%;
+  color: black;
+  font-size: 0.6em;
+  -webkit-animation: text-in 1s 1 ease-out;
+}
+
+.notif-close {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  color: white;
+  font-weight: bold;
+  text-shadow: #000 0px 1px 1px;
 }
 
 @-webkit-keyframes flip {

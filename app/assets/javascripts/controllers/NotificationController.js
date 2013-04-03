@@ -63,6 +63,10 @@ app.controller('NotificationController', [
       }
     }
 
+    $scope.closeNotification = function(index) {
+      $scope.notifications.splice(index, 1);
+    }
+
 }]);
 
 return app;
