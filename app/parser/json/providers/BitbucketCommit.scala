@@ -39,7 +39,7 @@ object BitbucketCommitParser extends GenericJsonParser {
         Nil,
         -1,
         Some(""),//urlRepo.replace(":ownerslug", ??).replace(":id", e.node),
-        e.node,
+        e.date.toDate().getTime().toString,
         None,
         Configuration.Bitbucket.commits)))
   }

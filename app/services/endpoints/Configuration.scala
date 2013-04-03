@@ -273,7 +273,6 @@ object Configuration {
     }
     object commits extends EndpointConfig {
       override val url = withLimit("https://api.bitbucket.org/1.0/repositories/:id/changesets?limit=:limit")
-      override val since = Some("&start=:since") // ts
       override val requiredParams = List("id")
       override val provider = providers.Bitbucket
       override val mustBeReordered = true
