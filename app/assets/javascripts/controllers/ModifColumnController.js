@@ -41,7 +41,7 @@ app.controller('ModifColumnController', [
       //to check unique title
       $scope.$apply(function() {
         for (var i = 0; i < columns.length; i++) {
-          $scope.columnsTitle.push(columns[i].title);
+          $scope.columnsTitle.push(""+columns[i].title);
         };
       });
     });
@@ -257,7 +257,7 @@ app.controller('ModifColumnController', [
     // ###################################
 
     function checkErrorEmptyArg(column) {
-      var cleanRegex = /[&\/\\#,+()$~%'":*?<>{}]/g;
+      var cleanRegex = /[&\\#,+()$~%'":*?<>{}]/g;
 
       for (var i = 0; i < column.unifiedRequests.length; i++) {
         for (var j = 0; j < column.unifiedRequests[i].args.length; j++) {
