@@ -21,6 +21,7 @@ APP_COMMAND="${OPENSHIFT_REPO_DIR}target/start $PLAY_PARAMS "\
 "-Dhttp.port=${OPENSHIFT_DIY_PORT} "\
 "-Dhttp.address=${OPENSHIFT_DIY_IP} "\
 "-Dconfig.resource=openshift.conf"\
+"-Dmongodb.uri=${OPENSHIFT_MONGODB_DB_URL} "\
 "-Dsocial.betaseries.secret=${BETASERIES_SECRET} "\
 "-Dsocial.twitter.clientId=${TWITTER_CLIENTID} "\
 "-Dsocial.twitter.secret=${TWITTER_SECRET} "\
