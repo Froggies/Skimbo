@@ -3,6 +3,9 @@
 # script. The application will work only if it binds to
 # $OPENSHIFT_INTERNAL_IP:8080
 
+# set env api keys
+source ${OPENSHIFT_DATA_DIR}/my-social.conf
+
 # loads $PLAY_PARAMS
 . ${OPENSHIFT_REPO_DIR}.openshift/action_hooks/load_config
 
@@ -17,7 +20,29 @@ chmod +x ${OPENSHIFT_REPO_DIR}target/start
 APP_COMMAND="${OPENSHIFT_REPO_DIR}target/start $PLAY_PARAMS "\
 "-Dhttp.port=${OPENSHIFT_DIY_PORT} "\
 "-Dhttp.address=${OPENSHIFT_DIY_IP} "\
-"-Dconfig.resource=openshift.conf"
+"-Dconfig.resource=openshift.conf"\
+"-Dsocial.betaseries.secret=${BETASERIES_SECRET} "\
+"-Dsocial.twitter.clientId=${TWITTER_CLIENTID} "\
+"-Dsocial.twitter.secret=${TWITTER_SECRET} "\
+"-Dsocial.scoopit.clientId=${SCOOPIT_CLIENTID} "\
+"-Dsocial.scoopit.secret=${SCOOPIT_SECRET} "\
+"-Dsocial.facebook.clientId=${FACEBOOK_CLIENTID} "\
+"-Dsocial.facebook.secret=${FACEBOOK_SECRET} "\
+"-Dsocial.googleplus.clientId=${GOOGLEPLUS_CLIENTID} "\
+"-Dsocial.googleplus.secret=${GOOGLEPLUS_SECRET} "\
+"-Dsocial.viadeo.clientId=${VIADEO_CLIENTID} "\
+"-Dsocial.viadeo.secret=${VIADEO_SECRET} "\
+"-Dsocial.linkedin.clientId=${LINKEDIN_CLIENTID} "\
+"-Dsocial.linkedin.secret=${LINKEDIN_SECRET} "\
+"-Dsocial.github.clientId=${GITHUB_CLIENTID} "\
+"-Dsocial.github.secret=${GITHUB_SECRET} "\
+"-Dsocial.stackexchange.clientId=${STACKEXCHANGE_CLIENTID} "\
+"-Dsocial.stackexchange.secret=${STACKEXCHANGE_SECRET} "\
+"-Dsocial.stackexchange.key=${STACKEXCHANGE_KEY} "\
+"-Dsocial.trello.clientId=${TRELLO_CLIENTID} "\
+"-Dsocial.trello.secret=${TRELLO_SECRET} "\
+"-Dsocial.bitbucket.clientId=${BITBUCKET_CLIENTID} "\
+"-Dsocial.bitbucket.secret=${BITBUCKET_SECRET} "\
 
 echo $APP_COMMAND &>> $LOG_FILE
 nohup bash -c "${APP_COMMAND} &>> ${LOG_FILE} 2>&1" &> /dev/null &
