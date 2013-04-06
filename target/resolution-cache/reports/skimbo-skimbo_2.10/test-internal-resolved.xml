@@ -7,7 +7,7 @@
 		revision="0.1-SNAPSHOT"
 		conf="test-internal"
 		confs="compile, runtime, test, provided, optional, compile-internal, runtime-internal, test-internal, plugin, sources, docs, pom"
-		date="20130406155113"/>
+		date="20130406173850"/>
 	<dependencies>
 		<module organisation="commons-codec" name="commons-codec">
 			<revision name="1.6" status="release" pubdate="20111202153826" resolver="local" artresolver="local" homepage="http://commons.apache.org/codec/" downloaded="false" searched="false" default="false" conf="compile, master(*), runtime, compile(*), runtime(*), master" position="55">

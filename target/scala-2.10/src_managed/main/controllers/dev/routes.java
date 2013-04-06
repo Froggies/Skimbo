@@ -1,6 +1,6 @@
 // @SOURCE:/home/manland/projets/skimbo/Skimbo/conf/routes
 // @HASH:0db3a9eaaf9303eee8f28ddb45447bb6ccb672b4
-// @DATE:Sat Apr 06 15:51:13 CEST 2013
+// @DATE:Sat Apr 06 17:38:50 CEST 2013
 
 package controllers.dev;
 
