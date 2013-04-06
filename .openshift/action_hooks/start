@@ -4,7 +4,7 @@
 # $OPENSHIFT_INTERNAL_IP:8080
 
 # loads $PLAY_PARAMS
-. ${OPENSHIFT_REPO_DIR}.openshift/action_hooks/load_config
+. ${OPENSHIFT_REPO_DIR}/.openshift/action_hooks/load_config
 
 if [[ ! $? -eq 0 ]]; then
   exit $?
