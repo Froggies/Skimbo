@@ -43,7 +43,7 @@ APP_COMMAND="${OPENSHIFT_REPO_DIR}target/start $PLAY_PARAMS "\
 "-Dsocial.trello.clientId=${TRELLO_CLIENTID} "\
 "-Dsocial.trello.secret=${TRELLO_SECRET} "\
 "-Dsocial.bitbucket.clientId=${BITBUCKET_CLIENTID} "\
-"-Dsocial.bitbucket.secret=${BITBUCKET_SECRET} "\
+"-Dsocial.bitbucket.secret=${BITBUCKET_SECRET} "
 
 echo $APP_COMMAND &>> $LOG_FILE
 nohup bash -c "${APP_COMMAND} &>> ${LOG_FILE} 2>&1" &> /dev/null &
