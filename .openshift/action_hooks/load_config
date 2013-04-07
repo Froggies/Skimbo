@@ -5,31 +5,90 @@
 
 # check needed vars
 if [[ -z $OPENSHIFT_REPO_DIR ]]; then
-  echo "Error: OPENSHIFT_REPO_DIR not defined"
-  return 1
+	echo "Error: OPENSHIFT_REPO_DIR not defined"
+	return 1
 fi
 
-PLAY_PARAMS=""
+if [[ -z $OPENSHIFT_DATA_DIR ]]; then
+	echo "Error: OPENSHIFT_DATA_DIR not defined"
+	return 1
+fi
 
-PLAY_CONFIG_FILE="${OPENSHIFT_REPO_DIR}conf/openshift.conf"
+if [[ -z $OPENSHIFT_TMP_DIR ]]; then
+	echo "Error: OPENSHIFT_TMP_DIR not defined"
+	return 1
+fi
+
+if [[ -z $OPENSHIFT_DIY_LOG_DIR ]]; then
+	echo "Error: OPENSHIFT_DIY_LOG_DIR not defined"
+	return 1
+fi
+
+# set env api keys
+source ${OPENSHIFT_DATA_DIR}/my-social.conf
+
+# version of play framework to dowload and install
+VERSION="1.2.5"
+DEPS_PARAMS="--forProd --clearcache"
+ID="openshift"
+PLAY_PARAMS="-Dhttp.port=${OPENSHIFT_DIY_PORT} "\
+"-Dhttp.address=${OPENSHIFT_DIY_IP} "\
+"-Dmongodb.uri=\"${OPENSHIFT_MONGODB_DB_URL}${OPENSHIFT_GEAR_NAME}\" "\
+"-Dsocial.betaseries.secret=\"${BETASERIES_SECRET}\" "\
+"-Dsocial.twitter.clientId=\"${TWITTER_CLIENTID}\" "\
+"-Dsocial.twitter.secret=\"${TWITTER_SECRET}\" "\
+"-Dsocial.scoopit.clientId=\"${SCOOPIT_CLIENTID}\" "\
+"-Dsocial.scoopit.secret=\"${SCOOPIT_SECRET}\" "\
+"-Dsocial.facebook.clientId=\"${FACEBOOK_CLIENTID}\" "\
+"-Dsocial.facebook.secret=\"${FACEBOOK_SECRET}\" "\
+"-Dsocial.googleplus.clientId=\"${GOOGLEPLUS_CLIENTID}\" "\
+"-Dsocial.googleplus.secret=\"${GOOGLEPLUS_SECRET}\" "\
+"-Dsocial.viadeo.clientId=\"${VIADEO_CLIENTID}\" "\
+"-Dsocial.viadeo.secret=\"${VIADEO_SECRET}\" "\
+"-Dsocial.linkedin.clientId=\"${LINKEDIN_CLIENTID}\" "\
+"-Dsocial.linkedin.secret=\"${LINKEDIN_SECRET}\" "\
+"-Dsocial.github.clientId=\"${GITHUB_CLIENTID}\" "\
+"-Dsocial.github.secret=\"${GITHUB_SECRET}\" "\
+"-Dsocial.stackexchange.clientId=\"${STACKEXCHANGE_CLIENTID}\" "\
+"-Dsocial.stackexchange.secret=\"${STACKEXCHANGE_SECRET}\" "\
+"-Dsocial.stackexchange.key=\"${STACKEXCHANGE_KEY}\" "\
+"-Dsocial.trello.clientId=\"${TRELLO_CLIENTID}\" "\
+"-Dsocial.trello.secret=\"${TRELLO_SECRET}\" "\
+"-Dsocial.bitbucket.clientId=\"${BITBUCKET_CLIENTID}\" "\
+"-Dsocial.bitbucket.secret=\"${BITBUCKET_SECRET}\" "\
+"-Dconfig.resource=openshift.conf"
+
+PLAY_CONFIG_FILE="${OPENSHIFT_REPO_DIR}conf/application.conf"
 
 if [[ -f $PLAY_CONFIG_FILE ]]; then
 
-  function read_conf {
-    local key=$1
-    local default=$2
-    local result=`grep "^$key[ |=]" $PLAY_CONFIG_FILE`
+	function read_conf {
+		local key=$1
+		local default=$2
+		local result=`grep "^$key[ |=]" $PLAY_CONFIG_FILE`
 
-    # key not found
-    if [[ -z "$result" ]]; then
-      echo $default
-    else
-      result=`echo "$result" | grep -oP "=.*" | cut -b 1 --complement`
-      echo $result
-    fi
-  }
+		# key not found
+		if [[ -z "$result" ]]; then
+			echo $default
+		else
+			result=`echo "$result" | grep -oP "=.*" | cut -b 1 --complement`
+			echo $result
+		fi
+	}
 
-  PLAY_PARAMS=$(read_conf "openshift.play.params" $PLAY_PARAMS)
+	VERSION=$(read_conf "openshift.play.version" $VERSION)
+	DEPS_PARAMS=$(read_conf "openshift.deps.params" $DEPS_PARAMS)
+	ID=$(read_conf "openshift.id" $ID)
+	#PLAY_PARAMS=$(read_conf "openshift.play.params" $PLAY_PARAMS)
 fi
+
+# validate version
+if [ "$VERSION" \< "1.2.3" ]; then
+	echo "Error: version $VERSION not supported, use version 1.2.3 or higher"
+	return 1
+fi
+
+LOG_FILE="$OPENSHIFT_DIY_LOG_DIRsystem.out"
+PLAY_COMMAND="${OPENSHIFT_DATA_DIR}play-${VERSION}/play"
 
 return 0
