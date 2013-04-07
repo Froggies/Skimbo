@@ -41,7 +41,7 @@ Seq[Any](format.raw/*1.1*/("""<html>
 }
                 /*
                     -- GENERATED --
-                    DATE: Sat Apr 06 18:07:45 CEST 2013
+                    DATE: Sun Apr 07 15:17:56 CEST 2013
                     SOURCE: /home/manland/projets/skimbo/Skimbo/app/views/popupEndAuthentication.scala.html
                     HASH: 6c28c4f4e95ff1a899aa67cfe7b5ff9247f550b7
                     MATRIX: 586->0

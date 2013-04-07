@@ -20,7 +20,6 @@ chmod +x ${OPENSHIFT_REPO_DIR}target/start
 APP_COMMAND="${OPENSHIFT_REPO_DIR}target/start $PLAY_PARAMS "\
 "-Dhttp.port=${OPENSHIFT_DIY_PORT} "\
 "-Dhttp.address=${OPENSHIFT_DIY_IP} "\
-"-Dconfig.resource=openshift.conf "\
 "-Dmongodb.uri=${OPENSHIFT_MONGODB_DB_URL} "\
 "-Dsocial.betaseries.secret=${BETASERIES_SECRET} "\
 "-Dsocial.twitter.clientId=${TWITTER_CLIENTID} "\
@@ -43,7 +42,8 @@ APP_COMMAND="${OPENSHIFT_REPO_DIR}target/start $PLAY_PARAMS "\
 "-Dsocial.trello.clientId=${TRELLO_CLIENTID} "\
 "-Dsocial.trello.secret=${TRELLO_SECRET} "\
 "-Dsocial.bitbucket.clientId=${BITBUCKET_CLIENTID} "\
-"-Dsocial.bitbucket.secret=${BITBUCKET_SECRET} "
+"-Dsocial.bitbucket.secret=${BITBUCKET_SECRET} "\
+"-Dconfig.resource=openshift.conf"
 
 echo $APP_COMMAND &>> $LOG_FILE
 nohup bash -c "${APP_COMMAND} &>> ${LOG_FILE} 2>&1" &> /dev/null &

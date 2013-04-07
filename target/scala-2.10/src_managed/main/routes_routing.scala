@@ -1,6 +1,6 @@
 // @SOURCE:/home/manland/projets/skimbo/Skimbo/conf/routes
 // @HASH:0db3a9eaaf9303eee8f28ddb45447bb6ccb672b4
-// @DATE:Sat Apr 06 18:07:42 CEST 2013
+// @DATE:Sun Apr 07 15:17:51 CEST 2013
 
 
 import play.core._

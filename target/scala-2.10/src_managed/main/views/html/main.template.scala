@@ -71,7 +71,7 @@ Seq[Any](format.raw/*1.43*/("""
 }
                 /*
                     -- GENERATED --
-                    DATE: Sat Apr 06 18:07:45 CEST 2013
+                    DATE: Sun Apr 07 15:17:56 CEST 2013
                     SOURCE: /home/manland/projets/skimbo/Skimbo/app/views/main.scala.html
                     HASH: 781e3aa3092d56a9ddd3b609338b7076ba9dc410
                     MATRIX: 514->1|632->42|1176->550|1203->555|1302->618|1317->624|1368->653|1411->661|1435->664|1513->706|1528->712|1573->735|2314->1441|2343->1448|2545->1622|2574->1623|2917->1939|2945->1940
