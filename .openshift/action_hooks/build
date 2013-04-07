@@ -7,6 +7,8 @@
 # debug
 # set -x
 
+echo "in build"
+
 #loads VERSION, DEPS_PARAMS, ID, LOG_FILE, PLAY_COMMAND="${OPENSHIFT_DATA_DIR}play-${VERSION}/play"
 . ${OPENSHIFT_REPO_DIR}.openshift/action_hooks/load_config
 
@@ -17,5 +19,5 @@ fi
 echo "cd to $OPENSHIFT_REPO_DIR"
 cd "$OPENSHIFT_REPO_DIR"
 
-echo "$PLAY_COMMAND clean compile stage" >> $LOG_FILE
-$PLAY_COMMAND clean compile stage &> $LOG_FILE
+echo "$PLAY_COMMAND clean compile stage"
+bash -c "$PLAY_COMMAND clean compile stage &>> ${LOG_FILE}"

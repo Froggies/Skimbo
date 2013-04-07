@@ -6,6 +6,8 @@
 # debug
 # set -x
 
+echo "in start"
+
 #loads VERSION, DEPS_PARAMS, ID, LOG_FILE, PLAY_COMMAND="${OPENSHIFT_DATA_DIR}play-${VERSION}/play"
 . ${OPENSHIFT_REPO_DIR}.openshift/action_hooks/load_config
 
