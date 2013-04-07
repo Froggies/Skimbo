@@ -26,18 +26,7 @@ if [[ ! $? -eq 0 ]]; then
 	exit 1
 fi
 
-cd "$OPENSHIFT_REPO_DIR"
-
-# clean everything
-echo "$PLAY_COMMAND clean" >> $LOG_FILE
-$PLAY_COMMAND clean &> $LOG_FILE
-
-echo "$PLAY_COMMAND compile" >> $LOG_FILE
-$PLAY_COMMAND compile &> $LOG_FILE
-
-export PLAY_LOG_PATH=${OPENSHIFT_DIY_LOG_DIR}
-echo "$PLAY_COMMAND start --%$ID $PLAY_PARAMS" >> $LOG_FILE
-nohup bash -c "$PLAY_COMMAND start --%$ID $PLAY_PARAMS &> $LOG_FILE" &> /dev/null &
+nohup bash -c "${OPENSHIFT_REPO_DIR}target/start $PLAY_PARAMS &>> ${LOG_FILE} 2>&1" &> /dev/null &
 
 if [[ ! $? -eq 0 ]]; then
 	echo "Error: starting play application"

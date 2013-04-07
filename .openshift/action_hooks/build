@@ -3,3 +3,19 @@
 # available.  Otherwise it will execute while your application is stopped
 # before the deploy step.  This script gets executed directly, so it
 # could be python, php, ruby, etc.
+
+# debug
+# set -x
+
+#loads VERSION, DEPS_PARAMS, ID, LOG_FILE, PLAY_COMMAND="${OPENSHIFT_DATA_DIR}play-${VERSION}/play"
+. ${OPENSHIFT_REPO_DIR}.openshift/action_hooks/load_config
+
+if [[ ! $? -eq 0 ]]; then
+	exit $?
+fi
+
+echo "cd to $OPENSHIFT_REPO_DIR"
+cd "$OPENSHIFT_REPO_DIR"
+
+echo "$PLAY_COMMAND clean compile stage" >> $LOG_FILE
+$PLAY_COMMAND clean compile stage &> $LOG_FILE

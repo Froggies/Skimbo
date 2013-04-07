@@ -44,27 +44,6 @@ else
 		echo "Error installing play $VERSION to $PLAY_FULL_PATH"
 		exit 1
 	fi
-
-	#verify that the desired version installed successfully
-	#if [[ ! `${PLAY_FULL_PATH}play version | tail -1` = $VERSION ]]; then
-	#	echo "Error installing play $VERSION to $PLAY_FULL_PATH with ${PLAY_FULL_PATH}play version"
-	#	rm -fr $PLAY_FULL_PATH
-	#	exit 1
-	#fi
-
-	#cleanup, remove other play versions
-	for old in [play-]*; do 
-		# avoid showing "Removing version [play-]*" message
-		if [[ -d $old ]]; then
-			if [[ $old = "play-$VERSION" ]]; then
-				echo "Skipping current version version $old"
-			else
-				echo "Removing version $old"
-				rm -fr $old
-			fi
-		fi
-	done
-
 fi
 
 exit 0
