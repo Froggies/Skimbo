@@ -28,7 +28,7 @@ fi
 source ${OPENSHIFT_DATA_DIR}/my-social.conf
 
 # version of play framework to dowload and install
-VERSION="1.2.5"
+VERSION="2.1.1"
 DEPS_PARAMS="--forProd --clearcache"
 ID="openshift"
 PLAY_PARAMS="-Dhttp.port=${OPENSHIFT_DIY_PORT} "\
