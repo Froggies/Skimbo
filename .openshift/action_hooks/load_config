@@ -88,7 +88,7 @@ if [ "$VERSION" \< "1.2.3" ]; then
 	return 1
 fi
 
-LOG_FILE="$OPENSHIFT_DIY_LOG_DIRsystem.out"
+LOG_FILE="$OPENSHIFT_DIY_LOG_DIR/play.log"
 PLAY_COMMAND="${OPENSHIFT_DATA_DIR}play-${VERSION}/play"
 
 return 0
