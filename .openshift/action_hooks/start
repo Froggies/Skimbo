@@ -44,7 +44,7 @@ fi
 
 export PLAY_LOG_PATH=${OPENSHIFT_DIY_LOG_DIR}
 echo "$PLAY_COMMAND start --%$ID $PLAY_PARAMS" >> $LOG_FILE
-nohup bash -c "$PLAY_COMMAND start --%$ID $PLAY_PARAMS -Duser.timezone=Europe/London &> $LOG_FILE" &> /dev/null &
+nohup bash -c "$PLAY_COMMAND start --%$ID $PLAY_PARAMS &> $LOG_FILE" &> /dev/null &
 
 if [[ ! $? -eq 0 ]]; then
 	echo "Error: starting play application"

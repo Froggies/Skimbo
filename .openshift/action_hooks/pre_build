@@ -13,7 +13,7 @@ fi
 PLAY_PATH="play-$VERSION/"
 
 # use tmp file just in case it hangs up
-PLAY_ARCH="${OPENSHIFT_TMP_DIR}play-$VERSION.zip"
+PLAY_ARCH="${OPENSHIFT_DATA_DIR}play-$VERSION.zip"
 
 cd "$OPENSHIFT_DATA_DIR"
 
