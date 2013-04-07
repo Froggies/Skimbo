@@ -32,15 +32,8 @@ cd "$OPENSHIFT_REPO_DIR"
 echo "$PLAY_COMMAND clean" >> $LOG_FILE
 $PLAY_COMMAND clean &> $LOG_FILE
 
-echo "$PLAY_COMMAND deps $DEPS_PARAMS -Divy.home=${OPENSHIFT_TMP_DIR}ivy2/" >> $LOG_FILE
-$PLAY_COMMAND deps $DEPS_PARAMS -Divy.home=${OPENSHIFT_TMP_DIR}ivy2/ &> $LOG_FILE
-
-if [[ ! $? -eq 0 ]]; then
-	echo "Error: could not update dependencies"
-	echo "Error executing '$PLAY_COMMAND $DEPS_PARAMS'"
-	exit 1
-fi
-
+echo "$PLAY_COMMAND compile" >> $LOG_FILE
+$PLAY_COMMAND compile &> $LOG_FILE
 
 export PLAY_LOG_PATH=${OPENSHIFT_DIY_LOG_DIR}
 echo "$PLAY_COMMAND start --%$ID $PLAY_PARAMS" >> $LOG_FILE

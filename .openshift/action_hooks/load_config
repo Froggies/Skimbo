@@ -79,7 +79,7 @@ if [[ -f $PLAY_CONFIG_FILE ]]; then
 	VERSION=$(read_conf "openshift.play.version" $VERSION)
 	DEPS_PARAMS=$(read_conf "openshift.deps.params" $DEPS_PARAMS)
 	ID=$(read_conf "openshift.id" $ID)
-	#PLAY_PARAMS=$(read_conf "openshift.play.params" $PLAY_PARAMS)
+	PLAY_PARAMS=$(read_conf "openshift.play.params" $PLAY_PARAMS)
 fi
 
 # validate version
