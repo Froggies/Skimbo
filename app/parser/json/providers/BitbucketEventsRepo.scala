@@ -1,7 +1,6 @@
 package parser.json.providers
 
 import org.joda.time.DateTime
-
 import models.Skimbo
 import models.user.ProviderUser
 import parser.json.GenericJsonParser
@@ -13,10 +12,12 @@ import play.api.libs.json.Reads
 import play.api.libs.json.__
 import services.auth.providers.Bitbucket
 import services.endpoints.Configuration
+import parser.json.PathDefaultReads
 
 case class BitbucketEventsRepo(
   node: Option[String],
   description: Option[String],
+  descriptionCommit: Option[String],
   event: String,
   date:DateTime,
   repo: Option[BitbucketRepo]
@@ -40,7 +41,7 @@ object BitbucketEventsRepoParser extends GenericJsonParser {
         e.node.getOrElse(e.date.toDate().getTime().toString),
         user.username.getOrElse("-- private --"),
         user.name.getOrElse("-- private --"),
-        e.event + e.repo.map(repo => " on " + repo.owner + "/" + repo.slug).getOrElse(""),
+        buildMessage(e),
         e.date,
         Nil,
         -1,
@@ -48,6 +49,14 @@ object BitbucketEventsRepoParser extends GenericJsonParser {
         e.date.toDate().getTime().toString,
         user.avatar.orElse(e.repo.map(_.logo)),
         Configuration.Bitbucket.eventsRepo)))
+  }
+  
+  def buildMessage(e:BitbucketEventsRepo): String = {
+    e.event + 
+    e.repo.map(repo => " on " + repo.owner + "/" + repo.slug).getOrElse("") + 
+    e.description.map(desc => " : " + desc).getOrElse(
+        e.descriptionCommit.map(desc => " : " + desc).getOrElse("")
+    )
   }
 
   override def cut(json: JsValue) = {
@@ -70,7 +79,8 @@ object BitbucketEventsRepo {
   
   implicit val reader: Reads[BitbucketEventsRepo] = (
     (__ \ "node").readNullable[String] and
-    (__ \ "description").readNullable[String] and
+    PathDefaultReads.default[Option[String]]((__ \ "description"), None) and
+    PathDefaultReads.default[Option[String]](((__ \ "description" \ "commits")(0) \\ "description"), None) and
     (__ \ "event").read[String] and
     (__ \ "utc_created_on").read[DateTime](Reads.jodaDateReads(datePattern)) and
     (__ \ "repository").readNullable[BitbucketRepo])(BitbucketEventsRepo.apply _)
