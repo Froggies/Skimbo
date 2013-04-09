@@ -2,8 +2,8 @@
 
 echo "##### Deploy to openshift strating #####"
 
-PATH_PLAY=""
-PATH_PROJECT=""
+PATH_PLAY="/home/manland/projets/play-2.1.1"
+PATH_PROJECT="/home/manland/projets/skimbo/Skimbo"
 OPENSHIFT_REPO="openshift"
 OPENSHIFT_BRANCH="master"
 

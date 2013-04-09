@@ -64,7 +64,7 @@ trait OAuth2Provider extends AuthProvider with Starer {
    * Get token from session if exists
    */
   override def getToken(implicit request: RequestHeader) = {
-    request.session.get("id").flatMap(id => Await.result(UserDao.getToken(id, this), 1 second))
+    request.session.get("id").flatMap(id => Await.result(UserDao.getToken(id, this), 10 second))
   }
 
   /**

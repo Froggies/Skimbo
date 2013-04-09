@@ -63,7 +63,7 @@ trait OAuthProvider extends AuthProvider with Starer {
   }
 
   override def getToken(implicit request: RequestHeader): Option[RequestToken] = {
-    val skimboToken = request.session.get("id").flatMap(id => Await.result(UserDao.getToken(id, this), 1 second))
+    val skimboToken = request.session.get("id").flatMap(id => Await.result(UserDao.getToken(id, this), 10 second))
     skimboToken.map(st => RequestToken(st.token, st.secret.get))
   }
 
