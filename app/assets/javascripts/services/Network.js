@@ -7,9 +7,9 @@ app.factory("Network", ["$http", "$timeout", "ServerCommunication",
 
   var wshost = jsRoutes.controllers.stream.WebSocket.connect().webSocketURL();
   console.log("WHOST URL = "+wshost);
-  var ssehost = jsRoutes.controllers.stream.Sse.connect().absoluteURL();
-  console.log("SSEHOST URL = "+ssehost);
-  var sseping = jsRoutes.controllers.stream.Sse.ping().absoluteURL();
+  var ssehost = jsRoutes.controllers.stream.Sse.connect().url;
+  console.log("SSEHOST URL = "+ ssehost);
+  var sseping = jsRoutes.controllers.stream.Sse.ping().url;
   console.log("SSEPING URL = "+sseping);
 
   var socket = undefined;//ws mode
