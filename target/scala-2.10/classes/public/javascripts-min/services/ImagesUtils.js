@@ -1,1 +1,0 @@
-define(["app"],function(e){return e.factory("ImagesUtils",function(){return{isDefaultImage:function(e){return e=="assets/img/image-default.png"},checkExistingImage:function(e){return e==""||e==undefined?"assets/img/image-default.png":e.match("^www")=="www"?"http://"+e:e}}}),e})
