@@ -1,0 +1,42 @@
+<div ng-controller="HeaderController" id="header-general">
+	<div id="logo">
+		<img ng-hide="loading" src="assets/img/skimbo-acote_40.png" width="114" height="40">
+		<div id="loader" ng-show="loading">
+			<img src="assets/img/loader.gif" width="40" height="40">{{loadingMsg | i18n}}
+		</div>
+	</div>
+
+	<div class="separateur-gris"></div>
+
+	<div style="display:inline-block" ng-include src="'assets/app/views/post.html'"></div>
+	<div style="display:inline-block" ng-include src="'assets/app/views/modifColumn.html'"></div>
+
+	<div id="recherche-et-profil">
+		<input type="search" placeholder="Live search" results="5" name="test" ng-model="$parent.$parent.query">
+		<a id="nom-prenom" href="#" class="btn" ng-click="showUserInformations=!showUserInformations">
+			<img ng-src="{{userInfos[0].avatar}}" width="24" height="24">{{userInfos[0].username}} ▼
+		</a>
+		<div id="bloc-utilisateur" ng-show="showUserInformations" ng-click="showUserInformations=!showUserInformations">
+			<div id="reseaux-connectes">
+				<div class="connected-on">You are logged in:</div>
+				<ul>
+					<li ng-repeat="userInfo in userInfos">
+						<a href="#" class="social-network-connected {{userInfo.socialType}}">
+							<img ng-src="assets/img/brand/{{userInfo.socialType}}.png" alt="{{userInfo.socialType}}" width="16" height="16">{{userInfo.username}}
+						</a>
+						<a href="#" ng-click="deleteProvider(userInfo.socialType)" class="deconnexion {{userInfo.socialType}}">✘</a>
+					</li>
+				</ul>
+			</div>
+			<footer>
+				<a class="btn" href="https://github.com/Froggies/Skimbo/wiki/Contact" target="_blank" title="Contact us">@ Contact us</a>
+				<a class="btn" href="https://github.com/Froggies/Skimbo/wiki/Help" target="_blank" title="Help">?</a>
+				<a class="btn" href="https://github.com/Froggies/Skimbo/wiki/About" target="_blank" title="About"><b>ⓘ</b></a>
+				<a class="btn" href="/logout" target="_self" title="Log out">✘ Log out</a>
+			</footer>
+		</div>
+	</div>
+</div>
+
+
+
