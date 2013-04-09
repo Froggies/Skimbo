@@ -1,0 +1,1 @@
+define(["app"],function(e){e.directive("onKeyPress",function(){return{restrict:"A",link:function(e,t,n){document.onkeypress=function(t){t=t||window.event;var r=typeof t.which=="number"?t.which:t.keyCode;r&&t.ctrlKey&&t.charCode==n.onKeyPress&&(e.$eval(n.onKeyPressExec),t.stopPropagation(),t.preventDefault())}}}})})
