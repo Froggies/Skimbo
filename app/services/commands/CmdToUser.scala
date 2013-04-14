@@ -22,16 +22,16 @@ object CmdToUser {
     userToUser.get(idUser).getOrElse(idUser)
   }
 
-  def userConnected(idUser: String, channel: Concurrent.Channel[JsValue]):Future[Concurrent.Channel[JsValue]] = {
+  def userConnected(idUser: String, channel: Concurrent.Channel[JsValue], isPublicPage: Boolean = false):Future[Concurrent.Channel[JsValue]] = {
     val optChannels = channelUser.get(idUser)
     if (optChannels.isDefined) { //user deco/reco or other tab in navigator
       log.info("user deco/reco")
       channelUser.put(idUser, optChannels.get ++ Seq(channel))
       Future(optChannels.get.head)
-    } else {
+    } else if(!isPublicPage) {
       UserDao.findOneById(idUser).map(_.map { user =>
         val account = user.accounts.filter(account => channelUser.get(account.id).isDefined).headOption
-        if (account.isDefined) { //another account, probably another browser
+        if (account.isDefined) { //another account, probably another browser/pc
           log.info("another account")
           val oldChannels = channelUser.get(account.get.id).get
           channelUser.put(account.get.id, oldChannels ++ Seq(channel))
@@ -43,6 +43,8 @@ object CmdToUser {
           channel
         }
       }.getOrElse(channel))
+    } else {//in publicPage we create always channel
+      Future(channel)
     }
   }
 

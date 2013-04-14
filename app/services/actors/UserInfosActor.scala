@@ -30,7 +30,6 @@ case class RefreshInfosUser(userId: String, provider: GenericProvider)
 object UserInfosActor {
   
   def create(idUser: String)(implicit request: RequestHeader) = {
-    println("UserInfosActor == CREATE")
     HelperUserInfosActor.foundOrCreate(idUser)
   }
 
@@ -129,7 +128,7 @@ class UserInfosActor(idUser: String)(implicit request: RequestHeader) extends Ac
       if (providers.isEmpty) {
         CmdFromUser.interpretCmd(idUser, Command("allColumns"))
       } else {
-        providers.map { provider =>
+        providers.foreach { provider =>
           provider.getUser.map { providerUser =>
             providerUser.map(pUser =>
               UserDao.findByIdProvider(provider.name, pUser.id).map(optUser =>

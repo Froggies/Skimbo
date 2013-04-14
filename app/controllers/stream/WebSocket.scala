@@ -34,5 +34,25 @@ object WebSocket extends Controller {
 
     (in, out)
   }
+  
+  def connectPublicPage(publicPage: String) = play.api.mvc.WebSocket.using[JsValue] { implicit request =>
+    
+    //val idUser = request.session.get("id").getOrElse(throw new PlayException("Security Runtime Error", "Unallowed websocket connection"))
+
+    val (out, channelClient) = Concurrent.broadcast[JsValue]
+    
+    CmdToUser.userConnected(publicPage, channelClient, true).map { preferedChannel =>
+      UserInfosActor.create(publicPage)
+      UserDao.updateLastUse(publicPage)
+    }
+    
+    val in = Iteratee.foreach[JsValue](cmd => CmdFromUser.interpret(publicPage, cmd))
+              .mapDone { _ => 
+                UserInfosActor.killActorsForUser(publicPage)
+                CmdToUser.userDeco(publicPage, channelClient)
+              }
+
+    (in, out)
+  }
 
 }

@@ -2,10 +2,15 @@
 
 define(["app"], function(app) {
 
-app.factory("Network", ["$http", "$timeout", "ServerCommunication", 
-  function($http, $timeout, $serverCommunication) {
+app.factory("Network", ["$http", "$timeout", "ServerCommunication", "$location",
+  function($http, $timeout, $serverCommunication, $location) {
+
+  var pageName = $location.path().split('/');
 
   var wshost = jsRoutes.controllers.stream.WebSocket.connect().webSocketURL();
+  if(pageName !== undefined && pageName.length == 3) {
+    wshost = wshost + "/" + pageName[2];
+  }
   console.log("WHOST URL = "+wshost);
   var ssehost = jsRoutes.controllers.stream.Sse.connect().url;
   console.log("SSEHOST URL = "+ ssehost);

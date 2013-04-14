@@ -30,7 +30,6 @@ object User {
   }
 
   implicit object UserBSONReader extends BSONReader[User] {
-
     def fromBSON(document: BSONDocument): User = {
       val accounts = UtilBson.tableTo[models.user.Account](document, "accounts", { a =>
         models.user.Account.fromBSON(a)

@@ -9,11 +9,11 @@ case class Service(name: String, connected: Boolean)
 
 object Service {
 
-  def list(implicit req: RequestHeader) = {
+  def list(implicit request: RequestHeader) = {
     ProviderDispatcher.listAll.map(provider => Service(provider.name, provider.hasToken))
   }
   
-  def toJson()(implicit req: RequestHeader) = {
+  def toJson(implicit request: RequestHeader) = {
     val services = list.map { service =>
       Json.obj(
         "name" -> service.name,
@@ -23,7 +23,7 @@ object Service {
     Json.toJson(services)
   }
   
-  def toJsonWithUnifiedRequest()(implicit req: RequestHeader) = {
+  def toJsonWithUnifiedRequest(implicit request: RequestHeader) = {
     val jsonUnifiedRequests = Endpoints.getAll.map { endpoint =>
       Json.obj(
         "endpoint" -> endpoint.provider.name,

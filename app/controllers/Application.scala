@@ -11,6 +11,7 @@ import models.User
 import views.html.helper.javascriptRouter
 import play.api.Routes
 import play.api.http.ContentTypes._
+import services.dao.PublicPageDao
 
 object Application extends Controller {
 
@@ -18,6 +19,10 @@ object Application extends Controller {
     session.get("id")
       .map(_ => Ok(views.html.unified()))
       .getOrElse(Ok(views.html.index(Service.list)))
+  }
+  
+  def publicPage(namePage: String) = Action { implicit request =>
+    Ok(views.html.unified())
   }
 
   def authenticate(providerName: String) = Action { implicit request =>

@@ -12,7 +12,7 @@ import services.security.Authentication
 object Providers extends Controller with Authentication {
 
   def listAll = Action { implicit req =>
-    Ok(Service.toJson())
+    Ok(Service.toJson)
   }
   
   def listServices = Action { implicit req =>

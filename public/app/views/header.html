@@ -1,15 +1,15 @@
 <div ng-controller="HeaderController" id="header-general">
 	<div id="logo">
-		<img ng-hide="loading" src="assets/img/skimbo-acote_40.png" width="114" height="40">
+		<img ng-hide="loading" src="/assets/img/skimbo-acote_40.png" width="114" height="40">
 		<div id="loader" ng-show="loading">
-			<img src="assets/img/loader.gif" width="40" height="40">{{loadingMsg | i18n}}
+			<img src="/assets/img/loader.gif" width="40" height="40">{{loadingMsg | i18n}}
 		</div>
 	</div>
 
 	<div class="separateur-gris"></div>
 
-	<div style="display:inline-block" ng-include src="'assets/app/views/post.html'"></div>
-	<div style="display:inline-block" ng-include src="'assets/app/views/modifColumn.html'"></div>
+	<div style="display:inline-block" ng-include src="'/assets/app/views/post.html'"></div>
+	<div style="display:inline-block" ng-include src="'/assets/app/views/modifColumn.html'"></div>
 
 	<div id="recherche-et-profil">
 		<input type="search" placeholder="Live search" results="5" name="test" ng-model="$parent.$parent.query">
@@ -22,7 +22,7 @@
 				<ul>
 					<li ng-repeat="userInfo in userInfos">
 						<a href="#" class="social-network-connected {{userInfo.socialType}}">
-							<img ng-src="assets/img/brand/{{userInfo.socialType}}.png" alt="{{userInfo.socialType}}" width="16" height="16">{{userInfo.username}}
+							<img ng-src="/assets/img/brand/{{userInfo.socialType}}.png" alt="{{userInfo.socialType}}" width="16" height="16">{{userInfo.username}}
 						</a>
 						<a href="#" ng-click="deleteProvider(userInfo.socialType)" class="deconnexion {{userInfo.socialType}}">✘</a>
 					</li>

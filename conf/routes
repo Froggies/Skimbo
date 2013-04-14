@@ -1,4 +1,5 @@
 GET     /                           	controllers.Application.index
+GET		/p/:namePage					controllers.Application.publicPage(namePage: String)
 GET     /jsRouter						controllers.Application.jsRouter
 
 GET     /api/providers/list         	controllers.api.Providers.listAll
@@ -10,7 +11,8 @@ GET     /auth/end						controllers.Application.closePopup
 GET     /auth/:provider             	controllers.Application.authenticate(provider: String)
 
 # Streams -- websocket
-GET     /api/stream/webSocket       	controllers.stream.WebSocket.connect
+GET     /api/stream/webSocket			controllers.stream.WebSocket.connect
+GET     /api/stream/webSocket/:publicPage	controllers.stream.WebSocket.connectPublicPage(publicPage: String)
 
 # Streams -- Sse
 GET     /api/stream/sse       			controllers.stream.Sse.connect
