@@ -30,12 +30,12 @@ object StackExchange extends OAuth2Provider with WSGzipJson {
   val KEY = config.getString("key").getOrElse("")
 
   // Override fetch method : add key to queries
-  override def fetch(url: String)(implicit request: RequestHeader) =
-    super.fetch(url).withQueryString("key" -> KEY)
+  override def fetch(idUser: String, url: String) =
+    super.fetch(idUser, url).withQueryString("key" -> KEY)
     
   override def resultAsJson(response:play.api.libs.ws.Response):JsValue = parseGzipJson(response)
     
-  override def distantUserToSkimboUser(ident: String, response: play.api.libs.ws.Response)(implicit request: RequestHeader): Option[ProviderUser] = {
+  override def distantUserToSkimboUser(idUser: String, response: play.api.libs.ws.Response): Option[ProviderUser] = {
     try {
       val me = (resultAsJson(response) \ "items")(0)
       val id = (me \ "user_id").as[Int].toString
@@ -46,7 +46,7 @@ object StackExchange extends OAuth2Provider with WSGzipJson {
       Some(ProviderUser(
           id, 
           this.name, 
-          Some(SkimboToken(getToken.get.token, None)), 
+          Some(SkimboToken(getToken(idUser).get.token, None)), 
           username, 
           name, 
           description, 

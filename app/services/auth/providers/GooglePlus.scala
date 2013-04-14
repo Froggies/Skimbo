@@ -39,13 +39,13 @@ object GooglePlus extends OAuth2Provider {
         (response.json \ "expires_in").asOpt[Int],
         (response.json \ "refresh_token").asOpt[String])
   
-  override def distantUserToSkimboUser(ident: String, response: play.api.libs.ws.Response)(implicit request: RequestHeader): Option[ProviderUser] = {
-    if(isInvalidToken(ident, response)) {
-      CmdToUser.sendTo(ident, models.command.TokenInvalid(name))
+  override def distantUserToSkimboUser(idUser: String, response: play.api.libs.ws.Response): Option[ProviderUser] = {
+    if(isInvalidToken(idUser, response)) {
+      CmdToUser.sendTo(idUser, models.command.TokenInvalid(name))
       None
     } else {
       try {
-        GoogleplusUser.asProviderUser(response.json)
+        GoogleplusUser.asProviderUser(idUser, response.json)
       } catch {
         case t:Throwable => {
           Logger("G+Provider").error("Error during fetching user details G+ "+t.getMessage())
@@ -56,13 +56,13 @@ object GooglePlus extends OAuth2Provider {
     }
   }
   
-  override def isInvalidToken(idUser:String, response: play.api.libs.ws.Response)(implicit request: RequestHeader): Boolean = {
+  override def isInvalidToken(idUser:String, response: play.api.libs.ws.Response): Boolean = {
     if(response.status == 401) {
       val data = Map(
         "client_id" -> clientId,
         "client_secret" -> secret,
         "grant_type" -> "refresh_token",
-        "refresh_token" -> getToken.get.secret.get)
+        "refresh_token" -> getToken(idUser).get.secret.get)
   
       val req = WS.url(accessTokenUrl).withHeaders(accessTokenHeaders: _*)
   

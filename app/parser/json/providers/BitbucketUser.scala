@@ -10,8 +10,8 @@ import play.api.libs.oauth.RequestToken
 
 object BitbucketUser extends GenericJsonParserUser {
 
-  override def asProviderUser(json: JsValue)(implicit request: RequestHeader): Option[models.user.ProviderUser] = {
-    asProviderUser(json, Bitbucket.getToken)
+  override def asProviderUser(idUser: String, json: JsValue): Option[models.user.ProviderUser] = {
+    asProviderUser(json, Bitbucket.getToken(idUser))
   }
   
   def asProviderUser(json: JsValue, token:Option[RequestToken]): Option[models.user.ProviderUser] = {

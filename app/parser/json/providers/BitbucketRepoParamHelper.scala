@@ -8,14 +8,13 @@ import models.ParamHelper
 object BitbucketRepoParamHelper extends GenericJsonParserParamHelper {
 
   override def cut(json: JsValue) = json.as[List[JsValue]]
-  
-  override def asParamHelper(json: JsValue)(implicit request: RequestHeader) : Option[models.ParamHelper] = {
+
+  override def asParamHelper(idUser: String, json: JsValue): Option[models.ParamHelper] = {
     Some(ParamHelper(
       (json \ "label").as[String],
       (json \ "value").as[String],
       (json \ "avatar").as[String],
-      None
-    ))
+      None))
   }
-  
+
 }

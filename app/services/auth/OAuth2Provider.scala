@@ -56,15 +56,15 @@ trait OAuth2Provider extends AuthProvider with Starer {
    * Shortcut to make WS request without passing token as parameter
    * TOKEN must be in session
    */
-  override def fetch(url: String)(implicit request: RequestHeader) = {
-    WS.url(url).withQueryString("access_token" -> getToken.get.token)
+  override def fetch(idUser: String, url: String) = {
+    WS.url(url).withQueryString("access_token" -> getToken(idUser).get.token)
   }
 
   /**
    * Get token from session if exists
    */
-  override def getToken(implicit request: RequestHeader) = {
-    request.session.get("id").flatMap(id => Await.result(UserDao.getToken(id, this), 10 second))
+  override def getToken(idUser: String) = {
+    Await.result(UserDao.getToken(idUser, this), 10 second)
   }
 
   /**
@@ -152,16 +152,16 @@ trait OAuth2Provider extends AuthProvider with Starer {
     }
   }
   
-  override def post(url:String, queryString:Seq[(String, String)], headers:Seq[(String, String)], content:String)(implicit request: RequestHeader) = {
-    val queryS = queryString ++ Seq("access_token" -> getToken.get.token)
+  override def post(idUser: String, url:String, queryString:Seq[(String, String)], headers:Seq[(String, String)], content:String) = {
+    val queryS = queryString ++ Seq("access_token" -> getToken(idUser).get.token)
     WS.url(url)
       .withQueryString( queryS:_* )
       .withHeaders(headers:_*)
       .post(content)
   }
   
-  override def star(idProvider: String)(implicit request: RequestHeader) = {
-    val queryString = Seq("access_token" -> getToken.get.token)
+  override def star(idUser:String, idProvider: String) = {
+    val queryString = Seq("access_token" -> getToken(idUser).get.token)
     WS.url(urlToStar(idProvider))
       .withQueryString( queryString:_* )
       .post("")

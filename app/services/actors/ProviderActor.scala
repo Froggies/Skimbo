@@ -52,7 +52,7 @@ sealed case class Restart(idUser: String)
 
 object ProviderActor {
 
-  def create(idUser: String, column: Column)(implicit request: RequestHeader) {
+  def create(idUser: String, column: Column) {
     column.unifiedRequests.foreach { unifiedRequest =>
       val endpoint = for (
         provider <- Endpoints.getProvider(unifiedRequest.service);
@@ -87,7 +87,7 @@ object ProviderActor {
 
 }
 
-class ProviderActor(parameter:ProviderActorParameter)(implicit request: RequestHeader) extends Actor {
+class ProviderActor(parameter:ProviderActorParameter) extends Actor {
 
   val log = Logger(ProviderActor.getClass())
   

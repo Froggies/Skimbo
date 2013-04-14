@@ -16,7 +16,7 @@ object ViadeoPoster extends GenericPoster {
     }
   }
   
-  override def postParams(post:models.Post)(implicit request: RequestHeader):Seq[(String, String)] = {
+  override def postParams(idUser: String, post:models.Post):Seq[(String, String)] = {
     if(post.url.isDefined) {
       Seq(
         "url" -> post.url.get,

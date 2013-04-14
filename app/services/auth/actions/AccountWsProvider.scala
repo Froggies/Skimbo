@@ -16,14 +16,14 @@ trait AccountWsProvider extends WsProvider {
   /**
    * Retrieve user informations from provider
    */
-  def getUser(implicit request: RequestHeader): Future[Option[ProviderUser]] = {
+  def getUser(idUser: String): Future[Option[ProviderUser]] = {
     config.getString("urlUserInfos").map(url =>
-      fetch(url).get().map(response => distantUserToSkimboUser(request.session("id"), response))).getOrElse(Future { None })
+      fetch(idUser, url).get().map(response => distantUserToSkimboUser(idUser, response))).getOrElse(Future { None })
   }
 
   /**
    * Transcript getUser to real User
    */
-  def distantUserToSkimboUser(id: String, response: play.api.libs.ws.Response)(implicit request: RequestHeader): Option[ProviderUser] = None
+  def distantUserToSkimboUser(idUser: String, response: play.api.libs.ws.Response): Option[ProviderUser] = None
 
 }

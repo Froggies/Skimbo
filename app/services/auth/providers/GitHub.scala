@@ -21,13 +21,13 @@ object GitHub extends OAuth2Provider {
   override def processToken(response: play.api.libs.ws.Response) =
     Token((response.json \ "access_token").asOpt[String], None)
 
-  override def distantUserToSkimboUser(ident: String, response: play.api.libs.ws.Response)(implicit request: RequestHeader): Option[ProviderUser] = {
-    if(isInvalidToken(ident, response)) {
-      CmdToUser.sendTo(ident, models.command.TokenInvalid(name))
+  override def distantUserToSkimboUser(idUser: String, response: play.api.libs.ws.Response): Option[ProviderUser] = {
+    if(isInvalidToken(idUser, response)) {
+      CmdToUser.sendTo(idUser, models.command.TokenInvalid(name))
       None
     } else {
       try {
-      GithubUser.asProviderUser(response.json)
+      GithubUser.asProviderUser(idUser, response.json)
       } catch {
         case t:Throwable => {
           Logger("G+Provider").error("Error during fetching user details Github "+t.getMessage())

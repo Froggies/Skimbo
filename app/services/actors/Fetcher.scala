@@ -30,7 +30,7 @@ object Fetcher {
 
   val log = Logger(Fetcher.getClass())
 
-  def apply(parameter:FetcherParameter)(implicit request: RequestHeader): Future[Option[List[Skimbo]]] = {
+  def apply(parameter:FetcherParameter): Future[Option[List[Skimbo]]] = {
 
     val provider = parameter.provider
     val parser = parameter.parser
@@ -39,12 +39,12 @@ object Fetcher {
     
     log.info("[" + parameter.serviceName + "] Fetching")
 
-    if (provider.canStart) {
+    if (provider.canStart(idUser)) {
 
       log.info("[" + parameter.serviceName + "] " + url.get)
 
       if (url.isDefined) {
-        val get = provider.fetch(url.get).withTimeout(parameter.delay * 1000).get
+        val get = provider.fetch(idUser, url.get).withTimeout(parameter.delay * 1000).get
         get.onFailure { 
           case e:Throwable => {
             log.error("[" + parameter.serviceName + "] Timeout HTTP", e)
@@ -81,7 +81,7 @@ object Fetcher {
         log.error("[" + parameter.serviceName + "] Bad url" + url)
         Future(None)
       }
-    } else if (provider.isAuthProvider && !provider.canStart) {
+    } else if (provider.isAuthProvider && !provider.canStart(idUser)) {
       CmdToUser.sendTo(idUser, TokenInvalid(provider.name))
       log.info("[" + parameter.serviceName + "] No Token")
       Future(None)

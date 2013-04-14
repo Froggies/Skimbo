@@ -13,13 +13,13 @@ object TwitterUser extends GenericJsonParserUser with GenericJsonParserParamHelp
 
   override def cut(json: JsValue) = json.as[List[JsValue]]
   
-  override def asProviderUser(json: JsValue)(implicit request: RequestHeader): Option[models.user.ProviderUser] = {
+  override def asProviderUser(idUser: String, json: JsValue): Option[models.user.ProviderUser] = {
       val id = (json \ "id").as[Int].toString
       val username = (json \ "screen_name").asOpt[String]
       val name = (json \ "name").asOpt[String]
       val description = (json \ "description").asOpt[String]
       val profileImage = (json \ "profile_image_url").asOpt[String]
-      val token = Twitter.getToken
+      val token = Twitter.getToken(idUser)
       Some(models.user.ProviderUser(
           id, 
           Twitter.name, 
@@ -30,8 +30,8 @@ object TwitterUser extends GenericJsonParserUser with GenericJsonParserParamHelp
           profileImage))
   }
   
-  override def asParamHelper(json: JsValue)(implicit request: RequestHeader) : Option[models.ParamHelper] = {
-    asProviderUser(json).map( user => ParamHelper.fromProviderUser(user))
+  override def asParamHelper(idUser: String, json: JsValue) : Option[models.ParamHelper] = {
+    asProviderUser(idUser, json).map( user => ParamHelper.fromProviderUser(user))
   }
 
 }

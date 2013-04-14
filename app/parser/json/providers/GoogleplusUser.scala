@@ -13,7 +13,7 @@ object GoogleplusUser extends GenericJsonParserUser with GenericJsonParserParamH
 
   override def cut(json: JsValue) = super.cut(json \ "items")
   
-  override def asProviderUser(json: JsValue)(implicit request: RequestHeader): Option[models.user.ProviderUser] = {
+  override def asProviderUser(idUser: String, json: JsValue): Option[models.user.ProviderUser] = {
     val id = (json \ "id").as[String]
     val username = (json \ "displayName").asOpt[String]
     val name = (json \ "name" \ "familyName").asOpt[String]
@@ -22,15 +22,15 @@ object GoogleplusUser extends GenericJsonParserUser with GenericJsonParserParamH
     Some(models.user.ProviderUser(
         id, 
         GooglePlus.name, 
-        Some(SkimboToken(GooglePlus.getToken.get.token, None)), 
+        Some(SkimboToken(GooglePlus.getToken(idUser).get.token, None)), 
         username, 
         name, 
         description, 
         profileImage))
   }
   
-  override def asParamHelper(json: JsValue)(implicit request: RequestHeader) : Option[models.ParamHelper] = {
-    asProviderUser(json).map( user => ParamHelper.fromProviderUser(user))
+  override def asParamHelper(idUser: String, json: JsValue) : Option[models.ParamHelper] = {
+    asProviderUser(idUser, json).map( user => ParamHelper.fromProviderUser(user))
   }
   
 }

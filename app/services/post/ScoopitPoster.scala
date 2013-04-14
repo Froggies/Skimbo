@@ -21,8 +21,8 @@ object ScoopitPoster extends GenericPoster {
     "&content="+URLEncoder.encode(post.message, "UTF-8")+
     "&topicId="+URLEncoder.encode(post.toPageId.get, "UTF-8")
     
-  override def helperPageId(search: String)(implicit request: RequestHeader):Future[Seq[ParamHelper]] = {
-    Scoopit.fetch("http://www.scoop.it/api/1/profile").get.map { response =>
+  override def helperPageId(idUser: String, search: String):Future[Seq[ParamHelper]] = {
+    Scoopit.fetch(idUser, "http://www.scoop.it/api/1/profile").get.map { response =>
       val pages = (response.json \ "user" \ "curatedTopics").as[List[JsValue]]
       pages.map { page => 
         val ph = ParamHelper(

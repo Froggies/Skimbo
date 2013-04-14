@@ -46,13 +46,13 @@ object Facebook extends OAuth2Provider {
     }
   }
   
-  override def distantUserToSkimboUser(ident: String, response: play.api.libs.ws.Response)(implicit request: RequestHeader): Option[ProviderUser] = {
-    if(isInvalidToken(ident, response)) {
-      CmdToUser.sendTo(ident, models.command.TokenInvalid(name))
+  override def distantUserToSkimboUser(idUser: String, response: play.api.libs.ws.Response): Option[ProviderUser] = {
+    if(isInvalidToken(idUser, response)) {
+      CmdToUser.sendTo(idUser, models.command.TokenInvalid(name))
       None
     } else {
       try {
-        FacebookUser.asProviderUser(response.json)
+        FacebookUser.asProviderUser(idUser, response.json)
       } catch {
         case t:Throwable => {
           Logger.error("Error during fetching user details FACEBOOK")

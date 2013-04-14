@@ -9,9 +9,9 @@ import play.api.libs.json.Json
 
 trait GenericJsonParserParamHelper extends GenericParserParamHelper {
 
-  override def getParamsHelper(response:play.api.libs.ws.Response, provider: GenericProvider)(implicit request: RequestHeader):Option[List[models.ParamHelper]] = {
+  override def getParamsHelper(idUser: String, response:play.api.libs.ws.Response, provider: GenericProvider):Option[List[models.ParamHelper]] = {
     cutSafe(response, provider).map { exploded =>
-      exploded.map(json => asParamHelperSafe(json)).flatten
+      exploded.map(json => asParamHelperSafe(idUser, json)).flatten
     }
   }
   
@@ -34,9 +34,9 @@ trait GenericJsonParserParamHelper extends GenericParserParamHelper {
     }
   }
   
-  def asParamHelperSafe(json: JsValue)(implicit request: RequestHeader) : Option[models.ParamHelper] = {
+  def asParamHelperSafe(idUser: String, json: JsValue) : Option[models.ParamHelper] = {
     try {
-      asParamHelper(json)
+      asParamHelper(idUser, json)
     } catch {
       case ex : Throwable => {
         Logger("GenericJsonParserParamHelper").error("Error during parsing this message", ex)
@@ -46,6 +46,6 @@ trait GenericJsonParserParamHelper extends GenericParserParamHelper {
     }
   }
   
-  def asParamHelper(json: JsValue)(implicit request: RequestHeader) : Option[models.ParamHelper]
+  def asParamHelper(idUser: String, json: JsValue): Option[models.ParamHelper]
   
 }

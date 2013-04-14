@@ -20,12 +20,12 @@ object FacebookPagePoster extends GenericPoster {
   
   override def urlToPost(post:models.Post) = "https://graph.facebook.com/"+post.toPageId.get+"/feed"
 
-  override def postParams(post:models.Post)(implicit request: RequestHeader):Seq[(String, String)] = {
-    FacebookPoster.postParams(post) ++ getPageToken(post.toPageId.get)
+  override def postParams(idUser: String, post:models.Post):Seq[(String, String)] = {
+    FacebookPoster.postParams(idUser, post) ++ getPageToken(idUser, post.toPageId.get)
   }
   
-  override def helperPageId(search: String)(implicit request: RequestHeader):Future[Seq[ParamHelper]] = {
-    Facebook.fetch("https://graph.facebook.com/me/accounts").get.map { response =>
+  override def helperPageId(idUser: String, search: String):Future[Seq[ParamHelper]] = {
+    Facebook.fetch(idUser, "https://graph.facebook.com/me/accounts").get.map { response =>
       val pages = (response.json \ "data").as[List[JsValue]]
       pages.map { page => 
         val ph = ParamHelper(
@@ -39,9 +39,9 @@ object FacebookPagePoster extends GenericPoster {
     }
   }
   
-  private def getPageToken(pageId: String)(implicit request: RequestHeader):Seq[(String, String)] = {
+  private def getPageToken(idUser: String, pageId: String):Seq[(String, String)] = {
     println("FACEBOOK PAGE :: getPageTOken")
-    val token:Future[Option[String]] = Facebook.fetch("https://graph.facebook.com/me/accounts").get.map { response =>
+    val token:Future[Option[String]] = Facebook.fetch(idUser, "https://graph.facebook.com/me/accounts").get.map { response =>
       println("FACEBOOK PAGE :: response :: "+response.body.toString)
       val pages = (response.json \ "data").as[List[JsValue]]
       val optToken: List[Option[String]] = pages.map { json =>

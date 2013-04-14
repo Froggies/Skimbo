@@ -16,7 +16,7 @@ object Viadeo extends OAuth2Provider {
   override def processToken(response: play.api.libs.ws.Response) = 
     Token((response.json \ "access_token").asOpt[String], None)
     
-  override def distantUserToSkimboUser(ident: String, response: play.api.libs.ws.Response)(implicit request: RequestHeader): Option[ProviderUser] = {
+  override def distantUserToSkimboUser(idUser: String, response: play.api.libs.ws.Response): Option[ProviderUser] = {
     try {
       val me = response.json
       val id = (me \ "id").as[String]
@@ -27,7 +27,7 @@ object Viadeo extends OAuth2Provider {
       Some(ProviderUser(
           id, 
           this.name, 
-          Some(SkimboToken(getToken.get.token, None)), 
+          Some(SkimboToken(getToken(idUser).get.token, None)), 
           username, 
           name, 
           description, 

@@ -12,21 +12,22 @@ import services.security.Authentication
 object Providers extends Controller with Authentication {
 
   def listAll = Action { implicit req =>
-    Ok(Service.toJson)
+    val idUser = req.session.get("id").getOrElse("")
+    Ok(Service.toJson(idUser))
   }
   
   def listServices = Action { implicit req =>
-    Ok(Service.toJsonWithUnifiedRequest)
+    val idUser = req.session.get("id").getOrElse("")
+    Ok(Service.toJsonWithUnifiedRequest(idUser))
   }
   
-  def delete(providerName: String) = Authenticated { user =>
-    implicit request =>
-      
+  def delete(providerName: String) = Authenticated { user => implicit request =>
+      val idUser = user.accounts.headOption.map(_.id)
       ProviderDispatcher(providerName).map { provider =>
         user.accounts.foreach { account =>
           ProviderActor.killProvider(account.id, providerName)
+          provider.deleteToken(account.id)
         }
-        provider.deleteToken
         Ok(Json.toJson(Command("deleteProvider", Some(JsString("ok")))))
       }.getOrElse(BadRequest)
   }

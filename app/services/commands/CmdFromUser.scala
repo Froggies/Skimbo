@@ -29,7 +29,7 @@ object CmdFromUser {
     interpretCmd(idUser, cmd)
   }
 
-  def interpretCmd(idUser: String, cmd: Command)(implicit req: RequestHeader): Unit = {
+  def interpretCmd(idUser: String, cmd: Command): Unit = {
     val internalIdUser = CmdToUser.getInternalIdUser(idUser)
     cmd.name match {
       case "allColumns" => {
@@ -96,10 +96,10 @@ object CmdFromUser {
         })
       }
       case "allUnifiedRequests" => {
-        CmdToUser.sendTo(internalIdUser, Command(cmd.name, Some(Service.toJsonWithUnifiedRequest)))
+        CmdToUser.sendTo(internalIdUser, Command(cmd.name, Some(Service.toJsonWithUnifiedRequest(idUser))))
       }
       case "allProviders" => {
-        CmdToUser.sendTo(internalIdUser, Command(cmd.name, Some(Service.toJson)))
+        CmdToUser.sendTo(internalIdUser, Command(cmd.name, Some(Service.toJson(idUser))))
       }
       case "deleteProvider" => {
         val providerName = (cmd.body.get \ "provider").as[String]
@@ -113,7 +113,7 @@ object CmdFromUser {
         PingActor.ping(internalIdUser)
       }
       case "allPosters" => {
-        CmdToUser.sendTo(internalIdUser, Command(cmd.name, Some(Posters.toJson)))
+        CmdToUser.sendTo(internalIdUser, Command(cmd.name, Some(Posters.toJson(idUser))))
       }
       case "post" => {
         val providers = (cmd.body.get \ "providers").as[Seq[JsObject]]
@@ -123,7 +123,7 @@ object CmdFromUser {
           val post = Json.fromJson[Post]((cmd.body.get \ "post").as[JsValue]).get
           val toPost = Post(post.title, post.message, post.url, post.url_image, providerPageId)
           Posters.getPoster(providerName).
-            map( _.post(toPost)).
+            map( _.post(idUser, toPost)).
             getOrElse(Logger(CmdFromUser.getClass).error("not found poster "+providerName))
         }
       }
@@ -139,7 +139,7 @@ object CmdFromUser {
         val columnTitle = (cmd.body.get \ "columnTitle").as[String]
         Endpoints.getConfig(serviceName).map { service =>
           service.parserDetails.map { parser =>
-            service.starer.map( _.star(idMsg).map { response =>
+            service.starer.map( _.star(idUser, idMsg).map { response =>
               detailsSkimbo(internalIdUser, serviceName, idMsg, columnTitle)
               Logger(CmdFromUser.getClass).info(response.body.toString)
               if(service.canParseResultStar) {
@@ -158,8 +158,8 @@ object CmdFromUser {
         Endpoints.getConfig(serviceName).map { service =>
           service.paramParserHelper.map { parser =>
             service.paramUrlHelper.map { url =>
-              service.provider.fetch(url.replace(":search", URLEncoder.encode(search, "UTF-8"))).withTimeout(service.delay * 1000).get.map { response =>
-                parser.getParamsHelper(response, service.provider).map { params =>
+              service.provider.fetch(idUser, url.replace(":search", URLEncoder.encode(search, "UTF-8"))).withTimeout(service.delay * 1000).get.map { response =>
+                parser.getParamsHelper(idUser, response, service.provider).map { params =>
                   val msg = Json.obj("serviceName" -> serviceName, "values" -> params)
                   CmdToUser.sendTo(internalIdUser, Command("paramHelperSearch", Some(msg)))
                 }
@@ -174,7 +174,7 @@ object CmdFromUser {
         println("paramPostHelperSearch :: ")
         Posters.getPoster(serviceName).map { service =>
           println("paramPostHelperSearch :: "+service)
-          service.helperPageId(search).map { params =>
+          service.helperPageId(idUser, search).map { params =>
             println("paramPostHelperSearch :: "+params)
             val msg = Json.obj("serviceName" -> serviceName, "values" -> params)
             CmdToUser.sendTo(internalIdUser, Command("paramPostHelperSearch", Some(msg)))
@@ -187,7 +187,7 @@ object CmdFromUser {
     }
   }
   
-  def detailsSkimbo(internalIdUser:String, serviceName:String, idMsg:String, columnTitle:String)(implicit req: RequestHeader) = {
+  def detailsSkimbo(internalIdUser:String, serviceName:String, idMsg:String, columnTitle:String) = {
     Endpoints.getConfig(serviceName).map { service =>
       service.parserDetails.map { parser =>
         Fetcher(FetcherParameter(

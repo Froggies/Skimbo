@@ -10,6 +10,6 @@ trait Starer {
   
   def name: String
   
-  def star(idProvider: String)(implicit request: RequestHeader):Future[Response]
+  def star(idUser: String, idProvider: String):Future[Response]
   
 }

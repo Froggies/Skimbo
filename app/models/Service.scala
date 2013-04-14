@@ -9,12 +9,16 @@ case class Service(name: String, connected: Boolean)
 
 object Service {
 
-  def list(implicit request: RequestHeader) = {
-    ProviderDispatcher.listAll.map(provider => Service(provider.name, provider.hasToken))
+  def list() = {
+    ProviderDispatcher.listAll.map(provider => Service(provider.name, false))
   }
   
-  def toJson(implicit request: RequestHeader) = {
-    val services = list.map { service =>
+  def list(idUser: String) = {
+    ProviderDispatcher.listAll.map(provider => Service(provider.name, provider.hasToken(idUser)))
+  }
+  
+  def toJson(idUser: String) = {
+    val services = list(idUser).map { service =>
       Json.obj(
         "name" -> service.name,
         "connected" -> service.connected
@@ -23,7 +27,7 @@ object Service {
     Json.toJson(services)
   }
   
-  def toJsonWithUnifiedRequest(implicit request: RequestHeader) = {
+  def toJsonWithUnifiedRequest(idUser: String) = {
     val jsonUnifiedRequests = Endpoints.getAll.map { endpoint =>
       Json.obj(
         "endpoint" -> endpoint.provider.name,
@@ -33,7 +37,7 @@ object Service {
           "hasParser" -> service.parser.isDefined,
           "hasHelper" -> service.paramParserHelper.isDefined
         )),
-        "hasToken" -> endpoint.provider.canStart
+        "hasToken" -> endpoint.provider.canStart(idUser)
       )
     }
     Json.toJson(jsonUnifiedRequests)

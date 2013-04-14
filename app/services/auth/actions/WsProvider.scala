@@ -10,11 +10,11 @@ trait WsProvider {
   /**
    * Create a basic webservice call and sign the request with token
    */
-  def fetch(url: String)(implicit request: RequestHeader): WSRequestHolder
+  def fetch(idUser: String, url: String): WSRequestHolder
   
   def resultAsJson(response: Response): JsValue = response.json
 
-  def isInvalidToken(idUser:String, response: play.api.libs.ws.Response)(implicit request: RequestHeader): Boolean = 
+  def isInvalidToken(idUser:String, response: play.api.libs.ws.Response): Boolean = 
     response.body.contains("token")
 
   def isRateLimiteError(response: Response): Boolean = response.body.contains("rate")

@@ -11,9 +11,9 @@ import play.api.mvc.RequestHeader
 
 trait GenericJsonParserUser extends GenericParserUser {
 
-  override def getProviderUser(response:play.api.libs.ws.Response, provider: GenericProvider)(implicit request: RequestHeader):Option[List[models.user.ProviderUser]] = {
+  override def getProviderUser(idUser: String, response:play.api.libs.ws.Response, provider: GenericProvider):Option[List[models.user.ProviderUser]] = {
     cutSafe(response, provider).map { exploded =>
-      exploded.map(json => asProviderUserSafe(json)).flatten
+      exploded.map(json => asProviderUserSafe(idUser, json)).flatten
     }
   }
   
@@ -36,9 +36,9 @@ trait GenericJsonParserUser extends GenericParserUser {
     }
   }
   
-  def asProviderUserSafe(json: JsValue)(implicit request: RequestHeader) : Option[models.user.ProviderUser] = {
+  def asProviderUserSafe(idUser: String, json: JsValue) : Option[models.user.ProviderUser] = {
     try {
-      asProviderUser(json)
+      asProviderUser(idUser, json)
     } catch {
       case ex : Throwable => {
         Logger("GenericJsonParserUser").error("Error during parsing this message", ex)
@@ -48,6 +48,6 @@ trait GenericJsonParserUser extends GenericParserUser {
     }
   }
   
-  def asProviderUser(json: JsValue)(implicit request: RequestHeader) : Option[models.user.ProviderUser]
+  def asProviderUser(idUser: String, json: JsValue) : Option[models.user.ProviderUser]
   
 }

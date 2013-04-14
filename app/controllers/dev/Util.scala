@@ -20,10 +20,11 @@ import scala.concurrent.Await
 object Util extends Controller with Authentication {
 
   def testRes(service: String) = Action { implicit request =>
+    val idUser = request.session.get("id").get
     Async {
       Endpoints.getConfig(service).flatMap { config =>
         Endpoints.genererUrl(service, Map.empty, None).map { url =>
-          config.provider.fetch(url).get.map { response =>
+          config.provider.fetch(idUser, url).get.map { response =>
             Ok(config.provider.resultAsJson(response))
           }
         }
@@ -32,10 +33,11 @@ object Util extends Controller with Authentication {
   }
   
   def testSkimboRes(service: String) = Action { implicit request =>
+    val idUser = request.session.get("id").get
     Async {
       Endpoints.getConfig(service).flatMap { config =>
         Endpoints.genererUrl(service, Map.empty, None).map { url =>
-          config.provider.fetch(url).get.map { response =>
+          config.provider.fetch(idUser, url).get.map { response =>
             val res = config.parser.get.getSkimboMsg(response, config.provider)
             Ok(res.map(Json.toJson(_)).toString)
           }
@@ -45,11 +47,12 @@ object Util extends Controller with Authentication {
   }
 
   def staticRes() = Action { implicit request =>
+    val idUser = request.session.get("id").get
     import scala.concurrent.ExecutionContext.Implicits.global
     Async {
       Endpoints.getConfig("github.notifications").flatMap { config =>
         Endpoints.genererUrl("github.notifications", Map("username" -> "playframework"), None).map { url =>
-          config.provider.fetch(url).get.map { response =>
+          config.provider.fetch(idUser, url).get.map { response =>
             Ok(config.provider.resultAsJson(response))
           }
         }
@@ -58,9 +61,10 @@ object Util extends Controller with Authentication {
   }
   
   def urlTest(id:String) = Action { implicit request =>
+    val idUser = request.session.get("id").get
     import scala.concurrent.ExecutionContext.Implicits.global
     Async {
-      Twitter.fetch("https://api.twitter.com/1.1/statuses/show.json?id="+id).withTimeout(6000).get.map { response =>
+      Twitter.fetch(idUser, "https://api.twitter.com/1.1/statuses/show.json?id="+id).withTimeout(6000).get.map { response =>
         Ok(response.json)
       }
     }
@@ -91,9 +95,10 @@ object Util extends Controller with Authentication {
   }
 
   def userDistantRes(providerName: String) = Action { implicit request =>
+    val idUser = request.session.get("id").get
     Async {
       ProviderDispatcher(providerName).map { provider =>
-        provider.fetch(provider.getUserInfosUrl.get).get.map { response =>
+        provider.fetch(idUser, provider.getUserInfosUrl.get).get.map { response =>
           Ok(response.json)
         }
       }.getOrElse(future(Ok("Service not found")))
@@ -101,10 +106,11 @@ object Util extends Controller with Authentication {
   }
 
   def userRes(providerName: String) = Action { implicit request =>
+    val idUser = request.session.get("id").get
     import scala.concurrent.ExecutionContext.Implicits.global
     Async {
       ProviderDispatcher(providerName).map { provider =>
-        provider.getUser.map { response =>
+        provider.getUser(idUser).map { response =>
           Ok(Json.toJson(response))
         }
       }.getOrElse(future(Ok("Provider not found")))

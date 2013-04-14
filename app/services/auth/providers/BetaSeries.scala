@@ -20,8 +20,8 @@ object BetaSeries extends AuthProvider {
   override val namespace = "bs"
   lazy val secret = config.getString("secret").get
 
-  override def getToken(implicit request: RequestHeader) = {
-    request.session.get("id").flatMap(id => Await.result(UserDao.getToken(id, this), 1 second))
+  override def getToken(idUser: String) = {
+    Await.result(UserDao.getToken(idUser, this), 1 second)
   }
 
   override def auth(redirectRoute: Call)(implicit request: RequestHeader): Result = {
@@ -45,20 +45,20 @@ object BetaSeries extends AuthProvider {
     }
   }
 
-  override def fetch(url: String)(implicit request: RequestHeader) = {
-    WS.url(url).withQueryString("key" -> secret, "token" -> getToken.get.token)
+  override def fetch(idUser: String, url: String) = {
+    WS.url(url).withQueryString("key" -> secret, "token" -> getToken(idUser).get.token)
   }
   
   //TODO not tested because nothing to post :D
-  override def post(url:String, queryString:Seq[(String, String)], headers:Seq[(String, String)], content:String)(implicit request: RequestHeader) = {
-   val queryS = queryString ++ Seq("key" -> secret, "token" -> getToken.get.token)
+  override def post(idUser: String, url:String, queryString:Seq[(String, String)], headers:Seq[(String, String)], content:String) = {
+   val queryS = queryString ++ Seq("key" -> secret, "token" -> getToken(idUser).get.token)
     WS.url(url)
       .withQueryString( queryS:_* )
       .withHeaders(headers:_*)
       .post(content)
   }
 
-  override def distantUserToSkimboUser(id: String, response: play.api.libs.ws.Response)(implicit request: RequestHeader): Option[ProviderUser] = {
+  override def distantUserToSkimboUser(idUser: String, response: play.api.libs.ws.Response): Option[ProviderUser] = {
     try {
       val me = (response.json \ "root" \ "member")
       val username = (me \ "login").as[String]
@@ -68,7 +68,7 @@ object BetaSeries extends AuthProvider {
       Some(ProviderUser(
         username,
         this.name,
-        Some(SkimboToken(getToken.get.token)),
+        Some(SkimboToken(getToken(idUser).get.token)),
         Some(username),
         Some(name),
         description,

@@ -14,9 +14,9 @@ object Bitbucket extends OAuthProvider {
   override val name = "bitbucket"
   override val namespace = "bb"
 
-  override def distantUserToSkimboUser(ident: String, response: play.api.libs.ws.Response)(implicit request: RequestHeader): Option[ProviderUser] = {
+  override def distantUserToSkimboUser(idUser: String, response: play.api.libs.ws.Response): Option[ProviderUser] = {
     try {
-      BitbucketUser.asProviderUser(response.json)
+      BitbucketUser.asProviderUser(idUser, response.json)
     } catch {
       case _ : Throwable => {
         Logger.error("Error during fetching user details BITBUCKET")

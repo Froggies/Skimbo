@@ -14,7 +14,7 @@ object GithubUser extends GenericJsonParserUser with GenericJsonParserParamHelpe
   
   override def cut(json: JsValue) = super.cut(json \ "users")
   
-  override def asProviderUser(json: JsValue)(implicit request: RequestHeader): Option[models.user.ProviderUser] = {
+  override def asProviderUser(idUser: String, json: JsValue): Option[models.user.ProviderUser] = {
     val id = (json \ "id").asOpt[Int]
     val username = (json \ "login").asOpt[String]
     val name = (json \ "name").asOpt[String]
@@ -23,15 +23,15 @@ object GithubUser extends GenericJsonParserUser with GenericJsonParserParamHelpe
     Some(models.user.ProviderUser(
         id.getOrElse((json \ "id").as[String]).toString, 
         GitHub.name, 
-        Some(SkimboToken(GitHub.getToken.get.token, None)), 
+        Some(SkimboToken(GitHub.getToken(idUser).get.token, None)), 
         username, 
         name, 
         description, 
         Some(gravatarUrl.replace(":hash", profileImage.getOrElse("")))))
   }
   
-  override def asParamHelper(json: JsValue)(implicit request: RequestHeader) : Option[models.ParamHelper] = {
-    asProviderUser(json).map( providerUser => 
+  override def asParamHelper(idUser: String, json: JsValue) : Option[models.ParamHelper] = {
+    asProviderUser(idUser, json).map( providerUser => 
       ParamHelper(
         providerUser.name.getOrElse(providerUser.username.getOrElse("--no name--")),
         providerUser.username.getOrElse(providerUser.name.getOrElse(providerUser.id)),

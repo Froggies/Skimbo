@@ -11,7 +11,7 @@ object Trello extends OAuthProvider {
   override val name = "trello"
   override val namespace = "tr"
 
-  override def distantUserToSkimboUser(ident: String, response: play.api.libs.ws.Response)(implicit request: RequestHeader): Option[ProviderUser] = {
+  override def distantUserToSkimboUser(idUser: String, response: play.api.libs.ws.Response): Option[ProviderUser] = {
     try {
       val me = response.json
       val id = (me \ "id").as[String]
@@ -19,10 +19,11 @@ object Trello extends OAuthProvider {
       val name = (me \ "fullName").asOpt[String]
       val description = (me \ "bio").asOpt[String]
       val profileImage = (me \ "gravatarHash").asOpt[String]
+      val token = getToken(idUser).get
       Some(ProviderUser(
           id, 
           this.name, 
-          Some(SkimboToken(getToken.get.token, Some(getToken.get.secret))),
+          Some(SkimboToken(token.token, Some(token.secret))),
           username, 
           name, 
           description, 

@@ -23,13 +23,13 @@ object ProviderDispatcher {
   def get(providerName: String): Option[AuthProvider] =
     providers.find(_.name == providerName)
 
-  def atLeastOneIsConnected(implicit req: RequestHeader): Boolean =
-    providers.exists(_.hasToken)
+  def atLeastOneIsConnected(idUser: String): Boolean =
+    providers.exists(_.hasToken(idUser))
 
   def listAll: Seq[AuthProvider] = providers
 
-  def listConnecteds(implicit req: RequestHeader): Seq[AuthProvider] =
-    providers.filter(_.hasToken)
+  def listConnecteds(idUser: String): Seq[AuthProvider] =
+    providers.filter(_.hasToken(idUser))
 
 }
 

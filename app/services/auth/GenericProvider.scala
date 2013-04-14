@@ -21,9 +21,9 @@ trait GenericProvider extends Results with WsProvider {
   
   def isAuthProvider:Boolean = this.isInstanceOf[AuthProvider]
   
-  def canStart(implicit request: RequestHeader):Boolean = {
+  def canStart(idUser: String):Boolean = {
     if(needToken) {
-      this.asInstanceOf[AuthProvider].hasToken
+      this.asInstanceOf[AuthProvider].hasToken(idUser)
     } else {
       true
     }

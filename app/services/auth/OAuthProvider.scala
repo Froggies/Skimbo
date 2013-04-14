@@ -62,27 +62,27 @@ trait OAuthProvider extends AuthProvider with Starer {
     RequestToken(request.session.get(fieldToken).get, request.session.get(fieldSecret).get)
   }
 
-  override def getToken(implicit request: RequestHeader): Option[RequestToken] = {
-    val skimboToken = request.session.get("id").flatMap(id => Await.result(UserDao.getToken(id, this), 10 second))
+  override def getToken(idUser: String): Option[RequestToken] = {
+    val skimboToken = Await.result(UserDao.getToken(idUser, this), 10 second)
     skimboToken.map(st => RequestToken(st.token, st.secret.get))
   }
 
-  override def fetch(url: String)(implicit request: RequestHeader) = {
-    WS.url(url).sign(OAuthCalculator(KEY, getToken.get))
+  override def fetch(idUser: String, url: String) = {
+    WS.url(url).sign(OAuthCalculator(KEY, getToken(idUser).get))
   }
-  
-  override def post(url:String, queryString:Seq[(String, String)], headers:Seq[(String, String)], content:String)(implicit request: RequestHeader) = {
+
+  override def post(idUser: String, url: String, queryString: Seq[(String, String)], headers: Seq[(String, String)], content: String) = {
     WS.url(url)
-      .withQueryString(queryString:_*)
-      .withHeaders(headers:_*)
-      .sign(OAuthCalculator(KEY, getToken.get))
+      .withQueryString(queryString: _*)
+      .withHeaders(headers: _*)
+      .sign(OAuthCalculator(KEY, getToken(idUser).get))
       .post(content)
   }
-  
-  override def star(idProvider: String)(implicit request: RequestHeader) = {
+
+  override def star(idUser: String, idProvider: String) = {
     WS.url(urlToStar(idProvider))
-      .sign(OAuthCalculator(KEY, getToken.get))
+      .sign(OAuthCalculator(KEY, getToken(idUser).get))
       .post("")
   }
-  
+
 }

@@ -16,15 +16,15 @@ trait AuthProvider extends GenericProvider with AccountWsProvider with SecurityP
 
   protected def permissions: Seq[String] = Seq.empty
   protected def permissionsSep = ","
-    
+
   // Common config
   lazy val authRoute: Call = controllers.routes.Application.authenticate(name)
-  
-  override def deleteToken(implicit request: RequestHeader) = {
-    UserDao.removeToken(request.session("id"), this)
+
+  override def deleteToken(idUser: String) = {
+    UserDao.removeToken(idUser, this)
   }
-  
-  protected def startUser(token:SkimboToken, redirectRoute: Call)(implicit request: RequestHeader) = {
+
+  protected def startUser(token: SkimboToken, redirectRoute: Call)(implicit request: RequestHeader) = {
     val session = generateUniqueId(request.session)
     UserDao.setToken(session("id"), this, token).map { lastError =>
       CmdFromUser.interpretCmd(session("id"), NewToken.asCommand(this))
@@ -33,10 +33,8 @@ trait AuthProvider extends GenericProvider with AccountWsProvider with SecurityP
       Redirect(redirectRoute).withSession(session)
     }
   }
-  
-  def post(url:String, 
-      queryString:Seq[(String, String)], 
-      headers:Seq[(String, String)], 
-      content:String)(implicit request: RequestHeader): Future[play.api.libs.ws.Response]
-  
+
+  def post(idUser: String, url: String, queryString: Seq[(String, String)],
+    headers: Seq[(String, String)], content: String): Future[play.api.libs.ws.Response]
+
 }

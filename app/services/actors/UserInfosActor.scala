@@ -28,8 +28,8 @@ case class AddInfosUser(providerUser: ProviderUser)
 case class RefreshInfosUser(userId: String, provider: GenericProvider)
 
 object UserInfosActor {
-  
-  def create(idUser: String)(implicit request: RequestHeader) = {
+
+  def create(idUser: String) = {
     HelperUserInfosActor.foundOrCreate(idUser)
   }
 
@@ -56,12 +56,12 @@ object UserInfosActor {
 
 }
 
-class UserInfosActor(idUser: String)(implicit request: RequestHeader) extends Actor {
+class UserInfosActor(idUser: String) extends Actor {
 
   val log = Logger(classOf[UserInfosActor])
-  
+
   def getIdUser = idUser
-  
+
   override def preStart() = {
     self ! Retreive
   }
@@ -101,8 +101,8 @@ class UserInfosActor(idUser: String)(implicit request: RequestHeader) extends Ac
       if (id == idUser) {
         UserDao.findOneById(idUser).map {
           _.map { user =>
-            if (provider.isAuthProvider && provider.canStart) {
-              (provider.asInstanceOf[AuthProvider]).getUser.map { providerUser =>
+            if (provider.isAuthProvider && provider.canStart(idUser)) {
+              (provider.asInstanceOf[AuthProvider]).getUser(idUser).map { providerUser =>
                 if (providerUser.isDefined && !user.distants.exists(
                   _.exists(pu => pu.socialType == provider.name && pu.id == providerUser.get.id))) {
                   self ! AddInfosUser(ProviderUser(providerUser.get.id, provider.name, None))
@@ -124,12 +124,13 @@ class UserInfosActor(idUser: String)(implicit request: RequestHeader) extends Ac
 
   def start(user: User) = {
     if (user.columns.map(_.isEmpty).getOrElse(true)) {
-      val providers = ProviderDispatcher.listAll.filter(_.hasToken)
+      val idUser = user.accounts.lastOption.map(_.id).getOrElse("")
+      val providers = ProviderDispatcher.listAll.filter(_.hasToken(idUser))
       if (providers.isEmpty) {
         CmdFromUser.interpretCmd(idUser, Command("allColumns"))
       } else {
         providers.foreach { provider =>
-          provider.getUser.map { providerUser =>
+          provider.getUser(idUser).map { providerUser =>
             providerUser.map(pUser =>
               UserDao.findByIdProvider(provider.name, pUser.id).map(optUser =>
                 optUser.map { originalUser =>

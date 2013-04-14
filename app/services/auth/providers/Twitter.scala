@@ -16,13 +16,13 @@ object Twitter extends OAuthProvider {
   override val name = "twitter"
   override val namespace = "tw"
 
-  override def distantUserToSkimboUser(ident: String, response: play.api.libs.ws.Response)(implicit request: RequestHeader): Option[ProviderUser] = {
-    if(isInvalidToken(ident, response)) {
-      CmdToUser.sendTo(ident, models.command.TokenInvalid(name))
+  override def distantUserToSkimboUser(idUser: String, response: play.api.libs.ws.Response): Option[ProviderUser] = {
+    if(isInvalidToken(idUser, response)) {
+      CmdToUser.sendTo(idUser, models.command.TokenInvalid(name))
       None
     } else {
       try {
-        TwitterUser.asProviderUser(response.json)
+        TwitterUser.asProviderUser(idUser, response.json)
       } catch {
         case t:Throwable => {
           Logger.error("Error during fetching user details TWITTER (certainly Rate Limit Exceeded)")
@@ -33,7 +33,7 @@ object Twitter extends OAuthProvider {
     }
   }
   
-  override def isInvalidToken(idUser:String, response: play.api.libs.ws.Response)(implicit request: RequestHeader): Boolean = 
+  override def isInvalidToken(idUser:String, response: play.api.libs.ws.Response): Boolean = 
     response.status != 200 && response.status != 429 && response.status != 404
   
   override def isRateLimiteError(response: Response): Boolean = response.status == 429

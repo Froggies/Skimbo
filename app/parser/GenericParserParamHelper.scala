@@ -7,9 +7,6 @@ import models.ParamHelper
 
 trait GenericParserParamHelper {
 
-    def getParamsHelper
-          (response: Response, provider: GenericProvider)
-          (implicit request: RequestHeader)
-        : Option[List[ParamHelper]]
+    def getParamsHelper(idUser: String, response: Response, provider: GenericProvider): Option[List[ParamHelper]]
   
 }

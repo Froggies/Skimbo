@@ -7,6 +7,6 @@ import play.api.mvc.RequestHeader
 
 trait GenericParserUser {
 
-  def getProviderUser(response: Response, provider: GenericProvider)(implicit request: RequestHeader):Option[List[ProviderUser]]
-  
+  def getProviderUser(idUser: String, response: Response, provider: GenericProvider): Option[List[ProviderUser]]
+
 }

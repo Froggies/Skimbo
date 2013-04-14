@@ -19,10 +19,10 @@ object LinkedIn extends OAuthProvider {
   override val permissionsSep = "+"
 
   // Override fetch method : define json format by default
-  override def fetch(url: String)(implicit request: RequestHeader) =
-    super.fetch(url).withHeaders("x-li-format" -> "json")
+  override def fetch(idUser: String, url: String) =
+    super.fetch(idUser, url).withHeaders("x-li-format" -> "json")
 
-  override def distantUserToSkimboUser(ident: String, response: play.api.libs.ws.Response)(implicit request: RequestHeader): Option[ProviderUser] = {
+  override def distantUserToSkimboUser(idUser: String, response: play.api.libs.ws.Response): Option[ProviderUser] = {
     try {
       val me = response.json
       val id = (me \ "id").as[String]
@@ -31,10 +31,11 @@ object LinkedIn extends OAuthProvider {
       val displayName = Some(fname.getOrElse("") + " " + lname.getOrElse(""))
       val description = (me \ "headline").asOpt[String]
       val profileImage = (me \ "picture-url").asOpt[String]
+      val token = getToken(idUser).get
       Some(ProviderUser(
           id, 
           this.name, 
-          Some(SkimboToken(getToken.get.token, Some(getToken.get.secret))), 
+          Some(SkimboToken(token.token, Some(token.secret))), 
           displayName, 
           displayName, 
           description, 
