@@ -10,12 +10,13 @@ object Stats extends Controller {
 
   import play.api.libs.concurrent.Execution.Implicits._
   
-  val today = new DateTime().withHourOfDay(0).withMillisOfDay(0)
-  val week = today.withDayOfWeek(1)
-  val month = today.withDayOfMonth(1)
-  val year = today.withMonthOfYear(1)
-  
   def get() = Action { implicit request =>
+    
+    val today = new DateTime().withHourOfDay(0).withMillisOfDay(0)
+    val week = today.withDayOfWeek(1)
+    val month = today.withDayOfMonth(1)
+    val year = today.withMonthOfYear(1)
+    
     Async {
       UserDao.findAll.map { users =>
         val res = new StringBuilder
