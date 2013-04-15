@@ -1,0 +1,77 @@
+<section id="content" on-key-press="2" on-key-press-exec="switchBlur()">
+	<section class="notifications" 
+					 ng-controller="NotificationController"
+					 ng-include src="'/assets/app/views/notification.html'">
+	</section>
+
+	<div class="userNoColumn animated bounceInDown" ng-show="userNoColumn">
+		<center>{{'ADD_FIRST_COLUMN_SENTENCE' | i18n}}</center><br />
+		<ul>
+			<li>{{'ADD_FIRST_SERVICE_SENTENCE' | i18n}}</li>
+			<li>{{'ADD_FIRST_MODIF_SENTENCE_BEFORE_ICON' | i18n}}<span class="icon-cog" />{{'ADD_FIRST_MODIF_SENTENCE_AFTER_ICON' | i18n}}</li>
+			<li>{{'ADD_FIRST_SIZE_SENTENCE_BEFORE_ICON1' | i18n}}<span class="icon-resize-full" />{{'ADD_FIRST_SIZE_SENTENCE_AFTER_ICON1' | i18n}}<span class="icon-cog" />{{'ADD_FIRST_SIZE_SENTENCE_AFTER_ICON2' | i18n}}</li>
+		</ul>
+	</div>
+
+	<section id="column_{{$index}}" 
+			class="column"
+			ng-repeat="c in columns"
+			drag="" dragStyle="columnDrag"
+      drop="" dropStyle="columnDrop"
+			style="width:{{c.csswidth}};height:{{c.cssheight}}">
+		<header class="column-title">
+			<div class="containerNbMsg">
+				<a class="linkNbMsgIcon icon-eye-1" ng-click="markAllAsView(c)"></a>
+				<a class="linkNbMsg {{messagesNoView(c) > 0}}" ng-click="markAllAsView(c)" title="{{messagesNoView(c)}} {{'NEW_MGS_UNREAD' | i18n}}">
+					{{messagesNoView(c)}}
+				</a>
+			</div>
+			<div class="title">
+				{{c.title}}
+			</div>
+			<div class="configure">
+				<a href="#" class="icon-resize-full" title="{{'RESIZE_COLUMN' | i18n}}" ng-click="c.show_size_column=!c.show_size_column"></a>
+				<div class="column-size" ng-show="c.show_size_column">
+					<div ng-repeat="h in c.compoSize">
+						<a href="#" style="{{w.selectedStyle}}"
+								ng-click="resizeColumn(c, h.height, w.width)" 
+								ng-repeat="w in h.tab">■</a>
+					</div>
+					<br />
+				</div>
+				<a href="#" class="icon-cog" title="{{'CONFIGURATION_COLUMN' | i18n}}" ng-click="modifyColumn(c)"></a>
+			</div>
+		</header>
+		<div class="column-content" scrollmanager="onlyTop" scrolldata="c">
+			<ul>
+				<li class="element {{m.isView}}" scrollmanager="m" ng-repeat="m in c.messages | filter:$parent.$parent.query">
+					<div class="timeline">
+						<div class="from-social-network vertical-text {{m.from}}">{{m.from}}</div>
+						<div class="rond {{m.from}}"></div>
+					</div>
+					<div class="message-content">
+						<img ng-src="{{m.authorAvatar}}" 
+								title="{{m.authorScreenName}}" 
+								class="column-content-mini-img"
+								width="32" height="32">
+						<a href="{{m.directLink}}" class="author-name {{m.from}}" target="_blank">{{m.authorName}}</a>
+						<p class="date-creation">{{m.dateAgo}}</p>
+						<div class="message blur-text {{blurText}}" ng-bind-html="m.message" title="{{m.original}}"></div>
+						<div class="message-footer" showonhoverparent>
+							<span class="message-footer-content"
+										ng-click="dispatchMsg(m)"
+										title="{{'SHARE' | i18n}}"></span>
+							<div class="message-footer-content message-footer-loader {{m.styleRefresh}}" 
+										ng-click="getDetails(m, c)" 
+										ng-show="m.hasDetails"
+										title="{{'REFRESH_DETAILS' | i18n}}"></div>
+							<span class="message-footer-content message-footer-star {{m.iStared}}"
+										ng-click="star(m, c)" 
+										ng-show="m.stared >= 0">★{{m.stared}}</span>
+						</div>
+					</div>
+				</li>
+			</ul>
+		</div>
+	</section>
+</section>

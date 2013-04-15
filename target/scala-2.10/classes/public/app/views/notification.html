@@ -1,0 +1,7 @@
+<div class="notif column-title" ng-repeat="notification in notifications">
+  <a href="#" ng-click="clickOnNotification(notification)">
+    <div class="head"> <img ng-src="/assets/img/brand/{{notification.providerName}}.png" alt="{{notification.providerName}}" width="24" height="24" />{{notification.title}} <span class="social-network-name">{{notification.providerName}}</span></div>
+    <div class="text">{{notification.footer}}</div>
+  </a>
+  <a href="#" class="notif-close" ng-click="closeNotification($index)">X</a>
+</div>

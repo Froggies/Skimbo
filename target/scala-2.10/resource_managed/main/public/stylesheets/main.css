@@ -1,0 +1,165 @@
+body,
+html {
+  height: 100%;
+  width: 100%;
+  padding: 0;
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 16px;
+}
+a:hover {
+  position: relative;
+  z-index: 1;
+}
+a[ref]:hover:after {
+  content: attr(ref);
+  width: 52px;
+  height: auto;
+  font-size: 10px;
+  padding: 4px 8px;
+  color: #333;
+  position: absolute;
+  left: -5px;
+  top: 100%;
+  z-index: 20;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+  border-radius: 5px;
+  -moz-box-shadow: 0px 0px 4px #222;
+  -webkit-box-shadow: 0px 0px 4px #222;
+  box-shadow: 0px 0px 4px #222;
+  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #eeeeee), color-stop(1, #cccccc));
+  background-image: -webkit-linear-gradient(top, #eeeeee, #cccccc);
+  background-image: -moz-linear-gradient(top, #eeeeee, #cccccc);
+  background-image: -ms-linear-gradient(top, #eeeeee, #cccccc);
+  background-image: -o-linear-gradient(top, #eeeeee, #cccccc);
+}
+a[ref]:hover:before {
+  position: absolute;
+  top: -20px;
+  right: 20px;
+  border-left: 20px solid transparent;
+  border-right: 20px solid transparent;
+  border-bottom: 20px solid #B6B6B6;
+}
+/** Séparateur **/
+.separateur {
+  display: inline-block;
+  height: 100%;
+  width: 2px;
+  overflow: hidden;
+}
+.divSeparateurDroit-blanc,
+.divSeparateurGauche-blanc {
+  display: inline-block;
+  height: 100%;
+  width: 1px;
+  background: transparent;
+  background: -moz-linear-gradient(top, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.3) 50%, rgba(255, 255, 255, 0) 100%);
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, rgba(255, 255, 255, 0)), color-stop(50%, rgba(255, 255, 255, 0.3)), color-stop(100%, rgba(255, 255, 255, 0)));
+  background: -webkit-linear-gradient(top, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.3) 50%, rgba(255, 255, 255, 0) 100%);
+  background: -o-linear-gradient(top, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.3) 50%, rgba(255, 255, 255, 0) 100%);
+  background: -ms-linear-gradient(top, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.3) 50%, rgba(255, 255, 255, 0) 100%);
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.3) 50%, rgba(255, 255, 255, 0) 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#00ffffff', endColorstr='#00ffffff', GradientType=0);
+}
+.separateur-gris {
+  display: inline-block;
+  height: 100%;
+  width: 1px;
+  background: -moz-linear-gradient(top, transparent 0%, rgba(0, 0, 0, 0.3) 50%, transparent 100%);
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, transparent), color-stop(50%, rgba(0, 0, 0, 0.3)), color-stop(100%, transparent));
+  background: -webkit-linear-gradient(top, transparent 0%, rgba(0, 0, 0, 0.3) 50%, transparent 100%);
+  background: -o-linear-gradient(top, transparent 0%, rgba(0, 0, 0, 0.3) 50%, transparent 100%);
+  background: -ms-linear-gradient(top, transparent 0%, rgba(0, 0, 0, 0.3) 50%, transparent 100%);
+  background: linear-gradient(to bottom, transparent 0%, rgba(0, 0, 0, 0.3) 50%, transparent 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#00000000', endColorstr='#00000000', GradientType=0);
+}
+.win ::-webkit-scrollbar,
+.linux ::-webkit-scrollbar {
+  width: 12px;
+}
+.win ::-webkit-scrollbar-track,
+.linux ::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+}
+.win ::-webkit-scrollbar-thumb,
+.linux ::-webkit-scrollbar-thumb {
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.5);
+}
+/************* SocialNetworks ******************/
+.social-network-name {
+  text-transform: capitalize;
+}
+.twitter {
+  color: #00a0d1;
+}
+.facebook {
+  color: #3b5998;
+}
+.linkedin {
+  color: #0e76a8;
+}
+.github {
+  color: #4183c4;
+}
+.googleplus {
+  color: #db4a39;
+}
+.scoopit {
+  color: #90D302;
+}
+.viadeo {
+  color: #FFC906;
+}
+.stackexchange {
+  color: #C47B07;
+}
+.trello {
+  color: #A38F8F;
+}
+.betaseries {
+  color: #3B8DD0;
+}
+.rss {
+  color: #FC8815;
+}
+.bitbucket {
+  color: #28649C;
+}
+.rond.twitter {
+  background: #00a0d1;
+}
+.rond.facebook {
+  background: #3b5998;
+}
+.rond.linkedin {
+  background: #0e76a8;
+}
+.rond.github {
+  background: #4183c4;
+}
+.rond.googleplus {
+  background: #db4a39;
+}
+.rond.scoopit {
+  background: #90D302;
+}
+.rond.viadeo {
+  background: #FFC906;
+}
+.rond.stackexchange {
+  background: #C47B07;
+}
+.rond.trello {
+  background: #A38F8F;
+}
+.rond.betaseries {
+  background: #3B8DD0;
+}
+.rond.rss {
+  background: #FC8815;
+}
+.rond.bitbucket {
+  background: #28649C;
+}

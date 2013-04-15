@@ -1,0 +1,1 @@
+define(["app"],function(e){return e.controller("MainController",["$scope","$rootScope",function(e,t){e.showUserInformations=!1,t.currentLanguage=navigator.language.substring(0,2),console.log(navigator.language)}]),e})
