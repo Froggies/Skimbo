@@ -1,0 +1,28 @@
+header.banner{position:fixed;top:0;z-index:10;width:100%;height:45px;line-height:45px;background-color:#FAFAFA;border-bottom:1px solid #B6B6B6;margin:0 auto;}
+#header-general{height:100%;}
+header .separateur-gris{float:left;margin-left:20px;margin-right:20px;}
+#loader{vertical-align:top;color:#CE0022;font-weight:bolder;text-shadow:0px 1px 1px black;font-size:15px;}
+#logo{float:left;margin-left:2%;height:40px;width:114px;margin-top:3px;}
+#formulaire{float:left;}
+#recherche-et-profil{float:right;margin-right:2%;width:35%;text-align:right;}
+input[type=search]{border-radius:10px;height:36px;width:30%;}
+.button{height:30px;border-radius:5px;border:1px solid #8f2025;color:white;font-size:15px;text-shadow:0px 1px 1px #000000;cursor:pointer;background:#cb091c;background:url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/Pgo8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgdmlld0JveD0iMCAwIDEgMSIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSI+CiAgPGxpbmVhckdyYWRpZW50IGlkPSJncmFkLXVjZ2ctZ2VuZXJhdGVkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjAlIiB5MT0iMCUiIHgyPSIwJSIgeTI9IjEwMCUiPgogICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iI2NiMDkxYyIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjQ0JSIgc3RvcC1jb2xvcj0iI2NhMGExYyIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjcwJSIgc3RvcC1jb2xvcj0iIzk1MTQxYiIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgPC9saW5lYXJHcmFkaWVudD4KICA8cmVjdCB4PSIwIiB5PSIwIiB3aWR0aD0iMSIgaGVpZ2h0PSIxIiBmaWxsPSJ1cmwoI2dyYWQtdWNnZy1nZW5lcmF0ZWQpIiAvPgo8L3N2Zz4=);background:-moz-linear-gradient(top, #cb091c 0%, #ca0a1c 44%, #95141b 70%);background:-webkit-gradient(linear, left top, left bottom, color-stop(0%, #cb091c), color-stop(44%, #ca0a1c), color-stop(70%, #95141b));background:-webkit-linear-gradient(top, #cb091c 0%, #ca0a1c 44%, #95141b 70%);background:-o-linear-gradient(top, #cb091c 0%, #ca0a1c 44%, #95141b 70%);background:-ms-linear-gradient(top, #cb091c 0%, #ca0a1c 44%, #95141b 70%);background:linear-gradient(to bottom, #cb091c 0%, #ca0a1c 44%, #95141b 70%);filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#cb091c', endColorstr='#95141b', GradientType=0);}
+.link-into-message,.banner a,.column-new a,.delete-link,.services-actives a,.configure a,.delete-service,.notifications a{text-decoration:none;}
+.banner a,.column-new a,.delete-link,#nom-prenom img,.img-service,.receving-service{display:inline-block;vertical-align:middle;}
+.banner .btn{background:white;line-height:30px;padding-left:6px;padding-right:6px;border:2px solid #B6B6B6;-webkit-border-radius:10px;-moz-border-radius:10px;border-radius:10px;}
+.column-new a,.delete-link{color:#B6B6B6;background:white;line-height:40px;padding-left:10px;padding-right:10px;border:2px solid #B6B6B6;-webkit-border-radius:10px;-moz-border-radius:10px;border-radius:10px;}
+#nom-prenom img{margin-right:10px;}
+#bloc-utilisateur{width:300px;z-index:1;line-height:0;position:absolute;background-color:#FAFAFA;border-radius:10px;border:2px solid #B6B6B6;right:20px;top:50px;font-size:14px;color:#666;}
+.connected-on{text-align:left;}
+#bloc-utilisateur:after{content:"";position:absolute;top:-18px;right:20px;border-left:20px solid transparent;border-right:20px solid transparent;border-bottom:20px solid #FAFAFA;}
+#bloc-utilisateur:before{content:"";position:absolute;top:-20px;right:20px;border-left:20px solid transparent;border-right:20px solid transparent;border-bottom:20px solid #B6B6B6;}
+.social-network-connected img{padding-right:10px;}
+#reseaux-connectes{margin:20px;}
+#reseaux-connectes a{border:none;border-radius:0;background:#FAFAFA;}
+#reseaux-connectes a.deconnexion{float:right;}
+#reseaux-connectes ul{padding:0;}
+#reseaux-connectes li{width:95%;list-style-type:none;text-align:left;}
+#bloc-utilisateur footer{border-radius:0 0 8px 8px;border-top:1px solid #B6B6B6;background:#e0dbdb;text-align:center;}
+#bloc-utilisateur footer a{margin:4px;}
+#bloc-utilisateur footer a,#nom-prenom{color:#666;}
+#nom-prenom{max-width:50%;max-height:30px;overflow:hidden;word-break:break-word;text-overflow:ellipsis;white-space:nowrap;text-align:left;}
