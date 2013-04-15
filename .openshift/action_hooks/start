@@ -15,11 +15,6 @@ if [[ ! $? -eq 0 ]]; then
 	exit $?
 fi
 
-if [[ ! -f $PLAY_COMMAND ]]; then
-	echo "Error: couldn't find play executable at $PLAY_COMMAND"
-	exit 1
-fi
-
 ## stop play application
 ${OPENSHIFT_REPO_DIR}.openshift/action_hooks/stop
 
