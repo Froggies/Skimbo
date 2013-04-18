@@ -8,6 +8,7 @@ import models.Skimbo
 import parser.json.GenericJsonParser
 import services.auth.providers.GitHub
 import services.endpoints.Configuration
+import org.joda.time.DateTimeZone
 
 case class GithubWallMessage(
   id: String,
@@ -192,7 +193,7 @@ object GithubPullRequestEvent {
 
 object GithubWallMessage {
   
-  val datePattern = "yyyy-MM-dd'T'HH:mm:ss'Z'"
+  val datePattern = "yyyy-MM-dd'T'HH:mm:ssZZ"
   
   implicit val githubReader: Reads[GithubWallMessage] = (
     (__ \ "id").read[String] and
@@ -201,7 +202,11 @@ object GithubWallMessage {
     (__).tryReadNullable[GithubForkeEvent] and
     (__ \ "payload" \ "head").readNullable[String] and
     (__ \ "payload" \ "commits").readNullable[List[GithubPushEvent]] and
-    (__ \ "created_at").read[DateTime](Reads.jodaDateReads(datePattern)) and
+    (__ \ "created_at").read[DateTime](Reads.jodaDateReads(datePattern, {input =>
+      val s = input.substring(0, input.length() - 1) + "+0000"
+      println("LAAAAAA : "+s)
+      s
+    })) and
     (__ \ "actor" \ "avatar_url").readNullable[String] and
     (__ \ "repo" \ "name").read[String] and
     (__ \ "payload" \ "issue").readNullable[GithubIssuesEvent] and
