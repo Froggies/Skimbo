@@ -203,9 +203,7 @@ object GithubWallMessage {
     (__ \ "payload" \ "head").readNullable[String] and
     (__ \ "payload" \ "commits").readNullable[List[GithubPushEvent]] and
     (__ \ "created_at").read[DateTime](Reads.jodaDateReads(datePattern, {input =>
-      val s = input.substring(0, input.length() - 1) + "+0000"
-      println("LAAAAAA : "+s)
-      s
+      input.substring(0, input.length() - 1) + "+0000"
     })) and
     (__ \ "actor" \ "avatar_url").readNullable[String] and
     (__ \ "repo" \ "name").read[String] and
