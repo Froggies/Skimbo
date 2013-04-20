@@ -22,6 +22,9 @@ object LinkedIn extends OAuthProvider {
   override def fetch(idUser: String, url: String) =
     super.fetch(idUser, url).withHeaders("x-li-format" -> "json")
 
+  override def isInvalidToken(idUser:String, response: play.api.libs.ws.Response): Boolean = 
+    response.status == 423
+    
   override def distantUserToSkimboUser(idUser: String, response: play.api.libs.ws.Response): Option[ProviderUser] = {
     try {
       val me = response.json
