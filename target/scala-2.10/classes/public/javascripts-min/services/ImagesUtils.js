@@ -1,0 +1,1 @@
+define(["app"],function(e){return e.factory("ImagesUtils",function(){return{isDefaultImage:function(e){return e=="/assets/img/image-default.png"},checkExistingImage:function(e){if(e==""||e==undefined)return"/assets/img/image-default.png";var t=e;return e.match("^www")=="www"&&(t="http://"+e),"/download?url="+encodeURIComponent(t)}}}),e})
