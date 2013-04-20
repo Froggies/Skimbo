@@ -13,11 +13,12 @@ app.factory("ImagesUtils", function() {
       if(image == "" || image == undefined) {
         return "/assets/img/image-default.png";
       }
-      else if(image.match("^www")=="www") {
-        return "http://"+image;
-      }
       else {
-        return image;
+        var url = image;
+        if(image.match("^www")=="www") {
+          url = "http://"+image;
+        }
+        return "/download/"+encodeURIComponent(url);
       }
     }
   }
