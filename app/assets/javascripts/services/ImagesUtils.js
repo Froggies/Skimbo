@@ -18,7 +18,7 @@ app.factory("ImagesUtils", function() {
         if(image.match("^www")=="www") {
           url = "http://"+image;
         }
-        return "/download/"+encodeURIComponent(url);
+        return "/download?url="+encodeURIComponent(url);
       }
     }
   }

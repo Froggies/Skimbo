@@ -71,17 +71,19 @@ object Application extends Controller {
     )).as(JAVASCRIPT)
   }
   
-  def downloadDistant(url: String) = Action {
-    Async {
-      WS.url(URLDecoder.decode(url, "utf-8")).get.map { file =>
-        if(file.status == 200 && file.body.size > 0) {
-          Ok(file.getAHCResponse.getResponseBodyAsBytes)
-            .as(file.header("Content-Type").getOrElse("image/png"))
-        } else {
-          Ok.sendFile(new File("public/img/image-default.png"))
+  def downloadDistant = Action { implicit request =>
+    request.getQueryString("url").map { url =>
+      Async {
+        WS.url(URLDecoder.decode(url, "utf-8")).get.map { file =>
+          if(file.status == 200 && file.body.size > 0) {
+            Ok(file.getAHCResponse.getResponseBodyAsBytes)
+              .as(file.header("Content-Type").getOrElse("image/png"))
+          } else {
+            Ok.sendFile(new File("public/img/image-default.png"))
+          }
         }
       }
-    }
+    } getOrElse (Ok.sendFile(new File("public/img/image-default.png")))
   }
 
 }
