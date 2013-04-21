@@ -5,16 +5,19 @@ define(["app"], function(app) {
 app.factory("Network", ["$http", "$timeout", "ServerCommunication", "$location",
   function($http, $timeout, $serverCommunication, $location) {
 
+  var isSecure = $location.$$protocol === "https";
   var pageName = $location.path().split('/');
 
-  var wshost = jsRoutes.controllers.stream.WebSocket.connect().webSocketURL();
+  var wshost = jsRoutes.controllers.stream.WebSocket.connect().webSocketURL(isSecure);
+
   if(pageName !== undefined && pageName.length == 3) {
     wshost = wshost + "/" + pageName[2];
   }
+
   console.log("WHOST URL = "+wshost);
-  var ssehost = jsRoutes.controllers.stream.Sse.connect().url;
+  var ssehost = jsRoutes.controllers.stream.Sse.connect().absoluteURL(isSecure);
   console.log("SSEHOST URL = "+ ssehost);
-  var sseping = jsRoutes.controllers.stream.Sse.ping().url;
+  var sseping = jsRoutes.controllers.stream.Sse.ping().absoluteURL(isSecure);
   console.log("SSEPING URL = "+sseping);
 
   var socket = undefined;//ws mode
