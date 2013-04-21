@@ -52,7 +52,11 @@ app.controller('NotificationController', [
       if(notification.isError == false && notification.providerName != "skimbo") {
         $popupProvider.openPopup({"name": notification.providerName});
       } else if(notification.isError == false && notification.providerName == "skimbo") {
-        window.location.href = "/";
+        if(notification.forceIdentification == true) {
+          window.location.href = "/logout";
+        } else {
+          window.location.href = "/";
+        }
       } else {
         var index = $arrayUtils.indexOfWith($scope.notifications, notification, function(inArray, data) {
           return inArray.providerName == data.providerName && inArray.msg == data.msg;

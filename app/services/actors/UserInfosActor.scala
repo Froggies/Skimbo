@@ -20,10 +20,10 @@ import models.command.Error
 import services.commands.CmdFromUser
 import services.commands.CmdToUser
 import scala.collection.mutable.HashMap
+import services.auth.GenericProvider
 
 case object Retreive
 case class StartProvider(userId: String, column: Column)
-case class CheckAccounts(idUser: String)
 case class AddInfosUser(providerUser: ProviderUser)
 case class RefreshInfosUser(userId: String, provider: GenericProvider)
 
@@ -74,7 +74,7 @@ class UserInfosActor(idUser: String) extends Actor {
           .map(user => start(user))
           .getOrElse {
             log.error("user haven't id in bd, WTF !?")
-            CmdToUser.sendTo(idUser, Command("disconnect"))
+            CmdToUser.sendTo(idUser, Command("logout"))
             self ! Dead(idUser)
           }
       }
@@ -82,7 +82,6 @@ class UserInfosActor(idUser: String) extends Actor {
     case StartProvider(id: String, unifiedRequests) => {
       if (id == idUser) {
         ProviderActor.create(idUser, unifiedRequests)
-        self ! CheckAccounts(id)
       }
     }
     case Dead(id) => {
@@ -90,11 +89,6 @@ class UserInfosActor(idUser: String) extends Actor {
         ProviderActor.killActorsForUser(idUser)
         HelperUserInfosActor.delete(idUser)
         context.stop(self)
-      }
-    }
-    case CheckAccounts(idUser: String) => {
-      ProviderDispatcher.listAll.map { provider =>
-        self ! RefreshInfosUser(idUser, provider)
       }
     }
     case RefreshInfosUser(id: String, provider: GenericProvider) => {
@@ -123,32 +117,42 @@ class UserInfosActor(idUser: String) extends Actor {
   }
 
   def start(user: User) = {
+    val providers = ProviderDispatcher.listAll.filter(_.hasToken(idUser))
     if (user.columns.map(_.isEmpty).getOrElse(true)) {
       val idUser = user.accounts.lastOption.map(_.id).getOrElse("")
-      val providers = ProviderDispatcher.listAll.filter(_.hasToken(idUser))
       if (providers.isEmpty) {
         CmdFromUser.interpretCmd(idUser, Command("allColumns"))
       } else {
-        providers.foreach { provider =>
-          provider.getUser(idUser).map { providerUser =>
-            providerUser.map(pUser =>
-              UserDao.findByIdProvider(provider.name, pUser.id).map(optUser =>
-                optUser.map { originalUser =>
-                  UserDao.merge(idUser, originalUser.accounts.head.id, {
-                    CmdFromUser.interpretCmd(idUser, Command("allColumns"))
-                    originalUser.columns.map(_.foreach(self ! StartProvider(idUser, _)))
-                    CmdToUser.sendTo(idUser, Command("userInfos", Some(Json.toJson(providerUser.get))))
-                  })
-                }.getOrElse {
-                  CmdFromUser.interpretCmd(idUser, Command("allColumns"))
-                  self ! CheckAccounts(idUser)
-                }))
-          }
-        }
+        checkUserByIdProvider(providers)
       }
     } else {
       user.columns.map(_.foreach(self ! StartProvider(idUser, _)))
+      providers.foreach(self ! RefreshInfosUser(idUser, _))
       CmdFromUser.interpretCmd(idUser, Command("allColumns"))
+    }
+  }
+  
+  def checkUserByIdProvider(providers:Seq[AuthProvider]): Unit = {
+    providers.headOption.map {provider =>
+      provider.getUser(idUser).map { providerUser =>
+        providerUser.map(pUser =>
+          UserDao.findByIdProvider(provider.name, pUser.id).map(optUser =>
+            optUser.map { originalUser =>
+              UserDao.merge(idUser, originalUser.accounts.head.id, {
+                CmdFromUser.interpretCmd(idUser, Command("allColumns"))
+                originalUser.columns.map(_.foreach(self ! StartProvider(idUser, _)))
+                ProviderDispatcher.listAll.filter(_.hasToken(idUser)).foreach(self ! RefreshInfosUser(idUser, _))
+              })
+            }.getOrElse {//provider id user not found in db
+              if(providers.size == 1) {//last provider and user wasn't found
+                CmdFromUser.interpretCmd(idUser, Command("allColumns"))
+                self ! AddInfosUser(pUser)
+                CmdToUser.sendTo(idUser, Command("userInfos", Some(Json.toJson(pUser))))
+              } else {//check next provider
+                checkUserByIdProvider(providers.drop(1))
+              }
+            }))
+      }
     }
   }
 

@@ -42,7 +42,11 @@ object CmdToUser {
           channelUser.put(idUser, Seq(channel))
           channel
         }
-      }.getOrElse(channel))
+      }.getOrElse {
+        channelUser.put(idUser, Seq(channel))
+        userToUser.put(idUser, idUser)
+        channel
+      })
     } else {//in publicPage we create always channel
       Future(channel)
     }

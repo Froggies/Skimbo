@@ -115,7 +115,7 @@ object HelperUserInfosActor extends ActorHelper[String] {
   protected def exist(id: String, actor: ActorRef) = {
     println("UserInfosActor EXIST in " + actors.size)
     CmdFromUser.interpretCmd(id, Command("allColumns"))
-    actor ! CheckAccounts(id)
+    actor ! Retreive
     ProviderActor.restart(id)
   }
 

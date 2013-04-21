@@ -147,6 +147,13 @@ app.factory("ServerCommunication", [
         broadcast('paramHelperSearch', data.body);
       } else if (data.cmd == "paramPostHelperSearch") {
         broadcast('paramPostHelperSearch', data.body);
+      } else if (data.cmd == "logout") {
+        var body = {};
+        body.title = "You have been disconnected from";
+        body.footer = "Click here to be connected again.";
+        body.isError = false;
+        body.forceIdentification = true;
+        broadcast('disconnect', body);
       } else {
         console.log("Command not yet implemented: ", data);
       }
