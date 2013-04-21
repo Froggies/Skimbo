@@ -4,9 +4,9 @@ define(["app"], function(app) {
 
 app.controller('ColumnController', [
   "$scope", "Network", "$rootScope", "UnifiedRequestUtils", "Visibility", 
-  "PopupProvider", "ArrayUtils", "ColumnSize",
+  "PopupProvider", "ArrayUtils", "ColumnSize", "$window",
   function($scope, $network, $rootScope, $unifiedRequestUtils, $visibility, 
-    $popupProvider, $arrayUtils, $columnSize) {
+    $popupProvider, $arrayUtils, $columnSize, $window) {
     //chrome memory leak !!!
     $scope.$destroy= function() {
         var parent = this.$parent;
@@ -31,6 +31,11 @@ app.controller('ColumnController', [
 
     $scope.columns = [];
     $scope.userNoColumn = false;
+
+    angular.element($window).bind('resize', function () {
+      $columnSize.setSize($scope.columns);
+      $scope.$apply();
+    });
 
     $rootScope.$on('availableServices', function(evt, serviceProposes) {
       if(!$scope.$$phase) {

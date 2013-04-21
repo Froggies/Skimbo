@@ -2,10 +2,32 @@
 
 define(["app"], function(app) {
 
-app.factory("ColumnSize", function() {
+app.factory("ColumnSize", ["$window", function($window) {
 
+  var minSizeWidthColumn = 100;
+  var minSizeHeightColumn = 100;
   var maxWidthNbColumns = 6;
   var maxHeightNbColumns = 4;
+
+  function calculNbColumn() {
+    var tempNbWidth = Math.floor($window.innerWidth / minSizeWidthColumn);
+    if(tempNbWidth >= 6) {
+      maxWidthNbColumns = 6;
+    } else if(tempNbWidth <= 1) {
+      maxWidthNbColumns = 1;
+    } else {
+      maxWidthNbColumns = tempNbWidth;
+    }
+
+    var tempNbHeight = Math.floor($window.innerHeight / minSizeHeightColumn);
+    if(tempNbHeight >= 4) {
+      maxHeightNbColumns = 4;
+    } else if(tempNbHeight <= 1) {
+      maxHeightNbColumns = 1;
+    } else {
+      maxHeightNbColumns = tempNbHeight;
+    }
+  }
 
   function widthManagement(column) {
     // fix bornes
@@ -15,8 +37,12 @@ app.factory("ColumnSize", function() {
       column.width = maxWidthNbColumns;
     }
     // finally set size
-    var w = column.width * 100 / maxWidthNbColumns;
-    column.csswidth = (w - 1) + '%';
+    if(maxWidthNbColumns <= 5) {
+      column.csswidth = '99%';
+    } else {
+      var w = column.width * 100 / maxWidthNbColumns;
+      column.csswidth = (w - 1) + '%';
+    }
   }
 
   function heightManagement(column) {
@@ -34,6 +60,7 @@ app.factory("ColumnSize", function() {
   return {
     setSize: function(columns) {
       var size = columns.length;
+      calculNbColumn();
       for (var i = 0; i < size; i++) {
         widthManagement(columns[i]);
         heightManagement(columns[i]);
@@ -68,7 +95,7 @@ app.factory("ColumnSize", function() {
     }
   }
 
-});
+}]);
 
 return app;
 });
