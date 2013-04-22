@@ -77,13 +77,25 @@ object Configuration {
 
   object Facebook {
     object wall extends EndpointConfig {
-      override val url = withLimit("https://graph.facebook.com/me/home?limit=:limit&fields=from,type,status_type,comments,message,story,picture,likes,actions")
+      override val url = withLimit("https://graph.facebook.com/me/feed?limit=:limit&fields=from,type,status_type,comments,message,story,picture,likes,actions")
       override val since = Some("&since=:since")
       override val delay = 30
       override val provider = providers.Facebook
       override val parser = Some(FacebookWallParser)
       override val mustBeReordered = true
       override val uniqueName = "facebook.wall"
+      override val parserDetails = Some(FacebookPostDetails)
+      override val urlDetails = "https://graph.facebook.com/:id"
+      override val starer = Some(providers.Facebook)
+    }
+    object notification extends EndpointConfig {
+      override val url = withLimit("https://graph.facebook.com/me/home?limit=:limit&fields=from,type,status_type,comments,message,story,picture,likes,actions")
+      override val since = Some("&since=:since")
+      override val delay = 30
+      override val provider = providers.Facebook
+      override val parser = Some(FacebookWallParser)
+      override val mustBeReordered = true
+      override val uniqueName = "facebook.notification"
       override val parserDetails = Some(FacebookPostDetails)
       override val urlDetails = "https://graph.facebook.com/:id"
       override val starer = Some(providers.Facebook)

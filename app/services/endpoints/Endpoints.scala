@@ -24,6 +24,7 @@ object Endpoints {
       Configuration.Twitter.messageToMe)),
     Endpoint(Facebook, Seq(
       Configuration.Facebook.wall,
+      Configuration.Facebook.notification,
       Configuration.Facebook.user,
       Configuration.Facebook.group,
       Configuration.Facebook.page,
