@@ -29,11 +29,17 @@ app.controller('ColumnController', [
 
     }
 
+    $scope.globalContainerSize = "100%";
     $scope.columns = [];
     $scope.userNoColumn = false;
 
     angular.element($window).bind('resize', function () {
       $columnSize.setSize($scope.columns);
+      if($columnSize.isMobileSize()) {
+        $scope.globalContainerSize = $scope.columns.length+"10%";
+      } else {
+        $scope.globalContainerSize = "100%";
+      }
       $scope.$apply();
     });
 
@@ -56,6 +62,11 @@ app.controller('ColumnController', [
           $scope.columns = columns;
         }
         $scope.userNoColumn = $scope.columns.length === 0;
+        if($columnSize.isMobileSize()) {
+          $scope.globalContainerSize = $scope.columns.length+"10%";
+        } else {
+          $scope.globalContainerSize = "100%";
+        }
       });
     });
 

@@ -2,6 +2,10 @@
 
 define(["app"], function(app) {
 
+/**
+* Think to change mobile.less if you change this file ! 
+**/
+
 app.factory("ColumnSize", ["$window", function($window) {
 
   var minSizeWidthColumn = 100;
@@ -10,22 +14,14 @@ app.factory("ColumnSize", ["$window", function($window) {
   var maxHeightNbColumns = 4;
 
   function calculNbColumn() {
+    console.log($window.innerWidth);
     var tempNbWidth = Math.floor($window.innerWidth / minSizeWidthColumn);
     if(tempNbWidth >= 6) {
       maxWidthNbColumns = 6;
-    } else if(tempNbWidth <= 1) {
-      maxWidthNbColumns = 1;
-    } else {
-      maxWidthNbColumns = tempNbWidth;
-    }
-
-    var tempNbHeight = Math.floor($window.innerHeight / minSizeHeightColumn);
-    if(tempNbHeight >= 4) {
       maxHeightNbColumns = 4;
-    } else if(tempNbHeight <= 1) {
-      maxHeightNbColumns = 1;
     } else {
-      maxHeightNbColumns = tempNbHeight;
+      maxWidthNbColumns = 1;
+      maxHeightNbColumns = 1;
     }
   }
 
@@ -38,7 +34,7 @@ app.factory("ColumnSize", ["$window", function($window) {
     }
     // finally set size
     if(maxWidthNbColumns <= 5) {
-      column.csswidth = '99%';
+      column.csswidth = ($window.innerWidth - 10)+'px';
     } else {
       var w = column.width * 100 / maxWidthNbColumns;
       column.csswidth = (w - 1) + '%';
@@ -53,11 +49,18 @@ app.factory("ColumnSize", ["$window", function($window) {
       column.height = maxHeightNbColumns;
     }
     // finally set size
-    var h = column.height * 100 / maxHeightNbColumns;
-    column.cssheight = (h - 1) + '%';
+    if(maxHeightNbColumns <= 3) {
+      column.cssheight = '100%';
+    } else {
+      var h = column.width * 100 / maxHeightNbColumns;
+      column.cssheight = (h - 1) + '%';
+    }
   }
 
   return {
+    isMobileSize: function() {
+      return maxWidthNbColumns != 6;
+    },
     setSize: function(columns) {
       var size = columns.length;
       calculNbColumn();
