@@ -22,7 +22,6 @@ object FacebookUser extends GenericJsonParserUser with GenericJsonParserParamHel
       val id = (json \ "id").as[String]
       val name = (json \ "name").asOpt[String]
       val picture = (json \ "picture" \ "data" \ "url").asOpt[String]
-      println("FACEBOOK IMAGE == "+json.toString)
       Some(models.user.ProviderUser(
           id, 
           Facebook.name, 
