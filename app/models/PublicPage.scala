@@ -2,12 +2,10 @@ package models
 
 import models.user.Column
 import models.user.ProviderUser
-import reactivemongo.bson.handlers.BSONWriter
 import reactivemongo.bson.BSONDocument
 import services.dao.UtilBson
-import reactivemongo.bson.BSONString
-import reactivemongo.bson.BSONString
-import reactivemongo.bson.handlers.BSONReader
+import reactivemongo.bson.BSONDocumentReader
+import reactivemongo.bson.BSONDocumentWriter
 
 case class PublicPage(
   name: String,
@@ -17,9 +15,8 @@ case class PublicPage(
 
 object PublicPage {
   
-  implicit object PublicPageBSONReader extends BSONReader[PublicPage] {
-    def fromBSON(document: BSONDocument): PublicPage = {
-      val traversable = document.toTraversable
+  implicit object PublicPageBSONReader extends BSONDocumentReader[PublicPage] {
+    def read(document: BSONDocument): PublicPage = {
       val providers = UtilBson.tableTo[ProviderUser](document, "distants", { d =>
         ProviderUser.fromBSON(d)
       })
@@ -27,15 +24,15 @@ object PublicPage {
         Column.fromBSON(c)
       })
       PublicPage(
-        UtilBson.asString(traversable, "name"), 
-        UtilBson.asString(traversable, "email"), 
+        document.getAs[String]("name").get, 
+        document.getAs[String]("email").get, 
         Some(providers), 
         Some(columns))
     }
   }
   
-  implicit object PublicPageBSONWriter extends BSONWriter[PublicPage] {
-    def toBSON(publicPage: PublicPage): BSONDocument = {
+  implicit object PublicPageBSONWriter extends BSONDocumentWriter[PublicPage] {
+    def write(publicPage: PublicPage): BSONDocument = {
       val distants = UtilBson.toArray[ProviderUser](publicPage.distantsOwner.getOrElse(Seq()), { distant =>
         ProviderUser.toBSON(distant)
       })
@@ -45,8 +42,8 @@ object PublicPage {
       })
 
       BSONDocument(
-        "name" -> BSONString(publicPage.name),
-        "email" -> BSONString(publicPage.emailOwner),
+        "name" -> publicPage.name,
+        "email" -> publicPage.emailOwner,
         "distants" -> distants,
         "columns" -> columns
       )

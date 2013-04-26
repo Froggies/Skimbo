@@ -23,8 +23,8 @@ object Account {
       "lastUse" -> BSONDateTime(account.lastUse.getTime()))
   }
   
-  def fromBSON(a: TraversableBSONDocument) = {
+  def fromBSON(a: BSONDocument) = {
     val lastUse = new Date(a.getAs[BSONDateTime]("lastUse").get.value)
-    Account(UtilBson.asString(a, "id"), lastUse)
+    Account(a.getAs[String]("id").get, lastUse)
   }
 }

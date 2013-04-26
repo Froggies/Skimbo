@@ -1,15 +1,14 @@
 package models
 
 import java.util.Date
-
 import models.user.Column
 import models.user.ProviderUser
 import play.api.libs.json.JsValue
 import play.api.libs.json.Json
 import play.api.libs.json.Json.toJsFieldJsValueWrapper
 import reactivemongo.bson.BSONDocument
-import reactivemongo.bson.handlers.BSONReader
 import services.dao.UtilBson
+import reactivemongo.bson.BSONDocumentReader
 
 case class User(
   accounts: Seq[models.user.Account],
@@ -29,8 +28,8 @@ object User {
       "columns" -> Json.toJson(user.columns.getOrElse(Seq.empty)))
   }
 
-  implicit object UserBSONReader extends BSONReader[User] {
-    def fromBSON(document: BSONDocument): User = {
+  implicit object UserBSONReader extends BSONDocumentReader[User] {
+    def read(document: BSONDocument): User = {
       val accounts = UtilBson.tableTo[models.user.Account](document, "accounts", { a =>
         models.user.Account.fromBSON(a)
       })

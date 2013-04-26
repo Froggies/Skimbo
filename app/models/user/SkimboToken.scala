@@ -21,8 +21,8 @@ object SkimboToken {
   
   def fromBSON(document: BSONDocument): Option[SkimboToken] = {
     Some(SkimboToken(
-      document.toTraversable.getAs[BSONString]("token").get.value,
-      Some(document.toTraversable.getAs[BSONString]("secret").get.value)
+      document.getAs[String]("token").get,
+      document.getAs[String]("secret")
     ))
   }
 }

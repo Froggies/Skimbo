@@ -32,10 +32,10 @@ object ProviderUser {
       "token" -> SkimboToken.toBSON(distant.token.getOrElse(SkimboToken(""))))
   }
   
-  def fromBSON(d: TraversableBSONDocument) = {
+  def fromBSON(d: BSONDocument) = {
     ProviderUser(
-          UtilBson.asString(d, "id"),
-          UtilBson.asString(d, "social"),
+          d.getAs[String]("id").get,
+          d.getAs[String]("social").get,
           SkimboToken.fromBSON(d.getAs[BSONDocument]("token").get)
         )
   }

@@ -9,8 +9,6 @@ import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import play.modules.reactivemongo.ReactiveMongoPlugin
 import reactivemongo.bson.BSONDocument
 import reactivemongo.bson.BSONString
-import reactivemongo.bson.handlers.DefaultBSONHandlers.DefaultBSONDocumentWriter
-import reactivemongo.bson.handlers.DefaultBSONHandlers.DefaultBSONReaderHandler
 import models.user.ProviderUser
 
 object PublicPageDao {
@@ -26,7 +24,7 @@ object PublicPageDao {
 
   def findOneByName(name: String): Future[Option[models.PublicPage]] = {
     val query = BSONDocument("name" -> new BSONString(name))
-    collection.find(query).headOption()
+    collection.find(query).cursor[models.PublicPage].headOption()
   }
 
   def delete(name: String) = {

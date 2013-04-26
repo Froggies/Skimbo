@@ -12,8 +12,6 @@ import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import play.modules.reactivemongo.ReactiveMongoPlugin
 import reactivemongo.bson.BSONDocument
 import reactivemongo.bson.BSONString
-import reactivemongo.bson.handlers.DefaultBSONHandlers.DefaultBSONDocumentWriter
-import reactivemongo.bson.handlers.DefaultBSONHandlers.DefaultBSONReaderHandler
 import services.auth.GenericProvider
 import services.auth.ProviderDispatcher
 
@@ -31,16 +29,16 @@ object UserDao {
 
   def findAll(): Future[List[models.User]] = {
     val query = BSONDocument()
-    collection.find(query).toList
+    collection.find(query).cursor[models.User].toList
   }
 
   def findOneById(idUser: String): Future[Option[models.User]] = {
-    val query = BSONDocument("accounts.id" -> new BSONString(idUser))
-    collection.find(query).headOption()
+    val query = BSONDocument("accounts.id" -> idUser)
+    collection.find(query).cursor[models.User].headOption()
   }
 
   def updateLastUse(idUser: String) = {
-    val query = BSONDocument("accounts.id" -> new BSONString(idUser))
+    val query = BSONDocument("accounts.id" -> idUser)
     val update = BSONDocument(
       "$set" -> BSONDocument(
         "accounts.$" -> models.user.Account.toBSON(models.user.Account(idUser, new Date()))))
@@ -48,13 +46,13 @@ object UserDao {
   }
 
   def addAccount(idUser: String, account: models.user.Account) = {
-    val query = BSONDocument("accounts.id" -> new BSONString(idUser))
+    val query = BSONDocument("accounts.id" -> idUser)
     val update = BSONDocument("$push" -> BSONDocument("accounts" -> models.user.Account.toBSON(account)))
     collection.update(query, update)
   }
 
   def addColumn(idUser: String, column: models.user.Column) = {
-    val query = BSONDocument("accounts.id" -> new BSONString(idUser))
+    val query = BSONDocument("accounts.id" -> idUser)
     val update = BSONDocument("$push" -> BSONDocument("columns" -> models.user.Column.toBSON(column)))
     collection.update(query, update)
   }
@@ -70,28 +68,24 @@ object UserDao {
   }
 
   def updateColumn(idUser: String, title: String, column: Column) = {
-    val query = BSONDocument(
-      "accounts.id" -> new BSONString(idUser),
-      "columns.title" -> new BSONString(title))
+    val query = BSONDocument("accounts.id" -> idUser, "columns.title" -> title)
     val update = BSONDocument("$set" -> BSONDocument("columns.$" -> Column.toBSON(column)))
     collection.update(query, update)
   }
 
   def findByIdProvider(provider: String, id: String): Future[Option[models.User]] = {
-    val query = BSONDocument(
-      "distants.social" -> new BSONString(provider),
-      "distants.id" -> new BSONString(id))
-    collection.find(query).headOption()
+    val query = BSONDocument("distants.social" -> provider, "distants.id" -> id)
+    collection.find(query).cursor[models.User].headOption
   }
 
   def deleteColumn(idUser: String, columnTitle: String) = {
-    val query = BSONDocument("accounts.id" -> new BSONString(idUser))
-    val update = BSONDocument("$pull" -> BSONDocument("columns" -> BSONDocument("title" -> new BSONString(columnTitle))))
+    val query = BSONDocument("accounts.id" -> idUser)
+    val update = BSONDocument("$pull" -> BSONDocument("columns" -> BSONDocument("title" -> columnTitle)))
     collection.update(query, update)
   }
 
   def delete(idUser: String) = {
-    val query = BSONDocument("accounts.id" -> new BSONString(idUser))
+    val query = BSONDocument("accounts.id" -> idUser)
     collection.remove(query)
   }
 
@@ -100,8 +94,8 @@ object UserDao {
   }
 
   def getToken(idUser: String, provider: GenericProvider): Future[Option[SkimboToken]] = {
-    val query = BSONDocument("accounts.id" -> new BSONString(idUser))
-    collection.find(query)
+    val query = BSONDocument("accounts.id" -> idUser)
+    collection.find(query).cursor[models.User]
       .headOption().map( _.flatMap( 
             _.distants.flatMap( 
                 _.filter( _.socialType == provider.name ).headOption.flatMap( 
@@ -109,7 +103,7 @@ object UserDao {
   }
 
   def setToken(idUser: String, provider: GenericProvider, token: SkimboToken, distantId: Option[String] = None) = {
-    val query = BSONDocument("accounts.id" -> new BSONString(idUser))
+    val query = BSONDocument("accounts.id" -> idUser)
     findOneById(idUser).flatMap { user =>
       val toUpdate =
         if (user.isDefined) {
@@ -142,8 +136,8 @@ object UserDao {
   }
 
   def removeToken(idUser: String, provider: GenericProvider) = {
-    val query = BSONDocument("accounts.id" -> new BSONString(idUser))
-    val update = BSONDocument("$pull" -> BSONDocument("distants" -> BSONDocument("social" -> new BSONString(provider.name))))
+    val query = BSONDocument("accounts.id" -> idUser)
+    val update = BSONDocument("$pull" -> BSONDocument("distants" -> BSONDocument("social" -> provider.name)))
     collection.update(query, update)
   }
 
@@ -155,7 +149,7 @@ object UserDao {
           val columns = fromUser.columns.getOrElse(Seq()) ++ toUser.columns.getOrElse(Seq())
           val distants = fromUser.distants.getOrElse(Seq()).filter( _.id != "") ++ toUser.distants.getOrElse(Seq()).filter( _.id != "")
           val newUser = models.User(accounts, Some(distants), Some(columns))
-          val query = BSONDocument("accounts.id" -> new BSONString(toUserId))
+          val query = BSONDocument("accounts.id" -> toUserId)
           delete(fromUserId) onSuccess {
             case _ => collection.update(query, models.User.toBSON(newUser)) onSuccess {
               case _ => onDone

@@ -40,25 +40,24 @@ object Column {
       val args: Seq[(String, BSONString)] = unifiedRequest.args.getOrElse(Map.empty).mapValues(BSONString(_)).toSeq
       BSONDocument(
         "service" -> BSONString(unifiedRequest.service),
-        "args" -> BSONDocument(args: _*))
+        "args" -> BSONDocument(args))
     }
     BSONDocument(
       "title" -> BSONString(column.title),
-      "unifiedRequests" -> BSONArray(unifiedRequests: _*),
+      "unifiedRequests" -> BSONArray(unifiedRequests),
       "index" -> BSONInteger(column.index),
       "width" -> BSONInteger(column.width),
       "height" -> BSONInteger(column.height))
   }
 
-  def fromBSON(c: TraversableBSONDocument) = {
+  def fromBSON(c: BSONDocument) = {
     val unifiedRequests = UtilBson.tableTo[UnifiedRequest](c, "unifiedRequests", { r =>
-      val requestArgs = r.getAs[BSONDocument]("args").get.toTraversable
-      val args = requestArgs.mapped.map(requestArg =>
-        (requestArg._1, requestArgs.getAs[BSONString](requestArg._1).get.value))
-      UnifiedRequest(UtilBson.asString(r, "service"), if (args.nonEmpty) Some(args) else None)
+      val requestArgs = r.getAs[BSONDocument]("args").get
+      val args = requestArgs.elements.toList.map(n => (n._1, requestArgs.getAs[String](n._1).get)).toMap
+      UnifiedRequest(r.getAs[String]("service").get, if (args.nonEmpty) Some(args) else None)
     })
-    Column(UtilBson.asString(c, "title"), unifiedRequests,
-      UtilBson.asInt(c, "index"), UtilBson.asInt(c, "width"), UtilBson.asInt(c, "height"))
+    Column(c.getAs[String]("title").get, unifiedRequests,
+      c.getAs[Int]("index").get, c.getAs[Int]("width").get, c.getAs[Int]("height").get)
   }
 
 }
