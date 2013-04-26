@@ -14,7 +14,6 @@ app.factory("ColumnSize", ["$window", function($window) {
   var maxHeightNbColumns = 4;
 
   function calculNbColumn() {
-    console.log($window.innerWidth);
     var tempNbWidth = Math.floor($window.innerWidth / minSizeWidthColumn);
     if(tempNbWidth >= 6) {
       maxWidthNbColumns = 6;
@@ -29,7 +28,7 @@ app.factory("ColumnSize", ["$window", function($window) {
     // fix bornes
     if(column.width < 1) {
       column.width = 2;
-    } else if(column.width > maxWidthNbColumns) {
+    } else if(maxWidthNbColumns > 1 && column.width > maxWidthNbColumns) {
       column.width = maxWidthNbColumns;
     }
     // finally set size
@@ -45,14 +44,14 @@ app.factory("ColumnSize", ["$window", function($window) {
     // fix bornes
     if(column.height < 1) {
       column.height = 2;
-    } else if(column.height > maxHeightNbColumns) {
+    } else if(maxHeightNbColumns > 1 && column.height > maxHeightNbColumns) {
       column.height = maxHeightNbColumns;
     }
     // finally set size
     if(maxHeightNbColumns <= 3) {
       column.cssheight = '100%';
     } else {
-      var h = column.width * 100 / maxHeightNbColumns;
+      var h = column.height * 100 / maxHeightNbColumns;
       column.cssheight = (h - 1) + '%';
     }
   }
