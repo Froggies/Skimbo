@@ -1,0 +1,131 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Skimbo by Froggies</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <script src="javascripts/scale.fix.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1 class="header">Skimbo</h1>
+        <p class="header">All your numeric social life</p>
+
+        <ul>
+          <li class="download"><a class="buttons" href="https://github.com/Froggies/Skimbo/zipball/master">Download ZIP</a></li>
+          <li class="download"><a class="buttons" href="https://github.com/Froggies/Skimbo/tarball/master">Download TAR</a></li>
+          <li><a class="buttons github" href="https://github.com/Froggies/Skimbo">View On GitHub</a></li>
+        </ul>
+
+        <p class="header">This project is maintained by <a class="header name" href="https://github.com/Froggies">Froggies</a></p>
+
+
+      </header>
+      <section>
+        <h1>Skimbo</h1>
+
+<h2>This app was created during the Typesafe_ contest app with Play2_. Test it on Demo_</h2>
+
+<p>For the Typesafe contest, we made a web application <strong>Skimbo</strong> : a social networks mashup. 
+The main problem that our application solves is that most user are members of several social networks so to follow every changes on each social network, users have to open one tab for each one, which is not very convenient. Thanks to our application, the user can follow all its social networks, in a unique window, thanks to a new kind of display.</p>
+
+<p>This application fully uses the <strong>Typesafe stack</strong> : Scala, Play 2.1-RC1, Akka, with bonus Reactivemongo for the MongoDB link, WebSocket but if the client doesn't support WebSocket, Server Send Event is used. The client is made with AngularJs.</p>
+
+<h2><strong>So why those technologies ?</strong></h2>
+
+<p>Find out new things is our favorite hobby ! The Typesafe contest was a real challenge, because it's based on a technologic stack in which we were debutants. Almost all developpers in our team had never written a piece of scala code before the contest. Those notions : actor/asynchronus/real time/reactive model were really new for us. </p>
+
+<p>Scala language was a revelation in the use of our so dear, but so dusty JVM.
+It's really fantastic to find a language which with only a few lines of code allows to write what we imagine in our small developpers' head ! Given that the contest lasted 2 months, this was a great asset in the rapid implementation of several of our key concepts.</p>
+
+<p>In the same way, Play allowed us to create webservices in less than 3 lines of code ! And all of this without being bothered by rebuild nuisances. Our application is communicating with a lot of distant webservices, Play was very helpfull to implements all the communication protocols. Easy to use and mainly really fast to approach.</p>
+
+<p>The first issue that we found was the large number of web services to ask for. Besides the fact that we had to code all specificities of each of them, we had to make our best to not slow down our application, to make it hold the charge. We had the same concern for the large number of connected users. Indeed, social networks mashup means a lot of potentials users.</p>
+
+<p>To deal with those concerns, we decided to use Akka with its actors system. In the same way than Play, this library is very easy to use (even if our biggest regret is that we didn't have enough time to dive into its deepest configuration). As Akka is thread safe, we decided to plug it to our pooling system to distant services. This allow to compartmentalize each client in its thread, without disturbing other users.</p>
+
+<p>As the pooling was well managed by the server, it was useless to  ask to the client to do it. So we decided that the communication between client and server will be made via an http ServersSendEvent channel. Thus, when the server finds out new messages, it just has to send them to the client. The client needs also to communicate with the server, so we had to add the implementation of WebSocket to our application.</p>
+
+<p>Later, we found out the Akka's events. So we can send an order from outside the stream to the actors. After a lot of refactoring, we had two operationals technologies : SSE and WebSocket.</p>
+
+<p>Once those steps passed, we decided to store the user's configuration into a MogoDb database, thanks to the reactivemongo library. Once more, we choose MongoDb because we didn't know anything about this wonderful database, so it was for pleasure and joy to learn and discover.</p>
+
+<p>It was the same for AngularJS, client side, it was also a real revelation, very powerful even with a lot of data.</p>
+
+<h2><strong>High level architecture</strong></h2>
+
+<p>.. image:: <a href="http://man.lydiman.net/test/skimboHLA.png">http://man.lydiman.net/test/skimboHLA.png</a></p>
+
+<h2>How to install ?</h2>
+
+<p><strong>Prerequisite :</strong></p>
+
+<ul>
+<li>Play 2.1-RC1</li>
+<li>MongoDb &gt; 2.0</li>
+<li>A browser which suppport WebSocket and/or Sse</li>
+</ul><p><strong>Installation :</strong></p>
+
+<ul>
+<li>Get the project</li>
+<li>Add your secret keys for all the social networks in a file called : "**conf/my-social.conf**" with the following structure : <a href="https://gist.github.com/4172803">https://gist.github.com/4172803</a>
+</li>
+<li>You can add Linkedin for example, which does not check the domain (<a href="https://gist.github.com/3c2b283adf15be148fdf">https://gist.github.com/3c2b283adf15be148fdf</a>), or create your own apps (oauth1/2 token)</li>
+<li>Start mongoDB server (mongoDb conf can be modified in application.conf)</li>
+<li>cd Skimbo</li>
+<li>play run</li>
+</ul><p>That's all ;)</p>
+
+<h2>Why do you have to make us win ?</h2>
+
+<p>Because we don't care to win ^^ We already won a lot of competences, and that's enough for us. But if you want us to keep running Skimbo on a server, we will need money to pay it, or may be a place on your server :D</p>
+
+<p>Anyway, we will keep adding functionnality to Skimbo. The next feature will be to code the "Skimber!" action. This action will allow you to post a message into each social networks that you are connected on. And of course, a lot of new social networks are coming. And why not, paid options as for example have several count of the same social network, or see statistics to use them for marketing.</p>
+
+<p>If you want to help us to realize this dream, don't hesitate, contact us ! Don't worry, our english is bad, but our passion for computer and technology is very big !</p>
+
+<h2>Froggies, our Team :</h2>
+
+<p>Follow us on twitter :</p>
+
+<ul>
+<li>udr3y_</li>
+<li>RmManeschi_</li>
+<li>studiodev_</li>
+<li>vp3n_</li>
+<li>LaurentDufour_</li>
+<li>Skimbo_</li>
+</ul><h2>Licence</h2>
+
+<p>This software is licensed under the Apache 2 license, quoted below.</p>
+
+<p>Licensed under the Apache License, Version 2.0 (the "License"); you may not use this project except in compliance with the License. You may obtain a copy of the License at <a href="http://www.apache.org/licenses/LICENSE-2.0">http://www.apache.org/licenses/LICENSE-2.0</a>.</p>
+
+<p>Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.</p>
+
+<p>.. _Demo: <a href="http://skimbo.studio-dev.fr/">http://skimbo.studio-dev.fr/</a>
+.. _Typesafe: <a href="http://blog.typesafe.com/typesafe-developer-contest">http://blog.typesafe.com/typesafe-developer-contest</a>
+.. _Play2: <a href="https://github.com/playframework/play20/">https://github.com/playframework/play20/</a>
+.. _udr3y:  <a href="https://twitter.com/udr3y">https://twitter.com/udr3y</a>
+.. _RmManeschi: <a href="https://twitter.com/RmManeschi">https://twitter.com/RmManeschi</a>
+.. _studiodev: <a href="https://twitter.com/studiodev">https://twitter.com/studiodev</a>
+.. _vp3n: <a href="https://twitter.com/vp3n">https://twitter.com/vp3n</a>
+.. _LaurentDufour : <a href="https://twitter.com/_LaurentDufour">https://twitter.com/_LaurentDufour</a> 
+.. _skimbo: <a href="https://twitter.com/skimbo34">https://twitter.com/skimbo34</a></p>
+      </section>
+      <footer>
+        <p><small>Hosted on <a href="https://pages.github.com">GitHub Pages</a> using the Dinky theme</small></p>
+      </footer>
+    </div>
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+		
+  </body>
+</html>
