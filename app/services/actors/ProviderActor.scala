@@ -62,6 +62,8 @@ object ProviderActor {
 
       endpoint match {
         case Some((provider, time, parser)) => {
+          println("---------------------------------------------------")
+          println("ProviderActor - launch : "+provider.name+" "+unifiedRequest.service)
           HelperProviderActor.foundOrCreate(idUser, ProviderActorParameter(provider, unifiedRequest, time, idUser, parser, column))
         }
         case _ => Logger.error("Provider or Url not found for " + unifiedRequest.service + " :: args = " + unifiedRequest.args)
@@ -150,6 +152,7 @@ class ProviderActor(parameter:ProviderActorParameter) extends Actor {
       }
     }
     case Restart(id: String) => {
+      log.info("ProviderActor RESTART => "+id+" :: "+idUser)
       if(id == idUser) {
         sinceId = None
         sinceDate = new DateTime().minusYears(1)

@@ -150,7 +150,7 @@ object Configuration {
   object Viadeo {
     object smartNews extends EndpointConfig {
       override val limit = 30
-      override val url = withLimit("https://api.viadeo.com/me/smart_news.json?limit=:limit")
+      override val url = withLimit("https://api.viadeo.com/me/smart_news.json?user_detail=PARTIAL&limit=:limit")
       override val since = Some("&since=:since")
       override val provider = providers.Viadeo
       override val parser = Some(ViadeoWallParser)
@@ -158,11 +158,27 @@ object Configuration {
     }
     object newsfeed extends EndpointConfig {
       override val limit = 30
-      override val url = withLimit("https://api.viadeo.com/newsfeed.json?limit=:limit")
+      override val url = withLimit("https://api.viadeo.com/newsfeed.json?user_detail=PARTIAL&limit=:limit")
       override val since = smartNews.since
       override val provider = providers.Viadeo
       override val parser = Some(ViadeoWallParser)
       override val uniqueName = "viadeo.newsfeed"
+    }
+    object homeNewsfeed extends EndpointConfig {
+      override val limit = 30
+      override val url = withLimit("https://api.viadeo.com/me/home_newsfeed.json?user_detail=PARTIAL&limit=:limit")
+      override val since = smartNews.since
+      override val provider = providers.Viadeo
+      override val parser = Some(ViadeoWallParser)
+      override val uniqueName = "viadeo.homeNewsfeed"
+    }
+    object inbox extends EndpointConfig {
+      override val limit = 30
+      override val url = withLimit("https://api.viadeo.com/me/inbox.json?user_detail=PARTIAL&limit=:limit")
+      override val since = smartNews.since
+      override val provider = providers.Viadeo
+      override val parser = Some(ViadeoInboxParser)
+      override val uniqueName = "viadeo.inbox"
     }
   }
 

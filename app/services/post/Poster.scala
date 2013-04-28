@@ -44,8 +44,8 @@ object Posters {
     LinkedinPoster,
     GithubPoster,
     GoogleplusPoster,
-    ScoopitPoster)
-  //services.auth.providers.Viadeo)      --> "Insufficient accreditation level" ! mais pas trouvé où le setter !!??
+    ScoopitPoster,
+    ViadeoPoster)//      --> "Insufficient accreditation level" ! mais pas trouvé où le setter !!??
   //                                     --> recommended only for premium user
 
   def getPoster(name: String): Option[Poster] = {

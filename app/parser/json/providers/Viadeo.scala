@@ -11,19 +11,20 @@ import parser.json.PathDefaultReads
 import services.endpoints.Configuration
 
 case class ViadeoWallMessage(
-  id:String,
-  typeViadeo:String,
-  fromName:String,
+  id: String,
+  typeViadeo: String,
+  fromName: String,
   onTitle: String,
-  onMessage:String,
-  likeCount:Int,
+  onMessage: String,
+  likeCount: Int,
   title: Option[String],
-  message:Option[String],
-  pictureUrl:Option[String],
-  updatedTime:DateTime,
-  infeedLink:Option[String]
-)
-    
+  message: Option[String],
+  label: Option[String],
+  pictureUrl: Option[String],
+  avatarUrl: String,
+  updatedTime: DateTime,
+  infeedLink: Option[String])
+
 object ViadeoWallParser extends GenericJsonParser {
 
   override def asSkimbo(json: JsValue): Option[Skimbo] = {
@@ -39,27 +40,35 @@ object ViadeoWallParser extends GenericJsonParser {
         msg.likeCount,
         msg.infeedLink,
         msg.updatedTime.toString(ViadeoWallMessage.datePattern),
-        msg.pictureUrl,
+        generatePicture(msg),
         Configuration.Viadeo.smartNews)))
   }
-  
+
   def generateMsg(e: ViadeoWallMessage) = {
-    if(e.message.isDefined && !e.message.get.isEmpty()) { // TODO JLA
-      e.message.get
-    }
-    else if(!e.onMessage.isEmpty()) {
+    if (e.message.isDefined && !e.message.get.isEmpty()) {
+      e.label.getOrElse("") + e.message.get
+    } else if (!e.onMessage.isEmpty()) {
       e.onMessage
-    } else if(e.title.isDefined && !e.title.get.isEmpty()) {
+    } else if (e.title.isDefined && !e.title.get.isEmpty()) {
       e.title.get
-    } else if(!e.onTitle.isEmpty()) {
+    } else if (!e.onTitle.isEmpty()) {
       e.onTitle
     } else {
       "Msg not decrypted !"
     }
   }
-  
+
+  def generatePicture(msg: ViadeoWallMessage): Option[String] = {
+    msg.pictureUrl.orElse(
+      if (msg.avatarUrl.isEmpty()) {
+        None
+      } else {
+        Some(msg.avatarUrl)
+      })
+  }
+
   override def cut(json: JsValue): List[JsValue] = super.cut(json \ "data")
-  
+
   override def nextSinceId(sinceId: String, compareSinceIdOpt: Option[String]): String = {
     val date = DateTime.parse(sinceId, DateTimeFormat.forPattern(ViadeoWallMessage.datePattern))
     if (compareSinceIdOpt.isEmpty) {
@@ -77,9 +86,9 @@ object ViadeoWallParser extends GenericJsonParser {
 }
 
 object ViadeoWallMessage {
-  
+
   val datePattern = "yyyy-MM-dd'T'HH:mm:ssZZ"
-  
+
   implicit val viadeoReader: Reads[ViadeoWallMessage] = (
     (__ \ "id").read[String] and
     (__ \ "type").read[String] and
@@ -89,7 +98,9 @@ object ViadeoWallMessage {
     (__ \ "like_count").read[Int] and
     (__ \ "title").readNullable[String] and
     (__ \ "message").readNullable[String] and
+    (__ \ "label").readNullable[String] and
     (__ \ "picture").readNullable[String] and
+    PathDefaultReads.default((__ \ "from" \ "picture_medium"), "") and
     (__ \ "updated_time").read[DateTime](Reads.jodaDateReads(datePattern)) and
     ((__ \ "infeed_link").readNullable[String] or (__ \ "on" \ "link").readNullable[String]))(ViadeoWallMessage.apply _)
 }

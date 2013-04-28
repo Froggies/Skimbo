@@ -31,7 +31,9 @@ object Endpoints {
       Configuration.Facebook.message)),
     Endpoint(Viadeo, Seq(
       Configuration.Viadeo.smartNews,
-      Configuration.Viadeo.newsfeed)),
+      Configuration.Viadeo.newsfeed,
+      Configuration.Viadeo.homeNewsfeed,
+      Configuration.Viadeo.inbox)),
     Endpoint(LinkedIn, Seq(
       Configuration.Linkedin.wall)),
     Endpoint(GooglePlus, Seq(
