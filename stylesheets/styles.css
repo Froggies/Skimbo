@@ -54,8 +54,11 @@ h1, h2, h3 {
 
 h1,h2, h3 {
 	display: block;
-	border-bottom: 1px solid #ccc;
 	padding-bottom: 5px;
+}
+
+h1, h2 {
+  border-bottom: 1px solid #ccc;
 }
 
 h1 {
@@ -254,6 +257,8 @@ header ul {
 }
 
 header li {
+  display: inline-block;
+
 	list-style-type: none;
   width:132px;
   height:15px;
@@ -289,10 +294,8 @@ header li:hover {
 
 a.buttons {
 	-webkit-font-smoothing: antialiased;
-	background: url(../images/arrow-down.png) no-repeat;
 	font-weight: normal;
 	text-shadow: rgba(0, 0, 0, 0.4) 0 -1px 0;
-	padding: 2px 2px 2px 22px;
 	height: 30px;
 }
 
@@ -303,6 +306,23 @@ a.github {
 a.buttons:hover {
 	color: #fff;
 	text-decoration: none;
+}
+
+h2 a:hover {
+  text-decoration: none;
+}
+
+.video {
+  float: right;
+}
+
+.skimboBtn {
+  float: right;
+}
+
+.skimboIcon {
+  padding-left: 25px;
+  background: url(../images/skimbo.png) no-repeat -1px;
 }
 
 
@@ -344,10 +364,6 @@ footer {
 		padding:0;
 	}
 
-  header {
-    padding-right:320px;
-  }
-
   section {
     padding:20px 84px 20px 50px;
     margin:0 0 20px;
@@ -355,12 +371,6 @@ footer {
 
   header a small {
     display:inline;
-  }
-
-  header ul {
-    position:absolute;
-    right:130px;
-    top:84px;
   }
 }
 
