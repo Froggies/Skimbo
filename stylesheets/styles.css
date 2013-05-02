@@ -337,6 +337,17 @@ h2 a:hover {
   border-radius: 30px;
 }
 
+.imgTechnos {
+  height: 50px;
+}
+
+.subTechno {
+  list-style: none; 
+  height: 40px; 
+  line-height: 40px; 
+  vertical-align: top;
+}
+
 
 /* Section - for main page content */
 
