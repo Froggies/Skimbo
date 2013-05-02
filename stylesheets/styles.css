@@ -325,6 +325,18 @@ h2 a:hover {
   background: url(../images/skimbo.png) no-repeat -1px;
 }
 
+.froggiesLink {
+  text-align: center;
+  display: block;
+}
+
+.froggiesIcon {
+  width: 30px;
+  margin: 0;
+  background-color: #fff;
+  border-radius: 30px;
+}
+
 
 /* Section - for main page content */
 
