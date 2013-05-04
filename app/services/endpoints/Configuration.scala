@@ -13,6 +13,8 @@ import services.post.Starer
 import parser.GenericParserUser
 import parser.GenericParserParamHelper
 import services.auth.providers.Bitbucket
+import services.comment.Commenter
+import services.comment.TwitterCommenter
 
 object Configuration {
 
@@ -28,6 +30,7 @@ object Configuration {
       override val urlDetails = "https://api.twitter.com/1.1/statuses/show.json?id=:id"
       override val starer = Some(providers.Twitter)
       override val canParseResultStar = true
+      override val commenter = Some(TwitterCommenter)
     }
     object user extends EndpointConfig {
       override val url = withLimit("https://api.twitter.com/1.1/statuses/user_timeline.json?count=:limit&user_id=:username")
@@ -329,6 +332,7 @@ trait EndpointConfig {
   val canParseResultStar: Boolean = false
   val paramParserHelper: Option[GenericParserParamHelper] = None
   val paramUrlHelper: Option[String] = None
+  val commenter: Option[Commenter] = None
 
   def withLimit(url: String) = url.replace(":limit", limit.toString)
 }

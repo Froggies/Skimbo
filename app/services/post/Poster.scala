@@ -45,8 +45,7 @@ object Posters {
     GithubPoster,
     GoogleplusPoster,
     ScoopitPoster,
-    ViadeoPoster)//      --> "Insufficient accreditation level" ! mais pas trouvé où le setter !!??
-  //                                     --> recommended only for premium user
+    ViadeoPoster)
 
   def getPoster(name: String): Option[Poster] = {
     posters.find(_.name == name)

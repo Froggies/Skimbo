@@ -42,7 +42,8 @@ object Skimbo {
         "service" -> skimbo.config.uniqueName,
         "hasDetails" -> skimbo.config.parserDetails.isDefined,
         "canStar" -> skimbo.config.starer.isDefined,
-        "iStared" -> skimbo.iStared
+        "iStared" -> skimbo.iStared,
+        "canComment" -> skimbo.config.commenter.isDefined
       )
     }
   }

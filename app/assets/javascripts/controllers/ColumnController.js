@@ -35,7 +35,7 @@ app.controller('ColumnController', [
 
     angular.element($window).bind('resize', function () {
       $columnSize.setSize($scope.columns);
-      if($columnSize.isMobileSize()) {
+      if($columnSize.isMobileSize() && $scope.columns.length > 0) {
         $scope.globalContainerSize = $scope.columns.length+"10%";
       } else {
         $scope.globalContainerSize = "100%";
@@ -62,7 +62,7 @@ app.controller('ColumnController', [
           $scope.columns = columns;
         }
         $scope.userNoColumn = $scope.columns.length === 0;
-        if($columnSize.isMobileSize()) {
+        if($columnSize.isMobileSize() && $scope.columns.length > 0) {
           $scope.globalContainerSize = $scope.columns.length+"10%";
         } else {
           $scope.globalContainerSize = "100%";
@@ -173,6 +173,28 @@ app.controller('ColumnController', [
 
     $scope.dispatchMsg = function(message) {
       $rootScope.$broadcast("dispatchMsg", message);
+    }
+
+    $scope.comment = function(message) {
+      message.inComment = !message.inComment;
+      if(message.from === "twitter") {
+        message.currentComment = "@" + message.authorScreenName;
+      }
+    }
+
+    $scope.sendComment = function(message, column) {
+      message.styleRefresh = "rotate";
+      $network.send({
+        cmd: "comment",
+        body: {
+          "serviceName": message.service,
+          "providerId": message.idProvider,
+          "message": message.currentComment,
+          "columnTitle": column.title
+        }
+      });
+      message.inComment = false;
+      $scope.$apply();
     }
 
     $scope.star = function(message, column) {

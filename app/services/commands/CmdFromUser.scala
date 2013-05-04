@@ -19,6 +19,7 @@ import services.actors.ProviderActorParameter
 import services.endpoints.JsonRequest.UnifiedRequest
 import services.actors.FetcherParameter
 import java.net.URLEncoder
+import services.comment.Commenters
 
 object CmdFromUser {
 
@@ -29,6 +30,7 @@ object CmdFromUser {
     interpretCmd(idUser, cmd)
   }
 
+  //TODO transform in command pattern
   def interpretCmd(idUser: String, cmd: Command): Unit = {
     val internalIdUser = CmdToUser.getInternalIdUser(idUser)
     cmd.name match {
@@ -178,6 +180,17 @@ object CmdFromUser {
             println("paramPostHelperSearch :: "+params)
             val msg = Json.obj("serviceName" -> serviceName, "values" -> params)
             CmdToUser.sendTo(internalIdUser, Command("paramPostHelperSearch", Some(msg)))
+          }
+        }
+      }
+      case "comment" => {
+        val jsComment = Json.fromJson[Comment](cmd.body.get)
+        jsComment.asOpt.map { comment =>
+          Endpoints.getConfig(comment.serviceName).map { service =>
+            Commenters.getCommenter(service.provider.name).map { service =>
+              //service.comment(idUser, comment)
+              detailsSkimbo(internalIdUser, comment.serviceName, comment.providerId, comment.columnTitle)
+            }
           }
         }
       }
