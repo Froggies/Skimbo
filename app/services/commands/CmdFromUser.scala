@@ -188,8 +188,8 @@ object CmdFromUser {
         jsComment.asOpt.map { comment =>
           Endpoints.getConfig(comment.serviceName).map { service =>
             Commenters.getCommenter(service.provider.name).map { service =>
-              //service.comment(idUser, comment)
-              detailsSkimbo(internalIdUser, comment.serviceName, comment.providerId, comment.columnTitle)
+              service.comment(idUser, comment)
+              //TODO finish comments detailsSkimbo(internalIdUser, comment.serviceName, comment.providerId, comment.columnTitle)
             }
           }
         }
