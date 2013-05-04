@@ -67,7 +67,8 @@ object Application extends Controller {
       Routes.javascriptRouter("jsRoutes")(
        stream.routes.javascript.WebSocket.connect,
        stream.routes.javascript.Sse.connect,
-       stream.routes.javascript.Sse.ping   
+       stream.routes.javascript.Sse.ping,
+       stream.routes.javascript.LongPolling.connect
     )).as(JAVASCRIPT)
   }
   

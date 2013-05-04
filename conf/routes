@@ -19,6 +19,9 @@ GET     /api/stream/sse       			controllers.stream.Sse.connect
 POST    /api/stream/command    			controllers.stream.Sse.command
 GET     /api/stream/ping       			controllers.stream.Sse.ping
 
+# Streams -- LongPolling
+GET     /api/stream/longpolling       	controllers.stream.LongPolling.connect
+
 # Stats
 GET		/api/stats						controllers.api.Stats.get
 

@@ -2,8 +2,8 @@
 
 define(["app"], function(app) {
 
-app.factory("Network", ["$http", "$timeout", "ServerCommunication", "$location",
-  function($http, $timeout, $serverCommunication, $location) {
+app.factory("Network", ["$http", "$timeout", "ServerCommunication", "$location", '$window',
+  function($http, $timeout, $serverCommunication, $location, $window) {
 
   var isSecure = $location.$$protocol === "https";
   var pageName = $location.path().split('/');
@@ -19,12 +19,17 @@ app.factory("Network", ["$http", "$timeout", "ServerCommunication", "$location",
   console.log("SSEHOST URL = "+ ssehost);
   var sseping = jsRoutes.controllers.stream.Sse.ping().absoluteURL(isSecure);
   console.log("SSEPING URL = "+sseping);
+  var longpolling = jsRoutes.controllers.stream.LongPolling.connect().absoluteURL(isSecure);
+  console.log("LONGPOLLING URL = "+longpolling);
 
   var socket = undefined;//ws mode
   var source = undefined;//sse mode
   var nbError = 0;
   var nbErrorMax = 5;
   var dataReceivedByWS = false;
+
+  console.log("ws supported", "WebSocket" in window);
+  console.log("sse supported", "EventSource" in window);
 
   function webSocketMode() {
     if(socket == undefined) {
@@ -110,6 +115,28 @@ app.factory("Network", ["$http", "$timeout", "ServerCommunication", "$location",
     }
   }
 
+  function longPollingMode() {
+    console.log("longPollingMode actif !");
+    var fakeIframe = document.createElement('iframe');
+    fakeIframe.hidden = true;
+    fakeIframe.src = longpolling;
+    window.longPolling = function(msg) {
+      var data;
+      try {
+          data = JSON.parse(msg);
+      } catch(exception) {
+          data = msg;
+      }      
+      command(data);
+    }
+    console.log(angular.element($window));
+    //angular.element($window).bind('load', function(evt) {
+      $timeout(function() {
+        document.body.appendChild(fakeIframe);
+      }, 3500);
+    //});
+  }
+
   function command(data) {
     if(data.cmd == "ping") {
       //only sse connexion
@@ -132,7 +159,9 @@ app.factory("Network", ["$http", "$timeout", "ServerCommunication", "$location",
   if(window.MozWebSocket) {
     window.WebSocket = window.MozWebSocket;
   }
-  if(!window.WebSocket) {
+  if(true || !window.WebSocket && !window.EventSource) {
+    longPollingMode();
+  } else if(!window.WebSocket) {
     sseMode();
   } else {
     webSocketMode();
