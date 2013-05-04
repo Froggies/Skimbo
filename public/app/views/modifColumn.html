@@ -21,7 +21,7 @@
             <div class="input-service" ng-show="service.hasArguments" ng-repeat="arg in service.args ">
               <img class="img-service" ng-src="/assets/img/brand/{{service.providerName}}.png" alt="{{service.providerName}}" width="24" height="24">
               <input class="arg-service" type="text" ng-model="arg.value" placeholder="{{arg.key}}" pattern="[ a-zA-Z0-9]*" oracle="service" oracle-type="paramHelperSearch" oracle-store="arg"/>
-              <a href="#" 
+              <a 
                 class="delete-service {{service.providerName}}"
                 ng-click="deleteService(service,arg)"
               >✘</a>
@@ -38,7 +38,7 @@
             <div class="input-service" ng-hide="service.hasArguments">
               <img class="img-service" ng-src="/assets/img/brand/{{service.providerName}}.png" alt="{{service.providerName}}" width="24" height="24">
               <span class="receving-service">{{service.serviceName}}</span>
-              <a href="#" 
+              <a 
                 class="delete-service {{service.providerName}}"
                 ng-click="deleteService(service,arg)"
               >✘</a>
@@ -51,7 +51,7 @@
         <ul class="services-proposes">
           <li ng-repeat="provider in providers">
             <div class="social-network-link">
-              <a class="btn {{provider.selected}}" href="#" ng-click="selectSocialNetwork(provider)">
+              <a class="btn {{provider.selected}}" ng-click="selectSocialNetwork(provider)">
                 <img class="social-network-active" ng-src="/assets/img/brand/{{provider.name}}.png" alt="{{provider.name}}" width="32" height="32"></a>
             </div>
           </li>
@@ -62,7 +62,7 @@
         <ul class="services-proposes">
           <li ng-repeat="service in selectedSocialNetwork.services">
             <div class="social-network-link {{service.hasParser}}">
-              <a class="btn" href="#" ng-click="addService(service)">
+              <a class="btn" ng-click="addService(service)">
                 {{service.serviceName}}
               </a> 
             </div>
@@ -70,7 +70,7 @@
         </ul>
         <div ng-show="googleReaderSelected" style="line-height:20px;">
           <textarea ng-model="googleReaderFeeds"></textarea>
-          <a class="btn" href="#" ng-click="parseGoogleReader()" style="vertical-align:top">{{'GR_PARSE' | i18n}}</a>
+          <a class="btn" ng-click="parseGoogleReader()" style="vertical-align:top">{{'GR_PARSE' | i18n}}</a>
           <ul>
             <li>{{'GR_1_BEFORE_LINK' | i18n}}
               <a href="https://www.google.com/reader/api/0/subscription/list?output=json" target="_blank">{{'GR_1_LINK' | i18n}}</a>{{'GR_1_AFTER_LINK' | i18n}}
@@ -82,8 +82,8 @@
       </div>
     </div>
     <div class="controls-new"> 
-      <a href="#" class="btn delete-link" ng-click="cancelCreateColumn()">{{'CANCEL' | i18n}}</a>
-      <a href="#" class="btn delete-link" ng-click="deleteColumn(c)" ng-hide="column.newColumn">{{'DELETE' | i18n}}</a>
+      <a class="btn delete-link" ng-click="cancelCreateColumn()">{{'CANCEL' | i18n}}</a>
+      <a class="btn delete-link" ng-click="deleteColumn(c)" ng-hide="column.newColumn">{{'DELETE' | i18n}}</a>
       <input class="button" type="button" ng-click="validate()" value="{{'CHANGE' | i18n}}" ng-hide="column.newColumn"/>
       <input ng-show="column.unifiedRequests.length > 0 && column.newColumn" class="button" type="button" ng-click="validate()" value="{{'CREATE' | i18n}}"/>
     </div>
