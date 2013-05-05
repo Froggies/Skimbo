@@ -25,6 +25,7 @@ import scala.util.Success
 import scala.util.Failure
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import models.command.Error
+import play.api.http.Status
 
 object CmdFromUser {
 
@@ -195,7 +196,7 @@ object CmdFromUser {
             Commenters.getCommenter(service.provider.name).map { commenter =>
               commenter.comment(idUser, comment).onComplete {
                 case Success(response) => {
-                  if(response.status != 200) {
+                  if(response.status != Status.OK) {
                     CmdToUser.sendTo(internalIdUser, Error(service.provider.name, "You can't comment", Some(comment.columnTitle)))
                   }
                   detailsSkimbo(internalIdUser, comment.serviceName, comment.providerId, comment.columnTitle)
