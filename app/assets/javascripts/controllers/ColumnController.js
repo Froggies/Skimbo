@@ -176,6 +176,7 @@ app.controller('ColumnController', [
     }
 
     $scope.comment = function(message) {
+      console.log(message);
       message.inComment = !message.inComment;
       if(message.from === "twitter") {
         message.currentComment = "@" + message.authorScreenName;

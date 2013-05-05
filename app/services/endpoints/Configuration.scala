@@ -15,6 +15,7 @@ import parser.GenericParserParamHelper
 import services.auth.providers.Bitbucket
 import services.comment.Commenter
 import services.comment.TwitterCommenter
+import services.comment.FacebookCommenter
 
 object Configuration {
 
@@ -43,6 +44,7 @@ object Configuration {
       override val uniqueName = "twitter.user"
       override val paramParserHelper = Some(TwitterUser)
       override val paramUrlHelper = Some("https://api.twitter.com/1.1/users/search.json?q=:search&count=10")
+      override val commenter = Some(TwitterCommenter)
     }
     object hashtag extends EndpointConfig {
       override val url = withLimit("https://api.twitter.com/1.1/search/tweets.json?count=:limit&result_type=mixed&q=%23:hashtag")
@@ -53,6 +55,7 @@ object Configuration {
       override val parser = Some(TwitterHashtagParser)
       override val mustBeReordered = true
       override val uniqueName = "twitter.hashtag"
+      override val commenter = Some(TwitterCommenter)
     }
     object directMessage extends EndpointConfig {
       override val url = withLimit("https://api.twitter.com/1.1/direct_messages.json?count=:limit")
@@ -69,6 +72,7 @@ object Configuration {
       override val provider = providers.Twitter
       override val parser = Some(TwitterTimelineParser)
       override val uniqueName = "twitter.messageToMe"
+      override val commenter = Some(TwitterCommenter)
     }
 //    object connect extends EndpointConfig {
 //      override val url = "https://api.twitter.com/1.1/friends/ids.json"
@@ -90,6 +94,7 @@ object Configuration {
       override val parserDetails = Some(FacebookPostDetails)
       override val urlDetails = "https://graph.facebook.com/:id"
       override val starer = Some(providers.Facebook)
+      override val commenter = Some(FacebookCommenter)
     }
     object notification extends EndpointConfig {
       override val url = withLimit("https://graph.facebook.com/me/home?limit=:limit&fields=from,type,status_type,comments,message,story,picture,likes,actions")

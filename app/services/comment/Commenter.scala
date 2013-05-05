@@ -24,8 +24,8 @@ trait Commenter {
 object Commenters {
 
   val commenters: Seq[Commenter] = Seq(
-    TwitterCommenter)
-  //    FacebookPoster,
+    TwitterCommenter,
+    FacebookCommenter)
   //    FacebookPagePoster,
   //    LinkedinPoster,
   //    GithubPoster,
