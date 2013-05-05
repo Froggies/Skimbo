@@ -186,7 +186,9 @@ object CmdFromUser {
       case "comment" => {
         val jsComment = Json.fromJson[Comment](cmd.body.get)
         jsComment.asOpt.map { comment =>
+          println("js found ==> "+comment)
           Endpoints.getConfig(comment.serviceName).map { service =>
+            println("service found ==> "+service.provider.name)
             Commenters.getCommenter(service.provider.name).map { service =>
               println("commenter found ==> send comment")
               service.comment(idUser, comment)

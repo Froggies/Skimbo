@@ -16,6 +16,7 @@ import services.auth.providers.Bitbucket
 import services.comment.Commenter
 import services.comment.TwitterCommenter
 import services.comment.FacebookCommenter
+import services.comment.ScoopitCommenter
 
 object Configuration {
 
@@ -264,6 +265,7 @@ object Configuration {
       override val parserDetails = Some(ScoopitPostDetails)
       override val urlDetails = "http://www.scoop.it/api/1/post?id=:id"
       override val starer = Some(providers.Scoopit)
+      override val commenter = Some(ScoopitCommenter)
     }
   }
   

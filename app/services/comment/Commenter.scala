@@ -25,12 +25,12 @@ object Commenters {
 
   val commenters: Seq[Commenter] = Seq(
     TwitterCommenter,
-    FacebookCommenter)
+    FacebookCommenter,
   //    FacebookPagePoster,
   //    LinkedinPoster,
   //    GithubPoster,
   //    GoogleplusPoster,
-  //    ScoopitPoster,
+    ScoopitCommenter)
   //    ViadeoPoster)
 
   def getCommenter(name: String): Option[Commenter] = {
