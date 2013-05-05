@@ -157,7 +157,7 @@ app.factory("Network", ["$http", "$timeout", "ServerCommunication", "$location",
   if(window.MozWebSocket) {
     window.WebSocket = window.MozWebSocket;
   }
-  if(true || !window.WebSocket && !window.EventSource) {
+  if(!window.WebSocket && !window.EventSource) {
     longPollingMode();
   } else if(!window.WebSocket) {
     sseMode();
