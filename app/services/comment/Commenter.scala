@@ -27,7 +27,7 @@ object Commenters {
     TwitterCommenter,
     FacebookCommenter,
   //    FacebookPagePoster,
-  //    LinkedinPoster,
+    LinkedInCommenter,
   //    GithubPoster,
   //    GoogleplusPoster,
     ScoopitCommenter)

@@ -17,6 +17,7 @@ import services.comment.Commenter
 import services.comment.TwitterCommenter
 import services.comment.FacebookCommenter
 import services.comment.ScoopitCommenter
+import services.comment.LinkedInCommenter
 
 object Configuration {
 
@@ -198,6 +199,7 @@ object Configuration {
       override val provider = providers.LinkedIn
       override val parser = Some(LinkedInWallParser)
       override val uniqueName = "linkedin.wall"
+      override val commenter = Some(LinkedInCommenter)
     }
   }
 
