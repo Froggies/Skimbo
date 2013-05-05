@@ -147,6 +147,9 @@ object CmdFromUser {
         val columnTitle = (cmd.body.get \ "columnTitle").as[String]
         Endpoints.getConfig(serviceName).map { service =>
             service.starer.map( _.star(idUser, idMsg).map { response =>
+              if(response.status != Status.OK) {
+                CmdToUser.sendTo(internalIdUser, Error(service.provider.name, "You can't star", Some(columnTitle)))
+              }
               detailsSkimbo(internalIdUser, serviceName, idMsg, columnTitle)
               Logger(CmdFromUser.getClass).info(response.body.toString)
               if(service.canParseResultStar) {
