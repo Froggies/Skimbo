@@ -26,7 +26,6 @@ object Commenters {
   val commenters: Seq[Commenter] = Seq(
     TwitterCommenter,
     FacebookCommenter,
-  //    FacebookPagePoster,
     LinkedInCommenter,
   //    GithubPoster,
   //    GoogleplusPoster,
