@@ -130,11 +130,9 @@ app.factory("Network", ["$http", "$timeout", "ServerCommunication", "$location",
       command(data);
     }
     console.log(angular.element($window));
-    //angular.element($window).bind('load', function(evt) {
-      $timeout(function() {
-        document.body.appendChild(fakeIframe);
-      }, 3500);
-    //});
+    $timeout(function() {
+      document.body.appendChild(fakeIframe);
+    }, 3500);
   }
 
   function command(data) {
