@@ -27,6 +27,7 @@ case class Skimbo(
 object Skimbo {
   implicit val writes = new Writes[Skimbo] {
     def writes(skimbo: Skimbo) = {
+      val canComment = skimbo.config.commenter.isDefined && !skimbo.idProvider.isEmpty
       Json.obj(
         "idProvider" -> skimbo.idProvider,
         "authorName" -> skimbo.authorName,
@@ -43,7 +44,7 @@ object Skimbo {
         "hasDetails" -> skimbo.config.parserDetails.isDefined,
         "canStar" -> skimbo.config.starer.isDefined,
         "iStared" -> skimbo.iStared,
-        "canComment" -> skimbo.config.commenter.isDefined
+        "canComment" -> canComment
       )
     }
   }

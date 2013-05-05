@@ -109,6 +109,7 @@ object Configuration {
       override val parserDetails = Some(FacebookPostDetails)
       override val urlDetails = "https://graph.facebook.com/:id"
       override val starer = Some(providers.Facebook)
+      override val commenter = Some(FacebookCommenter)
     }
     object user extends EndpointConfig {
       override val url = withLimit("https://graph.facebook.com/:username/feed?limit=:limit")
@@ -121,6 +122,7 @@ object Configuration {
       override val uniqueName = "facebook.user"
       override val paramParserHelper = Some(FacebookUser)
       override val paramUrlHelper = Some("https://graph.facebook.com/search?q=:search&limit=10&type=user&fields=name,picture")
+      override val commenter = Some(FacebookCommenter)
     }
     object group extends EndpointConfig {
       override val url = withLimit("https://graph.facebook.com/:groupId/feed?limit=:limit")
@@ -133,6 +135,7 @@ object Configuration {
       override val uniqueName = "facebook.group"
       override val paramParserHelper = Some(FacebookUser)
       override val paramUrlHelper = Some("https://graph.facebook.com/search?q=:search&limit=10&type=group&fields=name,picture")
+      override val commenter = Some(FacebookCommenter)
     }
     object page extends EndpointConfig {
       override val url = withLimit("https://graph.facebook.com/:pageId/feed?limit=:limit")
@@ -145,6 +148,7 @@ object Configuration {
       override val uniqueName = "facebook.page"
       override val paramParserHelper = Some(FacebookUser)
       override val paramUrlHelper = Some("https://graph.facebook.com/search?q=:search&limit=10&type=page&fields=name,picture")
+      override val commenter = Some(FacebookCommenter)
     }
     object message extends EndpointConfig {
       override val url = withLimit("https://graph.facebook.com/me/inbox?limit=:limit")
