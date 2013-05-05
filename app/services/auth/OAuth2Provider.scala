@@ -15,10 +15,10 @@ import services.dao.UserDao
 import services.post.Poster
 import scala.util.Success
 import scala.util.Failure
-import services.post.Starer
+import services.star.Starer
 import scala.concurrent.Future
 
-trait OAuth2Provider extends AuthProvider with Starer {
+trait OAuth2Provider extends AuthProvider {
 
   // OAuth2 provider settings (override these)
   def method: Verb = Get
@@ -160,13 +160,6 @@ trait OAuth2Provider extends AuthProvider with Starer {
       .post(content)
   }
   
-  override def star(idUser:String, idProvider: String) = {
-    val queryString = Seq("access_token" -> getToken(idUser).get.token)
-    WS.url(urlToStar(idProvider))
-      .withQueryString( queryString:_* )
-      .post("")
-  }
-
 }
 
 /**

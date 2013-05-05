@@ -146,18 +146,18 @@ object CmdFromUser {
         val idMsg = (cmd.body.get \ "id").as[String]
         val columnTitle = (cmd.body.get \ "columnTitle").as[String]
         Endpoints.getConfig(serviceName).map { service =>
-          service.parserDetails.map { parser =>
             service.starer.map( _.star(idUser, idMsg).map { response =>
               detailsSkimbo(internalIdUser, serviceName, idMsg, columnTitle)
               Logger(CmdFromUser.getClass).info(response.body.toString)
               if(service.canParseResultStar) {
-                parser.getSkimboMsg(response, service.provider).map { listMsg =>
-                  val msg = Json.obj("column" -> columnTitle, "msg" -> listMsg.head)
-                  CmdToUser.sendTo(internalIdUser, Command("msg", Some(msg)))
+                service.parserDetails.map { parser =>
+                  parser.getSkimboMsg(response, service.provider).map { listMsg =>
+                    val msg = Json.obj("column" -> columnTitle, "msg" -> listMsg.head)
+                    CmdToUser.sendTo(internalIdUser, Command("msg", Some(msg)))
+                  }
                 }
               }
-            })
-          }
+          })
         }
       }
       case "paramHelperSearch" => {

@@ -37,6 +37,4 @@ object Scoopit extends OAuthProvider {
     }
   }
   
-  override def urlToStar(idProvider:String) = "http://www.scoop.it/api/1/post?action=thank&id="+idProvider
-
 }

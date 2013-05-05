@@ -7,7 +7,7 @@ import services.auth._
 import play.api.libs.ws.Response
 import models.user.SkimboToken
 import java.net.URLEncoder
-import services.post.Starer
+import services.star.Starer
 import parser.json.providers.TwitterUser
 import services.commands.CmdToUser
 
@@ -37,8 +37,6 @@ object Twitter extends OAuthProvider {
     response.status != 200 && response.status != 429 && response.status != 404
   
   override def isRateLimiteError(response: Response): Boolean = response.status == 429
-  
-  override def urlToStar(idProvider:String) = "https://api.twitter.com/1.1/statuses/retweet/"+idProvider+".json"
   
 }
 

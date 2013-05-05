@@ -7,10 +7,6 @@ trait GenericCommenter extends Commenter {
     val params = commentParams(idUser, comment)
     val headers = commentHeaderParams
     val content = commentContent(comment)
-    println("GENERICCOMMENTER url ==> "+url)
-    println("GENERICCOMMENTER params ==> "+params)
-    println("GENERICCOMMENTER headers ==> "+headers)
-    println("GENERICCOMMENTER content ==> "+content)
     authProvider.post(idUser, url, params, headers, content)
   }
   

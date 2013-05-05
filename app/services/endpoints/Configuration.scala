@@ -9,7 +9,7 @@ import parser.json.detail._
 import services.auth.RssProvider
 import parser.xml.GenericRssParser
 import parser.GenericParser
-import services.post.Starer
+import services.star.Starer
 import parser.GenericParserUser
 import parser.GenericParserParamHelper
 import services.auth.providers.Bitbucket
@@ -18,6 +18,10 @@ import services.comment.TwitterCommenter
 import services.comment.FacebookCommenter
 import services.comment.ScoopitCommenter
 import services.comment.LinkedInCommenter
+import services.star.TwitterStarer
+import services.star.FacebookStarer
+import services.star.LinkedInStarer
+import services.star.ScoopitStarer
 
 object Configuration {
 
@@ -31,7 +35,7 @@ object Configuration {
       override val uniqueName = "twitter.wall"
       override val parserDetails = Some(TweetDetails)
       override val urlDetails = "https://api.twitter.com/1.1/statuses/show.json?id=:id"
-      override val starer = Some(providers.Twitter)
+      override val starer = Some(TwitterStarer)
       override val canParseResultStar = true
       override val commenter = Some(TwitterCommenter)
     }
@@ -46,6 +50,7 @@ object Configuration {
       override val uniqueName = "twitter.user"
       override val paramParserHelper = Some(TwitterUser)
       override val paramUrlHelper = Some("https://api.twitter.com/1.1/users/search.json?q=:search&count=10")
+      override val starer = Some(TwitterStarer)
       override val commenter = Some(TwitterCommenter)
     }
     object hashtag extends EndpointConfig {
@@ -57,6 +62,7 @@ object Configuration {
       override val parser = Some(TwitterHashtagParser)
       override val mustBeReordered = true
       override val uniqueName = "twitter.hashtag"
+      override val starer = Some(TwitterStarer)
       override val commenter = Some(TwitterCommenter)
     }
     object directMessage extends EndpointConfig {
@@ -74,6 +80,7 @@ object Configuration {
       override val provider = providers.Twitter
       override val parser = Some(TwitterTimelineParser)
       override val uniqueName = "twitter.messageToMe"
+      override val starer = Some(TwitterStarer)
       override val commenter = Some(TwitterCommenter)
     }
 //    object connect extends EndpointConfig {
@@ -95,7 +102,7 @@ object Configuration {
       override val uniqueName = "facebook.wall"
       override val parserDetails = Some(FacebookPostDetails)
       override val urlDetails = "https://graph.facebook.com/:id"
-      override val starer = Some(providers.Facebook)
+      override val starer = Some(FacebookStarer)
       override val commenter = Some(FacebookCommenter)
     }
     object notification extends EndpointConfig {
@@ -108,7 +115,7 @@ object Configuration {
       override val uniqueName = "facebook.notification"
       override val parserDetails = Some(FacebookPostDetails)
       override val urlDetails = "https://graph.facebook.com/:id"
-      override val starer = Some(providers.Facebook)
+      override val starer = Some(FacebookStarer)
       override val commenter = Some(FacebookCommenter)
     }
     object user extends EndpointConfig {
@@ -122,6 +129,7 @@ object Configuration {
       override val uniqueName = "facebook.user"
       override val paramParserHelper = Some(FacebookUser)
       override val paramUrlHelper = Some("https://graph.facebook.com/search?q=:search&limit=10&type=user&fields=name,picture")
+      override val starer = Some(FacebookStarer)
       override val commenter = Some(FacebookCommenter)
     }
     object group extends EndpointConfig {
@@ -135,6 +143,7 @@ object Configuration {
       override val uniqueName = "facebook.group"
       override val paramParserHelper = Some(FacebookUser)
       override val paramUrlHelper = Some("https://graph.facebook.com/search?q=:search&limit=10&type=group&fields=name,picture")
+      override val starer = Some(FacebookStarer)
       override val commenter = Some(FacebookCommenter)
     }
     object page extends EndpointConfig {
@@ -148,6 +157,7 @@ object Configuration {
       override val uniqueName = "facebook.page"
       override val paramParserHelper = Some(FacebookUser)
       override val paramUrlHelper = Some("https://graph.facebook.com/search?q=:search&limit=10&type=page&fields=name,picture")
+      override val starer = Some(FacebookStarer)
       override val commenter = Some(FacebookCommenter)
     }
     object message extends EndpointConfig {
@@ -203,7 +213,10 @@ object Configuration {
       override val provider = providers.LinkedIn
       override val parser = Some(LinkedInWallParser)
       override val uniqueName = "linkedin.wall"
+      override val parserDetails = Some(LinkedInPostDetails)
+      override val urlDetails = "http://www.scoop.it/api/1/post?id=:id"
       override val commenter = Some(LinkedInCommenter)
+      override val starer = Some(LinkedInStarer)
     }
   }
 
@@ -270,7 +283,7 @@ object Configuration {
       override val uniqueName = "scoopit.wall"
       override val parserDetails = Some(ScoopitPostDetails)
       override val urlDetails = "http://www.scoop.it/api/1/post?id=:id"
-      override val starer = Some(providers.Scoopit)
+      override val starer = Some(ScoopitStarer)
       override val commenter = Some(ScoopitCommenter)
     }
   }

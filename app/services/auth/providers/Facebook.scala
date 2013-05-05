@@ -63,6 +63,4 @@ object Facebook extends OAuth2Provider {
     }
   }
   
-  override def urlToStar(idProvider:String) = "https://graph.facebook.com/"+idProvider+"/likes"
-
 }
