@@ -2,6 +2,8 @@ package services.comment
 
 import models.Comment
 import services.auth.AuthProvider
+import scala.concurrent.Future
+import play.api.libs.ws.Response
 
 trait Commenter {
 
@@ -17,7 +19,7 @@ trait Commenter {
 
   def commentContent(comment: Comment): String = ""
 
-  def comment(idUser: String, comment: Comment)
+  def comment(idUser: String, comment: Comment): Future[Response]
 
 }
 

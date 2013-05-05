@@ -41,7 +41,7 @@ object FacebookWallParser extends GenericJsonParser {
           e.createdAt,
           Nil,
           e.nbLikes,
-          Some(e.link),
+          generateLink(e),
           (e.createdAt.getMillis() / 1000).toInt.toString,
           e.picture.orElse(Some(imageUrl.replace(":id", e.fromId.toString))),
           Configuration.Facebook.wall))
@@ -55,6 +55,21 @@ object FacebookWallParser extends GenericJsonParser {
 
   def generateMessage(e: FacebookWallMessage) = {
     e.message.orElse(e.story)
+  }
+  
+  def generateLink(e: FacebookWallMessage) = {
+    if(e.link.isEmpty) {
+      val ids = e.id.split("_")
+      if(ids.length > 1) {
+        Some("http://www.facebook.com/"+ids(0)+"/posts/"+ids(1))
+      } else if(!ids.isEmpty) {
+        Some("http://www.facebook.com/"+ids(0))
+      } else {
+        Some("http://www.facebook.com/")
+      }
+    } else {
+      Some(e.link)
+    }
   }
 
 }

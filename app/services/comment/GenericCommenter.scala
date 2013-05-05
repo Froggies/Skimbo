@@ -1,10 +1,5 @@
 package services.comment
 
-import play.api.mvc.RequestHeader
-import scala.util.Success
-import scala.util.Failure
-import play.api.libs.concurrent.Execution.Implicits.defaultContext
-
 trait GenericCommenter extends Commenter {
 
   def comment(idUser: String, comment:models.Comment) = {
@@ -16,14 +11,7 @@ trait GenericCommenter extends Commenter {
     println("GENERICCOMMENTER params ==> "+params)
     println("GENERICCOMMENTER headers ==> "+headers)
     println("GENERICCOMMENTER content ==> "+content)
-    authProvider.post(idUser, url, params, headers, content).onComplete {
-      case Success(response) => {
-        println(response.body.toString)
-      }
-      case Failure(error) => {
-        println(error)
-      }
-    }
+    authProvider.post(idUser, url, params, headers, content)
   }
   
 }

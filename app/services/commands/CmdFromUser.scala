@@ -20,6 +20,11 @@ import services.endpoints.JsonRequest.UnifiedRequest
 import services.actors.FetcherParameter
 import java.net.URLEncoder
 import services.comment.Commenters
+import play.api.mvc.RequestHeader
+import scala.util.Success
+import scala.util.Failure
+import play.api.libs.concurrent.Execution.Implicits.defaultContext
+import models.command.Error
 
 object CmdFromUser {
 
@@ -186,13 +191,19 @@ object CmdFromUser {
       case "comment" => {
         val jsComment = Json.fromJson[Comment](cmd.body.get)
         jsComment.asOpt.map { comment =>
-          println("js found ==> "+comment)
           Endpoints.getConfig(comment.serviceName).map { service =>
-            println("service found ==> "+service.provider.name)
-            Commenters.getCommenter(service.provider.name).map { service =>
-              println("commenter found ==> send comment")
-              service.comment(idUser, comment)
-              //TODO finish comments detailsSkimbo(internalIdUser, comment.serviceName, comment.providerId, comment.columnTitle)
+            Commenters.getCommenter(service.provider.name).map { commenter =>
+              commenter.comment(idUser, comment).onComplete {
+                case Success(response) => {
+                  if(response.status != 200) {
+                    CmdToUser.sendTo(internalIdUser, Error(service.provider.name, "You can't comment", Some(comment.columnTitle)))
+                  }
+                  detailsSkimbo(internalIdUser, comment.serviceName, comment.providerId, comment.columnTitle)
+                }
+                case Failure(error) => {
+                  CmdToUser.sendTo(internalIdUser, Error(service.provider.name, "You can't comment", Some(comment.columnTitle)))
+                }
+              }
             }
           }
         }
