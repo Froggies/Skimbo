@@ -170,6 +170,7 @@ object CmdFromUser {
           service.paramParserHelper.map { parser =>
             service.paramUrlHelper.map { url =>
               service.provider.fetch(idUser, url.replace(":search", URLEncoder.encode(search, "UTF-8"))).withTimeout(service.delay * 1000).get.map { response =>
+                println("param helper for " + search + " : " + response.body.toString)
                 parser.getParamsHelper(idUser, response, service.provider).map { params =>
                   val msg = Json.obj("serviceName" -> serviceName, "values" -> params)
                   CmdToUser.sendTo(internalIdUser, Command("paramHelperSearch", Some(msg)))

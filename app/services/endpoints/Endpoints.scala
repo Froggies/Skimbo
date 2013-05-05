@@ -47,7 +47,8 @@ object Endpoints {
     Endpoint(Trello, Seq(
       Configuration.Trello.notifications)),
     Endpoint(Scoopit, Seq(
-      Configuration.Scoopit.wall)),
+      Configuration.Scoopit.wall,
+      Configuration.Scoopit.topic)),
     Endpoint(BetaSeries, Seq(
       Configuration.BetaSeries.planning,
       Configuration.BetaSeries.timeline)),

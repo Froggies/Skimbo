@@ -286,6 +286,20 @@ object Configuration {
       override val starer = Some(ScoopitStarer)
       override val commenter = Some(ScoopitCommenter)
     }
+    object topic extends EndpointConfig {
+      override val url = withLimit("http://www.scoop.it/api/1/topic?count=:limit&id=:id")
+      override val since = Some("&since=:since") // ts
+      override val requiredParams = List("id")
+      override val paramParserHelper = Some(ScoopitTopicParamHelper)
+      override val paramUrlHelper = Some("http://www.scoop.it/api/1/search?type=topic&query=:search")
+      override val provider = providers.Scoopit
+      override val parser = Some(ScoopitTopic)
+      override val uniqueName = "scoopit.topic"
+      override val parserDetails = Some(ScoopitPostDetails)
+      override val urlDetails = "http://www.scoop.it/api/1/post?id=:id"
+      override val starer = Some(ScoopitStarer)
+      override val commenter = Some(ScoopitCommenter)
+    }
   }
   
   object BetaSeries {
