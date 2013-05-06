@@ -8,12 +8,13 @@ import models.Skimbo
 import parser.json.GenericJsonParser
 import services.auth.providers.Facebook
 import services.endpoints.Configuration
+import parser.json.PathDefaultReads
 
 case class FacebookInboxMessage(
   id: String,
   updatedAt: DateTime,
   users: Seq[FacebookInBoxUser],
-  data: Option[Seq[FacebookInboxData]] = None
+  data: Seq[FacebookInboxData]
 )
 
 case class FacebookInBoxUser(
@@ -60,9 +61,11 @@ object FacebookInboxParser extends GenericJsonParser {
   
   def generateMessage(e: FacebookInboxMessage) = {
     val res = new StringBuilder
-    e.data.map { data =>
+    if(e.data.isEmpty) {
+      res ++= "Has wrote new message for you !"
+    } else {
       res ++= "<div><ul>"
-      data.map { msg =>
+      e.data.foreach { msg =>
         res ++= "<li>"
         res ++= msg.from.map(_.name).getOrElse("private")
         res ++= " : "
@@ -70,7 +73,7 @@ object FacebookInboxParser extends GenericJsonParser {
         res ++= "</li>"
       }
       res ++= "</ul></div>"
-    }.getOrElse(res ++= "Has wrote new message for you !")
+    }
     res toString
   }
   
@@ -93,5 +96,6 @@ object FacebookInboxMessage {
     (__ \ "id").read[String] and
     (__ \ "updated_time").read[DateTime](Reads.jodaDateReads("yyyy-MM-dd'T'HH:mm:ssZZ")) and
     (__ \ "to" \ "data").read[Seq[FacebookInBoxUser]] and
-    (__ \ "comments" \ "data").readNullable[Seq[FacebookInboxData]])(FacebookInboxMessage.apply _)
+    PathDefaultReads.default((__ \ "comments" \ "data"), Seq[FacebookInboxData]()))(FacebookInboxMessage.apply _)
+    //(__ \ "comments" \ "data").readNullable[Seq[FacebookInboxData]])(FacebookInboxMessage.apply _)
 }
