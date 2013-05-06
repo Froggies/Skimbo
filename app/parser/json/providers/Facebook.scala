@@ -82,7 +82,7 @@ object FacebookWallMessage {
     (__ \ "type").read[String] and
     (__ \ "status_type").readNullable[String] and
     PathDefaultReads.default((__ \ "likes" \ "count"), 0) and
-    (__ \ "comments" \ "count").readNullable[Int].map(e => e.getOrElse(0)) and
+    PathDefaultReads.default((__ \ "comments" \ "count"), 0) and
     (__ \ "created_time").read[DateTime](Reads.jodaDateReads("yyyy-MM-dd'T'HH:mm:ssZZ")) and
     PathDefaultReads.default(((__ \ "actions")(0) \\ "link"), "") and
     (__ \ "message").readNullable[String] and
