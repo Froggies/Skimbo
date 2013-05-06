@@ -67,8 +67,13 @@ app.controller('NotificationController', [
       }
     }
 
-    $scope.closeNotification = function(index) {
-      $scope.notifications.splice(index, 1);
+    $scope.closeNotification = function(notification) {
+      var index = $arrayUtils.indexOfWith($scope.notifications, notification, function(inArray, data) {
+        return inArray.providerName == data.providerName && inArray.msg == data.msg;
+      });
+      if(index > -1) {
+        $scope.notifications.splice(index, 1);
+      }
     }
 
 }]);
