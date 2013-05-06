@@ -1,13 +1,14 @@
 'use strict';
 
 define(["app"], function(app) {
-  app.directive('onKeyPress', ['ArrayUtils', function($arrayUtils) {
+  app.directive('onKeyPress', ['ArrayUtils', '$timeout', function($arrayUtils, $timeout) {
 
-    var allCallback = {};
+    var allCallback = {/*charCode, [{ ctrl, elmt, global, scope, onKeyPress, uniqueKey }]*/};
+    var uniqueKey = 0;
 
     function findIndexCallback(charCode, element) {
       var index = $arrayUtils.indexOfWith(allCallback[charCode], element, function(element1, element2) {
-        return (element1.globalKey == "true" || angular.equals(element1.element, element2));
+        return (element1.globalKey == "true" || angular.equals(element1.element[0], element2[0]));
       });
       return index;
     }
@@ -19,8 +20,10 @@ define(["app"], function(app) {
       }
     }
 
-    function deleteCallback(charCode, element) {
-      var index = findIndexCallback(charCode, element);
+    function deleteCallback(charCode, uniqueKey) {
+      var index = $arrayUtils.indexOfWith(allCallback[charCode], uniqueKey, function(element1, uniqueKey) {
+        return element1.uniqueKey === uniqueKey;
+      });
       if(index > -1) {
         allCallback[charCode].splice(index, 1);
       }
@@ -53,16 +56,19 @@ define(["app"], function(app) {
       restrict : 'A',
       link : function($scope, $element, $attr) {
         allCallback[$attr.onKeyPress] = allCallback[$attr.onKeyPress] || [];
+        var uk = uniqueKey;
         allCallback[$attr.onKeyPress].push({
           ctrlKeyCheck: $attr.ctrlKeyCheck,
           scope: $scope,
           onKeyPressExec: $attr.onKeyPressExec,
           element: $element,
-          globalKey: $attr.globalKey
+          globalKey: $attr.globalKey,
+          uniqueKey: uk
         });
         $element.bind("$destroy", function() {
-          deleteCallback($attr.onKeyPress, $element);
+          deleteCallback($attr.onKeyPress, uk);
         });
+        ++uniqueKey;
       }
     }
   }]);

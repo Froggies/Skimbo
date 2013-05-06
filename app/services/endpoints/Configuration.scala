@@ -291,7 +291,7 @@ object Configuration {
       override val since = Some("&since=:since") // ts
       override val requiredParams = List("id")
       override val paramParserHelper = Some(ScoopitTopicParamHelper)
-      override val paramUrlHelper = Some("http://www.scoop.it/api/1/search?type=topic&query=:search")
+      override val paramUrlHelper = Some("http://www.scoop.it/api/1/search?type=topic&query=:search&count=10")
       override val provider = providers.Scoopit
       override val parser = Some(ScoopitTopic)
       override val uniqueName = "scoopit.topic"

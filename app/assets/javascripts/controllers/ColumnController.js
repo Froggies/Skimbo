@@ -96,13 +96,8 @@ app.controller('ColumnController', [
     $rootScope.$on('delColumn', function(evt, column) {
       var index = $arrayUtils.indexOf($scope.columns, column, "title");
       if(index > -1) {
-        if(!$scope.$$phase) {
-          $scope.$apply(function() {
-            $scope.columns.splice(index, 1);
-          });
-        } else {
-          $scope.columns.splice(index, 1);
-        }
+        $scope.columns.splice(index, 1);
+        $scope.$apply();
       }
     });
 
