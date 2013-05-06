@@ -325,12 +325,17 @@ h2 a:hover {
   background: url(../images/skimbo.png) no-repeat -1px;
 }
 
+.froggiesIcon {
+  padding-left: 25px;
+  background: url(../images/froggies-min.png) no-repeat -1px;
+}
+
 .froggiesLink {
   text-align: center;
   display: block;
 }
 
-.froggiesIcon {
+.froggiesBtn {
   width: 30px;
   margin: 0;
   background-color: #fff;
@@ -346,6 +351,24 @@ h2 a:hover {
   height: 40px; 
   line-height: 40px; 
   vertical-align: top;
+}
+
+.person {
+  display: inline-block;
+  vertical-align: top;
+}
+
+.person .social img {
+  max-width: 25px;
+  margin-top: 5px;
+}
+
+.person .name {
+  font-weight: bold;
+}
+
+.person .role {
+  color: lihgtgrey;
 }
 
 
