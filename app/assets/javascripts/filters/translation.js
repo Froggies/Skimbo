@@ -30,7 +30,7 @@ app.filter('i18n', ['$rootScope', function($rootScope) {
         'CREATE' : 'Créer !',
         'DELETE' : 'Supprimer',
         'MESSAGES' : 'Messages',
-        'NEW_MGS_UNREAD' : 'nouveaux messages. Click pour tout lire.',
+        'NEW_MGS_UNREAD' : 'nouveaux messages. Clic pour tout lire.',
         'POSTER_REQUIRED' : 'Au moins un réseau est requis.',
         'REFRESH_DETAILS' : 'Rafraîchir/Voir les détails',
         'RESIZE_COLUMN' : 'Modifier la taille de la colonne.',
