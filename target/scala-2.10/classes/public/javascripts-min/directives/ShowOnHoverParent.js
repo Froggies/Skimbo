@@ -1,1 +1,0 @@
-define(["app"],function(e){e.directive("showonhoverparent",[function(){return{link:function(e,t,n){t[0].hidden=!0,t.parent().bind("mouseenter",function(){t[0].hidden=!1}),t.parent().bind("mouseleave",function(){t[0].hidden=!0})}}}])})
