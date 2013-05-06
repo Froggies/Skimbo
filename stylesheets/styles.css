@@ -256,7 +256,7 @@ header ul {
   padding:0;
 }
 
-header li {
+header li, .skimboBtn {
   display: inline-block;
 
 	list-style-type: none;
@@ -282,7 +282,7 @@ header li {
 
 }
 
-header li:hover {
+header li:hover, .skimboBtn:hover {
 	background: #C3001D;
 	background: -moz-linear-gradient(top, #C3001D 0%, #950119 100%);
   background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#f8f8f8), color-stop(100%,#dddddd));
@@ -292,7 +292,7 @@ header li:hover {
   background: linear-gradient(top, #C3001D 0%,#950119 100%);
 }
 
-a.buttons {
+a.buttons, .skimboBtn {
 	-webkit-font-smoothing: antialiased;
 	font-weight: normal;
 	text-shadow: rgba(0, 0, 0, 0.4) 0 -1px 0;
@@ -303,7 +303,7 @@ a.github {
 	background: url(../images/octocat-small.png) no-repeat 1px;
 }
 
-a.buttons:hover {
+a.buttons:hover, .skimboBtn:hover {
 	color: #fff;
 	text-decoration: none;
 }
@@ -317,7 +317,9 @@ h2 a:hover {
 }
 
 .skimboBtn {
-  float: right;
+  color: white;
+  line-height: 30px;
+  text-align: center;
 }
 
 .skimboIcon {
