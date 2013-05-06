@@ -1,6 +1,6 @@
 <div ng-controller="HeaderController" id="header-general">
 	<div id="logo">
-		<!--<img ng-hide="loading" src="/assets/img/skimbo-acote_40.png" width="114" height="40">-->
+		<img ng-hide="loading" src="/assets/img/skimbo-acote_40.png" width="114" height="40" ng-hide="loading">
 		<div id="loader" ng-show="loading">
 			<img src="/assets/img/loader.gif" width="40" height="40">{{loadingMsg | i18n}}
 		</div>
