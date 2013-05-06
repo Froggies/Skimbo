@@ -56,7 +56,8 @@ object Posters {
       Json.obj(
         "service" -> service.name,
         "hasToken" -> service.hasToken(idUser),
-        "canHavePageId" -> service.canHavePageId)
+        "canHavePageId" -> service.canHavePageId,
+        "tokenProvider" -> service.authProvider.name)
     }
     Json.toJson(services)
   }

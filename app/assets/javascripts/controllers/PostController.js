@@ -60,7 +60,7 @@ app.controller('PostMessageController', [
             provider.arg.possibleValues = [];
           }
         }
-        console.log($scope.providersWithTitle);
+        console.log($scope.providers);
       });
     });
 
@@ -87,7 +87,7 @@ app.controller('PostMessageController', [
       if(poster.hasToken == true) {
         poster.selected = !poster.selected;
       } else {
-        $popupProvider.openPopup(poster, function() {
+        $popupProvider.openPopup({name:poster.tokenProvider}, function() {
           poster.selected = !poster.selected;
           $network.send({cmd:"allUnifiedRequests"});
           $network.send({cmd:"allPosters"});
