@@ -60,13 +60,14 @@ object Endpoints {
     endpoints
   }
   
+  def getGenericProvider(provider: String): Option[GenericProvider] = {
+    val found = endpoints.filter { _.provider.name == provider }
+    found.headOption.map(_.provider)
+  }
+  
   def getProvider(service: String): Option[GenericProvider] = {
     val found = endpoints.filter { _.services.filter { _.uniqueName == service }.size > 0 }
-    if (found.size > 0) {
-      Some(found.head.provider)
-    } else {
-      None
-    }
+    found.headOption.map(_.provider)
   }
 
   def getConfig(service: String): Option[EndpointConfig] = {
