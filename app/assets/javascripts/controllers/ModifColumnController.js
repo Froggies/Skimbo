@@ -88,6 +88,16 @@ app.controller('ModifColumnController', [
       });
     });
 
+    $rootScope.$on('delColumn', function(evt, column) {
+      var index = $arrayUtils.indexOfWith($scope.columnsTitle, column, function(inArray, column) {
+        return inArray == column.title;
+      });
+      if(index > -1) {
+        $scope.columnsTitle.splice(index, 1);
+        $scope.$apply();
+      }
+    });
+
     $scope.show = function(column) {
       resetView();
       $scope.showModifyColumn = !$scope.showModifyColumn;
