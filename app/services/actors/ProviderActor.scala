@@ -1,40 +1,29 @@
 package services.actors;
 
-import scala.Option.option2Iterable
 import scala.concurrent.duration.DurationInt
-import scala.util.Failure
-import scala.util.Success
+
 import org.joda.time.DateTime
+
 import akka.actor.Actor
-import akka.actor.ActorSystem
-import akka.actor.Props
 import akka.actor.ReceiveTimeout
 import akka.actor.actorRef2Scala
-import parser.GenericParser
+import models.Skimbo
 import models.command.Command
-import models.command.Error
-import models.command.TokenInvalid
 import models.user.Column
+import parser.GenericParser
 import play.api.Logger
 import play.api.UnexpectedException
-import play.api.http.Status
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
-import play.api.libs.iteratee.Concurrent
 import play.api.libs.iteratee.Enumerator
 import play.api.libs.iteratee.Iteratee
-import play.api.libs.json.JsValue
 import play.api.libs.json.Json
 import play.api.libs.json.Json.toJsFieldJsValueWrapper
-import play.api.mvc.RequestHeader
 import play.libs.Akka
 import services.auth.GenericProvider
+import services.commands.CmdToUser
 import services.endpoints.EndpointConfig
 import services.endpoints.Endpoints
 import services.endpoints.JsonRequest.UnifiedRequest
-import models.Skimbo
-import services.auth.AuthProvider
-import services.commands.CmdToUser
-import akka.actor.ActorRef
 
 sealed case class ProviderActorParameter(
   provider: GenericProvider,
