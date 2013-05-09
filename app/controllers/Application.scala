@@ -28,10 +28,14 @@ object Application extends Controller {
   def authenticate(providerName: String) = Action { implicit request =>
     val providerOpt  = ProviderDispatcher(providerName);
     val userOpt = session.get("id").map(User.create)
+    val isMobile = request.cookies.get("isMobile").map(_.value)
 
     providerOpt.map(provider => 
-      userOpt.map(_ => provider.auth(routes.Application.closePopup))
-      .getOrElse(provider.auth(routes.Application.index))) 
+      userOpt.map(_ => isMobile.map(_ => provider.auth(routes.Mobile.end).discardingCookies("isMobile"))
+          .getOrElse(provider.auth(routes.Application.closePopup)))
+      .getOrElse(
+          isMobile.map(_ => provider.auth(routes.Mobile.end).discardingCookies("isMobile"))
+          .getOrElse(provider.auth(routes.Application.index))))
     .getOrElse(BadRequest)
   }
 

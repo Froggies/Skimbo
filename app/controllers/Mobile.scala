@@ -18,9 +18,24 @@ import services.commands.CmdToUser
 import services.actors.PingActor
 import play.api.libs.Comet
 import play.api.libs.EventSource
+import services.auth.ProviderDispatcher
+import play.api.mvc.Call
+import play.api.mvc.Cookie
 
 object Mobile extends Controller {
 
+  def end() = Action { implicit request =>
+    Ok(views.html.mobileEndAuthentication()).withCookies(
+      Cookie("tokenSkimbo", session.get("id").getOrElse("Error in id !"))
+    )
+  }
+  
+  def authenticate(providerName: String) = Action { implicit request =>
+    ProviderDispatcher(providerName).map(provider => 
+      provider.auth(routes.Mobile.end).withCookies(Cookie("isMobile", "true")))
+    .getOrElse(BadRequest)
+  }
+  
   def login(provider: String, token: String) = Action {
     Logger("Mobile").info("MOBILE ==> " + provider + "  ::  " + token)
     val session = UUID.randomUUID().toString
