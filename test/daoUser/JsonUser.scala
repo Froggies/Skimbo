@@ -1,12 +1,11 @@
 package daoUser
 
-import org.specs2.mutable._
-import play.api.test._
-import play.api.test.Helpers._
-import json.parser._
-import json.Skimbo
-import play.api.libs.json.Json
+import scala.Option.option2Iterable
+
+import org.specs2.mutable.Specification
+
 import models.user.Column
+import play.api.libs.json.Json
 
 class JsonUser extends Specification {
 

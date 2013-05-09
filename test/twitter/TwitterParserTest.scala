@@ -3,9 +3,10 @@ package test.twitter
 import org.specs2.mutable._
 import play.api.test._
 import play.api.test.Helpers._
-import json.parser._
-import json.Skimbo
 import play.api.libs.json.Json
+import parser.json.providers.TwitterTimelineParser
+import parser.json.providers.Tweet
+import parser.json.providers.TwitterHashtagParser
 
 object TwitterParserTest extends Specification {
 

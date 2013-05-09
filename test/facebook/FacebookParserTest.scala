@@ -3,9 +3,9 @@ package facebook
 import org.specs2.mutable._
 import play.api.test._
 import play.api.test.Helpers._
-import json.parser._
-import json.Skimbo
 import play.api.libs.json.Json
+import parser.json.providers.FacebookWallParser
+import parser.json.providers.FacebookWallMessage
 
 object FacebookParserTest extends Specification {
 
@@ -15,7 +15,7 @@ object FacebookParserTest extends Specification {
       jsonMsg.size must beEqualTo(1)
       val msg = Json.fromJson[FacebookWallMessage](jsonMsg(0)).get
       msg.fromName must beEqualTo("Olivier Clavel")
-      msg.link.get must beEqualTo("https://www.facebook.com/644378010/posts/10151239069468011")
+      msg.link must beEqualTo("https://www.facebook.com/644378010/posts/10151239069468011")
     }
 
     "Read json from complexe API json" in {
