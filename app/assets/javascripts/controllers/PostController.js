@@ -119,7 +119,7 @@ app.controller('PostMessageController', [
         $scope.showErrorContentRequired = true;
       } else {
         var o = {
-          cmd:"post",
+          cmd: "post",
           body: {
             providers:selectedProviders,
             post: {
@@ -129,6 +129,10 @@ app.controller('PostMessageController', [
               url_image: $scope.image
             }
           }
+        }
+        if($scope.isDelayedPost == true) {
+          o.cmd = "delayedPost";
+          o.body.timeToPost = moment.utc(moment($scope.timeToPost, "DD-MM-YYYY HH:mm")).valueOf();
         }
         console.log(o);
         $network.send(o);
@@ -150,6 +154,8 @@ app.controller('PostMessageController', [
       $scope.showErrorPosterRequired = false;
       $scope.showErrorTitleRequired = false;
       $scope.showErrorContentRequired = false;
+      $scope.isDelayedPost = false;
+      $scope.timeToPost = "";
     }
 
   }]);

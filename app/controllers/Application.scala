@@ -2,9 +2,7 @@ package controllers
 
 import java.io.File
 import java.net.URLDecoder
-
 import scala.concurrent.ExecutionContext.Implicits.global
-
 import models.Service
 import models.User
 import play.api.Routes
@@ -12,9 +10,13 @@ import play.api.libs.ws.WS
 import play.api.mvc.Action
 import play.api.mvc.Controller
 import services.auth.ProviderDispatcher
+import services.commands.DelayedPostPolling
 
 object Application extends Controller {
 
+  //start polling delayed
+  private val pollDelayedPost = DelayedPostPolling
+  
   def index = Action { implicit request =>
     session.get("id")
       .map(_ => Ok(views.html.unified()))

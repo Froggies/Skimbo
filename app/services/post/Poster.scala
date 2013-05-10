@@ -10,6 +10,7 @@ import services.auth.AuthProvider
 import models.ParamHelper
 import scala.concurrent.Future
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
+import play.api.libs.ws.Response
 
 trait Poster {
 
@@ -29,7 +30,7 @@ trait Poster {
 
   def postContent(post: Post): String = ""
 
-  def post(idUser: String, post: Post)
+  def post(idUser: String, post: Post): Future[Response]
 
   def helperPageId(idUser: String, search: String): Future[Seq[ParamHelper]] = Future(Seq.empty)
 

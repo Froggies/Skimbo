@@ -72,7 +72,11 @@
           </div>
         </li>
       </ul>
-      <input type="button" class="button" value="Ok" ng-click="post()" />
+      <div>
+        {{'SEND_LATER' | i18n}} <input type="checkbox" ng-model="isDelayedPost" />
+        <input type="textinput" placeholder="JJ/MM/AAAA HH:MM" ng-model="timeToPost" ng-show="isDelayedPost" />
+        <input type="button" class="button" value="{{'SEND' | i18n}}" ng-click="post()" />
+      </div>
     </div>
   <div>
 </div>

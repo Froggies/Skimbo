@@ -26,6 +26,9 @@ import scala.util.Failure
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import models.command.Error
 import play.api.http.Status
+import services.dao.DelayedPostDao
+import models.command.DelayedPost
+import models.command.PostDelayedProvider
 
 object CmdFromUser {
 
@@ -131,9 +134,27 @@ object CmdFromUser {
           val post = Json.fromJson[Post]((cmd.body.get \ "post").as[JsValue]).get
           val toPost = Post(post.title, post.message, post.url, post.url_image, providerPageId)
           Posters.getPoster(providerName).
-            map( _.post(idUser, toPost)).
+            map( _.post(idUser, toPost).onComplete {
+              case Success(response) => {
+                
+              }
+              case Failure(error) => {
+                
+              }
+            }).
             getOrElse(Logger(CmdFromUser.getClass).error("not found poster "+providerName))
         }
+      }
+      case "delayedPost" => {
+        val jsonProviders = (cmd.body.get \ "providers").as[Seq[JsObject]]
+        val providers = jsonProviders.map { jsonProvider =>
+          val providerName = (jsonProvider \ "name").as[String]
+          val providerPageId = (jsonProvider \ "toPageId").asOpt[String]
+          PostDelayedProvider(providerName, providerPageId)
+        }
+        val post = Json.fromJson[Post]((cmd.body.get \ "post").as[JsValue]).get
+        val timeToPost = Json.fromJson[Long]((cmd.body.get \ "timeToPost").as[JsValue]).get
+        DelayedPostDao.add(DelayedPost(idUser, post, providers, timeToPost))
       }
       case "detailsSkimbo" => {
         val serviceName = (cmd.body.get \ "serviceName").as[String]
