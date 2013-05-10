@@ -61,6 +61,7 @@ app.controller('PostMessageController', [
           }
         }
         console.log($scope.providers);
+        $rootScope.$broadcast('loading', {loading: false, translationCode: 'GET_TOKEN_PROGRESS'});
       });
     });
 

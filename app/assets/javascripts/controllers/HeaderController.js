@@ -32,12 +32,10 @@ app.controller('HeaderController', [
   });
 
   $rootScope.$on('loading', function(evt, data) {
-    $scope.$apply(function() {
-      $scope.loading = data.loading;
-      if($scope.loading == true) {
-        $scope.loadingMsg = data.translationCode;
-      }
-    });
+    $scope.loading = data.loading;
+    if($scope.loading == true) {
+      $scope.loadingMsg = data.translationCode;
+    }
   });
 
   $rootScope.$on('userInfos', function(evt, data) {

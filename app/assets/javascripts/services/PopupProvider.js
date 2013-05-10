@@ -2,7 +2,7 @@
 
 define(["app"], function(app) {
 
-app.factory("PopupProvider", ["Network", function($network) {
+app.factory("PopupProvider", ["Network", "$rootScope", function($network, $rootScope) {
 
   return {
     openPopup: function(socialNetwork, optionalCallback) {
@@ -51,6 +51,9 @@ app.factory("PopupProvider", ["Network", function($network) {
       if (newwindow !== undefined && window.focus) {
         newwindow.focus();
       }
+
+      $rootScope.$broadcast('loading', {loading: true, translationCode: 'GET_TOKEN_PROGRESS'});
+
       return false;
     }
   }

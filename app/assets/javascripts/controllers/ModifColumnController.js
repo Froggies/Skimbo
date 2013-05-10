@@ -64,6 +64,7 @@ app.controller('ModifColumnController', [
           }
         };
         addGoogleReader();
+        $rootScope.$broadcast('loading', {loading: false, translationCode: 'GET_TOKEN_PROGRESS'});
       });
     });
 
