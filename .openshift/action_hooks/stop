@@ -11,22 +11,15 @@ if [[ ! $? -eq 0 ]]; then
 	exit $?
 fi
 
-#kill play if it was running
-if [[ -f "server.pid" ]]; then
+RUNNING_PID=${OPENSHIFT_REPO_DIR}/RUNNING_PID
 
-	if [[ ! -f $PLAY_COMMAND ]]; then
-		echo "Error: couldn't find play executable at $PLAY_COMMAND"
-		exit 1
-	fi
+#kill play if it was running
+if [[ -f $RUNNING_PID ]]; then
 
 	echo "Stopping play application"
-	bash -c "$PLAY_COMMAND stop &> $LOG_FILE" &> /dev/null
+	kill `cat $OPENSHIFT_REPO_DIR/RUNNING_PID` && sleep 5;
+	bash -c "rm $OPENSHIFT_REPO_DIR/RUNNING_PID &> $LOG_FILE" &> /dev/null
 
-	#manually remove server.pid if it's there
-	if [[ -f "server.pid" ]]; then
-		echo "Manually removing server.pid file"
-		bash -c "rm server.pid &> $LOG_FILE" &> /dev/null
-	fi
 fi
 
 #it survived, try to kill it manually
