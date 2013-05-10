@@ -12,6 +12,7 @@ define(["app"], function(app) {
         if(service !== undefined && element != undefined && service.service == objRes.serviceName) {
           scope.$apply(function() {
             putResIn.possibleValues = objRes.values;
+            $rootScope.$broadcast('loading', {loading: false, translationCode: 'PARAM_HELPER_SEARCH'});
           });
         }
       });
@@ -27,6 +28,7 @@ define(["app"], function(app) {
           }
         };
         $network.send(s);
+        $rootScope.$broadcast('loading', {loading: true, translationCode: 'PARAM_HELPER_SEARCH'});
       }
       lastSend = search;
     }
