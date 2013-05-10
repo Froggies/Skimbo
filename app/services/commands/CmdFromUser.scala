@@ -139,7 +139,7 @@ object CmdFromUser {
                 
               }
               case Failure(error) => {
-                
+                CmdToUser.sendTo(internalIdUser, Error(providerName, "You can't post !"))
               }
             }).
             getOrElse(Logger(CmdFromUser.getClass).error("not found poster "+providerName))
