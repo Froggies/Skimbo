@@ -7,6 +7,8 @@
       <span class="error-message" ng-show="showErrorContentRequired">{{'CONTENT_REQUIRED' | i18n}}</span>
       <br ng-show="showErrorContentRequired"/>
       <span class="error-message" ng-show="showErrorPosterRequired">{{'POSTER_REQUIRED' | i18n}}</span>
+      <br ng-show="showErrorPosterRequired"/>
+      <span class="error-message" ng-show="showErrorBadDate">{{'BAD_DATE_POSTER' | i18n}}</span>
     </div>
     <input class="button post-help" type="button" value="?" ng-click="showHelp = !showHelp" />
     <span>

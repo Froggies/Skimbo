@@ -117,6 +117,13 @@ app.controller('PostMessageController', [
         $scope.showErrorPosterRequired = false;
         $scope.showErrorTitleRequired = false;
         $scope.showErrorContentRequired = true;
+      } else if($scope.isDelayedPost == true && (
+          $scope.timeToPost == "" || $scope.timeToPost == undefined ||
+          !moment($scope.timeToPost, "DD-MM-YYYY HH:mm").isValid())) {
+        $scope.showErrorPosterRequired = false;
+        $scope.showErrorTitleRequired = false;
+        $scope.showErrorContentRequired = false;
+        $scope.showErrorBadDate = true;
       } else {
         var o = {
           cmd: "post",
@@ -154,6 +161,7 @@ app.controller('PostMessageController', [
       $scope.showErrorPosterRequired = false;
       $scope.showErrorTitleRequired = false;
       $scope.showErrorContentRequired = false;
+      $scope.showErrorBadDate = false;
       $scope.isDelayedPost = false;
       $scope.timeToPost = "";
     }
