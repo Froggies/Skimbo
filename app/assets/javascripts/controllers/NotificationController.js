@@ -3,13 +3,16 @@
 define(["app"], function(app) {
 
 app.controller('NotificationController', [
-  "$scope", "$rootScope", "ArrayUtils", "PopupProvider",
-  function($scope, $rootScope, $arrayUtils, $popupProvider) {
+  "$scope", "$rootScope", "ArrayUtils", "PopupProvider", "$filter",
+  function($scope, $rootScope, $arrayUtils, $popupProvider, $filter) {
 
     $scope.notifications = [];
 
     $rootScope.$on('tokenInvalid', function(evt, data) {
       $scope.$apply(function() {
+        data.title = $filter('i18n')('DISCONNECT');
+        data.footer = $filter('i18n')('CLICK_TO_RECONNECT');
+        data.type = "tokenInvalid";
         if(!$arrayUtils.exist($scope.notifications, data, "providerName")) {
           $scope.notifications.push(data);
         }
@@ -27,6 +30,19 @@ app.controller('NotificationController', [
 
     $rootScope.$on('error', function(evt, data) {
       $scope.$apply(function() {
+        if(data.type == "RateLimit" ||
+           data.type == "Timeout" ||
+           data.type == "Unknown" ||
+           data.type == "Parser" ||
+           data.type == "NoParser" ||
+           data.type == "Post" ||
+           data.type == "Star" ||
+           data.type == "Comment") {
+          data.title = $filter('i18n')(data.type);
+        } else {
+          data.title = "UNKNOW ERROR TYPE "+data.type;
+        }
+        data.footer = $filter('i18n')('CLICK_TO_HIDE');
         var exist = $arrayUtils.existWith($scope.notifications, data, function(inArray, data) {
           return inArray.providerName == data.providerName && inArray.title == data.title;
         });
@@ -38,6 +54,9 @@ app.controller('NotificationController', [
 
     $rootScope.$on('disconnect', function(evt, data) {
       $scope.$apply(function() {
+        data.title = $filter('i18n')('DISCONNECT');
+        data.footer = $filter('i18n')('CLICK_TO_RECONNECT');
+        data.type = "disconnect";
         data.providerName = "skimbo";
         var exist = $arrayUtils.existWith($scope.notifications, data, function(inArray, data) {
           return inArray.providerName == data.providerName && inArray.title == data.title;

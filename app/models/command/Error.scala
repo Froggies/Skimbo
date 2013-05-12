@@ -5,18 +5,25 @@ import play.api.libs.json.Json
 import play.api.libs.json.Json.toJsFieldJsValueWrapper
 import play.api.libs.json.Writes
 
-case class Error(providerName: String, msg: String, columnName: Option[String] = None)
+object ErrorType extends Enumeration {
+  type ErrorType = Value
+  val RateLimit, Timeout, Unknown, Parser, NoParser, Post, Star, Comment = Value
+}
+import ErrorType._
+
+case class Error(
+  providerName: String, 
+  errorType: ErrorType, 
+  columnName: Option[String] = None
+)
 
 object Error {
   implicit val errorWrites = new Writes[Error] {
     def writes(e: Error): JsValue = {
-      val json = e.columnName.map(_ => Json.obj(
+      val json = Json.obj(
         "providerName" -> e.providerName,
-        "msg" -> e.msg,
-        "columnName" -> e.columnName.get))
-        .getOrElse(Json.obj(
-          "providerName" -> e.providerName,
-          "msg" -> e.msg))
+        "type" -> e.errorType.toString(),
+        "columnName" -> e.columnName)
       Json.toJson(Command("error", Some(json)))
     }
   }

@@ -29,6 +29,7 @@ import play.api.http.Status
 import services.dao.DelayedPostDao
 import models.command.DelayedPost
 import models.command.PostDelayedProvider
+import models.command.ErrorType
 
 object CmdFromUser {
 
@@ -139,7 +140,7 @@ object CmdFromUser {
                 
               }
               case Failure(error) => {
-                CmdToUser.sendTo(internalIdUser, Error(providerName, "You can't post !"))
+                CmdToUser.sendTo(internalIdUser, Error(providerName, ErrorType.Post))
               }
             }).
             getOrElse(Logger(CmdFromUser.getClass).error("not found poster "+providerName))
@@ -167,20 +168,20 @@ object CmdFromUser {
         val idMsg = (cmd.body.get \ "id").as[String]
         val columnTitle = (cmd.body.get \ "columnTitle").as[String]
         Endpoints.getConfig(serviceName).map { service =>
-            service.starer.map( _.star(idUser, idMsg).map { response =>
-              if(response.status != Status.OK) {
-                CmdToUser.sendTo(internalIdUser, Error(service.provider.name, "You can't star", Some(columnTitle)))
-              }
-              detailsSkimbo(internalIdUser, serviceName, idMsg, columnTitle)
-              Logger(CmdFromUser.getClass).info(response.body.toString)
-              if(service.canParseResultStar) {
-                service.parserDetails.map { parser =>
-                  parser.getSkimboMsg(response, service.provider).map { listMsg =>
-                    val msg = Json.obj("column" -> columnTitle, "msg" -> listMsg.head)
-                    CmdToUser.sendTo(internalIdUser, Command("msg", Some(msg)))
-                  }
+          service.starer.map( _.star(idUser, idMsg).map { response =>
+            if(response.status != Status.OK) {
+              CmdToUser.sendTo(internalIdUser, Error(service.provider.name, ErrorType.Star, Some(columnTitle)))
+            }
+            detailsSkimbo(internalIdUser, serviceName, idMsg, columnTitle)
+            Logger(CmdFromUser.getClass).info(response.body.toString)
+            if(service.canParseResultStar) {
+              service.parserDetails.map { parser =>
+                parser.getSkimboMsg(response, service.provider).map { listMsg =>
+                  val msg = Json.obj("column" -> columnTitle, "msg" -> listMsg.head)
+                  CmdToUser.sendTo(internalIdUser, Command("msg", Some(msg)))
                 }
               }
+            }
           })
         }
       }
@@ -222,12 +223,12 @@ object CmdFromUser {
               commenter.comment(idUser, comment).onComplete {
                 case Success(response) => {
                   if(response.status != Status.OK) {
-                    CmdToUser.sendTo(internalIdUser, Error(service.provider.name, "You can't comment", Some(comment.columnTitle)))
+                    CmdToUser.sendTo(internalIdUser, Error(service.provider.name, ErrorType.Comment, Some(comment.columnTitle)))
                   }
                   detailsSkimbo(internalIdUser, comment.serviceName, comment.providerId, comment.columnTitle)
                 }
                 case Failure(error) => {
-                  CmdToUser.sendTo(internalIdUser, Error(service.provider.name, "You can't comment", Some(comment.columnTitle)))
+                  CmdToUser.sendTo(internalIdUser, Error(service.provider.name, ErrorType.Comment, Some(comment.columnTitle)))
                 }
               }
             }

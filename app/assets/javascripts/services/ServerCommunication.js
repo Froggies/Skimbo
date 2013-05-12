@@ -120,27 +120,15 @@ app.factory("ServerCommunication", [
         data.body.avatar = $imagesUtils.checkExistingImage(data.body.avatar);
         broadcast('userInfos', data.body);
       } else if (data.cmd == "tokenInvalid") {
-        data.body.title = "You have been disconnected from";
-        data.body.footer = "Click here to be connected again.";
-        data.body.isError = false;
         broadcast('tokenInvalid', data.body);
       } else if(data.cmd == "newToken") {
         broadcast('newToken', data.body);
       } else if(data.cmd == "allProviders") {
         broadcast('allProviders', data.body);
       } else if(data.cmd == "error") {
-        var error = {};
-        error.title = data.body.msg;
-        error.providerName = data.body.providerName;
-        error.footer = "Click here to hide error.";
-        error.isError = true;
-        broadcast('error', error);
+        broadcast('error', data.body);
       } else if (data.cmd == "disconnect") {
-        var body = {};
-        body.title = "You have been disconnected from";
-        body.footer = "Click here to be connected again.";
-        body.isError = false;
-        broadcast('disconnect', body);
+        broadcast('disconnect', data.body);
       } else if (data.cmd == "allPosters") {
         broadcast('allPosters', data.body);
       } else if (data.cmd == "paramHelperSearch") {

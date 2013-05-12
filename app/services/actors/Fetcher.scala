@@ -15,6 +15,7 @@ import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import scala.concurrent.Future
 import services.auth.GenericProvider
 import parser.GenericParser
+import models.command.ErrorType
 
 case class FetcherParameter(
   provider:GenericProvider,
@@ -48,7 +49,7 @@ object Fetcher {
         get.onFailure { 
           case e:Throwable => {
             log.error("[" + parameter.serviceName + "] Timeout HTTP", e)
-            CmdToUser.sendTo(idUser, Error(provider.name, "Timeout on"))
+            CmdToUser.sendTo(idUser, Error(provider.name, ErrorType.Timeout, Some(parameter.columnName)))
           }
         }
         get.map { response =>
@@ -59,10 +60,10 @@ object Fetcher {
               CmdToUser.sendTo(idUser, TokenInvalid(provider.name))
               None
             } else if (provider.isRateLimiteError(response)) {
-              CmdToUser.sendTo(idUser, Error(provider.name, "Rate limite exceeded on"))
+              CmdToUser.sendTo(idUser, Error(provider.name, ErrorType.RateLimit, Some(parameter.columnName)))
               Some(List.empty)
             } else {
-              CmdToUser.sendTo(idUser, Error(provider.name, "Error in column " + parameter.columnName + " with"))
+              CmdToUser.sendTo(idUser, Error(provider.name, ErrorType.Unknown, Some(parameter.columnName)))
               None
             }
           } else {
@@ -70,7 +71,7 @@ object Fetcher {
             if (skimboMsgs.isEmpty) {
               log.error("[" + parameter.serviceName + "] Unexpected result")
               log.info(response.body.toString)
-              CmdToUser.sendTo(idUser, Error(provider.name, "Unexpected result on"))
+              CmdToUser.sendTo(idUser, Error(provider.name, ErrorType.Parser, Some(parameter.columnName)))
               None
             } else {
               skimboMsgs
@@ -87,7 +88,7 @@ object Fetcher {
       Future(None)
     } else {
       log.error("Provider " + provider.name + " havn't parser for " + parameter.serviceName)
-      CmdToUser.sendTo(idUser, Error(provider.name, "No parser on"))
+      CmdToUser.sendTo(idUser, Error(provider.name, ErrorType.NoParser, Some(parameter.columnName)))
       Future(None)
     }
   }
