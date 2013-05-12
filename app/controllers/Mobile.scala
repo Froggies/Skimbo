@@ -35,22 +35,6 @@ object Mobile extends Controller {
       provider.auth(routes.Mobile.end).withCookies(Cookie("isMobile", "true")))
     .getOrElse(BadRequest)
   }
-  
-  def login(provider: String, token: String) = Action {
-    Logger("Mobile").info("MOBILE ==> " + provider + "  ::  " + token)
-    val session = UUID.randomUUID().toString
-    val t = SkimboToken(token)
-    Endpoints.getGenericProvider(provider).map { p =>
-      Async {
-        services.dao.UserDao.setToken(session, p, t).map { lastError =>
-          CmdFromUser.interpretCmd(session, NewToken.asCommand(p))
-          UserInfosActor.refreshInfosUser(session, p)
-          UserInfosActor.restartProviderColumns(session, p)
-          Ok(session)
-        }
-      }
-    }.getOrElse(BadRequest("provider " + provider + " not found"))
-  }
 
   def connect(idUser: String) = Action {
     Logger("Mobile").info("MOBILE ==> " + idUser)

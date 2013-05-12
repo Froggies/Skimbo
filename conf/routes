@@ -25,7 +25,6 @@ GET     /api/stream/longpolling       	controllers.stream.LongPolling.connect
 # Mobile
 GET     /api/mobile/auth/end			controllers.Mobile.end()
 GET		/api/mobile/auth/:provider		controllers.Mobile.authenticate(provider: String)
-GET		/api/mobile/login/:provider/:token	controllers.Mobile.login(provider: String, token: String)
 GET		/api/mobile/connect/:id			controllers.Mobile.connect(id: String)
 POST	/api/mobile/command/:id			controllers.Mobile.command(id: String)
 
