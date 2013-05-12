@@ -2,7 +2,7 @@
 
 define(["app"], function(app) {
 
-app.factory("ArrayUtils", function() {
+app.factory("ArrayUtils", ['Visibility', function($visibility) {
 
   var insertedMsgInProgress = false;
   var msgToBeInserted = [];
@@ -72,8 +72,10 @@ app.factory("ArrayUtils", function() {
         //insert data
         if(index > -1 && isOldMsg == false) {
           sortMe.splice(index, 0, newMsg);
+          $visibility.notifyNewMessage();
         } else if(isOldMsg == false) {
           sortMe.push(newMsg);
+          $visibility.notifyNewMessage();
         }
         //recursion powa
         if(msgToBeInserted.length == 0) {
@@ -92,7 +94,7 @@ app.factory("ArrayUtils", function() {
 
   };
 
-});
+}]);
 
 return app;
 });

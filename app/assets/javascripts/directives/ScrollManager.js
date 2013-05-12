@@ -2,7 +2,8 @@
 
 define(["app"], function(app) {
 
-  app.directive("scrollmanager", ["$timeout", "$rootScope", function($timeout, $rootScope) {
+  app.directive("scrollmanager", ["$timeout", "$rootScope", "Visibility", 
+    function($timeout, $rootScope, $visibility) {
     
     var userScroll = false;
     
@@ -15,7 +16,11 @@ define(["app"], function(app) {
           var scroller = angular.element(element); 
           $rootScope.$on("scrollManagerGoTop", function(evt, column) {
             if(angular.equals(column, scope[attrs["scrolldata"]])) {
+              userScroll = false;
               scroller[0].scrollTop = 0;
+              $timeout(function() {
+                userScroll = true;
+              }, 100);
             }
           });
         } else {
@@ -40,6 +45,7 @@ define(["app"], function(app) {
             object.pos = element.offsetTop - scroller[0].offsetTop;
             if(evt.target.scrollTop <= object.pos && userScroll == true) {
               object.isView = true;
+              $visibility.notifyMessageRead();
               scroller.unbind('scroll', scrollMove);
               unwatch();
               scope.$apply();

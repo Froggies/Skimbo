@@ -77,7 +77,6 @@ app.controller('ColumnController', [
           column.messages = [];
         }
         $arrayUtils.sortMsg(column.messages, msg.msg);
-        $visibility.notifyNewMessage();
       });
     });
 
@@ -150,6 +149,9 @@ app.controller('ColumnController', [
       $rootScope.$broadcast("scrollManagerGoTop", column);
       if(column != undefined && column.messages != undefined) {
         for(var i=0; i<column.messages.length; i++) {
+          if(column.messages[i].isView == false) {
+            $visibility.notifyMessageRead();
+          }
           column.messages[i].isView = true;
         }
       }
