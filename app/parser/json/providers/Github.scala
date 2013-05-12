@@ -63,7 +63,7 @@ case class GithubGollumEvent(
 case class GithubPullRequestReviewCommentEvent(
   id: Int,
   body: String,
-  htmlUrl: Option[String]
+  htmlUrl: String
 )
 
 case class GithubPullRequestEvent(
@@ -92,7 +92,7 @@ object GithubWallParser extends GenericJsonParser {
 
   def buildMsg(e: GithubWallMessage) = {
     e.typeGithub match {
-      case "ForkEvent" => "Fork of " + e.fork.map(_.repoName).getOrElse("")
+      case "ForkEvent" => "Fork of " + e.repoName
       case "PushEvent" => "Push on " + e.repoName + ": " + e.push.get.head.message
       case "IssuesEvent" => "Issue [" + e.issues.get.title + "] > " + e.issues.get.state + ": " + e.issues.get.body
       case "IssueCommentEvent" => "Issue [" + e.issues.get.title + "] > " + e.issueComment.get.body
@@ -118,7 +118,7 @@ object GithubWallParser extends GenericJsonParser {
 
   def buildLink(e: GithubWallMessage) = {
     e.typeGithub match {
-      case "ForkEvent"          => e.fork.flatMap(_.url)
+      case "ForkEvent"          => Some(gitRepoUrl.format(e.repoName))
       case "PushEvent"          => Some(gitPushUrl.format(e.repoName, e.head.get))
       case "DownloadEvent"      => Some(e.download.get.url)
       case "IssuesEvent"        => Some(e.issues.get.htmlUrl)
@@ -129,7 +129,7 @@ object GithubWallParser extends GenericJsonParser {
       case "WatchEvent"         => Some(gitRepoUrl.format(e.repoName))
       case "GollumEvent"        => Some(e.gollum.get.pageUrl)
       case "PullRequestEvent"   => Some(e.pullRequest.get.url)
-      case "PullRequestReviewCommentEvent" => e.pullRequestComment.flatMap(_.htmlUrl)
+      case "PullRequestReviewCommentEvent" => Some(e.pullRequestComment.get.htmlUrl)
       case _ => None
     }
   }
@@ -175,7 +175,7 @@ object GithubPullRequestReviewCommentEvent {
   implicit val githubReader: Reads[GithubPullRequestReviewCommentEvent] = (
     (__ \ "id").read[Int] and
     (__ \ "body").read[String] and
-    (__ \ "_links" \ "html" \ "href").tryReadNullable[String])(GithubPullRequestReviewCommentEvent.apply _)
+    (__ \ "html_url").read[String])(GithubPullRequestReviewCommentEvent.apply _)
 }
 
 object GithubGollumEvent {
