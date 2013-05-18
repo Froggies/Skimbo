@@ -71,6 +71,7 @@ object CmdFromUser {
         val columnsOrder = (cmd.body.get \ "columns").as[List[String]]
         UserDao.findOneById(internalIdUser).map(_.map { user =>
           user.columns.map(_.map { column =>
+            Logger(CmdFromUser.getClass).info("Columns order "+column.title+" --> "+columnsOrder.indexOf(column.title))
             UserDao.updateColumn(
               internalIdUser,
               column.title,
