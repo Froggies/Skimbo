@@ -5,6 +5,10 @@ import models.User
 import play.api.mvc._
 import services.dao.UserDao
 import services.auth.ProviderDispatcher
+import services.actors.UserInfosActor
+import services.actors.HelperUserInfosActor
+import services.actors.HelperProviderActor
+import services.commands.CmdToUser
 
 object Stats extends Controller {
 
@@ -50,6 +54,15 @@ object Stats extends Controller {
         
         res ++= "nb services by user :\n"
         res ++= formatMap(users.size, nbServiceByUser(users))
+        
+        res ++= "nb user actors actifs :\n"
+        res ++= "\t" + HelperUserInfosActor.getNbAccount + " avec " + HelperUserInfosActor.getNbActor + "\n"
+        res ++= "nb provider actor actifs : " + "\n"
+        res ++= "\t" + HelperProviderActor.getNbAccount + " avec " + HelperProviderActor.getNbActor + "\n"
+        
+        res ++= "nb channels actifs :\n"
+        res ++= "\t" + CmdToUser.getNbAccount + " avec " + CmdToUser.getNbChannels + "\n"
+        res ++= "\t" + CmdToUser.getNbOtherAccount + " autres accounts\n"
           
         Ok(res.toString)
       }

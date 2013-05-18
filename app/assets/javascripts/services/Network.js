@@ -159,11 +159,11 @@ app.factory("Network", ["$http", "$timeout", "ServerCommunication", "$location",
   }
   if(!window.WebSocket && !window.EventSource) {
     longPollingMode();
-  } else if(!window.WebSocket) {
+  } else /*if(!window.WebSocket)*/ {
     sseMode();
-  } else {
+  } /*else {
     webSocketMode();
-  } 
+  } */
 
   return {
 

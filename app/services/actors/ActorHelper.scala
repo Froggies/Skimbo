@@ -17,19 +17,41 @@ import models.user.Column
 import play.api.Logger
 import models.user.Account
 import java.util.Date
+import scala.annotation.tailrec
 
 trait ActorHelper[P] {
 
   val log = Logger("ActorHelper")
   protected val actors = new HashMap[String, List[(ActorRef, P)]]
 
+  def getNbAccount = {
+    actors.size
+  }
+
+  def getNbActor = {
+    sum(actors.values.map(_.size).toList)
+  }
+
+  def sum(xs: List[Int]): Int = {
+    @tailrec
+    def inner(xs: List[Int], accum: Int): Int = {
+      xs match {
+        case x :: tail => inner(tail, accum + x)
+        case Nil => accum
+      }
+    }
+    inner(xs, 0)
+  }
+
   protected def found(idUser: String): Option[List[(ActorRef, P)]] = {
     actors.get(idUser)
   }
 
-  def delete(idUser: String, p: P) = {
+  def delete(idUser: String, p: P) = synchronized {
+    log.info(logName(p, " delete "))
     found(idUser).map { list =>
       val notRemove = list.filterNot(otherP => same(p, otherP._2))
+      log.info(logName(p, " delete not remove " + notRemove.size))
       if (!notRemove.isEmpty) {
         actors.put(idUser, notRemove)
       } else {
@@ -37,47 +59,52 @@ trait ActorHelper[P] {
       }
     }
   }
+  
+  private def add(idUser: String, param: (ActorRef, P)) = synchronized {
+    actors.get(idUser).map(x => actors.put(idUser, x ++ List(param))).getOrElse(actors.put(idUser, List(param)))
+  }
 
   protected def same(p: P, otherP: P): Boolean
   protected def create(p: P): ActorRef
   protected def exist(p: P, actor: ActorRef)
+  protected def logName(p: P, msg: String): String
 
   def foundOrCreate(idUser: String, p: P): Future[ActorRef] = {
     val optT = found(idUser)
-    log.info("first found = " + optT)
+    log.info(logName(p, "first found = "))
     val isSame = optT.getOrElse(List.empty).filter(o => same(p, o._2))
     if (!isSame.isEmpty) {
-      log.info("first exist")
+      log.info(logName(p, "first exist "))
       exist(optT.get.head._2, optT.get.head._1)
       Future(optT.get.head._1)
     } else {
-      log.info("find with other account")
+      log.info(logName(p, "find with other account "))
       UserDao.findOneById(idUser).map(_.map { user =>
-        log.info("find user ")
+        log.info(logName(p, "find user "))
         val alreadyRun = user.accounts.filter(account => found(account.id).isDefined)
-        log.info("find account " + alreadyRun)
+        log.info(logName(p, "find account "))
         val alreadyP = found(alreadyRun.headOption.getOrElse(Account("", new Date())).id)
         val isSame = alreadyP.getOrElse(List.empty).filter(o => same(p, o._2))
         if (!isSame.isEmpty) {
           val t = isSame.head
-          log.info("find account " + t)
+          log.info(logName(p, "find account "))
           exist(t._2, t._1)
           t._1
         } else if (!alreadyRun.isEmpty) {
           val t = create(p)
-          log.info("create 1 " + t)
-          actors.put(alreadyRun.head.id, found(alreadyRun.head.id).get ++ List((t, p)))
+          log.info(logName(p, "create 1 "))
+          add(alreadyRun.head.id, (t, p))
           t
         } else {
           val t = create(p)
-          log.info("create 1 " + t)
-          actors.put(idUser, List((t, p)))
+          log.info(logName(p, "create 2 "))
+          add(idUser, (t, p))
           t
         }
       }.getOrElse {
         val t = create(p)
-        log.info("create 2 " + t)
-        actors.put(idUser, List((t, p)))
+        log.info(logName(p, "create 3 "))
+        add(idUser, (t, p))
         t
       })
     }
@@ -119,6 +146,10 @@ object HelperUserInfosActor extends ActorHelper[String] {
     ProviderActor.restart(id)
   }
 
+  protected def logName(id: String, msg: String): String = {
+    "UserInfosActor" + msg + id
+  }
+
 }
 
 object HelperProviderActor extends ActorHelper[ProviderActorParameter] {
@@ -145,6 +176,10 @@ object HelperProviderActor extends ActorHelper[ProviderActorParameter] {
   protected def exist(parameter: ProviderActorParameter, actor: ActorRef) = {
     println("ProviderActor EXIST !")
     actor ! Restart(parameter.idUser)
+  }
+
+  protected def logName(parameter: ProviderActorParameter, msg: String): String = {
+    "ProviderActor" + msg + parameter.column.title + " : " + parameter.provider.name
   }
 
 }

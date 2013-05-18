@@ -11,6 +11,7 @@ import services.dao.UserDao
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import play.api.Logger
 import scala.concurrent.Future
+import scala.annotation.tailrec
 
 object CmdToUser {
 
@@ -18,6 +19,29 @@ object CmdToUser {
   private val channelUser = new HashMap[String, Seq[Concurrent.Channel[JsValue]]] //IdUser -> List(output)
   private val userToUser = new HashMap[String, String] //same user with 2 accounts connected
 
+  def getNbAccount = {
+    channelUser.size
+  }
+
+  def getNbChannels = {
+    sum(channelUser.values.map(_.size).toList)
+  }
+  
+  def getNbOtherAccount = {
+    userToUser.size
+  }
+
+  def sum(xs: List[Int]): Int = {
+    @tailrec
+    def inner(xs: List[Int], accum: Int): Int = {
+      xs match {
+        case x :: tail => inner(tail, accum + x)
+        case Nil => accum
+      }
+    }
+    inner(xs, 0)
+  }
+  
   def getInternalIdUser(idUser: String): String = {
     userToUser.get(idUser).getOrElse(idUser)
   }
@@ -52,15 +76,10 @@ object CmdToUser {
     }
   }
 
-  def userDeco(idUser: String, channel: Concurrent.Channel[JsValue]) = {
-    channelUser.get(idUser).map { channels =>
-      val newChannels = channels.filterNot(_ == channel)
-      if (newChannels.isEmpty) {
-        channelUser.remove(idUser)
-      } else {
-        channelUser.put(idUser, newChannels)
-      }
-    }
+  def userDeco(idUser: String, channel: Concurrent.Channel[JsValue]) = synchronized {
+    channelUser.remove(getInternalIdUser(idUser))
+    userToUser.remove(getInternalIdUser(idUser))
+    userToUser.remove(idUser)
   }
 
   private def send(idUser: String, msg: JsValue) = {
