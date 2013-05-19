@@ -43,8 +43,10 @@ object FacebookWallParser extends GenericJsonParser {
           e.nbLikes,
           generateLink(e),
           (e.createdAt.getMillis() / 1000).toInt.toString,
-          e.picture.orElse(Some(imageUrl.replace(":id", e.fromId.toString))),
-          Configuration.Facebook.wall))
+          Some(imageUrl.replace(":id", e.fromId.toString)),
+          Configuration.Facebook.wall,
+          false,
+          e.picture.map(Seq(_)).getOrElse(Seq.empty)))
       } else {
         None
       }

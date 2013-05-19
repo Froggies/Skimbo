@@ -19,7 +19,9 @@ case class ScoopitPost (
     thanksCount: Int,
     iThanked: Boolean,
     displayName: String,
-    avatarUrl : String
+    avatarUrl : String,
+    mainImageUrl: Option[String],
+    imagesUrl: Option[Seq[String]]
 )
 
 object ScoopitWallParser extends GenericJsonParser {
@@ -41,7 +43,17 @@ object ScoopitWallParser extends GenericJsonParser {
         post.createdDate.toString,
         Some(post.avatarUrl),
         Configuration.Scoopit.wall,
-        post.iThanked)))
+        post.iThanked,
+        buildMedias(post))))
+  }
+  
+  private def buildMedias(post: ScoopitPost): Seq[String] = {
+    val medias = post.imagesUrl.getOrElse(Seq.empty)
+    if(medias.isEmpty) {
+      post.mainImageUrl.map(Seq(_)).getOrElse(Seq.empty)
+    } else {
+      medias
+    }
   }
   
   override def nextSinceId(sinceId:String, sinceId2:Option[String]): String = 
@@ -58,5 +70,7 @@ object ScoopitPost {
     (__ \ "thanksCount").read[Int] and
     (__ \ "thanked").read[Boolean] and
     (__ \ "author" \ "name").read[String] and
-    (__ \ "author" \ "avatarUrl").read[String])(ScoopitPost.apply _)
+    (__ \ "author" \ "avatarUrl").read[String] and
+    (__ \ "imageUrl").readNullable[String] and
+    (__ \ "imageUrls").readNullable[Seq[String]])(ScoopitPost.apply _)
 }

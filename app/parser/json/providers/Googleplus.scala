@@ -16,7 +16,13 @@ case class GoogleplusWallMessage(
   publishedDate:DateTime,
   plusoners:Int,
   url:Option[String],
-  actorImage:Option[String]
+  actorImage:Option[String],
+  attachments: Option[Seq[GoogleAttachment]]
+)
+
+case class GoogleAttachment(
+  attachmentType: String,
+  url: String
 )
 
 object GoogleplusWallParser extends GenericJsonParser {
@@ -35,7 +41,9 @@ object GoogleplusWallParser extends GenericJsonParser {
         e.url,
         e.publishedDate.toString(GoogleplusWallMessage.datePattern),
         e.actorImage,
-        Configuration.GooglePlus.wall)))
+        Configuration.GooglePlus.wall,
+        false,
+        e.attachments.getOrElse(Seq.empty).map(_.url))))
   }
   
   override def cut(json: JsValue): List[JsValue] = super.cut(json \ "items")
@@ -55,6 +63,12 @@ object GoogleplusWallParser extends GenericJsonParser {
   }
 }
 
+object GoogleAttachment {
+  implicit val googlePlusAttachmentReader: Reads[GoogleAttachment] = (
+    (__ \ "objectType").read[String] and
+    (__ \ "image" \ "url").read[String])(GoogleAttachment.apply _)
+}
+
 object GoogleplusWallMessage {
   
   val datePattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
@@ -66,7 +80,8 @@ object GoogleplusWallMessage {
     (__ \ "published").read[DateTime](Reads.jodaDateReads(datePattern)) and
     (__ \ "object" \ "plusoners" \ "totalItems").read[Int] and
     (__ \ "url").readNullable[String] and
-    (__ \ "actor" \ "image" \ "url").readNullable[String])(GoogleplusWallMessage.apply _)
+    (__ \ "actor" \ "image" \ "url").readNullable[String] and
+    (__ \ "object" \ "attachments").readNullable[Seq[GoogleAttachment]])(GoogleplusWallMessage.apply _)
     
 }
 

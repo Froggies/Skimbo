@@ -97,5 +97,4 @@ object FacebookInboxMessage {
     (__ \ "updated_time").read[DateTime](Reads.jodaDateReads("yyyy-MM-dd'T'HH:mm:ssZZ")) and
     (__ \ "to" \ "data").read[Seq[FacebookInBoxUser]] and
     PathDefaultReads.default((__ \ "comments" \ "data"), Seq[FacebookInboxData]()))(FacebookInboxMessage.apply _)
-    //(__ \ "comments" \ "data").readNullable[Seq[FacebookInboxData]])(FacebookInboxMessage.apply _)
 }

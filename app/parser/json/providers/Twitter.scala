@@ -18,6 +18,7 @@ case class Tweet(
   hashTags: List[TwitterTag],
   urls: List[TwitterUrl],
   mentions: List[TwitterMention],
+  medias: Option[List[TwitterMedia]],
   favorited: Boolean,
   retweets: Int,
   retweeted: Boolean,
@@ -29,6 +30,7 @@ case class Tweet(
 case class TwitterTag(text: String, indices: List[Int])
 case class TwitterUrl(shortUrl: String, url: String, indices: List[Int])
 case class TwitterMention(authorName: String, authorScreenName: String, indices: List[Int])
+case class TwitterMedia(url: String, indices: List[Int], typeMedia: String)
 
 object TwitterTimelineParser extends GenericJsonParser {
 
@@ -49,7 +51,8 @@ object TwitterTimelineParser extends GenericJsonParser {
         tweet.id.toString,
         tweet.profileImageUrl,
         Configuration.Twitter.wall,
-        tweet.retweeted)))
+        tweet.retweeted,
+        tweet.medias.getOrElse(Seq.empty).map(_.url))))
   }
   
   override def nextSinceId(sinceId:String, sinceId2:Option[String]): String = {
@@ -92,6 +95,13 @@ object TwitterMention {
     (__ \ "indices").read[List[Int]])(TwitterMention.apply _)
 }
 
+object TwitterMedia {
+  implicit val tweeterMedia: Reads[TwitterMedia] = (
+    (__ \ "media_url_https").read[String] and
+    (__ \ "indices").read[List[Int]] and
+    (__ \ "type").read[String])(TwitterMedia.apply _)
+}
+
 object Tweet {
   val twitterDatePattern = "EEE MMM dd HH:mm:ss Z yyyy";
 
@@ -116,6 +126,7 @@ object Tweet {
     (__ \ "entities" \ "hashtags").read[List[TwitterTag]] and
     (__ \ "entities" \ "urls").read[List[TwitterUrl]] and
     (__ \ "entities" \ "user_mentions").read[List[TwitterMention]] and
+    (__ \ "entities" \ "media").readNullable[List[TwitterMedia]] and
     (__ \ "favorited").read[Boolean] and
     (__ \ "retweet_count").read[Int] and
     (__ \ "retweeted").read[Boolean] and

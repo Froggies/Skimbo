@@ -21,7 +21,8 @@ case class Skimbo(
   sinceId: String,
   authorAvatar:Option[String],
   config: EndpointConfig,
-  iStared: Boolean = false
+  iStared: Boolean = false,
+  multimedia: Seq[String] = Seq.empty
 )
 
 object Skimbo {
@@ -44,7 +45,8 @@ object Skimbo {
         "hasDetails" -> skimbo.config.parserDetails.isDefined,
         "canStar" -> skimbo.config.starer.isDefined,
         "iStared" -> skimbo.iStared,
-        "canComment" -> canComment
+        "canComment" -> canComment,
+        "medias" -> skimbo.multimedia
       )
     }
   }

@@ -40,8 +40,10 @@ object ViadeoWallParser extends GenericJsonParser {
         msg.likeCount,
         msg.infeedLink,
         msg.updatedTime.toString(ViadeoWallMessage.datePattern),
-        generatePicture(msg),
-        Configuration.Viadeo.smartNews)))
+        Some(msg.avatarUrl),
+        Configuration.Viadeo.smartNews,
+        false,
+        msg.pictureUrl.map(Seq(_)).getOrElse(Seq.empty))))
   }
 
   def generateMsg(e: ViadeoWallMessage) = {
@@ -56,15 +58,6 @@ object ViadeoWallParser extends GenericJsonParser {
     } else {
       "Msg not decrypted !"
     }
-  }
-
-  def generatePicture(msg: ViadeoWallMessage): Option[String] = {
-    msg.pictureUrl.orElse(
-      if (msg.avatarUrl.isEmpty()) {
-        None
-      } else {
-        Some(msg.avatarUrl)
-      })
   }
 
   override def cut(json: JsValue): List[JsValue] = super.cut(json \ "data")
