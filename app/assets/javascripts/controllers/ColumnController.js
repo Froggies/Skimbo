@@ -4,9 +4,9 @@ define(["app"], function(app) {
 
 app.controller('ColumnController', [
   "$scope", "Network", "$rootScope", "UnifiedRequestUtils", "Visibility", 
-  "PopupProvider", "ArrayUtils", "ColumnSize", "$window",
+  "PopupProvider", "ArrayUtils", "ColumnSize", "$window", "$timeout",
   function($scope, $network, $rootScope, $unifiedRequestUtils, $visibility, 
-    $popupProvider, $arrayUtils, $columnSize, $window) {
+    $popupProvider, $arrayUtils, $columnSize, $window, $timeout) {
     //chrome memory leak !!!
     $scope.$destroy= function() {
         var parent = this.$parent;
@@ -230,6 +230,15 @@ app.controller('ColumnController', [
         $rootScope.tempColumns[name] = {};
       }
       return $rootScope.tempColumns[name];
+    }
+
+    $scope.showMedias = undefined;
+
+    $scope.showMediasClick = function(message) {
+      $scope.showMedias = "/assets/app/views/medias.html";
+      $timeout(function() {
+        $rootScope.$broadcast('displayMedias', message);
+      }, 10);
     }
 
 }]);

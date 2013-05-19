@@ -3,6 +3,7 @@
 require([
   'app',
   'filters/translation', 
+  'filters/maxRange', 
   'services/StringUtils', 
   'services/Visibility',
   'services/ArrayUtils', 
@@ -18,6 +19,7 @@ require([
   'directives/OnKeyPress',
   'directives/Oracle',
   'controllers/NotificationController', 
+  'controllers/MediasController',
   'controllers/MainController', 
   'controllers/ModifColumnController', 
   'controllers/HeaderController', 

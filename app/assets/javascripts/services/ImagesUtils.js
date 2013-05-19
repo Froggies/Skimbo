@@ -4,14 +4,16 @@ define(["app"], function(app) {
 
 app.factory("ImagesUtils", function() {
 
+  var defaultImage = "/assets/img/image-default.png";
+
   return {
     isDefaultImage: function(image) {
-      return image == "/assets/img/image-default.png";
+      return image == defaultImage;
     },
 
     checkExistingImage: function(image) {
       if(image == "" || image == undefined) {
-        return "/assets/img/image-default.png";
+        return defaultImage;
       }
       else {
         var url = image;
@@ -20,6 +22,10 @@ app.factory("ImagesUtils", function() {
         }
         return "/download?url="+encodeURIComponent(url);
       }
+    },
+
+    defaultImage: function() {
+      return defaultImage;
     }
   }
 

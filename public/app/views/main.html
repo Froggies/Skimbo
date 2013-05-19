@@ -58,8 +58,8 @@
 						<a href="{{m.directLink}}" class="author-name {{m.from}}" target="_blank">{{m.authorName}}</a>
 						<p class="date-creation">{{m.dateAgo}}</p>
 						<div class="message blur-text {{blurText}}" ng-bind-html="m.message" title="{{m.original}}"></div>
-						<div class="container-message-image">
-							<img class="message-image" src="{{media}}" ng-show="media" ng-repeat="media in m.medias" />
+						<div class="container-message-image" ng-click="showMediasClick(m)">
+							<img class="message-image" src="{{media}}" ng-show="media" ng-repeat="media in m.medias | maxRange:2 " />
 						</div>
 						<textarea ng-show="m.inComment" class="message-comment" placeholder="{{'COMMENT' | i18n}}" ng-model="m.currentComment" on-key-press="13" on-key-press-exec="sendComment(m, c)"></textarea>
 						<div class="message-footer" showonhoverparent>
@@ -83,5 +83,8 @@
 				</li>
 			</ul>
 		</div>
+	</section>
+	<section ng-controller="MediasController"
+					 ng-include src="showMedias">
 	</section>
 </section>
