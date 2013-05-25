@@ -1,5 +1,6 @@
-<div ng-controller="ModifColumnController">
-  <input id="modifButton" class="button" type="button" ng-click="show()" value="{{'ADD_NEW_COLUMN' | i18n}}" />
+<div ng-controller="ModifColumnController" class="button-selected-{{showModifyColumn}}">
+  <div class="glass-div" ng-show="showModifyColumn" ng-click="show()"></div>
+  <img class="button-img" src="assets/img/min-add-col.png" ng-click="show()" /><span id="modifButton" class="" ng-click="show()">{{'ADD_NEW_COLUMN' | i18n}}</span>
   <div id="content-div-add-column" ng-show="showModifyColumn">
     <div class="error-div">
       <span class="error-message" ng-show="showErrorTitleRequired">{{'TITLE_REQUIRED' | i18n}}</span>
@@ -21,10 +22,7 @@
             <div class="input-service" ng-show="service.hasArguments" ng-repeat="arg in service.args ">
               <img class="img-service" ng-src="/assets/img/brand/{{service.providerName}}.png" alt="{{service.providerName}}" width="24" height="24">
               <input class="arg-service" type="text" ng-model="arg.value" placeholder="{{arg.key}}" pattern="[ a-zA-Z0-9]*" oracle="service" oracle-type="paramHelperSearch" oracle-store="arg"/>
-              <a 
-                class="delete-service {{service.providerName}}"
-                ng-click="deleteService(service,arg)"
-              >✘</a>
+              <a class="delete-service {{service.providerName}}" ng-click="deleteService(service,arg)">✘</a>
               <div class="container-oracle" ng-show="arg.possibleValues.length > 0">
                 <ul>
                   <li class="value-oracle" 
@@ -37,7 +35,7 @@
             </div>
             <div class="input-service" ng-hide="service.hasArguments">
               <img class="img-service" ng-src="/assets/img/brand/{{service.providerName}}.png" alt="{{service.providerName}}" width="24" height="24">
-              <span class="receving-service">{{service.serviceName}}</span>
+              <div class="receving-service">{{service.serviceName}}</div>
               <a 
                 class="delete-service {{service.providerName}}"
                 ng-click="deleteService(service,arg)"
@@ -62,7 +60,7 @@
         <ul class="services-proposes">
           <li ng-repeat="service in selectedSocialNetwork.services">
             <div class="social-network-link {{service.hasParser}}">
-              <a class="btn" ng-click="addService(service)">
+              <a class="button-a" ng-click="addService(service)">
                 {{service.serviceName}}
               </a> 
             </div>
@@ -82,10 +80,10 @@
       </div>
     </div>
     <div class="controls-new"> 
-      <a class="btn delete-link" ng-click="cancelCreateColumn()">{{'CANCEL' | i18n}}</a>
-      <a class="btn delete-link" ng-click="deleteColumn(c)" ng-hide="column.newColumn">{{'DELETE' | i18n}}</a>
-      <input class="button" type="button" ng-click="validate()" value="{{'CHANGE' | i18n}}" ng-hide="column.newColumn"/>
-      <input ng-show="column.unifiedRequests.length > 0 && column.newColumn" class="button" type="button" ng-click="validate()" value="{{'CREATE' | i18n}}"/>
+      <a class="button-a delete-link" ng-click="cancelCreateColumn()">{{'CANCEL' | i18n}}</a>
+      <a class="button-a delete-link" ng-click="deleteColumn(c)" ng-hide="column.newColumn">{{'DELETE' | i18n}}</a>
+      <a class="button-a" ng-click="validate()"ng-hide="column.newColumn">{{'CHANGE' | i18n}}</a>
+      <a ng-show="column.unifiedRequests.length > 0 && column.newColumn" class="button-a" ng-click="validate()" />{{'CREATE' | i18n}}</a>
     </div>
   </div>
 </div>

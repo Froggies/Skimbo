@@ -22,7 +22,8 @@ require([
   'controllers/MediasController',
   'controllers/MainController', 
   'controllers/ModifColumnController', 
-  'controllers/HeaderController', 
+  'controllers/HeaderController',
+  'controllers/AccountController', 
   'controllers/ColumnController',
   'controllers/PostController'
 ], function(app) {

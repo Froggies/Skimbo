@@ -1,36 +1,13 @@
 @import "util.less";
 
 .userNoColumn {
-  margin-top: 14px;
+  margin-top: 45px;
   width: 50%;
   background-color: #FAFAFA;
   border: 1px solid #B6B6B6;
   border-radius: 5px;
   margin-left: 170px;
   padding: 25px 20px 25px 0;
-}
-
-.userNoColumn:after, .userNoColumn:before {
-  border: solid transparent;
-  content: ' ';
-  height: 0;
-  bottom: 100%;
-  position: absolute;
-  width: 0;
-}
-
-.userNoColumn:after {
-  border-width: 9px;
-  border-bottom-color: #FAFAFA;
-  left: 30%;
-  margin-left: -9px;
-}
-
-.userNoColumn:before {
-  border-width: 10px;
-  border-bottom-color: #B6B6B6;
-  left: 30%;
-  margin-left: -10px;
 }
 
 [draggable] {
@@ -41,8 +18,11 @@
 }
 
 .container {
+  width: 100%;
   height: 99%;
-  padding-top: 45px;
+  padding-left: 45px;
+  display: inline-block;
+  vertical-align: top;
   .boxSizing;
 }
 
@@ -58,12 +38,13 @@
   max-height: 100%;
   height: 100%;
   margin: 3px;
-  background: #FAFAFA;
+  background: #fff;
   border: 1px solid #C1C1C1;
   border-bottom-color: #B6B6B6;
   -webkit-box-shadow: 0 1px 3px #C1C1C1;
   box-shadow: 0 1px 3px #C1C1C1;
   overflow: hidden;
+  border-radius: 3px;
   .boxSizing;
 }
 
@@ -75,48 +56,29 @@
   border-color: red;
 }
 
-.column-new {
-  float:left;
-  line-height: 567px;
-  height: 100%;
-  text-align: center;
-  width: 250px;
-  margin: 5px;
-  border: 1px solid #C1C1C1;
-  border-bottom-color: #B6B6B6;
-  -webkit-box-shadow: 0 1px 3px #C1C1C1;
-  box-shadow: 0 1px 3px #C1C1C1;
-}
-
 header.column-title {
   position: relative;
   height: 30px;
-  background: #b6b6b6; /* Old browsers */
-  /* IE9 SVG, needs conditional override of 'filter' to 'none' */
-  background: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/Pgo8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgdmlld0JveD0iMCAwIDEgMSIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSI+CiAgPGxpbmVhckdyYWRpZW50IGlkPSJncmFkLXVjZ2ctZ2VuZXJhdGVkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjAlIiB5MT0iMCUiIHgyPSIxMDAlIiB5Mj0iMTAwJSI+CiAgICA8c3RvcCBvZmZzZXQ9IjAlIiBzdG9wLWNvbG9yPSIjYjZiNmI2IiBzdG9wLW9wYWNpdHk9IjEiLz4KICAgIDxzdG9wIG9mZnNldD0iNTAlIiBzdG9wLWNvbG9yPSIjYjZiNmI2IiBzdG9wLW9wYWNpdHk9IjEiLz4KICAgIDxzdG9wIG9mZnNldD0iNTElIiBzdG9wLWNvbG9yPSIjYzFjMWMxIiBzdG9wLW9wYWNpdHk9IjEiLz4KICAgIDxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iI2MxYzFjMSIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgPC9saW5lYXJHcmFkaWVudD4KICA8cmVjdCB4PSIwIiB5PSIwIiB3aWR0aD0iMSIgaGVpZ2h0PSIxIiBmaWxsPSJ1cmwoI2dyYWQtdWNnZy1nZW5lcmF0ZWQpIiAvPgo8L3N2Zz4=);
-  background: -moz-linear-gradient(-45deg, #b6b6b6 0%, #b6b6b6 50%, #c1c1c1 51%, #c1c1c1 100%); /* FF3.6+ */
-  background: -webkit-gradient(linear, left top, right bottom, color-stop(0%,#b6b6b6), color-stop(50%,#b6b6b6), color-stop(51%,#c1c1c1), color-stop(100%,#c1c1c1)); /* Chrome,Safari4+ */
-  background: -webkit-linear-gradient(-45deg, #b6b6b6 0%,#b6b6b6 50%,#c1c1c1 51%,#c1c1c1 100%); /* Chrome10+,Safari5.1+ */
-  background: -o-linear-gradient(-45deg, #b6b6b6 0%,#b6b6b6 50%,#c1c1c1 51%,#c1c1c1 100%); /* Opera 11.10+ */
-  background: -ms-linear-gradient(-45deg, #b6b6b6 0%,#b6b6b6 50%,#c1c1c1 51%,#c1c1c1 100%); /* IE10+ */
-  background: linear-gradient(135deg, #b6b6b6 0%,#b6b6b6 50%,#c1c1c1 51%,#c1c1c1 100%); /* W3C */
-  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#b6b6b6', endColorstr='#c1c1c1',GradientType=1 ); /* IE6-8 fallback on horizontal gradient */
+  background: #fff;
+  border-radius: 3px;
+  color: #545454;
+  border-bottom-color: #ECECEC;
+  border-bottom-width: 1px;
+  border-bottom-style: solid;
 }
 
 .title {
   float: left;
   padding: 5px 0 5px 10px;
-  color: white;
-  text-shadow:0px 1px 1px #000000;
 }
 
 .containerNbMsg {
   float: left;
+  padding-top: 5px;
 }
 
 .linkNbMsg {
   color: red;
-  text-decoration: none;
   font-size: 11px;
   margin-left: -6px;
   font-weight: bold;
@@ -127,9 +89,7 @@ header.column-title {
 }
 
 .linkNbMsgIcon {
-  color: white;
-  text-decoration: none;
-  text-shadow: none;
+  color: #8B8B8B;
 }
 
 .column-size {
@@ -146,9 +106,9 @@ header.column-title {
   right: 2px;
 }
 
-.configure a{
+.configure a {
   font-size: 21px;
-  color: white;
+  color: #8B8B8B;
   line-height: 30px;
 }
 
@@ -203,7 +163,7 @@ header.column-title {
 }
 
 .column-content li {
-  border-left: 1px solid #C1C1C1;
+  border-left: 1px solid #ECECEC;
   padding-left: 10px;
   margin-left: 22px;
   position: relative;

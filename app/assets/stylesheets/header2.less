@@ -1,0 +1,125 @@
+.banner-close, .banner-open {
+  position: fixed;
+  top: 0;
+  z-index: 10;
+  height: 100%;
+  line-height: 45px;
+  background-color: #2F2F2F;
+  display: inline-block;
+  overflow: hidden;
+}
+
+.banner-close {
+  width: 43px;
+}
+
+.banner-open {
+  width: 180px;
+}
+
+.arrow-open, .arrow-close {
+  color: #fff;
+  line-height: 20px;
+  position: fixed;
+  background-color: #2F2F2F;
+  border-radius: 0 0 3px;
+  cursor: pointer;
+  top: 0;
+}
+
+.arrow-open {
+  left: 25px;
+}
+
+.arrow-close {
+  left: 163px;
+}
+
+#loader {
+  vertical-align: top;
+  color: #CE0022;
+  font-weight: bolder;
+  text-shadow: 0px 1px 1px black;
+  font-size: 12px;
+}
+
+.logo {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.button, .button-a {
+  height: 45px;
+  line-height: 45px;
+  background-color: #545454;
+  color: #fff;
+  text-align: center;
+  margin: 10px 0;
+  overflow: hidden;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.button-a {
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.button-img {
+  margin-top: 10px;
+  margin-right: 5px;
+  vertical-align: top;
+  border-radius: 24px;
+  height: 24px;
+}
+
+.button-selected-true {
+  background-color: #F2F2F2;
+  color: #C50000;
+}
+
+.header-button-post {
+  margin-top: 55px;
+}
+
+.header-button-modif-column {
+  margin-bottom: 20px;
+}
+
+.header-button-post, .header-button-modif-column {
+  text-align: center;
+  background-color: transparent;
+}
+
+.glass-div {
+  cursor: default;
+  position: fixed;
+  top: 0;
+  left: 43px;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.75);
+}
+
+.banner-open .header-button-post, 
+.banner-open .header-button-modif-column, 
+.banner-open .header-button-account {
+  text-align: left;
+}
+
+.header-button-account .arrow-account {
+  float: right;
+}
+
+.banner-open .header-button-account #bloc-utilisateur,
+.banner-open .header-button-post #content-div-post-message,
+.banner-open .header-button-modif-column #content-div-add-column {
+  left: 180px;
+}
+
+.banner-open .header-button-account .glass-div,
+.banner-open .header-button-post .glass-div,
+.banner-open .header-button-modif-column .glass-div,
+.banner-open .medias {
+  left: 180px;
+}

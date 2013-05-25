@@ -1,5 +1,5 @@
 <div class="medias" ng-show="display">
-  <div class="medias-close"  ng-click="close()">X</div>
+  <div class="button-a medias-close"  ng-click="close()">X</div>
   <div class="medias-image-miniatures-container">
     <img class="medias-image-miniatures" 
       src="{{image}}" 
@@ -7,5 +7,5 @@
       ng-repeat="image in images" />
   </div>
   <img class="medias-image" src="{{urlImage}}" ng-hide="loading" />
-  <img class="medias-loading" src="/assets/img/loader.gif" width="40" height="40" ng-show="loading">
+  <img class="medias-loading" src="/assets/img/loader.gif" width="40" height="40" ng-show="loading" />
 </div>

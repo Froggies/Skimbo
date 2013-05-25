@@ -37,6 +37,12 @@ app.controller('ModifColumnController', [
     $scope.providers = undefined;
     $scope.columnsTitle = [];
 
+    $rootScope.$on('displayViewMenu', function(evt, view) {
+      if(view !== 'modifColumn') {
+        $scope.showModifyColumn = false;
+      }
+    });
+
     $rootScope.$on('allColumns', function(evt, columns) {
       //to check unique title
       $scope.$apply(function() {
@@ -116,6 +122,7 @@ app.controller('ModifColumnController', [
           $scope.column.title = "";
           $scope.column.unifiedRequests = [];
         }
+        $rootScope.$broadcast('displayViewMenu', 'modifColumn');
       }
     };
 

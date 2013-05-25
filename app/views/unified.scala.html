@@ -4,9 +4,8 @@
 
 	<div id="publicApp" ng-controller="MainController">
 
-    <header class="banner" ng-include="'@routes.Assets.at("app/views/header.html")'"></header>
+    <header ng-include="'@routes.Assets.at("app/views/header.html")'"></header>
 
-    <!-- Add your site or application content here -->
     <div class="container" ng-view>
       <noscript>
         <p>Your navigator must run javascript files !</p>
@@ -14,23 +13,23 @@
       </noscript>
     </div>
 
-  <script type="text/javascript" src="@routes.Application.jsRouter()"></script>
-  <script src="@routes.Assets.at("app/scripts/vendor/angular.min.js")"></script>
-  <script src="@routes.Assets.at("app/scripts/vendor/angular-sanitize.min.js")"></script>
-  <script src="@routes.Assets.at("app/scripts/vendor/moment.min.js")"></script>
-  <script src="@routes.Assets.at("app/scripts/vendor/whoareyou.js")"></script>
-		
-  @helper.requireJs(core = routes.Assets.at("javascripts/require.js").url, module = routes.Assets.at("javascripts/main").url)
+    <script type="text/javascript" src="@routes.Application.jsRouter()"></script>
+    <script src="@routes.Assets.at("app/scripts/vendor/angular.min.js")"></script>
+    <script src="@routes.Assets.at("app/scripts/vendor/angular-sanitize.min.js")"></script>
+    <script src="@routes.Assets.at("app/scripts/vendor/moment.min.js")"></script>
+    <script src="@routes.Assets.at("app/scripts/vendor/whoareyou.js")"></script>
+  		
+    @helper.requireJs(core = routes.Assets.at("javascripts/require.js").url, module = routes.Assets.at("javascripts/main").url)
 
-  <!-- UserVoice -->
-  <script type="text/javascript">
-    var uvOptions = {};
-    (function() {
-      var uv = document.createElement('script'); uv.type = 'text/javascript'; uv.async = true;
-      uv.src = ('https:' == document.location.protocol ? 'https://' : 'http://') + 'widget.uservoice.com/SKUqq2hdqI52HMB8QRZjw.js';
-      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(uv, s);
-    })();
-  </script>
-  <!-- end UserVoice -->
+    <!-- UserVoice -->
+    <script type="text/javascript">
+      var uvOptions = {};
+      (function() {
+        var uv = document.createElement('script'); uv.type = 'text/javascript'; uv.async = true;
+        uv.src = ('https:' == document.location.protocol ? 'https://' : 'http://') + 'widget.uservoice.com/SKUqq2hdqI52HMB8QRZjw.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(uv, s);
+      })();
+    </script>
+    <!-- end UserVoice -->
   </div>
 }

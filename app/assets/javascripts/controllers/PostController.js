@@ -31,6 +31,12 @@ app.controller('PostMessageController', [
     $scope.showHelp = false;
     resetView();
 
+    $rootScope.$on('displayViewMenu', function(evt, view) {
+      if(view !== 'postMessage') {
+        $scope.showPost = false;
+      }
+    });
+
     $rootScope.$on('allPosters', function(evt, providers) {
       $scope.$apply(function() {
         $scope.providersWithTitle = [];
@@ -81,12 +87,19 @@ app.controller('PostMessageController', [
         if($scope.providers == undefined) {
           $network.send({cmd:"allPosters"});
         }
+        $rootScope.$broadcast('displayViewMenu', 'postMessage');
       }
     };
 
     $scope.selectPoster = function(poster) {
       if(poster.hasToken == true) {
         poster.selected = !poster.selected;
+        for (var i = 0; i < $scope.providersWithTitle.length; i++) {
+          if($scope.providersWithTitle[i].name == poster.name) {
+            $scope.showTitleInput = true;
+            return;
+          }
+        };
       } else {
         $popupProvider.openPopup({name:poster.tokenProvider}, function() {
           poster.selected = !poster.selected;
@@ -111,6 +124,7 @@ app.controller('PostMessageController', [
       //check errors
       if(selectedProviders.length == 0) {
         $scope.showErrorPosterRequired = true;
+        $scope.showPosters = true;
       } else if($scope.title == "") {
         $scope.showErrorPosterRequired = false;
         $scope.showErrorTitleRequired = true;

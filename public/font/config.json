@@ -16,6 +16,24 @@
       "src": "entypo"
     },
     {
+      "uid": "cb13afd4722a849d48056540bb74c47e",
+      "css": "play",
+      "code": 59392,
+      "src": "entypo"
+    },
+    {
+      "uid": "18f7c393e3532e40edd45607c9d99988",
+      "css": "fast-forward",
+      "code": 59393,
+      "src": "entypo"
+    },
+    {
+      "uid": "85806fd8ab907f45d34f976354a0df23",
+      "css": "fast-backward",
+      "code": 59394,
+      "src": "entypo"
+    },
+    {
       "uid": "8a1d446e5555e76f82ddb1c8b526f579",
       "css": "flow-tree",
       "code": 59282,

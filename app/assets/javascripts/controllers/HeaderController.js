@@ -3,11 +3,13 @@
 define(["app"], function(app) {
 
 app.controller('HeaderController', [
-  "$scope", "$rootScope", "$http", "ArrayUtils", "ImagesUtils", "Network",
-  function($scope, $rootScope, $http, $arrayUtils, $imagesUtils, $network) {
+  "$scope", "$rootScope",
+  function($scope, $rootScope) {
 
   $scope.loading = true;
   $scope.loadingMsg = "COLUMNS";
+  $scope.banner_classes = "banner-close";
+  $scope.arrow_classes = "arrow-open icon-fast-forward";
   var firstMsg = true;
 
   $rootScope.$on('allColumns', function(evt, data) {
@@ -38,38 +40,15 @@ app.controller('HeaderController', [
     }
   });
 
-  $rootScope.$on('userInfos', function(evt, data) {
-    $scope.$apply(function() {
-      if($scope.userInfos == undefined) {
-        $scope.userInfos = [];
-        $scope.userInfos.push(data);
-      } else {
-        var index = $arrayUtils.indexOf($scope.userInfos, data, "socialType");
-        if(index > -1) {
-          $scope.userInfos[index] = data;
-        } else {
-          if($imagesUtils.isDefaultImage($scope.userInfos[0].avatar)) {
-            $scope.userInfos.splice(0, 0, data);
-          } else {
-            $scope.userInfos.push(data);
-          }
-        }
-      }
-    });
-  });
-
-	$scope.deleteProvider = function(providerName) {
-      $http.get("/api/providers/del/"+providerName).success(function() {
-        for (var i = 0; i < $scope.userInfos.length; i++) {
-	        if($scope.userInfos[i].socialType == providerName) {
-	          $scope.userInfos.splice(i,1);
-            $network.send({cmd:"allUnifiedRequests"});
-            $network.send({cmd:"allPosters"});
-	          break;
-	        }
-      	}
-      });
+  $scope.openMenu = function() {
+    if($scope.arrow_classes == "arrow-close icon-fast-backward") {
+      $scope.arrow_classes = "arrow-open icon-fast-forward";
+      $scope.banner_classes = "banner-close";
+    } else {
+      $scope.arrow_classes = "arrow-close icon-fast-backward";
+      $scope.banner_classes = "banner-open";
     }
+  }
 
 }]);
 
