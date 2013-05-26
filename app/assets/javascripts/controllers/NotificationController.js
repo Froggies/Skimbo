@@ -68,9 +68,9 @@ app.controller('NotificationController', [
     });
 
     $scope.clickOnNotification = function(notification) {
-      if(notification.isError == false && notification.providerName != "skimbo") {
+      if(notification.type == "tokenInvalid") {
         $popupProvider.openPopup({"name": notification.providerName});
-      } else if(notification.isError == false && notification.providerName == "skimbo") {
+      } else if(notification.type == "disconnect") {
         if(notification.forceIdentification == true) {
           window.location.href = "/logout";
         } else {
