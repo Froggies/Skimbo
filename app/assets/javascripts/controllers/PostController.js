@@ -125,10 +125,10 @@ app.controller('PostMessageController', [
       if(selectedProviders.length == 0) {
         $scope.showErrorPosterRequired = true;
         $scope.showPosters = true;
-      } else if($scope.title == "") {
+      /*} else if($scope.title == "") {
         $scope.showErrorPosterRequired = false;
         $scope.showErrorTitleRequired = true;
-      } else if($scope.message == "") {
+      */} else if($scope.message == "") {
         $scope.showErrorPosterRequired = false;
         $scope.showErrorTitleRequired = false;
         $scope.showErrorContentRequired = true;
