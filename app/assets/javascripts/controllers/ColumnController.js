@@ -72,7 +72,6 @@ app.controller('ColumnController', [
 
     $rootScope.$on('msg', function(evt, msg) {
       $scope.$apply(function() {
-        console.log(msg);
         var column = getColumnByName(msg.column);
         column.messages = column.messages || [];
         $arrayUtils.sortMsg(column.messages, msg.msg);
