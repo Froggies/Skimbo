@@ -1,11 +1,14 @@
-<div class="medias" ng-show="display">
-  <div class="button-a medias-close"  ng-click="close()">X</div>
-  <div class="medias-image-miniatures-container">
-    <img class="medias-image-miniatures" 
-      src="{{image}}" 
-      ng-click="selectImage(image)"
-      ng-repeat="image in images" />
+<div ng-show="display">
+  <div class="glass-div" ng-click="close()"></div>
+  <div class="medias">
+    <div class="button-a medias-close" ng-click="close()">X</div>
+    <div class="medias-image-miniatures-container">
+      <img class="medias-image-miniatures" 
+        src="{{image}}" 
+        ng-click="selectImage(image)"
+        ng-repeat="image in images" />
+    </div>
+    <img class="medias-image" src="{{urlImage}}" ng-hide="loading" />
+    <img class="medias-loading" src="/assets/img/loader.gif" width="40" height="40" ng-show="loading" />
   </div>
-  <img class="medias-image" src="{{urlImage}}" ng-hide="loading" />
-  <img class="medias-loading" src="/assets/img/loader.gif" width="40" height="40" ng-show="loading" />
 </div>
