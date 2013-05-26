@@ -4,11 +4,11 @@
     <div class="button-a medias-close" ng-click="close()">X</div>
     <div class="medias-image-miniatures-container">
       <img class="medias-image-miniatures" 
-        src="{{image}}" 
+        ng-src="{{image}}" 
         ng-click="selectImage(image)"
         ng-repeat="image in images" />
     </div>
-    <img class="medias-image" src="{{urlImage}}" ng-hide="loading" />
+    <img class="medias-image" ng-src="{{urlImage}}" ng-hide="loading" />
     <img class="medias-loading" src="/assets/img/loader.gif" width="40" height="40" ng-show="loading" />
   </div>
 </div>
