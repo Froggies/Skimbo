@@ -58,23 +58,23 @@
 						<a href="{{m.directLink}}" class="author-name {{m.from}}" target="_blank">{{m.authorName}}</a>
 						<p class="date-creation">{{m.dateAgo}}</p>
 						<div class="message blur-text {{blurText}}" ng-bind-html="m.message" title="{{m.original}}"></div>
-						<div class="container-message-image" ng-click="showMediasClick(m)">
+						<div class="container-message-image" ng-click="showMediasClick(m)" ng-show="m.picturesMin.length > 0">
 							<img class="message-image" ng-src="{{picture}}" ng-show="picture" ng-repeat="picture in m.picturesMin | maxRange:2 " />
 						</div>
 						<textarea ng-show="m.inComment" class="message-comment" placeholder="{{'COMMENT' | i18n}}" ng-model="m.currentComment" on-key-press="13" on-key-press-exec="sendComment(m, c)"></textarea>
-						<div class="message-footer" showonhoverparent>
-							<span class="message-footer-content"
+						<div class="message-footer">
+							<span class="message-footer-content button-a"
 										ng-click="comment(m)"
 										ng-show="m.canComment"
 										title="{{'COMMENT' | i18n}}"></span>
-							<span class="message-footer-content"
+							<span class="message-footer-content button-a"
 										ng-click="dispatchMsg(m)"
 										title="{{'SHARE' | i18n}}"></span>
-							<div class="message-footer-content message-footer-loader {{m.styleRefresh}}" 
+							<span class="message-footer-content message-footer-loader button-a" 
 										ng-click="getDetails(m, c)" 
 										ng-show="m.hasDetails"
-										title="{{'REFRESH_DETAILS' | i18n}}"></div>
-							<span class="message-footer-content message-footer-star {{m.iStared}}"
+										title="{{'REFRESH_DETAILS' | i18n}}"><div class="{{m.styleRefresh}}"></div></span>
+							<span class="message-footer-content message-footer-star {{m.iStared}} button-a"
 										ng-click="star(m, c)" 
 										ng-show="m.stared >= 0"
 										title="{{'STAR' | i18n}}">★{{m.stared}}</span>
