@@ -45,6 +45,7 @@ app.controller('ModifColumnController', [
 
     $rootScope.$on('allColumns', function(evt, columns) {
       //to check unique title
+      $scope.columnsTitle = [];
       $scope.$apply(function() {
         for (var i = 0; i < columns.length; i++) {
           $scope.columnsTitle.push(new String(columns[i].title));
