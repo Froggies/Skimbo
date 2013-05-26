@@ -13,11 +13,19 @@ app.controller('MediasController', [
 
     $rootScope.$on('displayMedias', function(evt, message) {
       console.log(message);
-      $scope.urlImage = $imagesUtils.checkExistingImage(message.medias[0]);
+      
+      var pictures;
+      if(message.picturesMax && message.picturesMax.length > 0) {
+        pictures = message.picturesMax;
+      } else {
+        pictures = message.picturesMin;
+      }
+      
+      $scope.urlImage = $imagesUtils.checkExistingImage(pictures[0]);
       $scope.images = [];
-      if(message.medias.length > 1) {
-        for (var i = 0; i < message.medias.length; i++) {
-          $scope.images.push($imagesUtils.checkExistingImage(message.medias[i]));
+      if(message.picturesMin.length > 1) {
+        for (var i = 0; i < message.picturesMin.length; i++) {
+          $scope.images.push($imagesUtils.checkExistingImage(message.picturesMin[i]));
         };
       }
       $scope.display = true;

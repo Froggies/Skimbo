@@ -59,7 +59,7 @@
 						<p class="date-creation">{{m.dateAgo}}</p>
 						<div class="message blur-text {{blurText}}" ng-bind-html="m.message" title="{{m.original}}"></div>
 						<div class="container-message-image" ng-click="showMediasClick(m)">
-							<img class="message-image" src="{{media}}" ng-show="media" ng-repeat="media in m.medias | maxRange:2 " />
+							<img class="message-image" src="{{picture}}" ng-show="picture" ng-repeat="picture in m.picturesMin | maxRange:2 " />
 						</div>
 						<textarea ng-show="m.inComment" class="message-comment" placeholder="{{'COMMENT' | i18n}}" ng-model="m.currentComment" on-key-press="13" on-key-press-exec="sendComment(m, c)"></textarea>
 						<div class="message-footer" showonhoverparent>

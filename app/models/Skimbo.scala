@@ -22,7 +22,8 @@ case class Skimbo(
   authorAvatar:Option[String],
   config: EndpointConfig,
   iStared: Boolean = false,
-  multimedia: Seq[String] = Seq.empty
+  picturesMin: Seq[String] = Seq.empty,
+  picturesMax: Seq[String] = Seq.empty
 )
 
 object Skimbo {
@@ -46,7 +47,8 @@ object Skimbo {
         "canStar" -> skimbo.config.starer.isDefined,
         "iStared" -> skimbo.iStared,
         "canComment" -> canComment,
-        "medias" -> skimbo.multimedia
+        "picturesMin" -> skimbo.picturesMin,
+        "picturesMax" -> skimbo.picturesMax
       )
     }
   }

@@ -46,7 +46,9 @@ object FacebookWallParser extends GenericJsonParser {
           Some(imageUrl.replace(":id", e.fromId.toString)),
           Configuration.Facebook.wall,
           false,
-          e.picture.map(Seq(_)).getOrElse(Seq.empty)))
+          e.picture.map(Seq(_)).getOrElse(Seq.empty),
+          //TODO dangerous !! longlongurl_s.xxx to longlongurl_n.xxx ==> find better way
+          e.picture.map(img => Seq(img.replaceAll("_s", "_n"))).getOrElse(Seq.empty)))
       } else {
         None
       }

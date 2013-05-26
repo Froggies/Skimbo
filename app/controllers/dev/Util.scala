@@ -50,8 +50,8 @@ object Util extends Controller with Authentication {
     val idUser = request.session.get("id").get
     import scala.concurrent.ExecutionContext.Implicits.global
     Async {
-      Endpoints.getConfig("googleplus.wall").flatMap { config =>
-        Endpoints.genererUrl("googleplus.wall", Map.empty, None).map { url =>
+      Endpoints.getConfig("facebook.notification").flatMap { config =>
+        Endpoints.genererUrl("facebook.notification", Map.empty, None).map { url =>
           config.provider.fetch(idUser, url).get.map { response =>
             Ok(config.provider.resultAsJson(response))
           }
