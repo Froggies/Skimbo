@@ -3,7 +3,8 @@
 	<div class="logo">
 		<img ng-hide="loading" src="/assets/img/skimbo-acote_40.png" width="114" height="40" ng-hide="loading">
 		<div id="loader" ng-show="loading">
-			<img src="/assets/img/loader.gif" width="40" height="40">{{loadingMsg | i18n}}
+			<img src="/assets/img/loader.gif" width="40" height="40">
+			<span>{{loadingMsg | i18n}}</span>
 		</div>
 	</div>
 
