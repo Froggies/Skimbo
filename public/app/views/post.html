@@ -1,6 +1,8 @@
 <div ng-controller="PostMessageController" class="button-selected-{{showPost}}">
   <div class="glass-div" ng-show="showPost" ng-click="show()"></div>
-  <img class="button-img" src="assets/img/min-skimbo.png" ng-click="show()" /><span id="skimber" class="" ng-click="show()">Skimber !</span>
+  <div ng-click="show()">
+    <img class="button-img" src="assets/img/min-skimbo.png" /><span id="skimber">Skimber !</span>
+  </div>
   <div id="content-div-post-message" ng-show="showPost">
     <div class="error-div">
       <span class="error-message" ng-show="showErrorTitleRequired">{{'TITLE_REQUIRED' | i18n}}</span>

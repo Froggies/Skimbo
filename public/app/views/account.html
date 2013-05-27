@@ -1,8 +1,10 @@
 <div ng-controller="AccountController" class="button-selected-{{showUserInformations}}">
   <div class="glass-div" ng-show="showUserInformations" ng-click="show()"></div>
-  <img class="button-img" ng-src="{{userInfos[0].avatar}}" width="24" height="24" ng-click="show()" ng-click="show()">
-  <div class="account-user-name" ng-click="show()">{{userInfos[0].username}}</div>
-  <i class="icon-play arrow-account" ng-click="show()"></i>
+  <div ng-click="show()">
+    <img class="button-img" ng-src="{{userInfos[0].avatar}}" width="24" height="24">
+    <div class="account-user-name">{{userInfos[0].username}}</div>
+    <i class="icon-play arrow-account"></i>
+  </div>
   <div id="bloc-utilisateur" ng-show="showUserInformations">
     <div id="reseaux-connectes">
       <div class="connected-on">{{'CONNECTED' | i18n}}</div>

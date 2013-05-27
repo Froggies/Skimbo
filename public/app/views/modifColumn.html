@@ -1,6 +1,8 @@
 <div ng-controller="ModifColumnController" class="button-selected-{{showModifyColumn}}">
   <div class="glass-div" ng-show="showModifyColumn" ng-click="show()"></div>
-  <img class="button-img" src="assets/img/min-add-col.png" ng-click="show()" /><span id="modifButton" class="" ng-click="show()">{{'ADD_NEW_COLUMN' | i18n}}</span>
+  <div ng-click="show()">
+    <img class="button-img" src="assets/img/min-add-col.png" /><span id="modifButton">{{'ADD_NEW_COLUMN' | i18n}}</span>
+  </div>
   <div id="content-div-add-column" ng-show="showModifyColumn">
     <div class="error-div">
       <span class="error-message" ng-show="showErrorTitleRequired">{{'TITLE_REQUIRED' | i18n}}</span>
