@@ -33,7 +33,7 @@ app.factory("ColumnSize", ["$window", function($window) {
     }
     // finally set size
     if(maxWidthNbColumns <= 5) {
-      column.csswidth = ($window.innerWidth - 10)+'px';
+      column.csswidth = ($window.innerWidth - 51)+'px';
     } else {
       var w = column.width * 100 / maxWidthNbColumns;
       column.csswidth = (w - 1.2) + '%';
