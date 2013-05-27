@@ -156,7 +156,6 @@ app.controller('PostMessageController', [
           o.cmd = "delayedPost";
           o.body.timeToPost = moment.utc(moment($scope.timeToPost, "DD-MM-YYYY HH:mm")).valueOf();
         }
-        console.log(o);
         $network.send(o);
         $scope.showPost = false;
         resetView();
@@ -179,6 +178,8 @@ app.controller('PostMessageController', [
       $scope.showErrorBadDate = false;
       $scope.isDelayedPost = false;
       $scope.timeToPost = "";
+      $scope.showLinkInput = false;
+      $scope.showImageInput = false;
     }
 
   }]);
