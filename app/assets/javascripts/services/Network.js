@@ -135,13 +135,33 @@ app.factory("Network", ["$http", "$timeout", "ServerCommunication", "$location",
     }, 3500);
   }
 
+  var datas = [];
+  var manageDatasInProgress = false;
+
   function command(data) {
     if(data.cmd == "ping") {
       //only sse connexion
       _send({"cmd":"pong"});
     } else {
       // console.log(data);
+      datas.push(data);
+      if(manageDatasInProgress == false) {
+        manageDatas();
+      }
+      
+    }
+  }
+
+  function manageDatas() {
+    if(datas.length == 0) {
+      manageDatasInProgress = false;
+    } else {
+      manageDatasInProgress = true;
+      var data = datas.pop();
       $serverCommunication.cmd(data);
+      $timeout(function() {
+        manageDatas();
+      }, 100);
     }
   }
 

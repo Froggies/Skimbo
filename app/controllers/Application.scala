@@ -11,6 +11,7 @@ import play.api.mvc.Action
 import play.api.mvc.Controller
 import services.auth.ProviderDispatcher
 import services.commands.DelayedPostPolling
+import play.api.mvc.DiscardingCookie
 
 object Application extends Controller {
 
@@ -33,10 +34,10 @@ object Application extends Controller {
     val isMobile = request.cookies.get("isMobile").map(_.value)
 
     providerOpt.map(provider => 
-      userOpt.map(_ => isMobile.map(_ => provider.auth(routes.Mobile.end).discardingCookies("isMobile"))
+      userOpt.map(_ => isMobile.map(_ => provider.auth(routes.Mobile.end).discardingCookies(DiscardingCookie("isMobile")))
           .getOrElse(provider.auth(routes.Application.closePopup)))
       .getOrElse(
-          isMobile.map(_ => provider.auth(routes.Mobile.end).discardingCookies("isMobile"))
+          isMobile.map(_ => provider.auth(routes.Mobile.end).discardingCookies(DiscardingCookie("isMobile")))
           .getOrElse(provider.auth(routes.Application.index))))
     .getOrElse(BadRequest)
   }
