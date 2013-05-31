@@ -54,6 +54,7 @@ app.controller('NotificationController', [
 
     $rootScope.$on('disconnect', function(evt, data) {
       $scope.$apply(function() {
+        var data = data || {};
         data.title = $filter('i18n')('DISCONNECT');
         data.footer = $filter('i18n')('CLICK_TO_RECONNECT');
         data.type = "disconnect";
