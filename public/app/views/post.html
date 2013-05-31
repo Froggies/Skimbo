@@ -1,7 +1,7 @@
 <div ng-controller="PostMessageController" class="button-selected-{{showPost}}">
   <div class="glass-div" ng-show="showPost" ng-click="show()"></div>
   <div ng-click="show()">
-    <img class="button-img" src="assets/img/min-skimbo.png" /><span id="skimber">Skimber !</span>
+    <span class="button-post-selected-{{showPost}}"></span><span class="label-button-post-selected">Skimber !</span>
   </div>
   <div id="content-div-post-message" ng-show="showPost">
     <div class="error-div">

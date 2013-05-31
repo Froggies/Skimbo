@@ -10,22 +10,19 @@
 			</div>
 		</header>
 	    <section>
-        <div id="connect-with">
-          <h1>Skimbo, a revolutionary way to follow all your social networks in real time.</h1>
-          <h2>Start now by connecting your favorite network.</h2>
-        </div>
         <ul id="social-networks">
         	@for(provider <- providers) {
 						<li>
 							<a href="/auth/@provider.name" title="Connect with @provider.name">
-								<img src="@routes.Assets.at("img/brand/"+provider.name+".png")" alt="@provider.name" width="50" height="50">
+								<img style="display:block;" src="@routes.Assets.at("img/brand/"+provider.name+".png")" alt="@provider.name" width="75" height="75">
+								<span class="@provider.name">@provider.name</span>
 							</a>
 						</li>
 					}
 				</ul>
 		</section>
 
-		<footer class="footer-graddient">
+		<!--<footer class="footer-graddient">
 				<p>⓵ <br/>
 					First, connect to Skimbo with your <strong>favorite network</strong>. Simply choose one, you can add more again later.</p>
 				<div class="separateur">
@@ -42,7 +39,7 @@
 				<p>⓷ <br />
 					You can add <strong>as many streams</strong> as you want in these columns. No limit !
 				</p>
-		</footer>
+		</footer>-->
 	</div>
 
 }
