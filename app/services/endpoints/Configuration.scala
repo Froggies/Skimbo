@@ -64,6 +64,7 @@ object Configuration {
       override val uniqueName = "twitter.hashtag"
       override val starer = Some(TwitterStarer)
       override val commenter = Some(TwitterCommenter)
+      override val transformParams = Map("hashtag" -> ((s: String) => if (s.startsWith("#")) s.drop(1) else s))
     }
     object directMessage extends EndpointConfig {
       override val url = withLimit("https://api.twitter.com/1.1/direct_messages.json?count=:limit")
@@ -373,6 +374,7 @@ trait EndpointConfig {
   val paramParserHelper: Option[GenericParserParamHelper] = None
   val paramUrlHelper: Option[String] = None
   val commenter: Option[Commenter] = None
+  val transformParams: Map[String, (String) => String] = Map()
 
   def withLimit(url: String) = url.replace(":limit", limit.toString)
 }

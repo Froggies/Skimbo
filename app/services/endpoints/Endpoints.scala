@@ -79,17 +79,21 @@ object Endpoints {
     found.headOption
   }
 
-  def genererUrl(endpoint: String, param: Map[String, String], sinceOpt: Option[String]): Option[String] = {
+  def genererUrl(endpoint: String, params: Map[String, String], sinceOpt: Option[String]): Option[String] = {
     getConfig(endpoint).flatMap { config =>
-      val isRequestValid = config.requiredParams.forall(param.get(_).isDefined) // Check if all required params are defined
+      val isRequestValid = config.requiredParams.forall(params.get(_).isDefined) // Check if all required params are defined
       if (!isRequestValid) {
         Logger.error("Request invalid : all required params are not defined.")
-        Logger.warn("Given : " + param)
+        Logger.warn("Given : " + params)
         Logger.warn("Expected : " + config.requiredParams)
         None
       } else {
+        // Transform params with configured filters
+        val tidyedParams = params.map {
+          case (key, value) => (key -> config.transformParams.get(key).map(tidyer => tidyer(value)).getOrElse(value))
+        }
         // Generate url with params
-        val baseUrl = param.foldLeft(config.url)((url, param) => url.replace(":" + param._1, param._2))
+        val baseUrl = tidyedParams.foldLeft(config.url)((url, param) => url.replace(":" + param._1, param._2))
         // And "since" element to Url
         Some(
             sinceOpt.map(since => 
