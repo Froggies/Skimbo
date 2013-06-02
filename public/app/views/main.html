@@ -43,7 +43,7 @@
 		</header>
 		<div class="column-content" scrollmanager="onlyTop" scrolldata="c">
 			<ul>
-				<li class="element {{m.isView}}" scrollmanager="m" ng-repeat="m in c.messages | filter:$parent.$parent.query">
+				<li class="element {{m.isView}}" ng-repeat="m in c.messages | filter:$parent.$parent.query">
 					<div class="timeline">
 						<div class="from-social-network vertical-text {{m.from}}">{{m.from}}</div>
 						<div class="rond {{m.from}}"></div>
@@ -56,7 +56,7 @@
 						<a href="{{m.directLink}}" class="author-name {{m.from}}" target="_blank">{{m.authorName}}</a>
 						<p class="date-creation">{{m.dateAgo}}</p>
 						<div class="message blur-text {{blurText}}" ng-bind-html="m.message" title="{{m.original}}"></div>
-						<div class="container-message-image" ng-click="showMediasClick(m)" ng-show="m.picturesMin.length > 0 && m.isView">
+						<div class="container-message-image" ng-click="showMediasClick(m)" ng-show="m.picturesMin.length > 0">
 							<img class="message-image" ng-src="{{picture}}" ng-show="picture" ng-repeat="picture in m.picturesMin | maxRange:2 " />
 						</div>
 						<textarea ng-show="m.inComment" class="message-comment" placeholder="{{'COMMENT' | i18n}}" ng-model="m.currentComment" on-key-press="13" on-key-press-exec="sendComment(m, c)"></textarea>
