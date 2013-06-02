@@ -40,7 +40,7 @@
   background-color: #F2F2F2;
   border: 1px solid #545454;
   border-left: none;
-  padding: 10px 20px 5px;
+  padding: 10px 10px 5px;
 }
 
 .posters-proposes {
@@ -73,53 +73,49 @@
 
 .post-message {
   height: 90px;
+  margin: 10px 2% 10px 0;
+  width: 90%;
+  padding: 5px;
+  resize: none;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  box-shadow: inset 0 0 2px #333;
+  border: none;
 }
 
-.button-linkfalse, .button-imagefalse, .button-previewfalse {
+.button-link, .button-image, .button-preview {
   position: absolute;
-  bottom: -20px;
-  padding: 0 46px;
+  bottom: -28px;
+  padding: 0 50px;
   border: 1px solid #000;
 }
 
-.button-linktrue, .button-imagetrue, .button-previewtrue {
-  position: absolute;
-  bottom: -20px;
-  padding: 0 40px;
-  border: 1px solid #000;
+.button-link:hover, .button-image:hover, .button-preview:hover {
+  background-color: #666;
 }
 
-.button-previewfalse {
-  left: 17px;
+.button-link:active, .button-image:active, .button-preview:active {
+  box-shadow: inset 0 0 2px #333;
+}
+
+.button-preview {
+  left: 11px;
   border-radius: 0 0 0 5px;
 }
 
-.button-previewtrue {
-  left: 14px;
-  border-radius: 0 0 0 5px;
-}
-
-.button-linkfalse {
-  left: 132px;
+.button-link {
+  left: 134px;
   border-radius: 0;
 }
 
-.button-linktrue {
-  left: 115px;
-  border-radius: 0;
-}
-
-.button-imagefalse {
-  left: 247px;
+.button-image {
+  left: 257px;
   border-radius: 0 0 5px 0;
 }
 
-.button-imagetrue {
-  left: 216px;
-  border-radius: 0 0 5px 0;
-}
-
-.inputfalse, .inputmessagefalse {
+.inputfalse {
   width: 85%;
   max-width: 400px;
   margin: 10px 5% 10px 0;
@@ -133,19 +129,27 @@
   border-radius: 5px;
 }
 
-.inputmessagetrue {
-  width: 75%;
-  max-width: 400px;
-  margin: 10px 5% 10px 0;
-  border-radius: 5px;
-}
-
 .post-help {
   position: absolute;
   border-radius: 5px 0 0 5px;
-  width: 25px;
+  width: 22px;
   right: 0;
-  top: 0;
+  top: 19px;
+  border: 1px solid #333;
+  border-right: none;
+  opacity: 0.8;
+  height: 29px;
+  line-height: 29px;
+  background-color: rgb(84, 84, 84);
+  color: rgb(255, 255, 255);
+}
+
+.post-help:hover {
+  opacity: 1;
+}
+
+.post-help:active {
+  box-shadow: inset 1px 0 1px #333;
 }
 
 .post-message-help {
@@ -167,6 +171,7 @@
 .action-bar-footer {
   text-align: right;
   margin-top: 20px;
+  margin-right: 19px;
 }
 
 .button-a.true {
@@ -199,3 +204,14 @@
   box-shadow: inset 0 0 2px #666;
 }
 
+.action-bar-footer .button-a {
+  border: 1px solid #333;
+}
+
+.action-bar-footer .button-a:hover {
+  background-color: #666;
+}
+
+.action-bar-footer .button-a:active {
+  box-shadow: inset 0 0 2px #333;
+}

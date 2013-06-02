@@ -50,11 +50,11 @@
       </ul>
     </div>
     <div class="post-message-container">
-      <textarea class="post-message inputmessage{{showHelp}}" ng-model="message" placeholder="message">{{message}}</textarea>
+      <textarea class="post-message inputmessage" ng-model="message" placeholder="message">{{message}}</textarea>
 
-      <a class="button-a icon-eye-1 button-preview{{showHelp}}"></a>
-      <a class="button-a icon-link button-link{{showHelp}}" ng-click="showLinkInput=!showLinkInput"></a>
-      <a class="button-a icon-camera button-image{{showHelp}}" ng-click="showImageInput=!showImageInput"></a>
+      <a class="button-a icon-eye-1 button-preview"></a>
+      <a class="button-a icon-link button-link" ng-click="showLinkInput=!showLinkInput"></a>
+      <a class="button-a icon-camera button-image" ng-click="showImageInput=!showImageInput"></a>
     </div>
     <div ng-show="showLinkInput">
       <input class="post-title input{{showHelp}}" type="text" ng-model="url" value="{{url}}" placeholder="url" />
