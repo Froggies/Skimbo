@@ -80,7 +80,7 @@
       </ul>
     </div>
     <div class="action-bar-footer">
-      <div class="post-message-help" ng-show="maxLength" style="color:hsl(0, {{100 - (maxLength - message.length / 1.5)}}%, 50%)"><img class="social-network-active" ng-show="maxLength == 140" ng-src="/assets/img/brand/twitter.png" alt="twitter" width="16" height="16">{{maxLength - message.length}}</div>
+      <div class="post-message-help" ng-show="maxLength && showHelp" style="color:hsl(0, {{100 - (maxLength - message.length / 1.5)}}%, 50%)"><img class="social-network-active" ng-show="maxLength == 140" ng-src="/assets/img/brand/twitter.png" alt="twitter" width="16" height="16">{{maxLength - message.length}}</div>
       <input type="textinput" placeholder="JJ/MM/AAAA HH:MM" ng-model="timeToPost" ng-show="isDelayedPost" />
       <a class="button-a" ng-click="isDelayedPost=!isDelayedPost">{{'SEND_LATER' | i18n}}</a>
       <a class="button-a" ng-click="post()">{{'SEND' | i18n}}</a>
