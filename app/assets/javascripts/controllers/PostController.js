@@ -29,6 +29,7 @@ app.controller('PostMessageController', [
 
     $scope.showPost = false;
     $scope.showHelp = false;
+    $scope.maxLength = 140;
     resetView();
 
     $rootScope.$on('displayViewMenu', function(evt, view) {
@@ -48,7 +49,7 @@ app.controller('PostMessageController', [
           provider.name = provider.service;
           provider.selected = false;
           if(provider.service == "linkedin" || provider.service == "github" ||
-             provider.service == "scoopit" || provider.service == "viadeo" || 
+             provider.service == "scoopit" || provider.service == "viadeo" ||
              provider.service == "googleplus") {
             $scope.providersWithTitle.push(provider);
           }
@@ -57,7 +58,7 @@ app.controller('PostMessageController', [
             $scope.providersWithUrl.push(provider);
           }
           if(provider.service == "linkedin" || provider.service == "facebook" ||
-             provider.service == "scoopit" || provider.service == "viadeo" || 
+             provider.service == "scoopit" || provider.service == "viadeo" ||
              provider.service == "googleplus") {
             $scope.providersWithImage.push(provider);
           }
@@ -107,7 +108,7 @@ app.controller('PostMessageController', [
           $network.send({cmd:"allPosters"});
         });
       }
-      
+
     }
 
     $scope.post = function() {
