@@ -48,6 +48,12 @@ app.filter('i18n', ['$rootScope', function($rootScope) {
         'TITLE_REQUIRED' : 'Le titre est requis.',
         'TO_ADD_STREAM_IN_COLUMN' : 'Pour ajouter un flux à cette colonne, sélectionnez un ou plusieurs services ci-dessus.',
         'YOU_ARE_RECEIVING' : 'Vous recevez',
+        //POST PLACEHOLDERS
+        'PH_POST_TITLE' : 'Titre',
+        'PH_POST_MESSAGE' : 'Message',
+        'PH_POST_URL' : 'Partager un lien',
+        'PH_POST_URLIMAGE' : 'Partager une image',
+        'PH_POST_DELAY' : 'JJ/MM/AAAA HH:MM',
         //ERRORS
         'CLICK_TO_HIDE' : 'Cliquer pour cacher cette erreur.',
         'CLICK_TO_RECONNECT' : 'Cliquer pour être reconnecté.',
@@ -111,6 +117,12 @@ app.filter('i18n', ['$rootScope', function($rootScope) {
         'TITLE_REQUIRED' : 'The title is required !',
         'TO_ADD_STREAM_IN_COLUMN' : 'To add a stream in this column, select one or many services above.',
         'YOU_ARE_RECEIVING' : 'You are receiving',
+        //POST PLACEHOLDERS
+        'PH_POST_TITLE' : 'Title',
+        'PH_POST_MESSAGE' : 'Message',
+        'PH_POST_URL' : 'Share a link',
+        'PH_POST_URLIMAGE' : 'Share a picture',
+        'PH_POST_DELAY' : 'DD/MM/YYYY HH:MM',
         //ERRORS
         'CLICK_TO_HIDE' : 'Click here to hide error.',
         'CLICK_TO_RECONNECT' : 'Click here to be connected again.',
@@ -133,7 +145,7 @@ app.filter('i18n', ['$rootScope', function($rootScope) {
       }
     },
     currentLanguage = $rootScope.currentLanguage || 'en';
-    if(translations[currentLanguage] != undefined && 
+    if(translations[currentLanguage] != undefined &&
         translations[currentLanguage][input] != undefined) {
         return translations[currentLanguage][input];
     } else {
