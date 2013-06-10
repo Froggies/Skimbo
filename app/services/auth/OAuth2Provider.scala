@@ -133,7 +133,7 @@ trait OAuth2Provider extends AuthProvider {
       "grant_type" -> "authorization_code")
 
     val req = WS.url(accessTokenUrl).withHeaders(accessTokenHeaders: _*)
-
+    Logger.info("OAuth fetch token ==> " + data)
     method match {
       case Get => req.withQueryString(data.toSeq: _*).get
       case Post => req.post(data.mapValues(Seq(_)))
