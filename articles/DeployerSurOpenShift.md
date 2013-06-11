@@ -34,4 +34,4 @@ Comme vous pourrez le remarquer, j'utilise les fichiers scripts <a href="https:/
 
 La procédure dure une dizaine de minutes pour une interruption de service n'excédant pas les 5 minutes. Certes interruption de service il y a, mais elle est raisonnable. Je pense également qu'on peut imaginer de déplacer l'arrêt du serveur après le rsync mais cela dépend de votre projet et de votre déploiement.
 
-Une faute d'orthographe, une groce bétise, une photo mal placée ? Faites une pull-request ;)
+Une faute d'orthographe, une grosse bétise, une photo mal placée ? Faites une pull-request ;)

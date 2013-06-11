@@ -64,4 +64,4 @@ override def distantUserToSkimboUser(idUser: String, response: play.api.libs.ws.
 
 Si d'aventure, vous êtes perdu ou que vous ne comprenez pas quelque chose, n'hésitez pas à nous le dire https://github.com/Froggies/Skimbo/issues?milestone=2&state=closed. De même, pour avoir d'autres exemples, nous avons déjà implémenté pas mal de providers basés sur oauth ou oauth2 https://github.com/Froggies/Skimbo/tree/master/app/services/auth/providers. Enfin, sachez que chaque provider fait ça petite sauce interne, donc ne soyez pas surpris que votre code ne marche pas du premier coup. Moi même pour rédiger cet article, j'ai passé 2h à débugger ce p****n de header perso imposé par reddit :D Pour preuve le commit final de l'ajout de reddit https://github.com/Froggies/Skimbo/commit/5ed536f685300a03e4f2fda25f31c28a46eaaeed
 
-Une faute d'orthographe, une groce bétise, une photo mal placée ? Faites une pull-request ;)
+Une faute d'orthographe, une grosse bétise, une photo mal placée ? Faites une pull-request ;)
