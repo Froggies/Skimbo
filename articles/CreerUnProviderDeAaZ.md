@@ -2,7 +2,7 @@
 
 Un article, sous forme de tutorial pour vous présenter comment ajouter un réseau social sur Skimbo !
 
-##Obtenir l'accès
+###Obtenir l'accès
 
 Pour commencer il vous faut, bien évidemment, un provider qui a une api ouverte. Pour cet exemple, je prendrais reddit. Il suffit, en règle général, de tapper "nom du réseau api" sur google pour trouver tout ce dont on a besoin.
 
@@ -31,7 +31,7 @@ Nous pouvons remarquer, que nous réécrivons clientId et secret. En fait, le fi
 
 Maintenant que la configuration est prête nous pouvons commencer à développer :D
 
-##Ajout du provider 
+###Ajout du provider 
 
 Reddit ouvre ces données grâce à OAuth2. Nous allons donc créer une classe Reddit qui étend la classe OAuth2. Afin de faciliter la lecture des classes nous préfèrerons la créer dans services.auth.providers.
 
