@@ -1,6 +1,8 @@
-Déployer un projet scala/playframework sur openshift
+#Déployer un projet scala/playframework sur openshift
 
 Vous connaissiez <a href="http://aws.amazon.com/" target="_blank">AWS</a>, <a href="https://www.heroku.com/" target="_blank">Heroku</a> ou <a href="https://www.dotcloud.com/" target="_blank">dotCloud</a>. Voici arriver un nouvel acteur d'importance sur ce marché tant convoité du Paas. Et ce nouvel acteur n'est ni plus ni moins que <a href="https://www.redhat.com/">RedHat</a>.
+
+###Commercial mode !
 
 Ce que nous propose RedHat par le biai de son outil <a href="https://www.openshift.com">OpenShift</a> est tout simplement magique. Non seulement il est à la hauteur de ses concurrents existants, mais en plus il est open-source. Vous l'aurez compris son let motive, est : "venez tester votre solution chez nous, puis si elle marche, payez pour scaler, ou achetez un serveur et installez OpenStack". Simpa de ne plus être tributaire d'un service, non ? OpenStack étant la pile logicielle sur laquelle est basée OpenShift.
 
@@ -11,6 +13,8 @@ Son écosystème des services tiers n'est pas encore à la hauteur d'Heroku, mai
 Ce que j'ai particulièrement aimé chez eux, c'est qu'ils vous donne l'accès ssh à la vm. Certes un cli existe pour vous faciliter déploiement et maintenance, mais qu'est-ce que c'est sympa de pouvoir faire un "top" pour comprendre ce qui se passe sur le serveur :D
 
 Après cette rapide intro passons aux choses sérieuses : le déploiement sur OpenShift !
+
+###Sur OpenShift
 
 Après avoir créé un compte chez eux, vous pouvez uploader votre clé ssh publique à partir de leur site. Ensuite il suffit de créer une application pour récupérer l'adresse url de connexion par ssh. Malheureusement, il n'existe pas (encore) de config pour scala/playframework. Cas cela ne tienne, nous allons utiliser un serveur "nu" et tout faire nous même. C'est là que l'open-source et le fait d'avoir le contrôle sur le serveur, prennent tout leur sens.
 
@@ -23,6 +27,8 @@ OpenShift, tout comme heroku, va créer un repo git pour votre synchro. Il vous 
 Dans ce dossier, se trouve un répertoire .openshift dans lequel vous retrouvez deux nouveaux répertoires : .action_hooks et .cron. Le premier permet d'automatiser des tâches lors du déploiement, le second de créer des crons.
 
 <img src="deployersuropenshift/openShiftRep.png" />
+
+###Au boulot
 
 Après plusieurs nuits de tests, j'ai abandonné l'idée de vouloir pousser les sources sur le serveur afin qu'il compile et fasse tout tout seul (comme Heroku). A la place je compile sur mon pc et je pousse la version staggée de mon projet sur leur serveur.
 
