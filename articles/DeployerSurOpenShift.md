@@ -20,8 +20,6 @@ Après avoir créé un compte chez eux, vous pouvez uploader votre clé ssh publ
 
 OpenShift, tout comme heroku, va créer un repo git pour votre synchro. Il vous faut donc soit le merger dans votre projet actuel, soit démarrer votre projet dans ce répertoire.
 
-Commande git !
-
 Dans ce dossier, se trouve un répertoire .openshift dans lequel vous retrouvez deux nouveaux répertoires : .action_hooks et .cron. Le premier permet d'automatiser des tâches lors du déploiement, le second de créer des crons.
 
 <img src="deployersuropenshift/openShiftRep.png" />
