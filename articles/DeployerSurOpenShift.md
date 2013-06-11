@@ -1,6 +1,6 @@
 Déployer un projet scala/playframework sur openshift
 
-Vous connaissiez AWS, Heroku, cloudBees ou dotCloud. Voici arriver un nouvel acteur d'importance sur ce marché tant convoité du Paas. Et ce nouvel acteur n'est ni plus ni moins que <a href="https://www.redhat.com/">RedHat</a>.
+Vous connaissiez <a href="http://aws.amazon.com/" target="_blank">AWS</a>, <a href="https://www.heroku.com/" target="_blank">Heroku</a> ou <a href="https://www.dotcloud.com/" target="_blank">dotCloud</a>. Voici arriver un nouvel acteur d'importance sur ce marché tant convoité du Paas. Et ce nouvel acteur n'est ni plus ni moins que <a href="https://www.redhat.com/">RedHat</a>.
 
 Ce que nous propose RedHat par le biai de son outil <a href="https://www.openshift.com">OpenShift</a> est tout simplement magique. Non seulement il est à la hauteur de ses concurrents existants, mais en plus il est open-source. Vous l'aurez compris son let motive, est : "venez tester votre solution chez nous, puis si elle marche, payez pour scaler, ou achetez un serveur et installez OpenStack". Simpa de ne plus être tributaire d'un service, non ? OpenStack étant la pile logicielle sur laquelle est basée OpenShift.
 
@@ -14,7 +14,9 @@ Après cette rapide intro passons aux choses sérieuses : le déploiement sur Op
 
 Après avoir créé un compte chez eux, vous pouvez uploader votre clé ssh publique à partir de leur site. Ensuite il suffit de créer une application pour récupérer l'adresse url de connexion par ssh. Malheureusement, il n'existe pas (encore) de config pour scala/playframework. Cas cela ne tienne, nous allons utiliser un serveur "nu" et tout faire nous même. C'est là que l'open-source et le fait d'avoir le contrôle sur le serveur, prennent tout leur sens.
 
-Photos du site !
+<img src="deployersuropenshift/pubKey.png" />
+<img src="deployersuropenshift/app.png" />
+<img src="deployersuropenshift/createAppDIY.png" />
 
 OpenShift, tout comme heroku, va créer un repo git pour votre synchro. Il vous faut donc soit le merger dans votre projet actuel, soit démarrer votre projet dans ce répertoire.
 
@@ -22,10 +24,14 @@ Commande git !
 
 Dans ce dossier, se trouve un répertoire .openshift dans lequel vous retrouvez deux nouveaux répertoires : .action_hooks et .cron. Le premier permet d'automatiser des tâches lors du déploiement, le second de créer des crons.
 
+<img src="deployersuropenshift/openShiftRep.png" />
+
 Après plusieurs nuits de tests, j'ai abandonné l'idée de vouloir pousser les sources sur le serveur afin qu'il compile et fasse tout tout seul (comme Heroku). A la place je compile sur mon pc et je pousse la version staggée de mon projet sur leur serveur.
 
-Pour cela rien de plus simple, un petit script shell : https://raw.github.com/Froggies/Skimbo/master/script/deploy_openshift.sh largement inspiré par celui-ci http://greweb.me/2013/05/playframework-simple-deployment-scripts/
+Pour cela rien de plus simple, un petit <a href="https://raw.github.com/Froggies/Skimbo/master/script/deploy_openshift.sh">script shell</a>, largement inspiré par <a href="http://greweb.me/2013/05/playframework-simple-deployment-scripts/">celui-ci</a>.
 
 En deux mots, il compile la version actuelle du projet grâce à la fonction stage de playframework. Il arrête le serveur playframework et il rsync (upload le différentiel) le résultat du pc, vers le serveur distant. Enfin, il relance le serveur playframework distant.
+
+Comme vous pourrez le remarquer, j'utilise les fichiers scripts <a href="https://github.com/Froggies/Skimbo/blob/master/.openshift/action_hooks/start">start</a> et <a href="https://github.com/Froggies/Skimbo/blob/master/.openshift/action_hooks/stop">stop</a> du répertoire .openshift/action_hooks. C'est pour garder le fonctionnement standard d'Openshift, si un jour un cartbridge playframeworks sort, ou si le serveur est mise à jour ce sera ces scripts qui seront appelés.
 
 La procédure dure une dizaine de minutes pour une interruption de service n'excédant pas les 5 minutes. Certes interruption de service il y a, mais elle est raisonnable. Je pense également qu'on peut imaginer de déplacer l'arrêt du serveur après le rsync mais cela dépend de votre projet et de votre déploiement.
