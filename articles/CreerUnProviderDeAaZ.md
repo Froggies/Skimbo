@@ -56,11 +56,13 @@ override def processToken(response: play.api.libs.ws.Response) = {
 
 Relancer Skimbo, votre nouveau provider est disponible pour la connexion.
 
-Pour réellement finir ce nouveau provider, il nous faut encore parser le résultat de l'appel à urlUserInfos, positionné plus haut. Pour cela il suffit d'overrider :
+Pour réellement finir ce nouveau provider, il nous faut encore parser le résultat de l'appel à urlUserInfos (oui oui celui entré dès le début). Pour cela il suffit d'overrider :
 
 ```scala
 override def distantUserToSkimboUser(idUser: String, response: play.api.libs.ws.Response): Option[ProviderUser]
 ```
+
+Petit détail final, penser à ajouter la couleur primaire du provider dans SKIMBO_REP/app/assets/stelsheets/main.less.
 
 Si d'aventure, vous êtes perdu ou que vous ne comprenez pas quelque chose, n'hésitez pas <a href="https://github.com/Froggies/Skimbo/issues?milestone=2&state=closed"à nous le dire</a>. De même, pour avoir d'autres exemples, nous avons déjà implémenté pas mal de providers basés sur oauth ou oauth2 sur notre <a href="https://github.com/Froggies/Skimbo/tree/master/app/services/auth/providers">github</a>. Enfin, sachez que chaque provider fait ça petite sauce interne, donc ne soyez pas surpris que votre code ne marche pas du premier coup. Moi même pour rédiger cet article, j'ai passé 2h à débugger ce p****n de header perso imposé par reddit :D Pour preuve le commit final de l'ajout de reddit https://github.com/Froggies/Skimbo/commit/5ed536f685300a03e4f2fda25f31c28a46eaaeed
 
