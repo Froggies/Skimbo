@@ -2,12 +2,14 @@
 
 define(["app"], function(app) {
 
-app.directive("drag2", ["$rootScope", function($rootScope) { 
+app.directive("drag", ["$rootScope", "$timeout", 
+  function($rootScope, $timeout) { 
     
   var currentElement, firstOffsetX, firstOffsetY, originalElement;
   var containerId = "content";
   var container = angular.element(document.getElementById(containerId));
-  var elements = [];  
+  var elements = []; 
+  var listen = true; 
 
   function calculPosition(evt, useOffsetEvt) {
     var offsetX = firstOffsetX;
@@ -24,67 +26,114 @@ app.directive("drag2", ["$rootScope", function($rootScope) {
     };
   }
 
-  container.bind('mousemove', function(evt) {
-    if(currentElement) {
-        var elem = currentElement;
-        var position = calculPosition(evt);
-        elem[0].style.position = "absolute";
-        elem[0].style.top = position.y+"px";
-        elem[0].style.left = position.x+"px";
-        for(var i=0; i<elements.length; i++) {
-          var nelem = elements[i][0];
-          console.log(nelem, evt);
-          if(nelem.offsetTop - nelem.offsetHeight > evt.pageY && 
-            nelem.offsetTop + nelem.height < evt.pageY && 
-            nelem.offsetLeft - nelem.offsetWidth > evt.pageX && 
-            nelem.offsetLeft + nelem.width < evt.pageX &&
-            originalElement.dragData.title != elements[i].dragData.title) {
-            $rootScope.$broadcast("dropEvent", originalElement.dragData, elements[i].dragData);
-            angular.element(nelem).addClass("columnDrop");
-            return;
-          } else {
-            angular.element(nelem).removeClass("columnDrop");
-          }
-      }
+  function isInside(c1, c2) {//c == {x:int, y:int, w:int, h:int}
+    return c2.x > c1.x && c2.x+c2.w < c1.x+c1.w &&
+      c2.y > c1.y && c2.y+c2.h < c1.y+c1.h;
+  }
+
+  function buildCarreMouseEvt(evt) {
+    return {
+      x: (evt.pageX - evt.offsetX),
+      y: (evt.pageY - evt.offsetY),
+      w: 100,
+      h: 100
     }
+  }
+
+  function buildCarreElmt(elmt) {
+    return {
+      x: elmt.offsetLeft,
+      y: elmt.offsetTop,
+      w: elmt.clientWidth,
+      h: elmt.clientHeight
+    }
+  }
+
+  container.bind('mousemove', function(evt) {
+    $timeout(function() {
+      if(currentElement) {
+        var position = calculPosition(evt);
+        currentElement[0].style.position = "absolute";
+        currentElement[0].style.top = position.y+"px";
+        currentElement[0].style.left = position.x+"px";
+        for(var i=0; i<elements.length && listen == true; i++) {
+          var elm = document.getElementById(elements[i].originalId);
+          var inside = isInside(buildCarreElmt(elm), buildCarreMouseEvt(evt));
+          if(inside && 
+            currentElement.dragData.title != elements[i].dragData.title) {
+            $rootScope.$broadcast("moveColumnEvent", currentElement.dragData, elements[i].dragData);
+            listen = false;
+            var oldWidth = currentElement[0].style.width;
+            var oldHeight = currentElement[0].style.height;
+            currentElement[0].style.width = elm.style.width;
+            currentElement[0].style.height = elm.style.height;
+            originalElement.style.width = elm.style.width;
+            originalElement.style.height = elm.style.height;
+            elm.style.width = oldWidth;
+            elm.style.height = oldHeight;
+            $timeout(function() {
+              listen = true;
+              var elm2 = document.getElementById(elements[i].originalId);
+            }, 1000);
+            return;
+          }
+        }
+      }
+    }, 0);
   });
     
   container.bind('mouseup', function(evt) {
     if(currentElement != undefined) {         
       document.getElementById(containerId).removeChild(currentElement[0]);
       currentElement = undefined;
-      originalElement.removeClass("columnDrag");
-      for(var i=0; i<elements.length; i++) {
-        elements[i].removeClass("columnDrop");
-      }
+      angular.element(originalElement).removeClass("columnDrag");
+      $rootScope.$broadcast("dropColumnEvent");
     }
   });
     
   return {
     restrict: 'A',
     link: function(scope, element, attrs)  {
-      scope.dragData = scope[attrs["drag2"]];
       scope.dragStyle = attrs["dragstyle"];
-      element.dragData = scope[attrs["drag2"]];
       element.bind('mousedown', function(evt) {
         if(currentElement == undefined) {
           var div = document.createElement("div");
-          div.innerHTML = element[0].innerHTML;
-          div.className = element[0].className;
+          originalElement = document.getElementById(attrs["dragElementId"]);
+          div.innerHTML = originalElement.innerHTML;
+          div.className = originalElement.className;
           document.getElementById(containerId).appendChild(div);
           currentElement = angular.element(div);
+          currentElement.dragData = scope[attrs["drag"]];
           var position = calculPosition(evt, true);
           currentElement[0].style.position = "absolute";
           currentElement[0].style.top = position.y+"px";
           currentElement[0].style.left = position.x+"px";
-          currentElement[0].style.width = element[0].style.width;
-          currentElement[0].style.height = element[0].style.height;
-          originalElement = element;
-          element.addClass("columnDrag");
-          console.log(evt, originalElement);
+          currentElement[0].style.width = originalElement.style.width;
+          currentElement[0].style.height = originalElement.style.height;
+          angular.element(originalElement).addClass("columnDrag");
         }
       });
-      elements.push(element);
+      attrs.$observe('dragElementId', function(val) {
+        if(element.added === undefined) {
+          element.added = true;
+          var elmt = {
+            dragData: scope[attrs["drag"]],
+            originalId: val
+          };
+          elements.push(elmt);
+        } else {
+          for (var i = 0; i < elements.length; i++) {
+            if(elements[i].originalId == val) {
+              elements.splice(i, 1);
+            }
+          };
+          var elmt = {
+            dragData: scope[attrs["drag"]],
+            originalId: val
+          };
+          elements.push(elmt);
+        }
+      });
     }
   }
 

@@ -17,8 +17,6 @@
 	<section id="column_{{$index}}"
 			class="column"
 			ng-repeat="c in columns"
-			drag="" dragStyle="columnDrag"
-      drop="" dropStyle="columnDrop"
 			style="width:{{c.csswidth}};height:{{c.cssheight}}">
 		<header class="column-title">
 			<div class="containerNbMsg">
@@ -27,7 +25,7 @@
 					{{messagesNoView(c)}}
 				</a>
 			</div>
-			<div class="title">{{c.title}}</div>
+			<div class="title" drag="c" drag-element-id="column_{{$index}}">{{c.title}}</div>
 			<div class="configure">
 				<a class="icon-resize-full" title="{{'RESIZE_COLUMN' | i18n}}" ng-click="c.show_size_column=!c.show_size_column"></a>
 				<div class="column-size" ng-show="c.show_size_column">

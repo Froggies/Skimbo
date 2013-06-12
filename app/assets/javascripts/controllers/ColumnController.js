@@ -116,12 +116,12 @@ app.controller('ColumnController', [
       });
     });
 
-    $rootScope.$on('dropEvent', function(evt, dragged, dropped) {
-      console.log(dragged, dropped);
+    $rootScope.$on('moveColumnEvent', function(evt, dragged, dropped) {
+      //console.log(dragged, dropped);
       var i, oldIndex1, oldIndex2;
       for(i=0; i<$scope.columns.length; i++) {
         var c = $scope.columns[i];
-        console.log(dragged.title);
+        //console.log(dragged.title);
         if(dragged.title === c.title) {
           oldIndex1 = i;
         }
@@ -133,6 +133,18 @@ app.controller('ColumnController', [
       $scope.columns[oldIndex1] = $scope.columns[oldIndex2];
       $scope.columns[oldIndex2] = temp;
       $scope.$apply();
+    });
+
+    $rootScope.$on('dropColumnEvent', function(evt) {
+      var modColumnsOrder = {
+        "cmd":"modColumnsOrder", "body":{ 
+          "columns": []
+        }
+      };
+      for (var i = 0; i < $scope.columns.length; i++) {
+        modColumnsOrder.body.columns.push($scope.columns[i].title);
+      };
+      $network.send(modColumnsOrder);
     });
 
     $scope.modifyColumn = function(column) {

@@ -13,7 +13,6 @@ require([
   'services/Network',
   'services/PopupProvider',
   'services/ServerCommunication',
-  'directives/DragAndDrop',
   'directives/Drag',
   'directives/ScrollManager',
   'directives/ShowOnHoverParent',
