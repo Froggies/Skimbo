@@ -2,7 +2,7 @@
 
 define(["app"], function(app) {
 
-app.factory("ArrayUtils", ['Visibility', function($visibility) {
+app.factory("ArrayUtils", ['Visibility', '$rootScope', function($visibility, $rootScope) {
 
   var insertedMsgInProgress = false;
   var msgToBeInserted = [];
@@ -68,6 +68,9 @@ app.factory("ArrayUtils", ['Visibility', function($visibility) {
           }
           //refresh time
           sortMe[i].dateAgo = moment(moment(Number(sortMe[i].createdAt)), "YYYYMMDD").fromNow();
+          // sortMe[i].dateAgo = moment(moment(Number(sortMe[i].createdAt)), "YYYYMMDD")
+          //                       .lang($rootScope.currentLanguage || 'en')
+          //                       .fromNow();
         }
         //insert data
         if(index > -1 && isOldMsg == false) {
