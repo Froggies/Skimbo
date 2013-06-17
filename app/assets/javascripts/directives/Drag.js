@@ -50,10 +50,8 @@ app.directive("drag", ["$rootScope", "$timeout",
   }
 
   function deleteElement(originalId) {
-    console.log("remove", originalId);
     for (var i = 0; i < elements.length; i++) {
       if(elements[i].originalId == originalId) {
-        console.log("really remove", originalId);
         return elements.splice(i, 1);
       }
     }
@@ -66,7 +64,6 @@ app.directive("drag", ["$rootScope", "$timeout",
         currentElement[0].style.position = "absolute";
         currentElement[0].style.top = position.y+"px";
         currentElement[0].style.left = position.x+"px";
-        console.log("elements", elements);
         for(var i=0; i<elements.length && listen == true; i++) {
           var elm = document.getElementById(elements[i].originalId);
           if(elm) {//FIXME : remove and fix it !
@@ -140,7 +137,6 @@ app.directive("drag", ["$rootScope", "$timeout",
         elements.push(elmt);
       });
       element.bind("$destroy", function() {
-        console.log("DESTROY", element.originalId);
         deleteElement(element.originalId);
       });
     }
