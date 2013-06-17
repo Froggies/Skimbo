@@ -67,10 +67,10 @@ app.factory("ArrayUtils", ['Visibility', '$rootScope', function($visibility, $ro
             console.log("message already received", newMsg);
           }
           //refresh time
-          sortMe[i].dateAgo = moment(moment(Number(sortMe[i].createdAt)), "YYYYMMDD").fromNow();
-          // sortMe[i].dateAgo = moment(moment(Number(sortMe[i].createdAt)), "YYYYMMDD")
-          //                       .lang($rootScope.currentLanguage || 'en')
-          //                       .fromNow();
+          //sortMe[i].dateAgo = moment(moment(Number(sortMe[i].createdAt)), "YYYYMMDD").fromNow();
+          sortMe[i].dateAgo = moment(moment(Number(sortMe[i].createdAt)), "YYYYMMDD")
+                                 .lang($rootScope.currentLanguage || 'en')
+                                 .fromNow();
         }
         //insert data
         if(index > -1 && isOldMsg == false) {
