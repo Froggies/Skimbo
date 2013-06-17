@@ -49,6 +49,16 @@ app.directive("drag", ["$rootScope", "$timeout",
     }
   }
 
+  function deleteElement(originalId) {
+    console.log("remove", originalId);
+    for (var i = 0; i < elements.length; i++) {
+      if(elements[i].originalId == originalId) {
+        console.log("really remove", originalId);
+        return elements.splice(i, 1);
+      }
+    }
+  }
+
   container.bind('mousemove', function(evt) {
     $timeout(function() {
       if(currentElement) {
@@ -56,26 +66,29 @@ app.directive("drag", ["$rootScope", "$timeout",
         currentElement[0].style.position = "absolute";
         currentElement[0].style.top = position.y+"px";
         currentElement[0].style.left = position.x+"px";
+        console.log("elements", elements);
         for(var i=0; i<elements.length && listen == true; i++) {
           var elm = document.getElementById(elements[i].originalId);
-          var inside = isInside(buildCarreElmt(elm), buildCarreMouseEvt(evt));
-          if(inside && 
-            currentElement.dragData.title != elements[i].dragData.title) {
-            $rootScope.$broadcast("moveColumnEvent", currentElement.dragData, elements[i].dragData);
-            listen = false;
-            var oldWidth = currentElement[0].style.width;
-            var oldHeight = currentElement[0].style.height;
-            currentElement[0].style.width = elm.style.width;
-            currentElement[0].style.height = elm.style.height;
-            originalElement.style.width = elm.style.width;
-            originalElement.style.height = elm.style.height;
-            elm.style.width = oldWidth;
-            elm.style.height = oldHeight;
-            $timeout(function() {
-              listen = true;
-              var elm2 = document.getElementById(elements[i].originalId);
-            }, 1000);
-            return;
+          if(elm) {//FIXME : remove and fix it !
+            var inside = isInside(buildCarreElmt(elm), buildCarreMouseEvt(evt));
+            if(inside && 
+              currentElement.dragData.title != elements[i].dragData.title) {
+              $rootScope.$broadcast("moveColumnEvent", currentElement.dragData, elements[i].dragData);
+              listen = false;
+              var oldWidth = currentElement[0].style.width;
+              var oldHeight = currentElement[0].style.height;
+              currentElement[0].style.width = elm.style.width;
+              currentElement[0].style.height = elm.style.height;
+              originalElement.style.width = elm.style.width;
+              originalElement.style.height = elm.style.height;
+              elm.style.width = oldWidth;
+              elm.style.height = oldHeight;
+              $timeout(function() {
+                listen = true;
+                var elm2 = document.getElementById(elements[i].originalId);
+              }, 1000);
+              return;
+            }
           }
         }
       }
@@ -116,23 +129,19 @@ app.directive("drag", ["$rootScope", "$timeout",
       attrs.$observe('dragElementId', function(val) {
         if(element.added === undefined) {
           element.added = true;
-          var elmt = {
-            dragData: scope[attrs["drag"]],
-            originalId: val
-          };
-          elements.push(elmt);
+          element.originalId = val;
         } else {
-          for (var i = 0; i < elements.length; i++) {
-            if(elements[i].originalId == val) {
-              elements.splice(i, 1);
-            }
-          };
-          var elmt = {
-            dragData: scope[attrs["drag"]],
-            originalId: val
-          };
-          elements.push(elmt);
+          deleteElement(val);
         }
+        var elmt = {
+          dragData: scope[attrs["drag"]],
+          originalId: val
+        };
+        elements.push(elmt);
+      });
+      element.bind("$destroy", function() {
+        console.log("DESTROY", element.originalId);
+        deleteElement(element.originalId);
       });
     }
   }
