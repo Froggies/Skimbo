@@ -145,9 +145,6 @@ app.filter('i18n', ['$rootScope', function($rootScope) {
     }
   },
   currentLanguage = $rootScope.currentLanguage || 'en';
-  //console.log(currentLanguage);
-  //moment.lang(currentLanguage);
-  //console.log(moment.lang);
 
   return function (input) {
     if(translations[currentLanguage] != undefined &&
