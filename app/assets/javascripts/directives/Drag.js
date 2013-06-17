@@ -62,7 +62,7 @@ app.directive("drag", ["$rootScope", "$timeout",
       if(currentElement) {
         var position = calculPosition(evt);
         currentElement[0].style.position = "absolute";
-        currentElement[0].style.top = position.y+"px";
+        currentElement[0].style.top = (position.y - 10)+"px";
         currentElement[0].style.left = position.x+"px";
         for(var i=0; i<elements.length && listen == true; i++) {
           var elm = document.getElementById(elements[i].originalId);
@@ -116,7 +116,7 @@ app.directive("drag", ["$rootScope", "$timeout",
           currentElement.dragData = scope[attrs["drag"]];
           var position = calculPosition(evt, true);
           currentElement[0].style.position = "absolute";
-          currentElement[0].style.top = position.y+"px";
+          currentElement[0].style.top = (position.y - 10)+"px";
           currentElement[0].style.left = position.x+"px";
           currentElement[0].style.width = originalElement.style.width;
           currentElement[0].style.height = originalElement.style.height;
