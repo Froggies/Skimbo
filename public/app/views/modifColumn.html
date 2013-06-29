@@ -1,4 +1,6 @@
 <div id="content-div-add-column" ng-controller="ModifColumnController">
+  <a class="button button-close" ng-click="close()" />X</a>
+  <a class="button button-help" ng-click="showHelp = !showHelp" />?</a>
   <div class="error-div">
     <span class="error-message" ng-show="showErrorTitleRequired">{{'TITLE_REQUIRED' | i18n}}</span>
     <br ng-show="showErrorTitleRequired"/>
@@ -66,7 +68,6 @@
     </div>
   </div>
   <div class="controls-new">
-    <a class="button-a delete-link" ng-click="cancelCreateColumn()">{{'CANCEL' | i18n}}</a>
     <a class="button-a delete-link" ng-click="deleteColumn(c)" ng-hide="column.newColumn">{{'DELETE' | i18n}}</a>
     <a class="button-a" ng-click="validate()"ng-hide="column.newColumn">{{'CHANGE' | i18n}}</a>
     <a ng-show="column.unifiedRequests.length > 0 && column.newColumn" class="button-a" ng-click="validate()" />{{'CREATE' | i18n}}</a>

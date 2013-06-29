@@ -101,9 +101,8 @@ app.controller('ModifColumnController', [
       arg.value = value.call;
     }
 
-    $scope.cancelCreateColumn = function() {
-      resetView();
-      $scope.showModifyColumn = false;
+    $scope.close = function() {
+      $scope.$parent.hide();
     }
 
     $scope.deleteService = function(service, arg) {
@@ -169,7 +168,7 @@ app.controller('ModifColumnController', [
           $scope.showErrorDoubleParser == false &&
           $scope.showErrorTitleRequired == false &&
           $scope.showErrorTitleAlreadyExist == false) {
-        $scope.showModifyColumn = !$scope.showModifyColumn;
+        $scope.close();
         $network.send(json);
       }
     }
@@ -179,7 +178,7 @@ app.controller('ModifColumnController', [
         "cmd": "delColumn", 
         "body": {"title": $scope.column.oldTitle}
       });
-      $scope.showModifyColumn = false;
+      $scope.close();
     }
 
     function resetView() {

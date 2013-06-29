@@ -1,5 +1,7 @@
 <div id="bloc-utilisateur" ng-controller="AccountController">
   <div id="reseaux-connectes">
+    <a class="button button-close" ng-click="close()" />X</a>
+    <a class="button button-help" ng-click="showHelp = !showHelp" />?</a>
     <div class="connected-on">{{'CONNECTED' | i18n}}</div>
     <ul>
       <li ng-repeat="userInfo in userInfos">

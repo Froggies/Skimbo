@@ -8,8 +8,8 @@
     <br ng-show="showErrorPosterRequired"/>
     <span class="error-message" ng-show="showErrorBadDate">{{'BAD_DATE_POSTER' | i18n}}</span>
   </div>
-  <a class="button post-close" ng-click="close()" />X</a>
-  <a class="button post-help" ng-click="showHelp = !showHelp" />?</a>
+  <a class="button button-close" ng-click="close()" />X</a>
+  <a class="button button-help" ng-click="showHelp = !showHelp" />?</a>
   <ul class="posters-proposes">
     <li ng-repeat="provider in providers">
       <div class="social-network-link">

@@ -8,6 +8,10 @@ app.controller('AccountController', [
       $scope.userInfos = data;
     });
 
+    $scope.close = function() {
+      $scope.$parent.hide();
+    }
+
     $scope.deleteProvider = function(providerName) {
       $http.get("/api/providers/del/"+providerName).success(function() {
         for (var i = 0; i < $scope.userInfos.length; i++) {
