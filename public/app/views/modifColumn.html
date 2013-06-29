@@ -6,18 +6,18 @@
     <br ng-show="showErrorTitleRequired"/>
     <span class="error-message" ng-show="showErrorTitleAlreadyExist">{{'TITLE_ALREADY_EXISTS' | i18n}}</span>
   </div>
-  <div id="column-title">
+  <div class="modif-column-title">
     {{'COLUMN_TITLE' | i18n}} <input class="title-input error" type="text" ng-model="column.title" value="{{column.title}}" />
   </div>
-  <div id="choose-service-provider">
-    <div id="services-in-column" ng-show="column.unifiedRequests.length > 0">
+  <div>
+    <div class="services-in-column" ng-show="column.unifiedRequests.length > 0">
       {{'ALREADY_IN_YOUR_COLUMN' | i18n}}
       <div class="error-div">
         <span class="error-message" ng-show="showErrorBlankArg">{{'ALL_FIELD_REQUIRED' | i18n}}</span>
         <span class="error-message" ng-show="showErrorDoubleParser">{{'CANT_ADD_SAME_SERVICE' | i18n}}</span>
       </div>
-      <ul class="services-proposes">
-        <li ng-repeat="service in column.unifiedRequests">
+      <ul>
+        <li class="services-proposes" ng-repeat="service in column.unifiedRequests">
           <div class="input-service" ng-show="service.hasArguments" ng-repeat="arg in service.args ">
             <img class="img-service" ng-src="/assets/img/brand/{{service.providerName}}.png" alt="{{service.providerName}}" width="24" height="24">
             <input class="arg-service" type="text" ng-model="arg.value" placeholder="{{arg.key}}" pattern="[ a-zA-Z0-9]*" oracle="service" oracle-type="paramHelperSearch" oracle-store="arg" focus/>
@@ -35,8 +35,7 @@
           <div class="input-service" ng-hide="service.hasArguments">
             <img class="img-service" ng-src="/assets/img/brand/{{service.providerName}}.png" alt="{{service.providerName}}" width="24" height="24">
             <div class="receving-service">{{service.serviceName}}</div>
-            <a
-              class="delete-service {{service.providerName}}"
+            <a class="delete-service {{service.providerName}}"
               ng-click="deleteService(service,arg)"
             >✘</a>
           </div>
@@ -45,31 +44,28 @@
     </div>
     <div class="sub-content" style="width:{{availableSocialNetworksWidth}}">
       {{'AVAILABLE_SOCIAL_NETWORKS' | i18n}}
-      <ul class="services-proposes">
-        <li ng-repeat="provider in providers">
-          <div class="social-network-link">
-            <a class="btn {{provider.selected}}" ng-click="selectSocialNetwork(provider)">
-              <img class="social-network-active" ng-src="/assets/img/brand/{{provider.name}}.png" alt="{{provider.name}}" width="32" height="32"></a>
-          </div>
+      <ul>
+        <li class="services-proposes" ng-repeat="provider in providers">
+          <a class="button-a {{provider.selected}} button-provider modif-column-button-provider" ng-click="selectSocialNetwork(provider)">
+            <img class="social-network-active" ng-src="/assets/img/brand/{{provider.name}}.png" alt="{{provider.name}}" width="32" height="32">
+          </a>
         </li>
       </ul>
     </div>
     <div class="sub-content sub-content-right" ng-show="selectedSocialNetwork != undefined">
       {{'AVAILABLE_SERVICES' | i18n}}
-      <ul class="services-proposes">
-        <li ng-repeat="service in selectedSocialNetwork.services">
-          <div class="social-network-link {{service.hasParser}}">
-            <a class="button-a" ng-click="addService(service)">
-              {{service.serviceName}}
-            </a>
-          </div>
+      <ul>
+        <li class="services-proposes" ng-repeat="service in selectedSocialNetwork.services">
+          <a class="button-a" ng-click="addService(service)">
+            {{service.serviceName}}
+          </a>
         </li>
       </ul>
     </div>
   </div>
-  <div class="controls-new">
+  <div class="controls-footer">
     <a class="button-a delete-link" ng-click="deleteColumn(c)" ng-hide="column.newColumn">{{'DELETE' | i18n}}</a>
-    <a class="button-a" ng-click="validate()"ng-hide="column.newColumn">{{'CHANGE' | i18n}}</a>
-    <a ng-show="column.unifiedRequests.length > 0 && column.newColumn" class="button-a" ng-click="validate()" />{{'CREATE' | i18n}}</a>
+    <a class="button-a" ng-click="validate()" ng-hide="column.newColumn">{{'CHANGE' | i18n}}</a>
+    <a ng-show="column.newColumn" class="button-a" ng-click="validate()" />{{'CREATE' | i18n}}</a>
   </div>
 </div>

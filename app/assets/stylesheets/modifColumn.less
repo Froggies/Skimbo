@@ -5,7 +5,7 @@
   max-height: 80%;
   height: 80%;
   position: relative;
-  top: 45px;
+  top: 42px;
   padding: 5px;
   z-index: 10;
   border-radius: 0 5px 5px 0;
@@ -22,8 +22,12 @@
   padding: 10px 20px 5px;
 }
 
-#choose-service-provider {
-  min-height: 80%;
+.modif-column-title {
+  padding: 20px;
+}
+
+.services-in-column {
+  padding-bottom: 20px;
 }
 
 .sub-content {
@@ -37,42 +41,15 @@
   padding-left: 5px;
 }
 
-.add-service,
-.service-empty {
-  margin: 15px 15px 0 15px;
-}
-
-.service-empty {
-  margin-bottom: 15px;
-}
-
-.social-network-link {
-  position: relative;
-}
-
-.btn.true {
-  border-color: red;
-}
-
-.social-network-char {
-  position: absolute;
-  bottom: 0;
-  left: 23px;
-}
-
-.social-network-char.facebook{
-  color: black;
-}
-
 .services-proposes {
-  margin: 0;
-  padding: 0px 10px 0px 10px;
-}
-
-.services-proposes li{
   display: inline-block;
   list-style-type: none;
   padding: 2px;
+}
+
+.modif-column-button-provider {
+  border: none;
+  box-shadow: none;
 }
 
 .input-service {
@@ -111,7 +88,6 @@
 
 .img-service,
 .delete-service,
-.type-service,
 .arg-service,
 .receving-service
  {
@@ -119,8 +95,7 @@
   height: 20px;
 }
 
-.delete-service,
-.type-service {
+.delete-service {
   vertical-align: top;
   display: inline-block;
   font-weight: normal;
@@ -132,19 +107,11 @@
   background-color: #EEE;
   width: auto;
   border: 1px solid #CCC;
-}
-
-.delete-service {
   -webkit-border-radius: 0 4px 4px 0;
   -moz-border-radius: 0 4px 4px 0;
   border-radius: 0 4px 4px 0;
   margin-left: -3px;
   white-space: nowrap;
-}
-
-.type-service {
-  margin-left: -4px;
-  margin-right: -2px;
 }
 
 .arg-service {
@@ -171,14 +138,9 @@
   vertical-align: top;
 }
 
-.controls-modify {
-  text-align: center;
-  vertical-align: middle;
-  width: 250px;
-}
-
-.controls-new {
-  text-align: center;
+.controls-footer {
+  text-align: right;
+  padding-top: 20px;
 }
 
 .receving-service {
