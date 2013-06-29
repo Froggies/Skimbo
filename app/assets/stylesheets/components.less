@@ -1,3 +1,8 @@
+// file contain css of : buttons, glass, error, oracle
+
+//**************************************
+// buttons
+//**************************************
 .button, .button-a {
   height: 45px;
   line-height: 45px;
@@ -15,19 +20,39 @@
   border-radius: 5px;
 }
 
-.button-img {
-  margin-top: 10px;
-  margin-right: 5px;
-  vertical-align: top;
-  border-radius: 24px;
-  height: 24px;
+.button:hover, .button-a:hover {
+  background-color: #666;
+  opacity: 1;
 }
 
-.button-selected-true {
-  background-color: #F2F2F2;
-  color: #C50000;
+.button:active, .button-a:active {
+  box-shadow: inset 0 0 2px #333;
+  box-shadow: inset 1px 0 1px #333;
 }
 
+.button-close {
+  position: absolute;
+  border-radius: 5px 0 0 5px;
+  width: 22px;
+  right: 0;
+  top: 0px;
+  height: 29px;
+  line-height: 29px;
+}
+
+.button-help {
+  position: absolute;
+  border-radius: 5px 0 0 5px;
+  width: 22px;
+  right: 0;
+  top: 33px;
+  height: 29px;
+  line-height: 29px;
+}
+
+//**************************************
+// glass-panel
+//**************************************
 .glass-div-container {
   position: fixed;
   top: 0;
@@ -44,4 +69,58 @@
   right: 0;
   bottom: 0;
   background-color: rgba(0, 0, 0, 0.15);
+}
+
+//**************************************
+// error
+//**************************************
+.error-message {
+  padding: 7px 16px;
+  background: #FFA5A5;
+  border: 1px solid #B94A48;
+  -webkit-border-radius: 2px;
+  -moz-border-radius: 2px;
+  border-radius: 2px;
+  line-height: 16px;
+  font-size: 11px;
+  position: relative;
+}
+
+.error-div {
+  text-align: center;
+  margin-top: 10px;
+}
+
+//**************************************
+// oracle
+//**************************************
+.container-oracle {
+  position: absolute;
+  left: 0;
+  top: 30px;
+  background-color: white;
+  z-index: 100;
+  border-left: 1px solid #CCC;
+  border-right: 1px solid #CCC;
+  border-bottom: 1px solid #CCC;
+  border-bottom-right-radius: 5px;
+  border-bottom-left-radius: 5px;
+}
+
+.container-oracle ul {
+  padding: 0;
+}
+
+.container-oracle li {
+  display: block;
+}
+
+.value-oracle {
+  display: block;
+  line-height: 15px;
+  cursor: pointer;
+}
+
+.value-oracle:hover {
+  background-color: #999;
 }

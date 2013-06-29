@@ -83,14 +83,6 @@
   border: 1px solid #000;
 }
 
-.button-link:hover, .button-image:hover, .button-preview:hover {
-  background-color: #666;
-}
-
-.button-link:active, .button-image:active, .button-preview:active {
-  box-shadow: inset 0 0 2px #333;
-}
-
 .button-preview {
   left: 11px;
   border-radius: 0 0 0 5px;
@@ -112,44 +104,6 @@
 
 .inputtrue {
   width: 55%;
-}
-
-.post-close {
-  position: absolute;
-  border-radius: 5px 0 0 5px;
-  width: 22px;
-  right: 0;
-  top: 0px;
-  border: 1px solid #333;
-  border-right: none;
-  opacity: 0.8;
-  height: 29px;
-  line-height: 29px;
-  background-color: rgb(84, 84, 84);
-  color: rgb(255, 255, 255);
-}
-
-.post-help {
-  position: absolute;
-  border-radius: 5px 0 0 5px;
-  width: 22px;
-  right: 0;
-  top: 40px;
-  border: 1px solid #333;
-  border-right: none;
-  opacity: 0.8;
-  height: 29px;
-  line-height: 29px;
-  background-color: rgb(84, 84, 84);
-  color: rgb(255, 255, 255);
-}
-
-.post-help:hover {
-  opacity: 1;
-}
-
-.post-help:active {
-  box-shadow: inset 1px 0 1px #333;
 }
 
 .post-message-help {
@@ -174,25 +128,12 @@
   margin-right: 19px;
 }
 
-.button-a.true {
-  border: 1px solid #545454;
-}
-
-.button-a.false {
-  border: 1px solid #545454;
-}
-
 .button-provider {
   padding: 5px;
   background-color: #eee;
-  opacity: 0.6;
+  opacity: 0.8;
   box-shadow: 0 0 1px #ccc;
-}
-
-.button-provider.true {
-  opacity: 1;
-  background-color: #fff;
-  box-shadow: inset 0 0 1px #333;
+  border: 1px solid #545454;
 }
 
 .button-provider:hover {
@@ -202,4 +143,10 @@
 
 .button-provider:active {
   box-shadow: inset 0 0 2px #666;
+}
+
+.button-provider.true {
+  opacity: 1;
+  background-color: #fff;
+  box-shadow: inset 0 0 1px #333;
 }
