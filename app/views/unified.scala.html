@@ -13,8 +13,10 @@
       </noscript>
     </div>
 
-    <div class="glass-div-container" ng-include="'@routes.Assets.at("app/views/glass.html")'"
-      ng-controller="GlassController" ng-show="showView"></div>
+    <div class="glass-div-container" ng-controller="GlassController" ng-show="showView">
+      <div class="glass-div" ng-click="hide()"></div>
+      <div ng-include="showView" onload="loaded()"></div>
+    </div>
 
     <script type="text/javascript" src="@routes.Application.jsRouter()"></script>
     <script src="@routes.Assets.at("app/scripts/vendor/angular.min.js")"></script>
