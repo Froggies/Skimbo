@@ -5,9 +5,9 @@
     <div class="connected-on">{{'CONNECTED' | i18n}}</div>
     <ul>
       <li ng-repeat="userInfo in userInfos">
-        <a class="social-network-connected {{userInfo.socialType}}">
-          <img ng-src="/assets/img/brand/{{userInfo.socialType}}.png" alt="{{userInfo.socialType}}" width="16" height="16">{{userInfo.username}}
-        </a>
+        <img ng-src="/assets/img/brand/{{userInfo.socialType}}.png" alt="{{userInfo.socialType}}" width="16" height="16">
+        <img class="provider-user-avatar" ng-src="{{userInfo.avatar}}" width="16" height="16" ng-click="selectImage($index)">
+        <a class="social-network-connected {{userInfo.socialType}}">{{userInfo.username}}</a>
         <a ng-click="deleteProvider(userInfo.socialType)" class="deconnexion {{userInfo.socialType}}">✘</a>
       </li>
     </ul>

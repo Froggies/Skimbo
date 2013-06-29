@@ -12,6 +12,13 @@ app.controller('AccountController', [
       $scope.$parent.hide();
     }
 
+    $scope.selectImage = function(index) {
+      var temp = $scope.userInfos[0];
+      $scope.userInfos[0] = $scope.userInfos[index];
+      $scope.userInfos[index] = temp;
+      $dataCache.on('userInfos', $scope.userInfos);
+    }
+
     $scope.deleteProvider = function(providerName) {
       $http.get("/api/providers/del/"+providerName).success(function() {
         for (var i = 0; i < $scope.userInfos.length; i++) {

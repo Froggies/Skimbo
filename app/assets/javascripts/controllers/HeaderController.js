@@ -39,7 +39,6 @@ app.controller('HeaderController', [
   });
 
   $dataCache.on('userInfos', function(data) {
-    console.log('Header', data);
     $scope.userInfos = data;
   });
 
