@@ -1,14 +1,18 @@
-<div ng-controller="HeaderController" class="{{banner_classes}}"> 
-	<div class="{{arrow_classes}}" ng-click="openMenu()"></div>
-	<div class="logo">
-		<img ng-hide="loading" src="/assets/img/skimbo-acote_40.png" width="114" height="40" ng-hide="loading">
-		<div id="loader" ng-show="loading">
-			<img src="/assets/img/loader.gif" />
-		</div>
-	</div>
+<div ng-controller="HeaderController" class="header">
 
-	<div class="button header-button-account" ng-include src="'/assets/app/views/account.html'"></div>
-	<div class="button header-button-post" ng-include src="'/assets/app/views/post.html'"></div>
-	<div class="button header-button-modif-column" ng-include src="'/assets/app/views/modifColumn.html'"></div>
+	<div class="header-user-img" ng-click="showAccount()" ng-hide="loading" style="background: url('{{userInfos[0].avatar}}') repeat scroll center center / cover transparent;"></div>
+	<img class="header-loader" ng-show="loading" alt="loader" src="/assets/img/loader.gif" />
+
+	<a class="header-menu-button" ng-click="showSkimber()">
+		<img id="skimber" alt="skimber" src="/assets/img/icone_skimber.png">
+		<br />
+		Skimber
+	</a>
+
+	<a class="header-menu-button" ng-click="showModifColumn()">
+		<img id="addcolonne" alt="column" src="/assets/img/icone_addcolonne.png">
+		<br />
+		{{'COLUMN' | i18n}}
+	</a>
 
 </div>

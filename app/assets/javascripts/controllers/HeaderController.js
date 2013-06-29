@@ -3,13 +3,11 @@
 define(["app"], function(app) {
 
 app.controller('HeaderController', [
-  "$scope", "$rootScope",
-  function($scope, $rootScope) {
+  "$scope", "$rootScope", "DataCache",
+  function($scope, $rootScope, $dataCache) {
 
   $scope.loading = true;
   $scope.loadingMsg = "COLUMNS";
-  $scope.banner_classes = "banner-close";
-  $scope.arrow_classes = "arrow-open icon-fast-forward";
   var firstMsg = true;
 
   $rootScope.$on('allColumns', function(evt, data) {
@@ -40,14 +38,21 @@ app.controller('HeaderController', [
     }
   });
 
-  $scope.openMenu = function() {
-    if($scope.arrow_classes == "arrow-close icon-fast-backward") {
-      $scope.arrow_classes = "arrow-open icon-fast-forward";
-      $scope.banner_classes = "banner-close";
-    } else {
-      $scope.arrow_classes = "arrow-close icon-fast-backward";
-      $scope.banner_classes = "banner-open";
-    }
+  $dataCache.on('userInfos', function(data) {
+    console.log('Header', data);
+    $scope.userInfos = data;
+  });
+
+  $scope.showAccount = function() {
+    $rootScope.$broadcast('glassShowView', '/assets/app/views/account.html');
+  }
+
+  $scope.showSkimber = function() {
+    $rootScope.$broadcast('glassShowView', '/assets/app/views/post.html');
+  }
+
+  $scope.showModifColumn = function() {
+    $rootScope.$broadcast('glassShowView', '/assets/app/views/modifColumn.html');
   }
 
 }]);

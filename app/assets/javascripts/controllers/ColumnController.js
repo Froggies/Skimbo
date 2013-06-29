@@ -148,7 +148,9 @@ app.controller('ColumnController', [
     });
 
     $scope.modifyColumn = function(column) {
-      $rootScope.$broadcast('clientModifyColumn', column);
+      $rootScope.$broadcast('glassShowView', 'modifColumn', function() {
+        $rootScope.$broadcast('clientModifyColumn', column);
+      });
     };
 
     $scope.resizeColumn = function(column, height, width) {

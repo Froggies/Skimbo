@@ -6,37 +6,9 @@ app.controller('PostMessageController', [
   "$scope", "Network", "$rootScope", "PopupProvider",
   function($scope, $network, $rootScope, $popupProvider) {
 
-    //chrome memory leak !!!
-    $scope.$destroy= function() {
-        var parent = this.$parent;
-
-        this.$broadcast('$destroy');
-
-        if (parent.$$childHead == this) parent.$$childHead = this.$$nextSibling;
-        if (parent.$$childTail == this) parent.$$childTail = this.$$prevSibling;
-        if (this.$$prevSibling) this.$$prevSibling.$$nextSibling = this.$$nextSibling;
-        if (this.$$nextSibling) this.$$nextSibling.$$prevSibling = this.$$prevSibling;
-
-      //------- my additions -----------------------
-      this.$id = null;
-      this.$$phase = this.$parent = this.$$watchers =
-                     this.$$nextSibling = this.$$prevSibling =
-                     this.$$childHead = this.$$childTail = null;
-      this['this'] = this.$root =  null;
-      this.$$asyncQueue = null; // fixme: how this must be properly cleaned?
-      this.$$listeners = null; // fixme: how this must be properly cleaned?
-    }
-
-    $scope.showPost = false;
     $scope.showHelp = false;
     $scope.maxLength = 140;
     resetView();
-
-    $rootScope.$on('displayViewMenu', function(evt, view) {
-      if(view !== 'postMessage') {
-        $scope.showPost = false;
-      }
-    });
 
     $rootScope.$on('allPosters', function(evt, providers) {
       $scope.$apply(function() {
@@ -74,23 +46,11 @@ app.controller('PostMessageController', [
 
     $rootScope.$on('dispatchMsg', function(evt, message) {
       resetView();
-      $scope.show();
-      $scope.showPost = true;//force show
       $scope.title = "";
       $scope.message = message.original;
       $scope.url = message.directLink;
       $scope.image = "";
     });
-
-    $scope.show = function() {
-      $scope.showPost = !$scope.showPost;
-      if ($scope.showPost == true) {
-        if($scope.providers == undefined) {
-          $network.send({cmd:"allPosters"});
-        }
-        $rootScope.$broadcast('displayViewMenu', 'postMessage');
-      }
-    };
 
     $scope.selectPoster = function(poster) {
       if(poster.hasToken == true) {
@@ -169,6 +129,9 @@ app.controller('PostMessageController', [
     }
 
     function resetView() {
+      if($scope.providers == undefined) {
+        $network.send({cmd:"allPosters"});
+      }
       $scope.title = "";
       $scope.message = "";
       $scope.url = "";

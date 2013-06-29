@@ -4,57 +4,28 @@ define(["app"], function(app) {
 
 app.controller('ModifColumnController', [
   "$scope", "Network", "$rootScope", "UnifiedRequestUtils", "Visibility", 
-  "PopupProvider", "ArrayUtils", "$http",
+  "PopupProvider", "ArrayUtils", "$http", "DataCache",
   function($scope, $network, $rootScope, $unifiedRequestUtils, $visibility, 
-    $popupProvider, $arrayUtils, $http) {
+    $popupProvider, $arrayUtils, $http, $dataCache) {
 
-    //chrome memory leak !!!
-    $scope.$destroy= function() {
-        var parent = this.$parent;
-
-        this.$broadcast('$destroy');
-
-        if (parent.$$childHead == this) parent.$$childHead = this.$$nextSibling;
-        if (parent.$$childTail == this) parent.$$childTail = this.$$prevSibling;
-        if (this.$$prevSibling) this.$$prevSibling.$$nextSibling = this.$$nextSibling;
-        if (this.$$nextSibling) this.$$nextSibling.$$prevSibling = this.$$prevSibling;
-
-      //------- my additions -----------------------
-      this.$id = null;
-      this.$$phase = this.$parent = this.$$watchers =
-                     this.$$nextSibling = this.$$prevSibling =
-                     this.$$childHead = this.$$childTail = null;
-      this['this'] = this.$root =  null;
-      this.$$asyncQueue = null; // fixme: how this must be properly cleaned?
-      this.$$listeners = null; // fixme: how this must be properly cleaned?
-
-    }
-
-    $scope.showModifyColumn = false;
     $scope.availableSocialNetworksWidth = "90%";
     $scope.column = undefined;
     $scope.selectedSocialNetwork = undefined;
     $scope.providers = undefined;
     $scope.columnsTitle = [];
 
-    $rootScope.$on('displayViewMenu', function(evt, view) {
-      if(view !== 'modifColumn') {
-        $scope.showModifyColumn = false;
-      }
-    });
+    console.log("modifColumn CREATED");
 
-    $rootScope.$on('allColumns', function(evt, columns) {
+    $dataCache.on('allColumns', function(columns) {
       //to check unique title
       $scope.columnsTitle = [];
-      $scope.$apply(function() {
-        for (var i = 0; i < columns.length; i++) {
-          $scope.columnsTitle.push(new String(columns[i].title));
-        };
-      });
+      for (var i = 0; i < columns.length; i++) {
+        $scope.columnsTitle.push(new String(columns[i].title));
+      };
     });
 
-    $rootScope.$on('allUnifiedRequests', function(evt, providers) {
-      $scope.$apply(function() {
+    $dataCache.on('allUnifiedRequests', function(providers) {
+      if($scope.providers == undefined) {
         $scope.providers = providers;
         for (var i = 0; i < providers.length; i++) {
           var provider = providers[i];
@@ -72,60 +43,27 @@ app.controller('ModifColumnController', [
         };
         addGoogleReader();
         $rootScope.$broadcast('loading', {loading: false, translationCode: 'GET_TOKEN_PROGRESS'});
-      });
+      }
     });
 
     $rootScope.$on('clientModifyColumn', function(evt, column) {
-      $scope.show(JSON.parse(JSON.stringify(column)));//reset view & download providers (if needed)
+      console.log("showModifyColumn");
+      //$scope.show(JSON.parse(JSON.stringify(column)));//reset view & download providers (if needed)
+      $scope.show();
+      $scope.column = column;
+      $scope.column.newColumn = false;
+      $scope.column.oldTitle = $scope.column.title;
     });
 
-    $rootScope.$on('addColumn', function(evt, column) {
-      $scope.columnsTitle.push(new String(column.title));
-    });
-
-    $rootScope.$on('modColumn', function(evt, column) {
-      $scope.$apply(function() {
-        //refresh name
-        for (var i = 0; i < $scope.columnsTitle.length; i++) {
-          if($scope.columnsTitle[i] == column.title) {
-            $scope.columnsTitle.splice(i, 1);
-            $scope.columnsTitle.push(new String(column.column.title));
-            break;
-          }
-        };
-      });
-    });
-
-    $rootScope.$on('delColumn', function(evt, column) {
-      var index = $arrayUtils.indexOfWith($scope.columnsTitle, column, function(inArray, column) {
-        return inArray == column.title;
-      });
-      if(index > -1) {
-        $scope.columnsTitle.splice(index, 1);
-        $scope.$apply();
-      }
-    });
-
-    $scope.show = function(column) {
+    $scope.show = function() {
       resetView();
-      $scope.showModifyColumn = !$scope.showModifyColumn;
-      if ($scope.showModifyColumn == true) {
-        if($scope.providers == undefined) {
-          $network.send({cmd:"allUnifiedRequests"});
-        }
-        if(column !== undefined) {//modif column
-          $scope.column = column;
-          $scope.column.newColumn = false;
-          $scope.column.oldTitle = $scope.column.title;
-        } else {//new column
-          $scope.column = {};
-          $scope.column.newColumn = true;
-          $scope.column.title = "";
-          $scope.column.unifiedRequests = [];
-        }
-        $rootScope.$broadcast('displayViewMenu', 'modifColumn');
-      }
+      $scope.column = {};
+      $scope.column.newColumn = true;
+      $scope.column.title = "";
+      $scope.column.unifiedRequests = [];
     };
+
+    $scope.show();
 
     $scope.selectSocialNetwork = function(socialNetwork) {
       if($scope.selectedSocialNetwork != undefined) {

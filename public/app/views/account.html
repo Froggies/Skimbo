@@ -1,26 +1,18 @@
-<div ng-controller="AccountController" class="button-selected-{{showUserInformations}}">
-  <div class="glass-div" ng-show="showUserInformations" ng-click="show()"></div>
-  <div ng-click="show()">
-    <img class="button-img" ng-src="{{userInfos[0].avatar}}" width="24" height="24">
-    <div class="account-user-name">{{userInfos[0].username}}</div>
-    <i class="icon-play arrow-account"></i>
+<div id="bloc-utilisateur" ng-controller="AccountController">
+  <div id="reseaux-connectes">
+    <div class="connected-on">{{'CONNECTED' | i18n}}</div>
+    <ul>
+      <li ng-repeat="userInfo in userInfos">
+        <a class="social-network-connected {{userInfo.socialType}}">
+          <img ng-src="/assets/img/brand/{{userInfo.socialType}}.png" alt="{{userInfo.socialType}}" width="16" height="16">{{userInfo.username}}
+        </a>
+        <a ng-click="deleteProvider(userInfo.socialType)" class="deconnexion {{userInfo.socialType}}">✘</a>
+      </li>
+    </ul>
   </div>
-  <div id="bloc-utilisateur" ng-show="showUserInformations">
-    <div id="reseaux-connectes">
-      <div class="connected-on">{{'CONNECTED' | i18n}}</div>
-      <ul>
-        <li ng-repeat="userInfo in userInfos">
-          <a class="social-network-connected {{userInfo.socialType}}">
-            <img ng-src="/assets/img/brand/{{userInfo.socialType}}.png" alt="{{userInfo.socialType}}" width="16" height="16">{{userInfo.username}}
-          </a>
-          <a ng-click="deleteProvider(userInfo.socialType)" class="deconnexion {{userInfo.socialType}}">✘</a>
-        </li>
-      </ul>
-    </div>
-    <footer class="bloc-utilisateur-footer">
-      <a class="button-a" href="http://froggies.github.io/Skimbo/#team" target="_blank" title="Contact us">@ {{'CONTACT_US' | i18n}}</a>
-      <a class="button-a" href="http://froggies.github.io/Skimbo" target="_blank" title="About">ⓘ</a>
-      <a class="button-a" href="/logout" target="_self" title="Log out">✘ {{'LOG_OUT' | i18n}}</a>
-    </footer>
-  </div>
+  <footer class="bloc-utilisateur-footer">
+    <a class="button-a" href="http://froggies.github.io/Skimbo/#team" target="_blank" title="Contact us">@ {{'CONTACT_US' | i18n}}</a>
+    <a class="button-a" href="http://froggies.github.io/Skimbo" target="_blank" title="About">ⓘ</a>
+    <a class="button-a" href="/logout" target="_self" title="Log out">✘ {{'LOG_OUT' | i18n}}</a>
+  </footer>
 </div>
