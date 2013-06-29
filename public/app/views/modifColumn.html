@@ -63,17 +63,6 @@
           </div>
         </li>
       </ul>
-      <div ng-show="googleReaderSelected" style="line-height:20px;">
-        <textarea ng-model="googleReaderFeeds"></textarea>
-        <a class="btn" ng-click="parseGoogleReader()" style="vertical-align:top">{{'GR_PARSE' | i18n}}</a>
-        <ul>
-          <li>{{'GR_1_BEFORE_LINK' | i18n}}
-            <a href="https://www.google.com/reader/api/0/subscription/list?output=json" target="_blank">{{'GR_1_LINK' | i18n}}</a>{{'GR_1_AFTER_LINK' | i18n}}
-          </li>
-          <li>{{'GR_2' | i18n}}</li>
-          <li>{{'GR_3' | i18n}}</li>
-        </ul>
-      </div>
     </div>
   </div>
   <div class="controls-new">

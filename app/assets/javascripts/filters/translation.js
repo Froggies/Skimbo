@@ -66,14 +66,7 @@ app.filter('i18n', ['$rootScope', function($rootScope) {
       'NoParser' : 'Il n\'existe pas de parser pour ',
       'Post' : 'Le message n\'a pas pu être envoyé chez ',
       'Star' : 'Le message n\'a pas pu être marqué chez ',
-      'Comment' : 'Le message n\'a pas pu être commenté chez ',
-      //GOOGLE READER
-      'GR_PARSE' : 'Parser les flux',
-      'GR_1_BEFORE_LINK' : 'Aller sur ',
-      'GR_1_LINK' : 'mes flux dans google reader',
-      'GR_1_AFTER_LINK' : ' et copier le contenu.',
-      'GR_2' : 'Coller le contenu dans le champ ci-dessus.',
-      'GR_3' : 'Cliquer sur "Parser les flux" et gérer les flux pour cette colonne.'
+      'Comment' : 'Le message n\'a pas pu être commenté chez '
     },
     'en' : {
       'ADD_FIRST_COLUMN_SENTENCE' : 'Create your first column !',
@@ -136,14 +129,7 @@ app.filter('i18n', ['$rootScope', function($rootScope) {
       'NoParser' : 'No parser found for ',
       'Post' : 'Post can\'t be send to ',
       'Star' : 'Star can\'t be send to ',
-      'Comment' : 'Comment can\'t be send to ',
-      //GOOGLE READER
-      'GR_PARSE' : 'Parse feeds',
-      'GR_1_BEFORE_LINK' : 'Go on ',
-      'GR_1_LINK' : 'my google reader subscriptions',
-      'GR_1_AFTER_LINK' : ' and copy content.',
-      'GR_2' : 'Past content in text field above.',
-      'GR_3' : 'Click on "Parse feeds" and manage feeds for this column.'
+      'Comment' : 'Comment can\'t be send to '
     }
   },
   currentLanguage = $rootScope.currentLanguage || 'en';
