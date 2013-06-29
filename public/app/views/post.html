@@ -8,6 +8,7 @@
     <br ng-show="showErrorPosterRequired"/>
     <span class="error-message" ng-show="showErrorBadDate">{{'BAD_DATE_POSTER' | i18n}}</span>
   </div>
+  <a class="button post-close" ng-click="close()" />X</a>
   <a class="button post-help" ng-click="showHelp = !showHelp" />?</a>
   <ul class="posters-proposes">
     <li ng-repeat="provider in providers">
@@ -33,7 +34,7 @@
       </div>
     </li>
   </ul>
-  <div ng-show="showTitleInput">
+  <div ng-show="showTitleInput" class="post-message-title-container">
     <input class="post-title input{{showHelp}}" type="text" ng-model="title" value="{{title}}" placeholder="{{'PH_POST_TITLE' | i18n}}" />
     <ul class="posters-proposes-help" ng-show="showHelp">
       <li ng-repeat="provider in providersWithTitle">

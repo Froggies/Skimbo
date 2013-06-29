@@ -128,6 +128,10 @@ app.controller('PostMessageController', [
       provider.possibleValues = [];
     }
 
+    $scope.close = function() {
+      $scope.$parent.hide();
+    }
+
     function resetView() {
       if($scope.providers == undefined) {
         $network.send({cmd:"allPosters"});
