@@ -7,27 +7,6 @@ app.controller('ColumnController', [
   "PopupProvider", "ArrayUtils", "ColumnSize", "$window", "$timeout",
   function($scope, $network, $rootScope, $unifiedRequestUtils, $visibility, 
     $popupProvider, $arrayUtils, $columnSize, $window, $timeout) {
-    //chrome memory leak !!!
-    $scope.$destroy= function() {
-        var parent = this.$parent;
-
-        this.$broadcast('$destroy');
-
-        if (parent.$$childHead == this) parent.$$childHead = this.$$nextSibling;
-        if (parent.$$childTail == this) parent.$$childTail = this.$$prevSibling;
-        if (this.$$prevSibling) this.$$prevSibling.$$nextSibling = this.$$nextSibling;
-        if (this.$$nextSibling) this.$$nextSibling.$$prevSibling = this.$$prevSibling;
-
-      //------- my additions -----------------------
-      this.$id = null;
-      this.$$phase = this.$parent = this.$$watchers =
-                     this.$$nextSibling = this.$$prevSibling =
-                     this.$$childHead = this.$$childTail = null;
-      this['this'] = this.$root =  null;
-      this.$$asyncQueue = null; // fixme: how this must be properly cleaned?
-      this.$$listeners = null; // fixme: how this must be properly cleaned?
-
-    }
 
     $scope.globalContainerSize = "100%";
     $scope.columns = [];
