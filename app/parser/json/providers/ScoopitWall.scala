@@ -66,7 +66,7 @@ object ScoopitPost {
     (__ \ "title").read[String] and
     (__ \ "htmlContent").read[String] and
     (__ \ "publicationDate").read[Long] and
-    (__ \ "url").read[String] and
+    ((__ \ "url").read[String] or (__ \ "scoopUrl").read[String]) and
     (__ \ "thanksCount").read[Int] and
     (__ \ "thanked").read[Boolean] and
     (__ \ "author" \ "name").read[String] and
