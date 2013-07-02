@@ -3,10 +3,10 @@
 define(["app"], function(app) {
 
 app.controller('ColumnController', [
-  "$scope", "Network", "$rootScope", "UnifiedRequestUtils", "Visibility", 
-  "PopupProvider", "ArrayUtils", "ColumnSize", "$window", "$timeout",
-  function($scope, $network, $rootScope, $unifiedRequestUtils, $visibility, 
-    $popupProvider, $arrayUtils, $columnSize, $window, $timeout) {
+  "$scope", "Network", "$rootScope", "Visibility", "DataCache",
+  "ArrayUtils", "ColumnSize", "$window", "$timeout",
+  function($scope, $network, $rootScope, $visibility, $dataCache,
+    $arrayUtils, $columnSize, $window, $timeout) {
 
     $scope.globalContainerSize = "100%";
     $scope.columns = [];
@@ -22,31 +22,20 @@ app.controller('ColumnController', [
       $scope.$apply();
     });
 
-    $rootScope.$on('availableServices', function(evt, serviceProposes) {
-      if(!$scope.$$phase) {
-          $scope.$apply(function() {
-            $scope.serviceProposes = serviceProposes;
-          });
-        }
-        else {
-          $scope.serviceProposes = serviceProposes;
-        }
-    });
+    $dataCache.on('allColumns', function(columns) {
+      var copy = columns.slice(0);
 
-    $rootScope.$on('allColumns', function(evt, columns) {
-      $scope.$apply(function() {
-        $columnSize.setSize(columns);
-        $columnSize.buildSizeCompo(columns);
-        if($scope.columns.length == 0) {
-          $scope.columns = columns;
-        }
-        $scope.userNoColumn = $scope.columns.length === 0;
-        if($columnSize.isMobileSize() && $scope.columns.length > 0) {
-          $scope.globalContainerSize = $scope.columns.length+"10%";
-        } else {
-          $scope.globalContainerSize = "100%";
-        }
-      });
+      $columnSize.setSize(copy);
+      $columnSize.buildSizeCompo(copy);
+      $scope.columns = copy;
+      $scope.userNoColumn = $scope.columns.length === 0;
+      if($columnSize.isMobileSize() && $scope.columns.length > 0) {
+        $scope.globalContainerSize = $scope.columns.length+"10%";
+      } else {
+        $scope.globalContainerSize = "100%";
+      }
+
+      $scope.$apply();
     });
 
     $rootScope.$on('msg', function(evt, msg) {
@@ -57,50 +46,10 @@ app.controller('ColumnController', [
       });
     });
 
-    $rootScope.$on('newToken', function(evt, data) {
-      $scope.$apply(function() {
-        if($scope.serviceProposes != undefined) {
-          for (var i = 0; i < $scope.serviceProposes.length; i++) {
-            if($scope.serviceProposes[i].service.service.split(".")[0] == data.providerName) {
-              $scope.serviceProposes[i].socialNetworkToken = true;
-            }
-          };
-        }
-      });
-    });
-
-    $rootScope.$on('delColumn', function(evt, column) {
-      var index = $arrayUtils.indexOf($scope.columns, column, "title");
-      if(index > -1) {
-        $scope.columns.splice(index, 1);
-        $scope.$apply();
-      }
-    });
-
-    $rootScope.$on('addColumn', function(evt, column) {
-      $scope.$apply(function() {
-        $columnSize.setSize([column]);
-        $columnSize.buildSizeCompo([column]);
-        $scope.columns.push(column);
-        $scope.userNoColumn = $scope.columns.length === 0;
-      });
-    });
-
-    $rootScope.$on('modColumn', function(evt, column) {
-      $scope.$apply(function() {
-        console.log(column);
-        var c = getColumnByName(column.title);
-        c.title = column.column.title;
-        c.unifiedRequests = column.column.unifiedRequests;
-      });
-    });
-
     $rootScope.$on('moveColumnEvent', function(evt, dragged, dropped) {
-      //console.log(dragged, dropped);
       var i, oldIndex1, oldIndex2;
       for(i=0; i<$scope.columns.length; i++) {
         var c = $scope.columns[i];
-        //console.log(dragged.title);
         if(dragged.title === c.title) {
           oldIndex1 = i;
         }
@@ -183,7 +132,6 @@ app.controller('ColumnController', [
     }
 
     $scope.comment = function(message) {
-      console.log(message);
       message.inComment = !message.inComment;
       if(message.from === "twitter") {
         message.currentComment = "@" + message.authorScreenName;

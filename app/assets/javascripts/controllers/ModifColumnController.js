@@ -14,8 +14,6 @@ app.controller('ModifColumnController', [
     $scope.providers = undefined;
     $scope.columnsTitle = [];
 
-    console.log("modifColumn CREATED");
-
     $dataCache.on('allColumns', function(columns) {
       //to check unique title
       $scope.columnsTitle = [];
