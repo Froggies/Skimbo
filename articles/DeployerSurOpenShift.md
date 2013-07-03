@@ -4,7 +4,7 @@ Vous connaissiez <a href="http://aws.amazon.com/" target="_blank">AWS</a>, <a hr
 
 ###Commercial mode !
 
-Ce que nous propose RedHat par le biai de son outil <a href="https://www.openshift.com">OpenShift</a> est tout simplement magique. Non seulement il est à la hauteur de ses concurrents existants, mais en plus il est open-source. Vous l'aurez compris son let motive, est : "venez tester votre solution chez nous, puis si elle marche, payez pour scaler, ou achetez un serveur et installez OpenStack". Simpa de ne plus être tributaire d'un service, non ? OpenStack étant la pile logicielle sur laquelle est basée OpenShift.
+Ce que nous propose RedHat par le biai de son outil <a href="https://www.openshift.com">OpenShift</a> est tout simplement magique. Non seulement il est à la hauteur de ses concurrents existants, mais en plus il est open-source. Vous l'aurez compris son leitmotiv, est : "venez tester votre solution chez nous, puis si elle marche, payez pour scaler, ou achetez un serveur et installez OpenStack". Sympa de ne plus être tributaire d'un service, non ? OpenStack étant la pile logicielle sur laquelle est basée OpenShift.
 
 Son système repose sur des gears, on peut les assimiler à une instance virtuelle d'un serveur. Là où heroku ne propose gratuitement qu'un web-dyno, OpenShift nous en propose 3. Soit en théorie, 1,5 Go de RAM. Comment font-ils ? Tout simplement en vous attribuant en réalité 1 seul gear, et lorsque votre application est à 100% de cpu ou de ram, il scale automatiquement à 2 puis 3. Lorsque votre application redescend, il enlève graduellement les gears. Ce qui permet de mieux répartir les ressources matériels. Bien sûr c'est basé sur le fait que tout le monde, n'utilise pas tout le temps toute la ressource...
 
@@ -16,7 +16,7 @@ Après cette rapide intro passons aux choses sérieuses : le déploiement sur Op
 
 ###Sur OpenShift
 
-Après avoir créé un compte chez eux, vous pouvez uploader votre clé ssh publique à partir de leur site. Ensuite il suffit de créer une application pour récupérer l'adresse url de connexion par ssh. Malheureusement, il n'existe pas (encore) de config pour scala/playframework. Cas cela ne tienne, nous allons utiliser un serveur "nu" et tout faire nous même. C'est là que l'open-source et le fait d'avoir le contrôle sur le serveur, prennent tout leur sens.
+Après avoir créé un compte chez eux, vous pouvez uploader votre clé ssh publique à partir de leur site. Ensuite il suffit de créer une application pour récupérer l'adresse url de connexion par ssh. Malheureusement, il n'existe pas (encore) de config pour scala/playframework. Qu'à cela ne tienne, nous allons utiliser un serveur "nu" et tout faire nous même. C'est là que l'open-source et le fait d'avoir le contrôle sur le serveur, prennent tout leur sens.
 
 <img src="deployersuropenshift/pubKey.png" />
 <img src="deployersuropenshift/app.png" />
