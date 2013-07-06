@@ -23,29 +23,26 @@ app.controller('ModifColumnController', [
     });
 
     $dataCache.on('allUnifiedRequests', function(providers) {
-      if($scope.providers == undefined) {
-        $scope.providers = providers;
-        for (var i = 0; i < providers.length; i++) {
-          var provider = providers[i];
-          provider.selected = false;
-          provider.name = provider.endpoint;
-          for (var j = 0; j < provider.services.length; j++) {
-            var service = provider.services[j];
-            var unifiedRequest = $unifiedRequestUtils.serverToUnifiedRequest(service);
-            provider.services[j] = unifiedRequest;
-          };
-          if($scope.selectedSocialNetwork != undefined && $scope.selectedSocialNetwork.name == provider.name) {
-            $scope.selectedSocialNetwork = provider;
-            $scope.selectedSocialNetwork.selected = true;
-          }
+      console.log(providers);
+      var provider, i, j, copy = JSON.parse(JSON.stringify(providers));
+      for (i = 0; i < copy.length; i++) {
+        provider = copy[i];
+        provider.selected = false;
+        provider.name = provider.endpoint;
+        provider.services = provider.services.slice(0); 
+        for (j = 0; j < provider.services.length; j++) {
+          provider.services[j] = $unifiedRequestUtils.serverToUnifiedRequest(provider.services[j]);
         };
-        $rootScope.$broadcast('loading', {loading: false, translationCode: 'GET_TOKEN_PROGRESS'});
-      }
+        if($scope.selectedSocialNetwork != undefined && $scope.selectedSocialNetwork.name == provider.name) {
+          $scope.selectedSocialNetwork = provider;
+          $scope.selectedSocialNetwork.selected = true;
+        }
+      };
+      $scope.providers = copy;
+      $rootScope.$broadcast('loading', {loading: false, translationCode: 'GET_TOKEN_PROGRESS'});
     });
 
     $rootScope.$on('clientModifyColumn', function(evt, column) {
-      console.log("showModifyColumn");
-      //$scope.show(JSON.parse(JSON.stringify(column)));//reset view & download providers (if needed)
       $scope.show();
       $scope.column = column;
       $scope.column.newColumn = false;
@@ -86,7 +83,6 @@ app.controller('ModifColumnController', [
     }
 
     function addService(service) {
-      console.log(service);
       service.fromServer = false;
       $scope.column.unifiedRequests.push(JSON.parse(JSON.stringify(service)));//clone service
       if($scope.column.title == "") {

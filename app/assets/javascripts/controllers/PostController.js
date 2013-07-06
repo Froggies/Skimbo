@@ -8,6 +8,7 @@ app.controller('PostMessageController', [
 
     $scope.showHelp = false;
     $scope.maxLength = 140;
+    $scope.showPlannifView = false;
     resetView();
 
     $rootScope.$on('allPosters', function(evt, providers) {

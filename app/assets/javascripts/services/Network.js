@@ -166,8 +166,8 @@ app.factory("Network", ["$http", "$timeout", "ServerCommunication", "$location",
   }
 
   function _send(jsonMsg) {
-    //console.log("send : ",jsonMsg);
     if(socket !== undefined) {
+      console.log("send : ",jsonMsg);
       socket.send(JSON.stringify(jsonMsg));
     } else {
       $http.post('/api/stream/command', JSON.stringify(jsonMsg));

@@ -45,22 +45,6 @@ app.factory("UnifiedRequestUtils", function() {
         serverUnifiedRequest.args[arg.key] = arg.value;
       };
       return serverUnifiedRequest;
-    },
-
-    fillExplainService: function(typeService, socialNetwork) {
-      if(typeService == "group") {
-        return "Click here to display a specific Facebook group.";
-      } else if(typeService == "user") {
-        if(socialNetwork == "twitter") {
-          return "Click here to display tweets of a specific Twitter user.";
-        } else {
-          return "Click here to display the wall of a specific Facebook user.";
-        }
-      } else if (typeService == "hashtag") {
-        return "Click here to display tweets of a specific Twitter hashtag.";
-      } else {
-        return "Click here to display your "+socialNetwork+" "+typeService+".";
-      }
     }
 
   };

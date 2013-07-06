@@ -31,7 +31,6 @@ app.controller('GlassController', ["$scope", "$rootScope", function($scope, $roo
   }
 
   $scope.loaded = function() {
-    console.log("LOADED");
     if(_optionalCallback !== undefined) {
       _optionalCallback();
     }

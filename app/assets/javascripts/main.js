@@ -14,6 +14,8 @@ require([
   'services/Network',
   'services/PopupProvider',
   'services/ServerCommunication',
+  'directives/DatePicker',
+  'directives/TimePicker',
   'directives/Drag',
   'directives/ScrollManager',
   'directives/ShowOnHoverParent',
