@@ -30,11 +30,6 @@ app.factory("ServerCommunication", [
               hasParser:services[j].hasParser,
               hasHelper:services[j].hasHelper
             };
-            // service.explainService = $unifiedRequestUtils.fillExplainService(service.typeService, service.socialNetwork);
-            // if(service.hasParser == false) {
-            //   service.explainService = "Coming soon...";
-            // }
-            // service.typeServiceChar = $stringUtils.typeServiceCharByService(services[j].service);
             for (var k = 0; k < services[j].args.length; k++) {
               service.args[services[j].args[k]] = "";
             };
