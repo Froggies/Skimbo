@@ -14,22 +14,15 @@ app.factory("Network", ["$http", "$timeout", "ServerCommunication", "$location",
     wshost = wshost + "/" + pageName[2];
   }
 
-  console.log("WHOST URL = "+wshost);
   var ssehost = jsRoutes.controllers.stream.Sse.connect().absoluteURL(isSecure);
-  console.log("SSEHOST URL = "+ ssehost);
   var sseping = jsRoutes.controllers.stream.Sse.ping().absoluteURL(isSecure);
-  console.log("SSEPING URL = "+sseping);
   var longpolling = jsRoutes.controllers.stream.LongPolling.connect().absoluteURL(isSecure);
-  console.log("LONGPOLLING URL = "+longpolling);
 
   var socket = undefined;//ws mode
   var source = undefined;//sse mode
   var nbError = 0;
   var nbErrorMax = 5;
   var dataReceivedByWS = false;
-
-  console.log("ws supported", "WebSocket" in window);
-  console.log("sse supported", "EventSource" in window);
 
   function webSocketMode() {
     if(socket == undefined) {
@@ -129,7 +122,6 @@ app.factory("Network", ["$http", "$timeout", "ServerCommunication", "$location",
       }      
       command(data);
     }
-    console.log(angular.element($window));
     $timeout(function() {
       document.body.appendChild(fakeIframe);
     }, 3500);
@@ -167,7 +159,6 @@ app.factory("Network", ["$http", "$timeout", "ServerCommunication", "$location",
 
   function _send(jsonMsg) {
     if(socket !== undefined) {
-      console.log("send : ",jsonMsg);
       socket.send(JSON.stringify(jsonMsg));
     } else {
       $http.post('/api/stream/command', JSON.stringify(jsonMsg));
