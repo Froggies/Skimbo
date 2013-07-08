@@ -53,8 +53,7 @@ app.factory("DataCache", [
   $rootScope.$on('modColumn', function(evt, column) {
     var index = $arrayUtils.indexOf(_cache.allColumns, column, "title");
     if(index > -1) {
-      _cache.allColumns.splice(index, 1);
-      _cache.allColumns.push(column.column);
+      _cache.allColumns[index] = column.column;
       fireEvent('allColumns');
     }
   });
