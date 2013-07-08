@@ -45,7 +45,6 @@ define(["app"], function(app) {
               $timeout.cancel(lastTimeout);
             }
             lastTimeout = $timeout(function() {
-              console.log(service, element[0].value);
               if(element[0].value !== "") {
                 send(type, service.service, element[0].value);
               } else {

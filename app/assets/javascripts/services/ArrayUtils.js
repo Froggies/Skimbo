@@ -64,7 +64,6 @@ app.factory("ArrayUtils", ['Visibility', '$rootScope', function($visibility, $ro
             }
             sortMe[i].iStared = newMsg.iStared;
             sortMe[i].styleRefresh = "";
-            console.log("message already received", newMsg);
           }
           //refresh time
           sortMe[i].dateAgo = moment(moment(Number(sortMe[i].createdAt)), "YYYYMMDD")

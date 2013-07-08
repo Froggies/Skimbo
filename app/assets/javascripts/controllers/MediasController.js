@@ -12,8 +12,6 @@ app.controller('MediasController', [
     $scope.loading = true;
 
     $rootScope.$on('displayMedias', function(evt, message) {
-      //console.log(message);
-
       var pictures;
       if(message.picturesMax && message.picturesMax.length > 0) {
         pictures = message.picturesMax;

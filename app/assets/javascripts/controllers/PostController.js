@@ -40,7 +40,6 @@ app.controller('PostMessageController', [
             provider.arg.possibleValues = [];
           }
         }
-        console.log($scope.providers);
         $rootScope.$broadcast('loading', {loading: false, translationCode: 'GET_TOKEN_PROGRESS'});
       });
     });
@@ -77,7 +76,6 @@ app.controller('PostMessageController', [
       for (var i = 0; i < $scope.providers.length; i++) {
         var p = $scope.providers[i];
         if(p.selected == true) {
-          console.log(p);
           name = p.name || p.service;
           selectedProviders.push({name: name, toPageId: p.toPageId});
         }

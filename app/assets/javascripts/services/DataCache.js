@@ -80,7 +80,6 @@ app.factory("DataCache", [
     on: function(key, callback) {
       _callback[key] = _callback[key] || [];
       _callback[key].push(callback);
-      console.log(_cache);
       if(_cache[key] !== undefined) {
         callback(_cache[key]);
       } else if(key == "allUnifiedRequests") {
