@@ -16,7 +16,7 @@ app.controller('AccountController', [
       var temp = $scope.userInfos[0];
       $scope.userInfos[0] = $scope.userInfos[index];
       $scope.userInfos[index] = temp;
-      $dataCache.on('userInfos', $scope.userInfos);
+      $dataCache.add('userInfos', $scope.userInfos);
     }
 
     $scope.deleteProvider = function(providerName) {
