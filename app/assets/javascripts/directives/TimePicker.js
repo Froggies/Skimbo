@@ -77,7 +77,6 @@ define(["app"], function(app) {
             $scope.minute = 0;
           }
           updateHorlogeMinute();
-          fireCallback();
         }
 
         $scope.downMinute = function() {
@@ -86,17 +85,18 @@ define(["app"], function(app) {
             $scope.minute = 55;
           }
           updateHorlogeMinute();
-          fireCallback();
         }
 
         function updateHorlogeHour() {
           var degree = $scope.hour * 360 / 12;
           $scope.styleHorlogeHour = getDefaultCssStyle(degree);
+          fireCallback();
         }
 
         function updateHorlogeMinute() {
           var degree = $scope.minute * 360 / 60;
           $scope.styleHorlogeMinute = getDefaultCssStyle(degree);
+          fireCallback();
         }
 
         function fireCallback() {

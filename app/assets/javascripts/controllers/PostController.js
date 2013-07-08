@@ -6,6 +6,8 @@ app.controller('PostMessageController', [
   "$scope", "Network", "$rootScope", "PopupProvider",
   function($scope, $network, $rootScope, $popupProvider) {
 
+    var delayedDate, delayedTime;
+
     $scope.showHelp = false;
     $scope.maxLength = 140;
     $scope.showPlannifView = false;
@@ -92,9 +94,8 @@ app.controller('PostMessageController', [
         $scope.showErrorPosterRequired = false;
         $scope.showErrorTitleRequired = false;
         $scope.showErrorContentRequired = true;
-      } else if($scope.isDelayedPost == true && (
-          $scope.timeToPost == "" || $scope.timeToPost == undefined ||
-          !moment($scope.timeToPost, "DD-MM-YYYY HH:mm").isValid())) {
+      } else if($scope.showPlannifView == true && 
+          !moment(delayedDate+" "+delayedTime, "DD-MM-YYYY HH:mm").isValid()) {
         $scope.showErrorPosterRequired = false;
         $scope.showErrorTitleRequired = false;
         $scope.showErrorContentRequired = false;
@@ -112,19 +113,28 @@ app.controller('PostMessageController', [
             }
           }
         }
-        if($scope.isDelayedPost == true) {
+        if($scope.showPlannifView == true) {
           o.cmd = "delayedPost";
-          o.body.timeToPost = moment.utc(moment($scope.timeToPost, "DD-MM-YYYY HH:mm")).valueOf();
+          o.body.timeToPost = moment.utc(moment(delayedDate+" "+delayedTime, "DD-MM-YYYY HH:mm")).valueOf();
         }
         $network.send(o);
         $scope.showPost = false;
         resetView();
+        $scope.close();
       }
     };
 
     $scope.selectOracle = function (provider, val) {
       provider.toPageId = val.call;
       provider.possibleValues = [];
+    }
+
+    $scope.selectDate = function (date) {
+      delayedDate = date.moment.format("DD-MM-YYYY");
+    }
+
+    $scope.selectTime = function (hour, minute) {
+      delayedTime = hour + ":" + minute;
     }
 
     $scope.close = function() {
@@ -143,8 +153,8 @@ app.controller('PostMessageController', [
       $scope.showErrorTitleRequired = false;
       $scope.showErrorContentRequired = false;
       $scope.showErrorBadDate = false;
-      $scope.isDelayedPost = false;
-      $scope.timeToPost = "";
+      $scope.showPlannifView = false;
+      delayedDate = delayedTime = "";
       $scope.showLinkInput = false;
       $scope.showImageInput = false;
     }

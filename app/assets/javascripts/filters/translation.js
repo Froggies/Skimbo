@@ -54,7 +54,6 @@ app.filter('i18n', ['$rootScope', function($rootScope) {
       'PH_POST_MESSAGE' : 'Message',
       'PH_POST_URL' : 'Partager un lien',
       'PH_POST_URLIMAGE' : 'Partager une image',
-      'PH_POST_DELAY' : 'JJ/MM/AAAA HH:MM',
       //ERRORS
       'CLICK_TO_HIDE' : 'Cliquer pour cacher cette erreur.',
       'CLICK_TO_RECONNECT' : 'Cliquer pour être reconnecté.',
@@ -117,7 +116,6 @@ app.filter('i18n', ['$rootScope', function($rootScope) {
       'PH_POST_MESSAGE' : 'Message',
       'PH_POST_URL' : 'Share a link',
       'PH_POST_URLIMAGE' : 'Share a picture',
-      'PH_POST_DELAY' : 'DD/MM/YYYY HH:MM',
       //ERRORS
       'CLICK_TO_HIDE' : 'Click here to hide error.',
       'CLICK_TO_RECONNECT' : 'Click here to be connected again.',
