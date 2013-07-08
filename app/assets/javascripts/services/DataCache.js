@@ -54,7 +54,7 @@ app.factory("DataCache", [
     var index = $arrayUtils.indexOf(_cache.allColumns, column, "title");
     if(index > -1) {
       _cache.allColumns.splice(index, 1);
-      _cache.allColumns.push(column);
+      _cache.allColumns.push(column.column);
       fireEvent('allColumns');
     }
   });
