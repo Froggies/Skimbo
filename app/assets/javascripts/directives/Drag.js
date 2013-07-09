@@ -15,10 +15,10 @@ app.directive("drag", ["$rootScope", "$timeout",
     var offsetX = firstOffsetX;
     var offsetY = firstOffsetY;
     if(useOffsetEvt == true) {
-      offsetX = evt.offsetX;
-      offsetY = evt.offsetY;
-      firstOffsetX = evt.offsetX;
-      firstOffsetY = evt.offsetY;
+      offsetX = evt.offsetX || (evt.layerX - evt.currentTarget.offsetLeft);
+      offsetY = evt.offsetY || (evt.layerY - evt.currentTarget.offsetTop);
+      firstOffsetX = offsetX;
+      firstOffsetY = offsetY;
     }
     return {
       x: (evt.pageX - offsetX), 
@@ -32,9 +32,11 @@ app.directive("drag", ["$rootScope", "$timeout",
   }
 
   function buildCarreMouseEvt(evt) {
+    var offsetX = evt.offsetX || (evt.layerX - evt.target.offsetLeft);
+    var offsetY = evt.offsetY || (evt.layerY - evt.target.offsetTop);
     return {
-      x: (evt.pageX - evt.offsetX),
-      y: (evt.pageY - evt.offsetY),
+      x: (evt.pageX - offsetX),
+      y: (evt.pageY - offsetY),
       w: 100,
       h: 100
     }

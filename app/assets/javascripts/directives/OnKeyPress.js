@@ -32,6 +32,7 @@ define(["app"], function(app) {
     document.onkeypress = function(e) {
       e = e || window.event;
       var charCode = (typeof e.which == "number") ? e.which : e.keyCode;
+      console.log("Character typed: " + charCode);
       if (charCode) {
         var obj = findCallback(charCode, angular.element(e.target));
         if(obj !== undefined) {
@@ -39,9 +40,6 @@ define(["app"], function(app) {
           var ctrlKeyCheck = obj.ctrlKeyCheck;
           var scope = obj.scope;
           var onKeyPressExec = obj.onKeyPressExec;
-
-          //console.log("Character typed: " + charCode);
-
           if((ctrlKeyCheck == true && e.ctrlKey) || 
               ctrlKeyCheck != true) {
             scope.$eval(onKeyPressExec);
