@@ -53,18 +53,22 @@ app.controller('NotificationController', [
     });
 
     $rootScope.$on('disconnect', function(evt, data) {
-      $scope.$apply(function() {
-        var data = data || {};
-        data.title = $filter('i18n')('DISCONNECT');
-        data.footer = $filter('i18n')('CLICK_TO_RECONNECT');
-        data.type = "disconnect";
-        data.providerName = "skimbo";
-        var exist = $arrayUtils.existWith($scope.notifications, data, function(inArray, data) {
-          return inArray.providerName == data.providerName && inArray.title == data.title;
-        });
-        if(!exist) {
-          $scope.notifications.push(data);
-        }
+      var data = data || {};
+      data.title = $filter('i18n')('DISCONNECT');
+      data.footer = $filter('i18n')('CLICK_TO_RECONNECT');
+      data.type = "disconnect";
+      data.providerName = "skimbo";
+      var exist = $arrayUtils.existWith($scope.notifications, data, function(inArray, data) {
+        return inArray.providerName == data.providerName && inArray.title == data.title;
+      });
+      if(!exist) {
+        $scope.notifications.push(data);
+      }
+      $scope.$apply();
+      //if received msg then hide disconnect error (sse has restablish connexion)
+      var onMsgOff = $rootScope.$on('msg', function(evt, msg) {
+        $scope.closeNotification(data);
+        onMsgOff();//remove listener
       });
     });
 
