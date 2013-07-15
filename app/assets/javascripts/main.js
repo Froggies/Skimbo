@@ -22,6 +22,7 @@ require([
   'directives/OnKeyPress',
   'directives/Oracle',
   'directives/Focus',
+  'directives/MovableEtc',
   'controllers/GlassController',
   'controllers/NotificationController',
   'controllers/MediasController',
