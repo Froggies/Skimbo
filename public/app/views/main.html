@@ -14,12 +14,12 @@
 		</ul>
 	</div>
 
-	<section id="column_{{$index}}"
+  <section id="column_{{$index}}"
 			class="column"
 			ng-repeat="c in columns"
 			style="width:{{c.csswidth}};height:{{c.cssheight}}">
 		<header class="column-title">
-			<div class="containerNbMsg">
+      <div class="containerNbMsg">
 				<a class="linkNbMsgIcon icon-eye-1" ng-click="markAllAsView(c)"></a>
 				<a class="linkNbMsg {{messagesNoView(c) > 0}}" ng-click="markAllAsView(c)" title="{{messagesNoView(c)}} {{'NEW_MGS_UNREAD' | i18n}}">
 					{{messagesNoView(c)}}
@@ -41,7 +41,7 @@
 		</header>
 		<div class="column-content" scrollmanager="onlyTop" scrolldata="c">
 			<ul>
-				<li class="element {{m.isView}}" scrollmanager="m" ng-repeat="m in c.messages | filter:$parent.$parent.query">
+				<li class="element {{m.isView}}" scrollmanager="m" ng-repeat="m in c.messages">
 					<div class="timeline">
 						<div class="from-social-network vertical-text {{m.from}}">{{m.from}}</div>
 						<div class="rond {{m.from}}"></div>
