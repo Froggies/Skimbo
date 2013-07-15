@@ -75,13 +75,17 @@ object BitbucketRepo {
 
 object BitbucketEventsRepo {
   
-  val datePattern = "yyyy-MM-dd HH:mm:ss'+00:00'"
+  val datePattern = "yyyy-MM-dd HH:mm:ssZZ"
+    
+  def transformDate(input: String) = {
+      input.substring(0, input.length() - 6) + "+0000"
+    }
   
   implicit val reader: Reads[BitbucketEventsRepo] = (
     (__ \ "node").readNullable[String] and
     PathDefaultReads.default[Option[String]]((__ \ "description"), None) and
     PathDefaultReads.default[Option[String]](((__ \ "description" \ "commits")(0) \\ "description"), None) and
     (__ \ "event").read[String] and
-    (__ \ "utc_created_on").read[DateTime](Reads.jodaDateReads(datePattern)) and
+    (__ \ "utc_created_on").read[DateTime](Reads.jodaDateReads(datePattern, transformDate)) and
     (__ \ "repository").readNullable[BitbucketRepo])(BitbucketEventsRepo.apply _)
 }

@@ -57,6 +57,6 @@ object BitbucketCommit {
     (__ \ "message").read[String] and
     (__ \ "author").read[String] and
     (__ \ "raw_node").read[String] and
-    (__ \ "utctimestamp").read[DateTime](Reads.jodaDateReads(BitbucketEventsRepo.datePattern))
+    (__ \ "utctimestamp").read[DateTime](Reads.jodaDateReads(BitbucketEventsRepo.datePattern, BitbucketEventsRepo.transformDate))
   )(BitbucketCommit.apply _)
 }

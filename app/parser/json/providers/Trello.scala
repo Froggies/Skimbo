@@ -47,7 +47,7 @@ object TrelloWallParser extends GenericJsonParser {
 
   override def asSkimbo(json: JsValue): Option[Skimbo] = {
     Json.fromJson[TrelloWallMessage](json).fold(
-      error => logParseError(json, error, "ViadeoWallMessage"),
+      error => logParseError(json, error, "TrelloWallMessage"),
       e => Some(Skimbo(
         e.id,
         e.memberCreator.fullName,
@@ -139,11 +139,16 @@ object DataTrello {
 }
 
 object TrelloWallMessage {
+  
+  val datePattern = "yyyy-MM-dd'T'HH:mm:ssZZ"
+  
   implicit val trelloReader: Reads[TrelloWallMessage] = (
     (__ \ "id").read[String] and
     (__ \ "unread").read[Boolean] and
     (__ \ "type").read[String] and
-    (__ \ "date").read[DateTime](Reads.jodaDateReads("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")) and
+    (__ \ "date").read[DateTime](Reads.jodaDateReads(datePattern, {input =>
+      input.substring(0, input.length() - 5) + "+0000"
+    })) and
     (__ \ "data").read[DataTrello] and
     (__ \ "idMemberCreator").read[String] and
     (__ \ "memberCreator").read[MemberCreatorTrello])(TrelloWallMessage.apply _)
