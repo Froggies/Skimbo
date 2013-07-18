@@ -27,9 +27,7 @@ define(["app"], function(app) {
         addDot(element);
 
         var unwatch = scope.$watch(attrs["movableEtc"]+".messages", function(newVal, oldVal) {
-          console.log("messages", newVal, newVal);
           if(newVal) {
-            console.log('Stop recursion');
             dot = undefined;//stop dot recursion
             $timeout(function() {
               element[0].innerText = scrollToShowMessage;
