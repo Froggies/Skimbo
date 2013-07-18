@@ -78,11 +78,7 @@
 					</div>
 				</li>
 			</ul>
-      <div style="height:100%">
-        <span ng-hide="c.messages.length">{{'RETRIEVING_MESSAGES' | i18n}}</span>
-        <span ng-hide="c.messages.length" movable-etc></span>
-        <span ng-show="c.messages.length">{{'SCROLL_TO_SHOW_MSG' | i18n}}</span>
-      </div>
+      <div class="first-block-column" movable-etc="c"></div>
 		</div>
 	</section>
 	<section ng-controller="MediasController"

@@ -2,22 +2,46 @@
 
 define(["app"], function(app) {
 
-  app.directive('movableEtc', ['$timeout', function($timeout) {
+  app.directive('movableEtc', ['$timeout', '$filter', function($timeout, $filter) {
 
-    function addDot(element) {
-      if(element[0].innerText.length < 3) {
-        element[0].innerText = element[0].innerText + ".";
-      } else {
-        element[0].innerText = ".";
-      }
-      $timeout(function() {
-        addDot(element);
-      }, 500);
-    }
+    var retreiveMessage = $filter('i18n')('RETRIEVING_MESSAGES');
+    var scrollToShowMessage = $filter('i18n')('SCROLL_TO_SHOW_MSG');
 
     return {
       link : function(scope, element, attrs) {
+        var dot = '';
+
+        function addDot(element) {
+          if(dot !== undefined) {
+            if(dot.length < 3) {
+              dot += '.';
+            } else {
+              dot = ".";
+            }
+            element[0].innerText = retreiveMessage + dot;
+            $timeout(function() {
+              addDot(element);
+            }, 500);
+          }
+        };
         addDot(element);
+
+        var unwatch = scope.$watch(attrs["movableEtc"]+".messages", function(newVal, oldVal) {
+          console.log("messages", newVal, newVal);
+          if(newVal) {
+            console.log('Stop recursion');
+            dot = undefined;//stop dot recursion
+            $timeout(function() {
+              element[0].innerText = scrollToShowMessage;
+            }, 500);
+            unwatch();
+          } else {
+            element[0].innerText = retreiveMessage;
+          }
+        });
+        element.bind("$destroy", function() {
+          unwatch();
+        });
       }
     };
 
