@@ -80,3 +80,6 @@ $RECYCLE.BIN/
 .*
 !.gitignore
 *~
+
+*.iml
+.idea

@@ -28,7 +28,8 @@ object FacebookParserTest extends Specification {
       val msg = Json.fromJson[FacebookWallMessage](jsonMsg(0)).get
       val res = FacebookWallParser.asSkimbo(jsonMsg(0))
       res must beSome
-      res.get.directLink must beEqualTo(msg.link)
+
+      res.get.directLink.get must beEqualTo(msg.link)
       res.get.message must beEqualTo(msg.message.get)
     }
   }

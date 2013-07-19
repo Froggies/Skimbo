@@ -1,4 +1,4 @@
-package daoUser
+package services.dao
 
 import play.api.test._
 import play.api.test.Helpers._
@@ -9,10 +9,9 @@ import models.command.PostDelayedProvider
 import org.joda.time.DateTime
 import org.joda.time.DateTimeZone
 import scala.concurrent.Await
-import services.dao.DelayedPostDao
 import scala.concurrent.duration.Duration
 
-object DelayedPostTest extends Specification {
+class DelayedPostTest extends Specification {
 
   val testConfiguration = Map("mongodb.db" -> "skimboTest")
 

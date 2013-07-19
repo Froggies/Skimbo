@@ -27,9 +27,6 @@ class GithubParserTest extends Specification {
     "Read json from complexe API json" in {
       val jsonMsg = GithubWallParser.cut(GithubFixture.timeline)
       jsonMsg.size must beEqualTo(12)
-      val githubMsg = jsonMsg.map { jmsg =>
-        GithubWallParser.asSkimbo(jmsg).get
-      }
     }
 
     "Convert Github message as Skimbo" in {

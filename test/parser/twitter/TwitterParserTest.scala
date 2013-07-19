@@ -20,10 +20,10 @@ object TwitterParserTest extends Specification {
 			tweet.createdAt.toString("MM-dd-yyyy") must equalTo("10-24-2012")
 			
 			val skimbo = TwitterTimelineParser.asSkimbo(jsonTweet(0)).get
-			val expectedId = "261219035964915700"
+			val expectedId = "261219035964915712"
 			
 			skimbo.sinceId must equalTo(expectedId)
-			skimbo.directLink.get must equalTo("http://twitter.com/yesnault/status/261219035964915700")
+			skimbo.directLink.get must equalTo("http://twitter.com/yesnault/status/261219035964915712")
 		}
 		
 		"parse hashtag messages" in {

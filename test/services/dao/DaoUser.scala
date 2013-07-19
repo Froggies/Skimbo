@@ -1,4 +1,4 @@
-package daoUser
+package services.dao
 
 import org.specs2.mutable._
 import play.api.test._
@@ -45,7 +45,7 @@ object UtilTest {
 
 }
 
-object DaoUserSimpleFind extends Specification {
+class DaoUserSimpleFind extends Specification {
 
   val testConfiguration = Map("mongodb.db" -> "skimboTest")
 

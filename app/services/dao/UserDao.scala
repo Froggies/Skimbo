@@ -2,16 +2,15 @@ package services.dao;
 
 import java.util.Date
 import scala.concurrent.Future
-import models.User.UserBSONReader
 import models.user.Account
 import models.user.Column
 import models.user.ProviderUser
 import models.user.SkimboToken
 import play.api.Play.current
-import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import play.modules.reactivemongo.ReactiveMongoPlugin
 import reactivemongo.bson.BSONDocument
-import reactivemongo.bson.BSONString
+
+import reactivemongo.api.collections.default.BSONCollection
 import services.auth.GenericProvider
 import services.auth.ProviderDispatcher
 
@@ -20,8 +19,8 @@ object UserDao {
   import play.api.libs.concurrent.Execution.Implicits._
   import models.User._
 
-  val db = ReactiveMongoPlugin.db
-  val collection = db("users")
+  def db = ReactiveMongoPlugin.db
+  def collection = db[BSONCollection]("users")
 
   def add(user: models.User) = {
     collection.insert(models.User.toBSON(user))

@@ -1,24 +1,16 @@
-package daoUser
+package services.dao
 
 import org.specs2.mutable._
 import play.api.test._
 import play.api.test.Helpers._
-import services.dao.UserDao
 import models.User
-import models.user.Account
-import java.util.Date
 import scala.concurrent.Await
-import java.util.concurrent.TimeoutException
-import scala.concurrent.ExecutionContext.Implicits.global
-import models.user.Column
-import services.endpoints.JsonRequest._
-import models.user.ProviderUser
 import scala.concurrent.duration.Duration
 import services.auth.providers.Twitter
 import models.user.SkimboToken
 
 
-object TokenTest extends Specification {
+class TokenTest extends Specification {
 
   val testConfiguration = Map("mongodb.db" -> "skimboTest")
 
@@ -37,7 +29,7 @@ object TokenTest extends Specification {
       }
     }
   }
-  
+
   /**
    * Test 1 : add and addToken
    */
@@ -52,7 +44,7 @@ object TokenTest extends Specification {
     //Add token
     Await.result(UserDao.setToken(id, Twitter, SkimboToken("test", None)), Duration("10 seconds"))
   }
-  
+
   /**
    * Test 2 : find, modToken and check
    */
@@ -69,5 +61,5 @@ object TokenTest extends Specification {
     token must not be beNone
     token.get.token must beEqualTo("test2")
   }
-  
+
 }

@@ -29,7 +29,8 @@ object LinkedInParserTest extends Specification {
       msg.person.get.connections.head.firstName must beEqualTo("Andrea")
       val res = LinkedInWallParser.asSkimbo(jsonMsg(0))
       res must beSome
-      res.get.authorScreenName must beEqualTo(msg.person.get.lastName)
+
+      res.get.authorScreenName must beEqualTo(LinkedInWallParser.getName(msg))
     }
   }
 
