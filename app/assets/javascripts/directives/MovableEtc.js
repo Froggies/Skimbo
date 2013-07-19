@@ -18,7 +18,7 @@ define(["app"], function(app) {
             } else {
               dot = ".";
             }
-            element[0].innerText = retreiveMessage + dot;
+            element[0].innerHTML = retreiveMessage + dot;
             $timeout(function() {
               addDot(element);
             }, 500);
@@ -30,11 +30,11 @@ define(["app"], function(app) {
           if(newVal) {
             dot = undefined;//stop dot recursion
             $timeout(function() {
-              element[0].innerText = scrollToShowMessage;
+              element[0].innerHTML = scrollToShowMessage;
             }, 500);
             unwatch();
           } else {
-            element[0].innerText = retreiveMessage;
+            element[0].innerHTML = retreiveMessage;
           }
         });
         element.bind("$destroy", function() {
