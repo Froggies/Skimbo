@@ -1,11 +1,32 @@
 define(["app"], function(app) {
 
 app.controller('AccountController', [
-  "$scope", "$http", "DataCache", "Network",
-  function($scope, $http, $dataCache, $network) {
+  "$scope", "DataCache", "$http", "Network", "ImagesUtils", "ArrayUtils",
+  function($scope, $dataCache, $http, $network, $imagesUtils, $arrayUtils) {
 
     $dataCache.on('userInfos', function(data) {
-      $scope.userInfos = data;
+      $scope.userInfos = data.slice(0);
+
+      $dataCache.on('tokenInvalid', function(tokensInvalid) {
+        var badToken = {};
+        for (var i = 0; i < tokensInvalid.length; i++) {
+          var index = $arrayUtils.indexOf(
+            $scope.userInfos, 
+            {socialType: tokensInvalid[i].providerName}, 
+            "socialType"
+          );
+          if(index < 0) {
+            badToken = {};
+            badToken.socialType = tokensInvalid[i].providerName;
+            badToken.avatar = $imagesUtils.defaultImage();
+            badToken.username = 'Invalid'; 
+            $scope.userInfos.push(badToken);
+          } else {
+            $scope.userInfos[index].avatar = $imagesUtils.defaultImage();
+            $scope.userInfos[index].username = 'Invalid'; 
+          }
+        }
+      });
     });
 
     $scope.close = function() {

@@ -41,6 +41,21 @@ app.factory("DataCache", [
     fireEvent('userInfos');
   });
 
+  $rootScope.$on('tokenInvalid', function(evt, data) {
+    if(_cache.tokenInvalid == undefined) {
+      _cache.tokenInvalid = [];
+      _cache.tokenInvalid.push(data);
+    } else {
+      var index = $arrayUtils.indexOf(_cache.tokenInvalid, data, "providerName");
+      if(index > -1) {
+        _cache.tokenInvalid[index] = data;
+      } else {
+        _cache.tokenInvalid.push(data);
+      }
+    }
+    fireEvent('tokenInvalid');
+  });
+
   $rootScope.$on('allColumns', function(evt, columns) {
     add('allColumns', columns);
   });

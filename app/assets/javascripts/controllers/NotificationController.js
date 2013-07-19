@@ -3,20 +3,22 @@
 define(["app"], function(app) {
 
 app.controller('NotificationController', [
-  "$scope", "$rootScope", "ArrayUtils", "PopupProvider", "$filter",
-  function($scope, $rootScope, $arrayUtils, $popupProvider, $filter) {
+  "$scope", "$rootScope", "ArrayUtils", "PopupProvider", "$filter", "DataCache",
+  function($scope, $rootScope, $arrayUtils, $popupProvider, $filter, $dataCache) {
 
     $scope.notifications = [];
 
-    $rootScope.$on('tokenInvalid', function(evt, data) {
-      $scope.$apply(function() {
+    $dataCache.on('tokenInvalid', function(tokensInvalid) {
+      var data;
+      for (var i = 0; i < tokensInvalid.length; i++) {
+        data = {};
+        data.providerName = tokensInvalid[i].providerName;
         data.title = $filter('i18n')('DISCONNECT');
         data.footer = $filter('i18n')('CLICK_TO_RECONNECT');
         data.type = "tokenInvalid";
-        if(!$arrayUtils.exist($scope.notifications, data, "providerName")) {
-          $scope.notifications.push(data);
-        }
-      });
+        $scope.notifications.push(data);
+      };
+      $scope.$apply();
     });
 
     $rootScope.$on('newToken', function(evt, data) {
