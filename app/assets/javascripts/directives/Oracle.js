@@ -5,10 +5,10 @@ define(["app"], function(app) {
   app.directive('oracle', ['Network', '$rootScope', '$timeout', 
     function($network, $rootScope, $timeout) {
 
-    var lastSend, lastTimeout = undefined;
+    var lastSend, unlisten, lastTimeout = undefined;
 
     function initListen(type, service, element, scope, putResIn) {
-      $rootScope.$on(type, function(evt, objRes) {
+      unlisten = $rootScope.$on(type, function(evt, objRes) {
         if(service !== undefined && element != undefined && service.service == objRes.serviceName) {
           scope.$apply(function() {
             putResIn.possibleValues = objRes.values;
@@ -40,6 +40,11 @@ define(["app"], function(app) {
           var type = attrs["oracleType"];
           var putResIn = scope[attrs["oracleStore"]];
           initListen(type, service, element, scope, putResIn);
+          if(attrs["oracleStart"] === "focus") {
+            element.bind('focus', function() {
+              send(type, service.service, "?");//search query not important
+            });
+          }
           element.bind('keyup', function() {
             if(lastTimeout != undefined) {
               $timeout.cancel(lastTimeout);
@@ -54,6 +59,8 @@ define(["app"], function(app) {
           });
           element.bind("$destroy", function() {
             element.unbind('keyup');
+            element.unbind('focus');
+            unlisten();
           });
         }
       }
