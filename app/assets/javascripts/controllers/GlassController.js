@@ -11,6 +11,14 @@ app.controller('GlassController', ["$scope", "$rootScope", function($scope, $roo
     _optionalCallback = optionalCallback;
     if(view == 'modifColumn') {
       show('/assets/app/views/modifColumn.html');
+    } else if(view == 'help') {
+      var lang;
+      if($rootScope.currentLanguage === 'fr') {
+        lang = 'fr';
+      } else {
+        lang = 'en';
+      }
+      show('/assets/app/views/help_'+lang+'.html');
     } else {
       show(view);
     }
@@ -19,16 +27,6 @@ app.controller('GlassController', ["$scope", "$rootScope", function($scope, $roo
   function show(view) {
     if(view == $scope.showView) {
       $scope.hide();
-    } else if(view == 'modifColumn') {
-      $scope.showView = '/assets/app/views/modifColumn.html';
-    } else if(view == 'help') {
-      var lang;
-      if($rootScope.currentLanguage === 'fr') {
-        lang = 'fr';
-      } else {
-        lang = 'en';
-      }
-      $scope.showView = '/assets/app/views/help_'+lang+'.html';
     } else {
       $scope.showView = view;
     }
@@ -42,6 +40,7 @@ app.controller('GlassController', ["$scope", "$rootScope", function($scope, $roo
     if(_optionalCallback !== undefined) {
       _optionalCallback();
     }
+    _optionalCallback = undefined;
   }
 
 }]);

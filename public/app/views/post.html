@@ -9,8 +9,8 @@
     <span class="error-message" ng-show="showErrorBadDate">{{'BAD_DATE_POSTER' | i18n}}</span>
   </div>
   <a class="button button-close" ng-click="close()" />X</a>
-  <a class="button button-help" ng-click="showHelp = !showHelp" />?</a>
-  <div ng-hide="showPlannifView">
+  <a class="button button-help" ng-click="showHelp()" />?</a>
+  <div ng-hide="showPlannifView" class="content-div-post-message-container">
     <ul class="posters-proposes">
       <li ng-repeat="provider in providers">
         <div class="social-network-link container-input-oracle">
@@ -38,17 +38,7 @@
         </div>
       </li>
     </ul>
-    <div ng-show="showTitleInput" class="post-message-title-container">
-      <input class="post-title input{{showHelp}}" type="text" ng-model="title" value="{{title}}" placeholder="{{'PH_POST_TITLE' | i18n}}" />
-      <ul class="posters-proposes-help" ng-show="showHelp">
-        <li ng-repeat="provider in providersWithTitle">
-          <div class="social-network-link">
-            <a class="btn {{provider.selected}}">
-              <img class="social-network-active" ng-src="/assets/img/brand/{{provider.service}}.png" alt="{{provider.service}}" width="16" height="16"></a>
-          </div>
-        </li>
-      </ul>
-    </div>
+    <input class="post-title input{{showHelp}}" ng-show="showTitleInput" type="text" ng-model="title" value="{{title}}" placeholder="{{'PH_POST_TITLE' | i18n}}" />
     <div class="post-message-container">
       <textarea class="post-message inputmessage" ng-model="message" placeholder="{{'PH_POST_MESSAGE' | i18n}}">{{message}}</textarea>
 
@@ -56,29 +46,8 @@
       <a class="button-a icon-link button-link" ng-click="showLinkInput=!showLinkInput"></a>
       <a class="button-a icon-camera button-image" ng-click="showImageInput=!showImageInput"></a>
     </div>
-    <div ng-show="showLinkInput">
-      <input class="post-title input{{showHelp}}" type="text" ng-model="url" value="{{url}}" placeholder="{{'PH_POST_URL' | i18n}}" />
-      <ul class="posters-proposes-help" ng-show="showHelp">
-        <li ng-repeat="provider in providersWithUrl">
-          <div class="social-network-link">
-            <a class="btn {{provider.selected}}">
-              <img class="social-network-active" ng-src="/assets/img/brand/{{provider.service}}.png" alt="{{provider.service}}" width="16" height="16">
-            </a>
-          </div>
-        </li>
-      </ul>
-    </div>
-    <div ng-show="showImageInput">
-      <input class="post-title input{{showHelp}}" type="text" ng-model="image" value="{{image}}" placeholder="{{'PH_POST_URLIMAGE' | i18n}}" />
-      <ul class="posters-proposes-help" ng-show="showHelp">
-        <li ng-repeat="provider in providersWithImage">
-          <div class="social-network-link">
-            <a class="btn {{provider.selected}}">
-              <img class="social-network-active" ng-src="/assets/img/brand/{{provider.service}}.png" alt="{{provider.service}}" width="16" height="16"></a>
-          </div>
-        </li>
-      </ul>
-    </div>
+    <input class="post-title input{{showHelp}}" ng-show="showLinkInput" type="text" ng-model="url" value="{{url}}" placeholder="{{'PH_POST_URL' | i18n}}" />
+    <input class="post-title input{{showHelp}}" ng-show="showImageInput" type="text" ng-model="image" value="{{image}}" placeholder="{{'PH_POST_URLIMAGE' | i18n}}" />
   </div>
   <div ng-show="showPlannifView">
     <date-picker select-date="selectDate" first-day-of-week="1"></date-picker>

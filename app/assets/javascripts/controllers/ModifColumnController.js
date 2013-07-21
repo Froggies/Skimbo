@@ -174,6 +174,12 @@ app.controller('ModifColumnController', [
       $scope.close();
     }
 
+    $scope.showHelp = function() {
+      $rootScope.$broadcast('glassShowView', 'help', function() {
+        $rootScope.$broadcast('goOnClick', 'helpIdColumn');
+      });
+    };
+
     function resetView() {
       $scope.availableSocialNetworksWidth = "90%";
       if($scope.selectedSocialNetwork != undefined) {

@@ -129,7 +129,9 @@ app.controller('ColumnController', [
     }
 
     $scope.dispatchMsg = function(message) {
-      $rootScope.$broadcast("dispatchMsg", message);
+      $rootScope.$broadcast('glassShowView', '/assets/app/views/post.html', function() {
+        $rootScope.$broadcast('dispatchMsg', message);
+      });
     }
 
     $scope.comment = function(message) {

@@ -8,7 +8,6 @@ app.controller('PostMessageController', [
 
     var delayedDate, delayedTime;
 
-    $scope.showHelp = false;
     $scope.maxLength = 140;
     $scope.showPlannifView = false;
     resetView();
@@ -16,8 +15,6 @@ app.controller('PostMessageController', [
     $rootScope.$on('allPosters', function(evt, providers) {
       $scope.$apply(function() {
         $scope.providersWithTitle = [];
-        $scope.providersWithUrl = [];
-        $scope.providersWithImage = [];
         $scope.providers = providers;
         for (var i = 0; i < $scope.providers.length; i++) {
           var provider = $scope.providers[i];
@@ -27,15 +24,6 @@ app.controller('PostMessageController', [
              provider.service == "scoopit" || provider.service == "viadeo" ||
              provider.service == "googleplus") {
             $scope.providersWithTitle.push(provider);
-          }
-          if(provider.service == "linkedin" || provider.service == "facebook" ||
-             provider.service == "scoopit" || provider.service == "viadeo") {
-            $scope.providersWithUrl.push(provider);
-          }
-          if(provider.service == "linkedin" || provider.service == "facebook" ||
-             provider.service == "scoopit" || provider.service == "viadeo" ||
-             provider.service == "googleplus") {
-            $scope.providersWithImage.push(provider);
           }
           if(provider.canHavePageId == true) {
             provider.arg = {};
@@ -139,6 +127,12 @@ app.controller('PostMessageController', [
 
     $scope.close = function() {
       $scope.$parent.hide();
+    }
+
+    $scope.showHelp = function() {
+      $rootScope.$broadcast('glassShowView', 'help', function() {
+        $rootScope.$broadcast('goOnClick', 'helpIdSkimber');
+      });
     }
 
     function resetView() {

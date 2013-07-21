@@ -1,6 +1,6 @@
 <div id="content-div-add-column" ng-controller="ModifColumnController">
   <a class="button button-close" ng-click="close()" />X</a>
-  <a class="button button-help" ng-click="showHelp = !showHelp" />?</a>
+  <a class="button button-help" ng-click="showHelp()" />?</a>
   <div class="error-div">
     <span class="error-message" ng-show="showErrorTitleRequired">{{'TITLE_REQUIRED' | i18n}}</span>
     <br ng-show="showErrorTitleRequired"/>
