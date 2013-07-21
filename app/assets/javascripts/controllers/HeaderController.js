@@ -54,6 +54,10 @@ app.controller('HeaderController', [
     $rootScope.$broadcast('glassShowView', '/assets/app/views/modifColumn.html');
   }
 
+  $scope.showHelp = function() {
+    $rootScope.$broadcast('glassShowView', 'help');
+  }
+
 }]);
 
 return app;

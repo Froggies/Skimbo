@@ -23,6 +23,8 @@ require([
   'directives/Oracle',
   'directives/Focus',
   'directives/MovableEtc',
+  'directives/ToggleClick',
+  'directives/GoOnClick',
   'controllers/GlassController',
   'controllers/NotificationController',
   'controllers/MediasController',

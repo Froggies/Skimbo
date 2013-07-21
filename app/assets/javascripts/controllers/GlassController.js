@@ -21,6 +21,14 @@ app.controller('GlassController', ["$scope", "$rootScope", function($scope, $roo
       $scope.hide();
     } else if(view == 'modifColumn') {
       $scope.showView = '/assets/app/views/modifColumn.html';
+    } else if(view == 'help') {
+      var lang;
+      if($rootScope.currentLanguage === 'fr') {
+        lang = 'fr';
+      } else {
+        lang = 'en';
+      }
+      $scope.showView = '/assets/app/views/help_'+lang+'.html';
     } else {
       $scope.showView = view;
     }

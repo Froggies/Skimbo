@@ -10,7 +10,6 @@ app.controller('ColumnController', [
 
     $scope.globalContainerSize = "100%";
     $scope.columns = [];
-    $scope.userNoColumn = false;
 
     angular.element($window).bind('resize', function () {
       $columnSize.setSize($scope.columns);
@@ -28,7 +27,9 @@ app.controller('ColumnController', [
       $columnSize.setSize(copy);
       $columnSize.buildSizeCompo(copy);
       $scope.columns = copy;
-      $scope.userNoColumn = $scope.columns.length === 0;
+      if($scope.columns.length === 0) {
+        $rootScope.$broadcast('glassShowView', 'help');
+      }
       if($columnSize.isMobileSize() && $scope.columns.length > 0) {
         $scope.globalContainerSize = $scope.columns.length+"10%";
       } else {

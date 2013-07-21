@@ -6,13 +6,6 @@ app.filter('i18n', ['$rootScope', function($rootScope) {
 
   var translations = {
     'fr' : {
-      'ADD_FIRST_COLUMN_SENTENCE' : 'Créez votre première colonne !',
-      'ADD_FIRST_SERVICE_SENTENCE' : 'Ajoutez-y autant de services que vous souhaitez.',
-      'ADD_FIRST_MODIF_SENTENCE_BEFORE_ICON' : 'Par la suite cliquez sur ',
-      'ADD_FIRST_MODIF_SENTENCE_AFTER_ICON' : ' (en haut à droite de la colonne) pour la modifier.',
-      'ADD_FIRST_SIZE_SENTENCE_BEFORE_ICON1' : 'Vous pouvez également cliquer sur ',
-      'ADD_FIRST_SIZE_SENTENCE_AFTER_ICON1' : ' (à gauche de ',
-      'ADD_FIRST_SIZE_SENTENCE_AFTER_ICON2' : ') pour modifier sa taille.',
       'ADD_NEW_COLUMN' : 'Ajouter une colonne',
       'ADD_STREAM_FOR_SOCIAL_NETWORK' : 'Ajouter un flux pour : ',
       'ALL_FIELD_REQUIRED' : 'Tous les champs sont requis.',
@@ -70,13 +63,6 @@ app.filter('i18n', ['$rootScope', function($rootScope) {
       'Comment' : 'Le message n\'a pas pu être commenté chez '
     },
     'en' : {
-      'ADD_FIRST_COLUMN_SENTENCE' : 'Create your first column !',
-      'ADD_FIRST_SERVICE_SENTENCE' : 'Add services as you want.',
-      'ADD_FIRST_MODIF_SENTENCE_BEFORE_ICON' : 'After that, click ',
-      'ADD_FIRST_MODIF_SENTENCE_AFTER_ICON' : ' (top right column) to change it.',
-      'ADD_FIRST_SIZE_SENTENCE_BEFORE_ICON1' : 'You can also click ',
-      'ADD_FIRST_SIZE_SENTENCE_AFTER_ICON1' : ' (left ',
-      'ADD_FIRST_SIZE_SENTENCE_AFTER_ICON2' : ') to change its size.',
       'ADD_NEW_COLUMN' : 'Add new column',
       'ADD_STREAM_FOR_SOCIAL_NETWORK' : 'Add a stream for this social network :',
       'ALL_FIELD_REQUIRED' : 'All fields are required.',
