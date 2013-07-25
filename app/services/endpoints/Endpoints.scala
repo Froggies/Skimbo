@@ -5,10 +5,10 @@ import play.api.libs.json.JsValue
 import play.api.mvc.AnyContent
 import play.api.mvc.Request
 import services.auth.GenericProvider
+import services.auth.RssProvider
 import services.auth.providers._
 import services.endpoints.JsonRequest.UnifiedRequest
 import services.endpoints.JsonRequest.unifiedRequestReader
-import services.auth.RssProvider
 
 case class Endpoint(provider: GenericProvider, services: Seq[EndpointConfig])
 
@@ -53,7 +53,12 @@ object Endpoints {
       Configuration.BetaSeries.planning,
       Configuration.BetaSeries.timeline)),
     Endpoint(RssProvider, Seq(
-      Configuration.Rss.rss))
+      Configuration.Rss.rss)),
+    Endpoint(Reddit, Seq(
+      Configuration.Reddit.hot,
+      Configuration.Reddit.top,
+      Configuration.Reddit.newer,
+      Configuration.Reddit.moderator))
   )
 
   def getAll: Seq[Endpoint] = {

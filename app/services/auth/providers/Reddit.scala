@@ -1,13 +1,13 @@
 package services.auth.providers
 
-import services.auth._
-import play.api.mvc.RequestHeader
-import play.api.libs.ws.WS
-import play.api.Logger
-import org.apache.commons.codec.binary.Base64.encodeBase64
 import models.user.ProviderUser
-import services.commands.CmdToUser
 import models.user.SkimboToken
+import play.api.Logger
+import play.api.libs.ws.WS
+import play.api.mvc.RequestHeader
+import services.auth.OAuth2Provider
+import services.auth.Token
+import services.commands.CmdToUser
 
 object Reddit extends OAuth2Provider {
 
@@ -15,7 +15,7 @@ object Reddit extends OAuth2Provider {
   override val namespace = "rd"
     
   override def additionalAccreditationParameters = Map("duration" -> "permanent")
-  override val permissions = Seq("identity", "modposts")
+  override val permissions = Seq("identity", "read", "submit", "vote", "mysubreddits")
   
   override protected def fetchAccessTokenResponse(code: String)(implicit request: RequestHeader) = {
     val data = Map(
@@ -41,6 +41,9 @@ object Reddit extends OAuth2Provider {
     WS.url(url)
       .withHeaders(("Authorization" -> token), ("user-agent" -> "skimbo by /u/skimbo34"))
   }
+  
+  override def isInvalidToken(idUser:String, response: play.api.libs.ws.Response): Boolean = 
+    response.status == 403
   
   override def distantUserToSkimboUser(idUser: String, response: play.api.libs.ws.Response): Option[ProviderUser] = {
     if(isInvalidToken(idUser, response)) {

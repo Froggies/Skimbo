@@ -1,27 +1,51 @@
 package services.endpoints
 
-import services.auth.GenericProvider
-import services.auth.providers
-import org.joda.time.format.DateTimeFormat
 import parser.GenericParser
-import parser.json.providers._
-import parser.json.detail._
-import services.auth.RssProvider
-import parser.xml.GenericRssParser
-import parser.GenericParser
-import services.star.Starer
-import parser.GenericParserUser
 import parser.GenericParserParamHelper
-import services.auth.providers.Bitbucket
+import parser.json.detail.FacebookPostDetails
+import parser.json.detail.GoogleplusDetails
+import parser.json.detail.LinkedInPostDetails
+import parser.json.detail.ScoopitPostDetails
+import parser.json.detail.TweetDetails
+import parser.json.providers.BetaseriesPlanningParser
+import parser.json.providers.BetaseriesTimelineParser
+import parser.json.providers.BitbucketCommitParser
+import parser.json.providers.BitbucketEventsRepoParser
+import parser.json.providers.BitbucketRepoParamHelper
+import parser.json.providers.FacebookInboxParser
+import parser.json.providers.FacebookUser
+import parser.json.providers.FacebookWallParser
+import parser.json.providers.GithubUser
+import parser.json.providers.GithubWallParser
+import parser.json.providers.GoogleplusUser
+import parser.json.providers.GoogleplusWallParser
+import parser.json.providers.LinkedInWallParser
+import parser.json.providers.RedditMessageParser
+import parser.json.providers.ScoopitTopic
+import parser.json.providers.ScoopitTopicParamHelper
+import parser.json.providers.ScoopitWallParser
+import parser.json.providers.TrelloWallParser
+import parser.json.providers.TwitterDirectMessageParser
+import parser.json.providers.TwitterHashtagParser
+import parser.json.providers.TwitterTimelineParser
+import parser.json.providers.TwitterUser
+import parser.json.providers.ViadeoInboxParser
+import parser.json.providers.ViadeoWallParser
+import parser.xml.GenericRssParser
+import services.auth.GenericProvider
+import services.auth.RssProvider
+import services.auth.providers
 import services.comment.Commenter
-import services.comment.TwitterCommenter
 import services.comment.FacebookCommenter
-import services.comment.ScoopitCommenter
 import services.comment.LinkedInCommenter
-import services.star.TwitterStarer
+import services.comment.ScoopitCommenter
+import services.comment.TwitterCommenter
 import services.star.FacebookStarer
 import services.star.LinkedInStarer
+import services.star.RedditStarer
 import services.star.ScoopitStarer
+import services.star.Starer
+import services.star.TwitterStarer
 
 object Configuration {
 
@@ -352,6 +376,41 @@ object Configuration {
       override val uniqueName = "bitbucket.commits"
       override val paramParserHelper = Some(BitbucketRepoParamHelper)
       override val paramUrlHelper = Some("https://bitbucket.org/xhr/repositories?term=:search")
+    }
+  }
+  object Reddit {
+    object hot extends EndpointConfig {
+      override val url = withLimit("https://oauth.reddit.com/hot.json?limit=:limit")
+      override val since = Some("&after=:since")
+      override val provider = providers.Reddit
+      override val parser = Some(RedditMessageParser)
+      override val uniqueName = "reddit.hot"
+      override val starer = Some(RedditStarer)
+    }
+    object top extends EndpointConfig {
+      override val url = withLimit("https://oauth.reddit.com/top.json?limit=:limit")
+      override val since = Reddit.hot.since
+      override val provider = Reddit.hot.provider
+      override val parser = Reddit.hot.parser
+      override val uniqueName = "reddit.top"
+      override val starer = Reddit.hot.starer
+    }
+    object newer extends EndpointConfig {
+      override val url = withLimit("https://oauth.reddit.com/new.json?limit=:limit")
+      override val since = Reddit.hot.since
+      override val provider = Reddit.hot.provider
+      override val parser = Reddit.hot.parser
+      override val uniqueName = "reddit.new"
+      override val starer = Reddit.hot.starer
+    }
+    object moderator extends EndpointConfig {
+      override val url = withLimit("https://oauth.reddit.com/r/:subreddit.json?limit=:limit")
+      override val requiredParams = List("subreddit")
+      override val since = Reddit.hot.since
+      override val provider = Reddit.hot.provider
+      override val parser = Reddit.hot.parser
+      override val uniqueName = "reddit.moderator"
+      override val starer = Reddit.hot.starer
     }
   }
 }

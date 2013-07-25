@@ -36,5 +36,8 @@ trait AuthProvider extends GenericProvider with AccountWsProvider with SecurityP
 
   def post(idUser: String, url: String, queryString: Seq[(String, String)],
     headers: Seq[(String, String)], content: String): Future[play.api.libs.ws.Response]
+  
+  def post(idUser: String, url: String, queryString: Seq[(String, String)],
+    headers: Seq[(String, String)], content: Map[String, Seq[String]]): Future[play.api.libs.ws.Response]
 
 }

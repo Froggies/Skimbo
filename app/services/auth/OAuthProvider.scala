@@ -78,5 +78,13 @@ trait OAuthProvider extends AuthProvider {
       .sign(OAuthCalculator(KEY, getToken(idUser).get))
       .post(content)
   }
+  
+  override def post(idUser: String, url: String, queryString: Seq[(String, String)], headers: Seq[(String, String)], content: Map[String, Seq[String]]) = {
+    WS.url(url)
+      .withQueryString(queryString: _*)
+      .withHeaders(headers: _*)
+      .sign(OAuthCalculator(KEY, getToken(idUser).get))
+      .post(content)
+  }
 
 }

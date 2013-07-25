@@ -160,6 +160,14 @@ trait OAuth2Provider extends AuthProvider {
       .post(content)
   }
   
+  override def post(idUser: String, url:String, queryString:Seq[(String, String)], headers:Seq[(String, String)], content:Map[String, Seq[String]]) = {
+    val queryS = queryString ++ Seq("access_token" -> getToken(idUser).get.token)
+    WS.url(url)
+      .withQueryString( queryS:_* )
+      .withHeaders(headers:_*)
+      .post(content)
+  }
+  
 }
 
 /**
