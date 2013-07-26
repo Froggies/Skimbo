@@ -1,0 +1,31 @@
+@main("Skimbo") {
+  <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/logged.min.css")"/>
+} {
+
+	<div id="publicApp" ng-controller="MainController">
+
+    <header ng-include="'@routes.Assets.at("app/views/header.html")'"></header>
+
+    <div class="container" ng-view>
+      <noscript>
+        <p>Your navigator must run javascript files !</p>
+        <p>Vous devez autoriser l'exécution de javascript !</p>
+      </noscript>
+    </div>
+
+    <div class="glass-div-container" ng-controller="GlassController" ng-show="showView">
+      <div class="glass-div" ng-click="hide()"></div>
+      <div ng-include="showView" onload="loaded()"></div>
+    </div>
+
+    <script type="text/javascript" src="@routes.Application.jsRouter()"></script>
+    <script src="@routes.Assets.at("app/scripts/vendor/angular.min.js")"></script>
+    <script src="@routes.Assets.at("app/scripts/vendor/angular-sanitize.min.js")"></script>
+    <script src="@routes.Assets.at("app/scripts/vendor/moment.min.js")"></script>
+    <script src="@routes.Assets.at("app/scripts/vendor/moment-langs/fr.js")"></script>
+    <script src="@routes.Assets.at("app/scripts/vendor/whoareyou.js")"></script>
+  		
+    @helper.requireJs(core = routes.Assets.at("javascripts/require.js").url, module = routes.Assets.at("javascripts/mockedMain").url)
+
+  </div>
+}

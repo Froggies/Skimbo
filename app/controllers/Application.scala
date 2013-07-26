@@ -23,6 +23,8 @@ object Application extends Controller {
       .map(_ => Ok(views.html.unified()))
       .getOrElse(Ok(views.html.index(Service.list)))
   }
+
+  def mocked = Action { Ok(views.html.mockedUnified()) }
   
   def publicPage(namePage: String) = Action { implicit request =>
     Ok(views.html.unified())

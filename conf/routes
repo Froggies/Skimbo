@@ -43,6 +43,7 @@ GET		/api/dev/util/invalidToken/:p/:pwd	controllers.dev.Util.invalidToken(p: Str
 GET		/api/dev/util/urlTest/:id		controllers.dev.Util.urlTest(id:String)
 
 GET		/download						controllers.Application.downloadDistant
+GET     /mock                           controllers.Application.mocked
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               	controllers.Assets.at(path="/public", file)
