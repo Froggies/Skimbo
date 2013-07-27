@@ -20,16 +20,5 @@ object Providers extends Controller with Authentication {
     val idUser = req.session.get("id").getOrElse("")
     Ok(Service.toJsonWithUnifiedRequest(idUser))
   }
-  
-  def delete(providerName: String) = Authenticated { user => implicit request =>
-      val idUser = user.accounts.headOption.map(_.id)
-      ProviderDispatcher(providerName).map { provider =>
-        user.accounts.foreach { account =>
-          ProviderActor.killProvider(account.id, providerName)
-          provider.deleteToken(account.id)
-        }
-        Ok(Json.toJson(Command("deleteProvider", Some(JsString("ok")))))
-      }.getOrElse(BadRequest)
-  }
 
 }

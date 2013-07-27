@@ -116,8 +116,13 @@ object CmdFromUser {
       }
       case "deleteProvider" => {
         val providerName = (cmd.body.get \ "provider").as[String]
-        ProviderActor.killProvider(internalIdUser, providerName)
-        interpretCmd(internalIdUser, Command("allUnifiedRequests"))
+        ProviderDispatcher(providerName).map { provider =>
+          ProviderActor.killProvider(internalIdUser, providerName)
+          provider.deleteToken(internalIdUser)
+          CmdToUser.sendTo(internalIdUser, Command(cmd.name, cmd.body))
+          interpretCmd(internalIdUser, Command("allUnifiedRequests"))
+          interpretCmd(internalIdUser, Command("allPosters"))
+        }
       }
       case "newToken" => {
         CmdToUser.sendTo(internalIdUser, cmd)

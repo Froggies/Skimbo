@@ -1,8 +1,8 @@
 define(["app"], function(app) {
 
 app.controller('AccountController', [
-  "$scope", "DataCache", "$http", "Network", "ImagesUtils", "ArrayUtils",
-  function($scope, $dataCache, $http, $network, $imagesUtils, $arrayUtils) {
+  "$scope", "DataCache", "Network", "ImagesUtils", "ArrayUtils",
+  function($scope, $dataCache, $network, $imagesUtils, $arrayUtils) {
 
     $dataCache.on('userInfos', function(data) {
       $scope.userInfos = data.slice(0);
@@ -41,16 +41,13 @@ app.controller('AccountController', [
     }
 
     $scope.deleteProvider = function(providerName) {
-      $http.get("/api/providers/del/"+providerName).success(function() {
-        for (var i = 0; i < $scope.userInfos.length; i++) {
-          if($scope.userInfos[i].socialType == providerName) {
-            $scope.userInfos.splice(i,1);
-            $network.send({cmd:"allUnifiedRequests"});
-            $network.send({cmd:"allPosters"});
-            break;
-          }
+      $network.send({cmd: 'deleteProvider', body: {provider: providerName}});
+      for (var i = 0; i < $scope.userInfos.length; i++) {
+        if($scope.userInfos[i].socialType == providerName) {
+          $scope.userInfos.splice(i,1);
+          break;
         }
-      });
+      }
     }
 
 }]);

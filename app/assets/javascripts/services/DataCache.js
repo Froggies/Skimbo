@@ -41,6 +41,24 @@ app.factory("DataCache", [
     fireEvent('userInfos');
   });
 
+  $rootScope.$on('deleteProvider', function(evt, data) {
+    data.socialType = data.provider;
+    var index = $arrayUtils.indexOf(_cache.userInfos, data, "socialType");
+    console.log(index, _cache.userInfos, data);
+    if(index > -1) {
+      _cache.userInfos.splice(index, 1);
+    }
+
+    data.providerName = data.provider;
+    var index = $arrayUtils.indexOf(_cache.tokenInvalid, data, "providerName");
+    if(index > -1) {
+      _cache.tokenInvalid.splice(index, 1);
+    }
+
+    fireEvent('userInfos');
+    fireEvent('tokenInvalid');
+  });
+
   $rootScope.$on('tokenInvalid', function(evt, data) {
     if(_cache.tokenInvalid == undefined) {
       _cache.tokenInvalid = [];
@@ -82,6 +100,7 @@ app.factory("DataCache", [
   });
 
   $rootScope.$on('allUnifiedRequests', function(evt, providers) {
+    console.log(providers);
     add('allUnifiedRequests', providers);
   });
 

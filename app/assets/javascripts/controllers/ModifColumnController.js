@@ -23,7 +23,7 @@ app.controller('ModifColumnController', [
     });
 
     $dataCache.on('allUnifiedRequests', function(providers) {
-      var provider, i, j, copy = JSON.parse(JSON.stringify(providers));
+      var provider, i, j, copy = providers.slice(0);
       for (i = 0; i < copy.length; i++) {
         provider = copy[i];
         provider.selected = false;

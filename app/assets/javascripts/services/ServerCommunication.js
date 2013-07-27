@@ -130,6 +130,8 @@ app.factory("ServerCommunication", [
         broadcast('paramHelperSearch', data.body);
       } else if (data.cmd == "paramPostHelperSearch") {
         broadcast('paramPostHelperSearch', data.body);
+      } else if (data.cmd == "deleteProvider") {
+        broadcast('deleteProvider', data.body);
       } else if (data.cmd == "logout") {
         var body = {};
         body.title = "You have been disconnected from";
