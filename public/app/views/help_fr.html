@@ -46,6 +46,12 @@
       </ul>
     </section>
     <section>
+      <h2 toggle-click go-on-click="helpIdNotifications">Notifications</h2>
+      <ul>
+        <li go-on-click="helpIdNotificationsTypes">Types</li>
+      </ul>
+    </section>
+    <section>
       <h2 toggle-click go-on-click="helpIdKeyboard">Raccourcis clavier</h2>
     </section>
     <section>
@@ -61,7 +67,7 @@
       <h2 id="helpIdGeneral" class="help-content-first-h2">Généralités</h2>
       <div>
         <span class="help-col2">Skimbo rassemble de nombreux réseaux-sociaux dans une seule fenêtre de votre navigateur.</span>
-        <span class="help-col2">Pas besoin de rafraichir votre navigateur ! Lorsque de nouveaux messages sont disponibles, Skimbo les affiche pour vous en temps réel dans la fenêtre.</span>
+        <span class="help-col2">Pas besoin de rafraichir votre navigateur ! Lorsque de nouveaux messages sont disponibles, Skimbo les affiche pour vous en temps réel.</span>
       </div>
       <h3 id="helpIdProvidersServices">Providers - services</h3>
       <div>
@@ -261,7 +267,7 @@
       <h3 id="helpIdContactUs">Nous contacter</h3>
       <div class="help-content-img-center">
         <img src="/assets/img/help/contactUs.png" width="300" height="210">
-        <div>Pour nous contacter, il vous suffit de vous rendre dans votre <a go-on-click="helpIdAccount" class="help-inside-link">compte</a> et de cliquer sur le bouton "@ Nous contacter". Remplissez tous les champs et cliquer sur "Envoyer". Si le message ne nous parvient pas, vous serez prévenu par une notification.</div>
+        <div>Pour nous contacter, il vous suffit de vous rendre dans votre <a go-on-click="helpIdAccount" class="help-inside-link">compte</a> et de cliquer sur le bouton "@ Nous contacter". Remplissez tous les champs et cliquer sur "Envoyer". Si le message ne nous parvient pas, vous serez prévenu par une <a go-on-click="helpIdNotifications" class="help-inside-link">notification</a>.</div>
       </div>
     </section>
     <section>
@@ -418,6 +424,69 @@
         <img src="/assets/img/help/skimberDelayed.png" width="427" height="279">
         <div>Vous pouvez également, planifier ce message, afin que Skimbo l'envoi pour vous à une date et uen heure précise. Pour cela, il vous suffit de cliquer sur "planifier" une fois votre <a go-on-click="helpIdMessages" class="help-inside-link">message</a> écrit. Puis sélectionnez une date et une heure, votre message sera alors envoyé au moment choisis, avec un maximum d'une minute d'écart. Attention, si entre temps, vous avez révoqué l'accès de Skimbo auprès du <a go-on-click="helpIdProvidersServices" class="help-inside-link">provider</a>, ce message ne pourra pas être envoyé.</div>
       </div>
+    </section>
+    <section>
+      <h2 id="helpIdNotifications">Notifications</h2>
+      <div>Lorsque Skimbo rencontre un problème ou lorsque il veut vous prévenir d'un détail, il vous affiche une notification. Ces notifications se placent par dessus tout le reste de l'application, en haut à droite.</div>
+      <h3 id="helpIdNotificationsTypes">Types</h3>
+      <div>Voici l'ensemble des règles :</div>
+      <table>
+        <thead>
+          <tr><td>Nom de code</td><td>Phrase affichée</td><td>Description</td></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>DISCONNECT</td>
+            <td>{{'DISCONNECT' | i18n}} <a go-on-click="helpIdGeneral" class="help-inside-link">Skimbo</a></td>
+            <td>Peut se produire lorsque votre connexion internet est coupée, le serveur est tombé, ou vous vous êtes déconnecté avec un autre compte.</td>
+          </tr>
+          <tr>
+            <td>RateLimit</td>
+            <td>{{'RateLimit' | i18n}} <a go-on-click="helpIdProvidersServices" class="help-inside-link">provider</a></td>
+            <td></td>
+          </tr>
+          <tr>
+            <td>Timeout</td>
+            <td>{{'Timeout' | i18n}} <a go-on-click="helpIdProvidersServices" class="help-inside-link">provider</a></td>
+            <td></td>
+          </tr>
+          <tr>
+            <td>Unknown</td>
+            <td>{{'Unknown' | i18n}} <a go-on-click="helpIdProvidersServices" class="help-inside-link">provider</a></td>
+            <td></td>
+          </tr>
+          <tr>
+            <td>Parser</td>
+            <td>{{'Parser' | i18n}} <a go-on-click="helpIdProvidersServices" class="help-inside-link">provider</a></td>
+            <td></td>
+          </tr>
+          <tr>
+            <td>NoParser</td>
+            <td>{{'NoParser' | i18n}} <a go-on-click="helpIdProvidersServices" class="help-inside-link">provider</a></td>
+            <td></td>
+          </tr>
+          <tr>
+            <td>Post</td>
+            <td>{{'Post' | i18n}} <a go-on-click="helpIdProvidersServices" class="help-inside-link">provider</a></td>
+            <td></td>
+          </tr>
+          <tr>
+            <td>Star</td>
+            <td>{{'Star' | i18n}} <a go-on-click="helpIdProvidersServices" class="help-inside-link">provider</a></td>
+            <td></td>
+          </tr>
+          <tr>
+            <td>Comment</td>
+            <td>{{'Comment' | i18n}} <a go-on-click="helpIdProvidersServices" class="help-inside-link">provider</a></td>
+            <td></td>
+          </tr>
+          <tr>
+            <td>EmailNotSend</td>
+            <td>{{'EmailNotSend' | i18n}} <a go-on-click="helpIdProvidersServices" class="help-inside-link">provider</a></td>
+            <td></td>
+          </tr>
+        </tbody>
+      </table>
     </section>
     <section>
       <h2 id="helpIdKeyboard">Raccourcis clavier</h2>
