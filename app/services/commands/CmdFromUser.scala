@@ -259,18 +259,21 @@ object CmdFromUser {
         val username = config.getString("smtp.user").get
         val password = config.getString("smtp.pass").get
         try {
-          val email = new SimpleEmail();
-          email.setHostName(host);
-          email.setSmtpPort(port);
-          email.setAuthenticator(new DefaultAuthenticator(username, password));
-          email.setSSLOnConnect(true);
-          email.setFrom(fromEmail);
-          email.setSubject("From skimbo : "+subject);
-          email.setMsg(message);
-          email.addTo(toEmail);
+          val email = new SimpleEmail()
+          email.setHostName(host)
+          email.setSmtpPort(port)
+          email.setAuthenticator(new DefaultAuthenticator(username, password))
+          email.setSSLOnConnect(true)
+          email.setFrom(fromEmail)
+          email.setSubject("From skimbo : "+subject)
+          email.setCharset("utf-8")
+          email.setMsg(message)
+          email.addTo(toEmail)
+          email.send()
           CmdToUser.sendTo(internalIdUser, Command(cmd.name))
         } catch {
-          case _:Throwable => {
+          case t:Throwable => {
+            Logger(CmdFromUser.getClass).error("Send mail fail : " + t.getMessage())
             CmdToUser.sendTo(internalIdUser, Error("skimbo", ErrorType.EmailNotSend))
           }
         }
