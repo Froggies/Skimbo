@@ -127,6 +127,10 @@ object CmdFromUser {
           interpretCmd(internalIdUser, Command("allPosters"))
         }
       }
+      case "pauseProvider" => {
+        val providerName = (cmd.body.get \ "provider").as[String]
+        ProviderActor.killProvider(internalIdUser, providerName)
+      }
       case "newToken" => {
         CmdToUser.sendTo(internalIdUser, cmd)
       }

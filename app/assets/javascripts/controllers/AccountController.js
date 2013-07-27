@@ -55,6 +55,10 @@ app.controller('AccountController', [
       }
     }
 
+    $scope.pauseProvider = function(providerName) {
+      $network.send({cmd: 'pauseProvider', body: {provider: providerName}});
+    }
+
     $scope.showHelp = function() {
       $rootScope.$broadcast('glassShowView', 'help', function() {
         $rootScope.$broadcast('goOnClick', 'helpIdAccount');

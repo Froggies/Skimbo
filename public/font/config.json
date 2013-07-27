@@ -2,12 +2,25 @@
   "name": "",
   "css_prefix_text": "icon-",
   "css_use_suffix": false,
+  "hinting": true,
   "glyphs": [
     {
       "uid": "2a6740fc2f9d0edea54205963f662594",
       "css": "spin3",
       "code": 59442,
       "src": "fontelico"
+    },
+    {
+      "uid": "d73eceadda1f594cec0536087539afbf",
+      "css": "heart",
+      "code": 9829,
+      "src": "fontawesome"
+    },
+    {
+      "uid": "474656633f79ea2f1dad59ff63f6bf07",
+      "css": "star",
+      "code": 9733,
+      "src": "fontawesome"
     },
     {
       "uid": "2c5335c6e56b876139d7a58ab2f4b2fe",
@@ -19,6 +32,12 @@
       "uid": "cb13afd4722a849d48056540bb74c47e",
       "css": "play",
       "code": 59392,
+      "src": "entypo"
+    },
+    {
+      "uid": "d8d378d0ce413f231dfa37592e39c227",
+      "css": "pause",
+      "code": 59395,
       "src": "entypo"
     },
     {
@@ -40,16 +59,10 @@
       "src": "entypo"
     },
     {
-      "uid": "d73eceadda1f594cec0536087539afbf",
-      "css": "heart",
-      "code": 9829,
-      "src": "fontawesome"
-    },
-    {
-      "uid": "474656633f79ea2f1dad59ff63f6bf07",
-      "css": "star",
-      "code": 9733,
-      "src": "fontawesome"
+      "uid": "k7sao112253txym1egnte7822irbyphe",
+      "css": "eye-1",
+      "code": 59396,
+      "src": "typicons"
     },
     {
       "uid": "69253046b55214b42caada5c226801f2",
@@ -80,12 +93,6 @@
       "css": "stop",
       "code": 9642,
       "src": "iconic"
-    },
-    {
-      "uid": "k7sao112253txym1egnte7822irbyphe",
-      "css": "eye-1",
-      "code": 59396,
-      "src": "typicons"
     },
     {
       "uid": "ae3so8q0b0n2h8esv9flua2nmwswa8fd",
