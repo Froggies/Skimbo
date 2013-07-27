@@ -49,8 +49,8 @@ app.factory("Network", ["$http", "$timeout", "ServerCommunication", "$location",
       "body": {
         "column": "column1",
         "msg": {
-          "authorName": "real name",
-          "authorScreenName": "login name",
+          "authorName": "Froggies",
+          "authorScreenName": "Skimbo",
           "message": "message n°"+id,
           "createdAt": new Date(),
           "comments": "",

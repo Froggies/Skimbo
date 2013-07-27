@@ -39,7 +39,8 @@ app.controller('NotificationController', [
            data.type == "NoParser" ||
            data.type == "Post" ||
            data.type == "Star" ||
-           data.type == "Comment") {
+           data.type == "Comment" ||
+           data.type == "EmailNotSend") {
           data.title = $filter('i18n')(data.type);
         } else {
           data.title = "UNKNOW ERROR TYPE "+data.type;

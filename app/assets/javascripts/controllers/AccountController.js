@@ -4,6 +4,11 @@ app.controller('AccountController', [
   "$scope", "DataCache", "Network", "ImagesUtils", "ArrayUtils", "$rootScope",
   function($scope, $dataCache, $network, $imagesUtils, $arrayUtils, $rootScope) {
 
+    $scope.showContactUs = false;
+    $scope.contactUsEmail = "";
+    $scope.contactUsObject = "";
+    $scope.contactUsMessage = "";
+
     $dataCache.on('userInfos', function(data) {
       $scope.userInfos = data.slice(0);
 
@@ -54,6 +59,21 @@ app.controller('AccountController', [
       $rootScope.$broadcast('glassShowView', 'help', function() {
         $rootScope.$broadcast('goOnClick', 'helpIdAccount');
       });
+    }
+
+    $scope.send = function() {
+      $network.send({
+        cmd: 'sendEmail', 
+        body: {
+          email: $scope.contactUsEmail,
+          object: $scope.contactUsObject,
+          message: $scope.contactUsMessage
+        }
+      });
+      $scope.contactUsEmail = "";
+      $scope.contactUsObject = "";
+      $scope.contactUsMessage = "";
+      $scope.showContactUs = false;
     }
 
 }]);

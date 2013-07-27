@@ -7,7 +7,7 @@ import play.api.libs.json.Writes
 
 object ErrorType extends Enumeration {
   type ErrorType = Value
-  val RateLimit, Timeout, Unknown, Parser, NoParser, Post, Star, Comment = Value
+  val RateLimit, Timeout, Unknown, Parser, NoParser, Post, Star, Comment, EmailNotSend = Value
 }
 import ErrorType._
 

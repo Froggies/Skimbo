@@ -1,7 +1,7 @@
 <div id="bloc-utilisateur" ng-controller="AccountController">
-  <div id="reseaux-connectes">
-    <a class="button button-close" ng-click="close()" />X</a>
-    <a class="button button-help" ng-click="showHelp()" />?</a>
+  <a class="button button-close" ng-click="close()" />X</a>
+  <a class="button button-help" ng-click="showHelp()" />?</a>
+  <div id="reseaux-connectes" ng-hide="showContactUs">
     <div class="connected-on">{{'CONNECTED' | i18n}}</div>
     <ul>
       <li ng-repeat="userInfo in userInfos">
@@ -12,8 +12,15 @@
       </li>
     </ul>
   </div>
+  <div class="contact-us-container" ng-show="showContactUs">
+    <!-- classes come from post.less -->
+    <input type="text" class="post-title" ng-model="contactUsEmail" placeholder="email">
+    <input type="text" class="post-title" ng-model="contactUsObject" placeholder="object">
+    <textarea class="post-message" ng-model="contactUsMessage" placeholder="message"></textarea>
+    <a class="button-a" ng-click="send()">{{'SEND' | i18n}}</a>
+  </div>
   <footer class="bloc-utilisateur-footer">
-    <a class="button-a" href="http://froggies.github.io/Skimbo/#team" target="_blank" title="Contact us">@ {{'CONTACT_US' | i18n}}</a>
+    <a class="button-a" ng-click="showContactUs=!showContactUs" title="Contact us">@ {{'CONTACT_US' | i18n}}</a>
     <a class="button-a" href="http://froggies.github.io/Skimbo" target="_blank" title="About">ⓘ</a>
     <a class="button-a" href="/logout" target="_self" title="Log out">✘ {{'LOG_OUT' | i18n}}</a>
   </footer>

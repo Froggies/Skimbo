@@ -30,6 +30,9 @@ import services.dao.DelayedPostDao
 import models.command.DelayedPost
 import models.command.PostDelayedProvider
 import models.command.ErrorType
+import play.api.Play.current
+import org.apache.commons.mail.SimpleEmail
+import org.apache.commons.mail.DefaultAuthenticator
 
 object CmdFromUser {
 
@@ -240,6 +243,34 @@ object CmdFromUser {
             }
           }
         }
+      }
+      case "sendEmail" => {
+        val fromEmail = (cmd.body.get \ "email").as[String]
+        val subject = (cmd.body.get \ "object").as[String]
+        val message = (cmd.body.get \ "message").as[String]
+        val config = current.configuration.getConfig("email").get
+        val toEmail = config.getString("to").get
+        val host = config.getString("smtp.host").get
+        val port = config.getInt("smtp.port").get
+        val username = config.getString("smtp.user").get
+        val password = config.getString("smtp.pass").get
+        try {
+          val email = new SimpleEmail();
+          email.setHostName(host);
+          email.setSmtpPort(port);
+          email.setAuthenticator(new DefaultAuthenticator(username, password));
+          email.setSSLOnConnect(true);
+          email.setFrom(fromEmail);
+          email.setSubject("From skimbo : "+subject);
+          email.setMsg(message);
+          email.addTo(toEmail);
+          CmdToUser.sendTo(internalIdUser, Command(cmd.name))
+        } catch {
+          case _:Throwable => {
+            CmdToUser.sendTo(internalIdUser, Error("skimbo", ErrorType.EmailNotSend))
+          }
+        }
+
       }
       case _ => {
         Logger(CmdFromUser.getClass).error("Command not found " + cmd)

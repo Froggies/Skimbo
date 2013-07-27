@@ -60,7 +60,8 @@ app.filter('i18n', ['$rootScope', function($rootScope) {
       'NoParser' : 'Il n\'existe pas de parser pour ',
       'Post' : 'Le message n\'a pas pu être envoyé chez ',
       'Star' : 'Le message n\'a pas pu être marqué chez ',
-      'Comment' : 'Le message n\'a pas pu être commenté chez '
+      'Comment' : 'Le message n\'a pas pu être commenté chez ',
+      'EmailNotSend' : 'Votre email n\'a pas pu être envoyé à l\'équipe de '
     },
     'en' : {
       'ADD_NEW_COLUMN' : 'Add new column',
@@ -117,7 +118,8 @@ app.filter('i18n', ['$rootScope', function($rootScope) {
       'NoParser' : 'No parser found for ',
       'Post' : 'Post can\'t be send to ',
       'Star' : 'Star can\'t be send to ',
-      'Comment' : 'Comment can\'t be send to '
+      'Comment' : 'Comment can\'t be send to ',
+      'EmailNotSend' : 'Your mail couldn\'t be send at '
     }
   },
   currentLanguage = $rootScope.currentLanguage || 'en';
