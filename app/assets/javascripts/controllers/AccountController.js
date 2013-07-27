@@ -1,8 +1,8 @@
 define(["app"], function(app) {
 
 app.controller('AccountController', [
-  "$scope", "DataCache", "Network", "ImagesUtils", "ArrayUtils",
-  function($scope, $dataCache, $network, $imagesUtils, $arrayUtils) {
+  "$scope", "DataCache", "Network", "ImagesUtils", "ArrayUtils", "$rootScope",
+  function($scope, $dataCache, $network, $imagesUtils, $arrayUtils, $rootScope) {
 
     $dataCache.on('userInfos', function(data) {
       $scope.userInfos = data.slice(0);
@@ -48,6 +48,12 @@ app.controller('AccountController', [
           break;
         }
       }
+    }
+
+    $scope.showHelp = function() {
+      $rootScope.$broadcast('glassShowView', 'help', function() {
+        $rootScope.$broadcast('goOnClick', 'helpIdAccount');
+      });
     }
 
 }]);

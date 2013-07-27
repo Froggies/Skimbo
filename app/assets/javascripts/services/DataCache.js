@@ -44,7 +44,6 @@ app.factory("DataCache", [
   $rootScope.$on('deleteProvider', function(evt, data) {
     data.socialType = data.provider;
     var index = $arrayUtils.indexOf(_cache.userInfos, data, "socialType");
-    console.log(index, _cache.userInfos, data);
     if(index > -1) {
       _cache.userInfos.splice(index, 1);
     }
@@ -100,7 +99,6 @@ app.factory("DataCache", [
   });
 
   $rootScope.$on('allUnifiedRequests', function(evt, providers) {
-    console.log(providers);
     add('allUnifiedRequests', providers);
   });
 
