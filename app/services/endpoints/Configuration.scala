@@ -403,13 +403,13 @@ object Configuration {
       override val uniqueName = "reddit.new"
       override val starer = Reddit.hot.starer
     }
-    object moderator extends EndpointConfig {
+    object subreddit extends EndpointConfig {
       override val url = withLimit("https://oauth.reddit.com/r/:subreddit.json?limit=:limit")
       override val requiredParams = List("subreddit")
       override val since = Reddit.hot.since
       override val provider = Reddit.hot.provider
       override val parser = Reddit.hot.parser
-      override val uniqueName = "reddit.moderator"
+      override val uniqueName = "reddit.subreddit"
       override val starer = Reddit.hot.starer
     }
   }

@@ -58,7 +58,7 @@ object Endpoints {
       Configuration.Reddit.hot,
       Configuration.Reddit.top,
       Configuration.Reddit.newer,
-      Configuration.Reddit.moderator))
+      Configuration.Reddit.subreddit))
   )
 
   def getAll: Seq[Endpoint] = {
