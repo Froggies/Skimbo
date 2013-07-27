@@ -11,6 +11,7 @@
       <h2 toggle-click go-on-click="helpIdAccount">Mon compte</h2>
       <ul>
         <li go-on-click="helpIdWhereFindAccount">Où le trouver ?</li>
+        <li go-on-click="helpIdPauseToken">Mettre en pause un accès</li>
         <li go-on-click="helpIdDeleteToken">Supprimer un accès</li>
         <li go-on-click="helpIdDisconnect">Déconnexion</li>
         <li go-on-click="helpIdContactUs">Nous contacter</li>
@@ -245,15 +246,23 @@
         <img src="/assets/img/help/account.png" width="90" height="293">
         <div>Votre compte est accessible par le bouton tout en haut du menu à gauche. Il vous suffit de cliquer sur l'image d'un de vos comptes relié à Skimbo.</div>
       </div>
+      <h3 id="helpIdPauseToken">Mettre en pause un accès</h3>
+      <div class="help-content-img-center">
+        <img src="/assets/img/help/pauseToken.png" width="300" height="160">
+        <div>Pour que Skimbo arrête de récupérer vos données d'un ou plusieurs <a go-on-click="helpIdProvidersServices" class="help-inside-link">providers</a>, jusqu'à votre prochaine connexion, il vous suffit de cliquer sur le symbole pause (2 traits verticaux), dans votre <a go-on-click="helpIdWhereFindAccount" class="help-inside-link">compte</a>.</div>
+      </div>
       <h3 id="helpIdDeleteToken">Supprimer un accès</h3>
       <div class="help-content-img-center">
         <img src="/assets/img/help/deleteToken.png" width="300" height="160">
         <div>Si vous souhaitez que Skimbo ne récupère plus de données sur un ou plusieurs <a go-on-click="helpIdProvidersServices" class="help-inside-link">providers</a>, vous pouvez tout simplement lui retirer son droit d'accès. Pour cela, rendez-vous dans votre compte et cliquez sur la croix en face du provider. Attention, Skimbo ne sera plus en mesure de retrouver vos colonnes, si après avoir supprimer un accès, vous vous re-connectez par le biais de ce provider. En effet, en toute transparence, Skimbo supprime réellement ce droit d'accès et toutes les données (nom, prénom, image...) qui y sont reliés. Si vous avez des colonnes contenant des services de ce provider, vous devrez les supprimer si vous ne voulez pas que Skimbo affiche "Vous êtes déconnecté de..." à chaque connexion.</div>
       </div>
       <h3 id="helpIdDisconnect">Déconnexion</h3>
-      <div>Pour vous déconnecter de Skimbo, allez dans votre <a go-on-click="helpIdWhereFindAccount" class="help-inside-link">compte</a> et cliquez sur "déconnexion". Vous serez alors redirigez vers la page de login, et Skimbo arrêtera d'aller chercher des nouveaux messages chez les différents <a go-on-click="helpIdProvidersServices" class="help-inside-link">providers</a>. Vous devrez vous reconnecter avec un réseau se trouvant dans la <a go-on-click="helpIdAccount" class="help-inside-link">liste des providers</a>, pour que Skimbo retrouve vos colonnes.</div>
+      <div>Pour vous déconnecter de Skimbo, allez dans votre <a go-on-click="helpIdWhereFindAccount" class="help-inside-link">compte</a> et cliquez sur "déconnexion". Vous serez alors redirigez vers la page de login, et Skimbo arrêtera d'aller chercher des nouveaux messages chez les différents <a go-on-click="helpIdProvidersServices" class="help-inside-link">providers</a>. Vous devrez vous reconnecter avec un réseau se trouvant dans la <a go-on-click="helpIdProvidersServices" class="help-inside-link">liste des providers</a>, pour que Skimbo retrouve vos colonnes.</div>
       <h3 id="helpIdContactUs">Nous contacter</h3>
-      <div>Bientôt disponible directement dans Skimbo ! En attendant vous pouvez nous retrouver sur les différents <a href="http://froggies.github.io/Skimbo/#team" target="_blank">réseaux sociaux</a>.</div>
+      <div class="help-content-img-center">
+        <img src="/assets/img/help/contactUs.png" width="300" height="210">
+        <div>Pour nous contacter, il vous suffit de vous rendre dans votre <a go-on-click="helpIdAccount" class="help-inside-link">compte</a> et de cliquer sur le bouton "@ Nous contacter". Remplissez tous les champs et cliquer sur "Envoyer". Si le message ne nous parvient pas, vous serez prévenu par une notification.</div>
+      </div>
     </section>
     <section>
       <h2 id="helpIdColumn">Colonne</h2>
