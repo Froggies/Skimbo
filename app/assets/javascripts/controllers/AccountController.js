@@ -80,6 +80,17 @@ app.controller('AccountController', [
       $scope.showContactUs = false;
     }
 
+    $scope.selectFrLang = function() {
+      $rootScope.currentLanguage = "fr";
+      //$rootScope.$apply();
+    }
+
+    $scope.selectGbLang = function() {
+      $rootScope.currentLanguage = "en";
+      //$rootScope.$apply();
+    }
+
+
 }]);
 
 });

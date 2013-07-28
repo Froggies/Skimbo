@@ -121,10 +121,10 @@ app.filter('i18n', ['$rootScope', function($rootScope) {
       'Comment' : 'Comment can\'t be send to ',
       'EmailNotSend' : 'Your mail couldn\'t be send at '
     }
-  },
-  currentLanguage = $rootScope.currentLanguage || 'en';
+  };
 
   return function (input) {
+    var currentLanguage = $rootScope.currentLanguage || 'en';
     if(translations[currentLanguage] != undefined &&
       translations[currentLanguage][input] != undefined) {
       return translations[currentLanguage][input];
