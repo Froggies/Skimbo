@@ -2,52 +2,83 @@
 
 define(["app"], function(app) {
 
-app.factory("Network", ["$http", "$timeout", "ServerCommunication", "$location", '$window',
-  function($http, $timeout, $serverCommunication, $location, $window) {
+app.factory("Network", ["$http", "$timeout", "ServerCommunication", "$location", '$window', 
+  'ArrayUtils',
+  function($http, $timeout, $serverCommunication, $location, $window, $arrayUtils) {
 
-  function addUserInfos() {
+  var providers = ["twitter", "facebook", "googleplus", "github", "bitbucket", "viadeo", "linkedin",
+    "betaseries", "rss", "scoopit", "trello", "reddit"];
+
+  var services = {
+    "twitter": ["wall", "hashtag", "user", "directMessage", "messageToMe"], 
+    "facebook": ["wall", "notification", "user", "group", "page", "message"],
+    "viadeo": ["smartNews", "newsfeed", "homeNewsfeed", "inbox"],
+    "linkedIn": ["wall"],
+    "googleplus": ["wall", "user"],
+    "github": ["userEvents"],
+    "bitbucket": ["eventsRepo", "commits"]
+    // Endpoint(Trello, Seq(
+    //   Configuration.Trello.notifications)),
+    // Endpoint(Scoopit, Seq(
+    //   Configuration.Scoopit.wall,
+    //   Configuration.Scoopit.topic)),
+    // Endpoint(BetaSeries, Seq(
+    //   Configuration.BetaSeries.planning,
+    //   Configuration.BetaSeries.timeline)),
+    // Endpoint(RssProvider, Seq(
+    //   Configuration.Rss.rss)),
+    // Endpoint(Reddit, Seq(
+    //   Configuration.Reddit.hot,
+    //   Configuration.Reddit.top,
+    //   Configuration.Reddit.newer,
+    //   Configuration.Reddit.subreddit)
+  };
+
+  function addUserInfos(provider) {
     var userInfos = {
       "cmd": "userInfos", 
       "body": {
-        "username": "login",
+        "username": provider,
         "name": "real name",
         "avatar": "",
         "description": "descriptione",
         "id": "1111",
-        "socialType": "twitter"
+        "socialType": provider
       }
     }
     $serverCommunication.cmd(userInfos);
   }
 
-  function addColumns() {
+  function addColumns(titles, provider, service) {
+    var b = [];
+    for (var i = 0; i < titles.length; i++) {
+      b.push({
+        "title":titles[i], 
+        "unifiedRequests": [
+          {
+            "service":provider + "." + service,
+            "args": {}
+          }
+        ],
+        "index":0,
+        "width":2,
+        "height":1
+      });
+    };
     var columns = {
       cmd: "allColumns",
-      body: [
-        {
-          "title":"column1", 
-          "unifiedRequests": [
-            {
-              "service":"twitter.wall",
-              "args": {}
-            }
-          ],
-          "index":0,
-          "width":3,
-          "height":3
-        }
-      ]
+      body: b
     };
     $serverCommunication.cmd(columns);
   }
 
   var id = 1;
 
-  function addMsg() {
+  function addMsg(columnTitle, provider) {
     var msg = {
       "cmd":"msg", 
       "body": {
-        "column": "column1",
+        "column": columnTitle,
         "msg": {
           "authorName": "Froggies",
           "authorScreenName": "Skimbo",
@@ -58,7 +89,7 @@ app.factory("Network", ["$http", "$timeout", "ServerCommunication", "$location",
           "directLink": "",
           "sinceId": id+"",
           "authorAvatar": "",
-          "from": "twitter",
+          "from": provider,
           //TODO add into doc
           "idProvider": id
         }
@@ -68,21 +99,33 @@ app.factory("Network", ["$http", "$timeout", "ServerCommunication", "$location",
     id++;
   }
 
+  var twitterMsg = true;
+  var columns = ["column12", "column11", "column10", "column9", "column8", "column7", 
+    "column6", "column5", "column4", "column3", "column2", "column1"];
+
   $timeout(function() {
-    addUserInfos();
-    addColumns();
+    for (var i = 0; i < providers.length; i++) {
+      addUserInfos(providers[i]);
+    };
+    addColumns(columns, $arrayUtils.random(providers), "wall");
   }, 500);
 
   function msgDelaye() {
     $timeout(function() {
-      addMsg();
-      msgDelaye();
-    }, 1500);
+      if(twitterMsg) {
+        addMsg($arrayUtils.random(columns), $arrayUtils.random(providers));
+        msgDelaye();
+      }
+    }, 500);
   };
   msgDelaye();
 
   function _send(jsonMsg) {
-    
+    if(jsonMsg) {
+      if(jsonMsg.cmd == "pauseProvider") {
+        twitterMsg = false;
+      }
+    }
   }
   
   return {

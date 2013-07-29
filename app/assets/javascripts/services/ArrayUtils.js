@@ -45,6 +45,10 @@ app.factory("ArrayUtils", ['Visibility', '$rootScope', function($visibility, $ro
       return index;
     },
 
+    random: function(array) {
+      return array[Math.floor(Math.random() * (array.length + 1))];
+    },
+
     sortMsg: function(sortMe, newMsg) {
       if(insertedMsgInProgress == false) {
         insertedMsgInProgress = true;
