@@ -12,12 +12,10 @@ object ApplicationBuild extends Build {
 	    "org.apache.commons" % "commons-email" % "1.3.1"
 	)
 	
-	val buildSettings = Defaults.defaultSettings ++ Seq (
-	    scalacOptions ++= Seq("-language:postfixOps", "-deprecation","-unchecked","-feature"),
-      requireJs += "main.js",
-      requireJs += "mockedMain.js"
-  )
+	val main = play.Project(appName, appVersion, appDependencies).settings(
+       scalacOptions ++= Seq("-language:postfixOps", "-deprecation","-unchecked","-feature"),
+       requireJs += "main.js",
+       requireJs += "mockedMain.js"
+   )
 	
-	val main = play.Project(appName, appVersion, appDependencies, settings = buildSettings)
-
 }
