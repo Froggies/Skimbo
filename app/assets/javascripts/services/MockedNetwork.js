@@ -3,35 +3,99 @@
 define(["app"], function(app) {
 
 app.factory("Network", ["$http", "$timeout", "ServerCommunication", "$location", '$window', 
-  'ArrayUtils',
-  function($http, $timeout, $serverCommunication, $location, $window, $arrayUtils) {
+  'ArrayUtils', 'DataCache',
+  function($http, $timeout, $serverCommunication, $location, $window, $arrayUtils, $dataCache) {
 
-  var providers = ["twitter", "facebook", "googleplus", "github", "bitbucket", "viadeo", "linkedin",
-    "betaseries", "rss", "scoopit", "trello", "reddit"];
+  //---------------------------------------------------\\
+  //-------------------- VARIABLES --------------------\\
+  //---------------------------------------------------\\
 
-  var services = {
-    "twitter": ["wall", "hashtag", "user", "directMessage", "messageToMe"], 
-    "facebook": ["wall", "notification", "user", "group", "page", "message"],
-    "viadeo": ["smartNews", "newsfeed", "homeNewsfeed", "inbox"],
-    "linkedIn": ["wall"],
-    "googleplus": ["wall", "user"],
-    "github": ["userEvents"],
-    "bitbucket": ["eventsRepo", "commits"]
-    // Endpoint(Trello, Seq(
-    //   Configuration.Trello.notifications)),
-    // Endpoint(Scoopit, Seq(
-    //   Configuration.Scoopit.wall,
-    //   Configuration.Scoopit.topic)),
-    // Endpoint(BetaSeries, Seq(
-    //   Configuration.BetaSeries.planning,
-    //   Configuration.BetaSeries.timeline)),
-    // Endpoint(RssProvider, Seq(
-    //   Configuration.Rss.rss)),
-    // Endpoint(Reddit, Seq(
-    //   Configuration.Reddit.hot,
-    //   Configuration.Reddit.top,
-    //   Configuration.Reddit.newer,
-    //   Configuration.Reddit.subreddit)
+  var providers = [];
+  var allUnifiedRequests = {
+    'cmd': "allUnifiedRequests",
+    'body': []
+  };
+  var idMsg = 1;
+  var twitterMsg = true;
+  var columns = [];
+
+  var providersServices = {
+    "twitter": [
+      {name: "wall", args: [], hasHelper: false}, 
+      {name: "hashtag", args: ['hashtag'], hasHelper: false}, 
+      {name: "user", args: ['username'], hasHelper: true}, 
+      {name: "directMessage", args: [], hasHelper: false}, 
+      {name: "messageToMe", args: [], hasHelper: false}
+    ], 
+    "facebook": [
+      {name: "wall", args: [], hasHelper: false},
+      {name: "notification", args: [], hasHelper: false},
+      {name: "user", args: ['username'], hasHelper: true},
+      {name: "group", args: ['groupId'], hasHelper: true},
+      {name: "page", args: ['pageId'], hasHelper: true},
+      {name: "message", args: [], hasHelper: false}
+    ],
+    "viadeo": [
+      {name: "smartNews", args: [], hasHelper: false},
+      {name: "newsfeed", args: [], hasHelper: false},
+      {name: "homeNewsfeed", args: [], hasHelper: false},
+      {name: "inbox", args: [], hasHelper: false}
+    ],
+    "linkedin": [
+      {name: "wall", args: [], hasHelper: false}
+    ],
+    "googleplus": [
+      {name: "wall", args: [], hasHelper: false},
+      {name: "user", args: ['username'], hasHelper: true}
+    ],
+    "github": [
+      {name: "userEvents", args: ['username'], hasHelper: true}
+    ],
+    "bitbucket": [
+      {name: "eventsRepo", args: ['id'], hasHelper: true},
+      {name: "commits", args: ['id'], hasHelper: true}
+    ],
+    "trello": [
+      {name: "notifications", args: [], hasHelper: false}
+    ],
+    "scoopit": [
+      {name: "wall", args: [], hasHelper: false},
+      {name: "topic", args: ['id'], hasHelper: true}
+    ],
+    "betaseries": [
+      {name: "planning", args: [], hasHelper: false},
+      {name: "timeline", args: [], hasHelper: false}
+    ],
+    "rss": [
+      {name: "rss", args: ['url'], hasHelper: false}
+    ],
+    "reddit": [
+      {name: "hot", args: [], hasHelper: false},
+      {name: "top", args: [], hasHelper: false},
+      {name: "newer", args: [], hasHelper: false},
+      {name: "subreddit", args: [], hasHelper: false}
+    ]
+  };
+
+  //---------------------------------------------------------\\
+  //-------------------- FUNCTIONS UTILS --------------------\\
+  //---------------------------------------------------------\\
+
+  function fillProvidersAndAllUnifiedRequests() {
+    for(var provider in providersServices) {
+      providers.push(provider);
+      var p = {endpoint: provider, services: [], "hasToken": true};
+      for(var i=0; i < providersServices[provider].length; i++) {
+        var service = providersServices[provider][i];
+        p.services.push({
+          "service": provider+'.'+service.name,
+          "args": service.args,
+          "hasParser": true,
+          "hasHelper": service.hasHelper
+        });
+      }
+      allUnifiedRequests.body.push(p);
+    }
   };
 
   function addUserInfos(provider) {
@@ -41,7 +105,7 @@ app.factory("Network", ["$http", "$timeout", "ServerCommunication", "$location",
         "username": provider,
         "name": "real name",
         "avatar": "",
-        "description": "descriptione",
+        "description": "description",
         "id": "1111",
         "socialType": provider
       }
@@ -49,32 +113,7 @@ app.factory("Network", ["$http", "$timeout", "ServerCommunication", "$location",
     $serverCommunication.cmd(userInfos);
   }
 
-  function addColumns(titles, provider, service) {
-    var b = [];
-    for (var i = 0; i < titles.length; i++) {
-      b.push({
-        "title":titles[i], 
-        "unifiedRequests": [
-          {
-            "service":provider + "." + service,
-            "args": {}
-          }
-        ],
-        "index":0,
-        "width":2,
-        "height":1
-      });
-    };
-    var columns = {
-      cmd: "allColumns",
-      body: b
-    };
-    $serverCommunication.cmd(columns);
-  }
-
-  var id = 1;
-
-  function addMsg(columnTitle, provider) {
+  function addMsg(columnTitle, service) {
     var msg = {
       "cmd":"msg", 
       "body": {
@@ -82,48 +121,82 @@ app.factory("Network", ["$http", "$timeout", "ServerCommunication", "$location",
         "msg": {
           "authorName": "Froggies",
           "authorScreenName": "Skimbo",
-          "message": "message n°"+id,
+          "message": "message n°"+idMsg,
           "createdAt": new Date(),
-          "comments": "",
-          "shared": "5",
+          "comments": [],//TODO transform string into array in doc
+          "stared": "5",//TODO check shared into doc
           "directLink": "",
-          "sinceId": id+"",
+          "sinceId": idMsg+"",
           "authorAvatar": "",
-          "from": provider,
+          "from": service.split('.')[0],
           //TODO add into doc
-          "idProvider": id
+          "idProvider": idMsg,
+          "service": service,
+          "hasDetails": false,
+          "canStar": false,
+          "iStared": true,
+          "canComment": false,
+          "picturesMin": [],
+          "picturesMax": []
         }
       }
     };
     $serverCommunication.cmd(msg);
-    id++;
+    idMsg++;
   }
 
-  var twitterMsg = true;
-  var columns = ["column12", "column11", "column10", "column9", "column8", "column7", 
-    "column6", "column5", "column4", "column3", "column2", "column1"];
+  function msgDelaye() {
+    $timeout(function() {
+      console.log(columns.length, twitterMsg);
+      if(columns.length > 0 && twitterMsg) {
+        var c = $arrayUtils.random(columns);
+        console.log(c);
+        var s = $arrayUtils.random(c.unifiedRequests);
+        console.log(s);
+        addMsg(c.title, s.service);
+      }
+      msgDelaye();
+    }, 3000);
+  };
+
+  //-----------------------------------------------------\\
+  //-------------------- FILL VALUES --------------------\\
+  //-----------------------------------------------------\\
+
+  fillProvidersAndAllUnifiedRequests();
+  msgDelaye();
 
   $timeout(function() {
     for (var i = 0; i < providers.length; i++) {
       addUserInfos(providers[i]);
     };
-    addColumns(columns, $arrayUtils.random(providers), "wall");
   }, 500);
 
-  function msgDelaye() {
-    $timeout(function() {
-      if(twitterMsg) {
-        addMsg($arrayUtils.random(columns), $arrayUtils.random(providers));
-        msgDelaye();
-      }
-    }, 500);
-  };
-  msgDelaye();
+  $timeout(function() {
+    $serverCommunication.cmd({cmd: 'allColumns', body: []});
+  }, 500);
+
+  //-----------------------------------------------------\\
+  //-------------------- APPLI CALLS --------------------\\
+  //-----------------------------------------------------\\
+
+  $dataCache.on('allColumns', function(c) {
+    columns = c;
+  });
 
   function _send(jsonMsg) {
+    console.log(jsonMsg);
     if(jsonMsg) {
       if(jsonMsg.cmd == "pauseProvider") {
         twitterMsg = false;
+      } else if(jsonMsg.cmd == "allUnifiedRequests") {
+        $serverCommunication.cmd(allUnifiedRequests);
+      } else if(jsonMsg.cmd == "addColumn") {
+        $serverCommunication.cmd(jsonMsg);
+      } else if(jsonMsg.cmd == "delColumn") {
+        $serverCommunication.cmd(jsonMsg);
+      } else if(jsonMsg.cmd == "modColumn") {
+        $serverCommunication.cmd(jsonMsg);
       }
     }
   }
