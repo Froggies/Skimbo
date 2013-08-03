@@ -46,7 +46,11 @@ app.factory("ArrayUtils", ['Visibility', '$rootScope', function($visibility, $ro
     },
 
     random: function(array) {
-      return array[Math.floor(Math.random() * (array.length + 1))];
+      var index = Math.floor(Math.random() * (array.length + 1));
+      if(index > array.length - 1) {
+        index = 0;
+      }
+      return array[index];
     },
 
     sortMsg: function(sortMe, newMsg) {
