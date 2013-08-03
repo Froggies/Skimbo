@@ -3,8 +3,8 @@
 define(["app"], function(app) {
 
 app.factory("DataCache", [
-  "$rootScope", "ImagesUtils", "ArrayUtils", "Network",
-  function($rootScope, $imagesUtils, $arrayUtils, $network) {
+  "$rootScope", "ImagesUtils", "ArrayUtils",
+  function($rootScope, $imagesUtils, $arrayUtils) {
 
   var _cache = {};
   var _callback = {};
@@ -114,8 +114,6 @@ app.factory("DataCache", [
       _callback[key].push(callback);
       if(_cache[key] !== undefined) {
         callback(_cache[key]);
-      } else if(key == "allUnifiedRequests") {
-        $network.send({cmd:"allUnifiedRequests"});
       }
     }
   }
