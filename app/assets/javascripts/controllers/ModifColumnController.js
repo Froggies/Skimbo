@@ -22,10 +22,10 @@ app.controller('ModifColumnController', [
       };
     });
 
-    $dataCache.on('allUnifiedRequests', function(providers) {
-      var provider, i, j, copy = providers.slice(0);
-      for (i = 0; i < copy.length; i++) {
-        provider = copy[i];
+    $dataCache.on('allUnifiedRequests', function(originalProviders) {
+      var provider, i, j, providers = [];
+      for (i = 0; i < originalProviders.length; i++) {
+        provider = JSON.parse(JSON.stringify(originalProviders[i]));//clone
         provider.selected = false;
         provider.name = provider.endpoint;
         provider.services = provider.services.slice(0); 
@@ -36,8 +36,9 @@ app.controller('ModifColumnController', [
           $scope.selectedSocialNetwork = provider;
           $scope.selectedSocialNetwork.selected = true;
         }
+        providers.push(provider);
       };
-      $scope.providers = copy;
+      $scope.providers = providers;
       $rootScope.$broadcast('loading', {loading: false, translationCode: 'GET_TOKEN_PROGRESS'});
     });
 
