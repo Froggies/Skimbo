@@ -9,10 +9,12 @@ import models.user.SkimboToken
 import play.api.Play.current
 import play.modules.reactivemongo.ReactiveMongoPlugin
 import reactivemongo.bson.BSONDocument
-
 import reactivemongo.api.collections.default.BSONCollection
 import services.auth.GenericProvider
 import services.auth.ProviderDispatcher
+import org.joda.time.DateTime
+import reactivemongo.bson.BSONDateTime
+import play.Logger
 
 object UserDao {
 
@@ -41,7 +43,16 @@ object UserDao {
     val update = BSONDocument(
       "$set" -> BSONDocument(
         "accounts.$" -> models.user.Account.toBSON(models.user.Account(idUser, new Date()))))
-    collection.update(query, update)
+    collection.update(query, update).andThen {
+      case _ => {
+        val update2 = 
+          BSONDocument("$pull" -> 
+            BSONDocument("accounts" -> 
+              BSONDocument("lastUse" ->
+                BSONDocument("$lt" -> BSONDateTime(DateTime.now().minusDays(30).toDate().getTime())))))
+        collection.update(query, update2)
+      }
+    }
   }
 
   def addAccount(idUser: String, account: models.user.Account) = {
