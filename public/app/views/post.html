@@ -8,8 +8,6 @@
     <br ng-show="showErrorPosterRequired"/>
     <span class="error-message" ng-show="showErrorBadDate">{{'BAD_DATE_POSTER' | i18n}}</span>
   </div>
-  <a class="button button-close" ng-click="close()" />X</a>
-  <a class="button button-help" ng-click="showHelp()" />?</a>
   <div ng-hide="showPlannifView" class="content-div-post-message-container">
     <ul class="posters-proposes">
       <li ng-repeat="provider in providers">
@@ -59,4 +57,6 @@
     <a class="button-a" ng-click="showPlannifView=!showPlannifView" ng-show="showPlannifView">{{'CANCEL' | i18n}}</a>
     <a class="button-a" ng-click="post()">{{'SEND' | i18n}}</a>
   </div>
+  <a class="button button-close" ng-click="close()" />X</a>
+  <a class="button button-help" ng-click="showHelp()" />?</a>
 </div>
