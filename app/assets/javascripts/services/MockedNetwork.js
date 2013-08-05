@@ -11,10 +11,7 @@ app.factory("Network", ["$http", "$timeout", "ServerCommunication", "$location",
   //---------------------------------------------------\\
 
   var providers = [];
-  var allUnifiedRequests = {
-    'cmd': "allUnifiedRequests",
-    'body': []
-  };
+  var allUnifiedRequests = {'cmd': "allUnifiedRequests", 'body': []};
   var idMsg = 1;
   var twitterMsg = true;
   var columns = [];
@@ -196,6 +193,8 @@ app.factory("Network", ["$http", "$timeout", "ServerCommunication", "$location",
       } else if(jsonMsg.cmd == "delColumn") {
         $serverCommunication.cmd(jsonMsg);
       } else if(jsonMsg.cmd == "modColumn") {
+        $serverCommunication.cmd(jsonMsg);
+      }  else if(jsonMsg.cmd == "deleteProvider") {
         $serverCommunication.cmd(jsonMsg);
       }
     }

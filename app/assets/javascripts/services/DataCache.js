@@ -47,15 +47,14 @@ app.factory("DataCache", [
     if(index > -1) {
       _cache.userInfos.splice(index, 1);
     }
+    fireEvent('userInfos');
 
     data.providerName = data.provider;
     var index = $arrayUtils.indexOf(_cache.tokenInvalid, data, "providerName");
     if(index > -1) {
       _cache.tokenInvalid.splice(index, 1);
+      fireEvent('tokenInvalid');
     }
-
-    fireEvent('userInfos');
-    fireEvent('tokenInvalid');
   });
 
   $rootScope.$on('tokenInvalid', function(evt, data) {
