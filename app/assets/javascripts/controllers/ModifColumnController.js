@@ -28,7 +28,7 @@ app.controller('ModifColumnController', [
         provider = JSON.parse(JSON.stringify(originalProviders[i]));//clone
         provider.selected = false;
         provider.name = provider.endpoint;
-        provider.services = provider.services.slice(0); 
+        provider.services = provider.services; 
         for (j = 0; j < provider.services.length; j++) {
           provider.services[j] = $unifiedRequestUtils.serverToUnifiedRequest(provider.services[j]);
         };
