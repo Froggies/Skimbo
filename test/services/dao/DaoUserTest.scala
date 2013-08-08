@@ -3,7 +3,6 @@ package services.dao
 import org.specs2.mutable._
 import play.api.test._
 import play.api.test.Helpers._
-import services.dao.UserDao
 import models.User
 import models.user.Account
 import java.util.Date
