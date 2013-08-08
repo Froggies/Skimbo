@@ -2,4 +2,4 @@ services:
   - mongodb
 language: scala
 scala:
-   - 2.10
+   - 2.10.0
