@@ -1,0 +1,5 @@
+services:
+  - mongodb
+language: scala
+scala:
+   - 2.10

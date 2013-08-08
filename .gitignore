@@ -79,6 +79,7 @@ $RECYCLE.BIN/
 #linux
 .*
 !.gitignore
+!.travis.yml
 *~
 
 *.iml
