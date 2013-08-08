@@ -1,18 +1,18 @@
-Skimbo 
+Skimbo
 ==========
 
 This app was created during the Typesafe_ contest app with Play2_. Test it on Demo_
 ----------
 
-For the Typesafe contest, we made a web application **Skimbo** : a social networks mashup. 
+For the Typesafe contest, we made a web application **Skimbo** : a social networks mashup.
 The main problem that our application solves is that most user are members of several social networks so to follow every changes on each social network, users have to open one tab for each one, which is not very convenient. Thanks to our application, the user can follow all its social networks, in a unique window, thanks to a new kind of display.
 
 This application fully uses the **Typesafe stack** : Scala, Play 2.1-RC1, Akka, with bonus Reactivemongo for the MongoDB link, WebSocket but if the client doesn't support WebSocket, Server Send Event is used. The client is made with AngularJs.
 
 **So why those technologies ?**
--------- 
+--------
 
-Find out new things is our favorite hobby ! The Typesafe contest was a real challenge, because it's based on a technologic stack in which we were debutants. Almost all developpers in our team had never written a piece of scala code before the contest. Those notions : actor/asynchronus/real time/reactive model were really new for us. 
+Find out new things is our favorite hobby ! The Typesafe contest was a real challenge, because it's based on a technologic stack in which we were debutants. Almost all developpers in our team had never written a piece of scala code before the contest. Those notions : actor/asynchronus/real time/reactive model were really new for us.
 
 Scala language was a revelation in the use of our so dear, but so dusty JVM.
 It's really fantastic to find a language which with only a few lines of code allows to write what we imagine in our small developpers' head ! Given that the contest lasted 2 months, this was a great asset in the rapid implementation of several of our key concepts.
@@ -32,12 +32,12 @@ Once those steps passed, we decided to store the user's configuration into a Mog
 It was the same for AngularJS, client side, it was also a real revelation, very powerful even with a lot of data.
 
 **High level architecture**
--------- 
+--------
 
 .. image:: http://man.lydiman.net/test/skimboHLA.png
 
 How to install ?
--------- 
+--------
 
 **Prerequisite :**
 
@@ -76,15 +76,6 @@ Follow us on twitter :
 - LaurentDufour_
 - Skimbo_
 
-Licence
-----
-
-This software is licensed under the Apache 2 license, quoted below.
-
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use this project except in compliance with the License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0.
-
-Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
-
 .. _Demo: http://skimbo.studio-dev.fr/
 .. _Typesafe: http://blog.typesafe.com/typesafe-developer-contest
 .. _Play2: https://github.com/playframework/play20/
@@ -92,5 +83,5 @@ Unless required by applicable law or agreed to in writing, software distributed 
 .. _RmManeschi: https://twitter.com/RmManeschi
 .. _studiodev: https://twitter.com/studiodev
 .. _vp3n: https://twitter.com/vp3n
-.. _LaurentDufour : https://twitter.com/_LaurentDufour 
+.. _LaurentDufour : https://twitter.com/_LaurentDufour
 .. _skimbo: https://twitter.com/skimbo34
