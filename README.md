@@ -1,10 +1,9 @@
 Skimbo [![Build Status](https://travis-ci.org/Froggies/Skimbo.png?branch=master)](https://travis-ci.org/Froggies/Skimbo)
 ==========
 
-This app was created during the Typesafe_ contest app with Play2_. Test it on Demo_
-----------
+This app was created during the Typesafe contest app with Play2. Test it on Demo_
 
-For the Typesafe contest, we made a web application **Skimbo** : a social networks mashup. 
+For the Typesafe contest, we made a web application *Skimbo* : a social networks mashup. 
 The main problem that our application solves is that most user are members of several social networks so to follow every changes on each social network, users have to open one tab for each one, which is not very convenient. Thanks to our application, the user can follow all its social networks, in a unique window, thanks to a new kind of display.
 
 This application fully uses the [Typesafe stack](http://typesafe.com/platform) : Scala, Play 2.x, Akka, with bonus Reactivemongo for the MongoDB link, WebSocket but if the client doesn't support WebSocket, Server Send Event is used. The client is made with AngularJs.
