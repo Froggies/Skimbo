@@ -1,4 +1,6 @@
-Skimbo .. image:: https://travis-ci.org/Froggies/Skimbo.png :target: https://travis-ci.org/Froggies/Skimbo
+Skimbo 
+.. image:: https://travis-ci.org/Froggies/Skimbo.png 
+   :target: https://travis-ci.org/Froggies/Skimbo
 ==========
 
 This app was created during the Typesafe_ contest app with Play2_. Test it on Demo_
