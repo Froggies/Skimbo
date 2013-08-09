@@ -246,7 +246,7 @@ class DaoUserSimpleFind extends Specification {
         UserDao.merge("test", "test2"),
         Duration("10 seconds")).get,
       Duration("10 seconds")).get
-    Thread.sleep(10)
+    Thread.sleep(500)
     //Find user
     val optionUser: Option[User] = Await.result(UserDao.findOneById("test"), Duration("10 seconds"))
     optionUser must beSome
