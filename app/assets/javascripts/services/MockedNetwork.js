@@ -2,9 +2,8 @@
 
 define(["app"], function(app) {
 
-app.factory("Network", ["$http", "$timeout", "ServerCommunication", "$location", '$window', 
-  'ArrayUtils', 'DataCache',
-  function($http, $timeout, $serverCommunication, $location, $window, $arrayUtils, $dataCache) {
+app.factory("Network", ["$http", "$timeout", "ServerCommunication", 'ArrayUtils', 'DataCache',
+  function($http, $timeout, $serverCommunication, $arrayUtils, $dataCache) {
 
   //---------------------------------------------------\\
   //-------------------- VARIABLES --------------------\\
