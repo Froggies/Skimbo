@@ -25,8 +25,9 @@ import play.api.mvc.Cookie
 object Mobile extends Controller {
 
   def end() = Action { implicit request =>
-    Ok(views.html.mobileEndAuthentication()).withCookies(
-      Cookie("tokenSkimbo", session.get("id").getOrElse("Error in id !"), httpOnly=false)
+    val token = session.get("id").getOrElse("Error in id !")
+    Ok(views.html.mobileEndAuthentication(token)).withCookies(
+      Cookie("tokenSkimbo", token, httpOnly=false)
     )
   }
   
