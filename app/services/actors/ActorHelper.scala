@@ -147,7 +147,7 @@ object HelperUserInfosActor extends ActorHelper[String] {
   }
 
   protected def logName(id: String, msg: String): String = {
-    "UserInfosActor" + msg + id
+    "UserInfosActor " + msg + id
   }
 
 }
@@ -179,7 +179,7 @@ object HelperProviderActor extends ActorHelper[ProviderActorParameter] {
   }
 
   protected def logName(parameter: ProviderActorParameter, msg: String): String = {
-    "ProviderActor" + msg + parameter.column.title + " : " + parameter.provider.name
+    "ProviderActor " + msg + parameter.column.title + " : " + parameter.provider.name
   }
 
 }
