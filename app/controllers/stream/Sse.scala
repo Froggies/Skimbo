@@ -11,7 +11,6 @@ import services.security.Authentication
 import services.dao.UserDao
 import services.commands.CmdFromUser
 import services.commands.CmdToUser
-import play.api.libs.concurrent.Execution.Implicits.defaultContext
 
 object Sse extends Controller with Authentication {
 
@@ -21,6 +20,9 @@ object Sse extends Controller with Authentication {
   }
 
   def command() = Authenticated { user => implicit request =>
+    
+    import play.api.libs.concurrent.Execution.Implicits.defaultContext
+    
     val userId = user.accounts.head.id
     request.body.asJson.map(js => CmdFromUser.interpret(userId, js))
     PingActor.ping(user.accounts.last.id)
@@ -30,6 +32,8 @@ object Sse extends Controller with Authentication {
   def connect() = Authenticated { user => implicit request =>
     val idUser = user.accounts.head.id
     val (out, channelClient) = Concurrent.broadcast[JsValue]
+    
+    import play.api.libs.concurrent.Execution.Implicits.defaultContext
     
     CmdToUser.userConnected(idUser, channelClient).map { preferedChannel =>
       UserInfosActor.create(idUser)
