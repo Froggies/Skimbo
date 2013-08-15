@@ -292,6 +292,23 @@ header li:hover, .skimboBtn:hover {
   background: linear-gradient(top, #C3001D 0%,#950119 100%);
 }
 
+.flags {
+  position: absolute;
+  top: 0;
+  right: 5px;
+}
+
+.flag {
+  width: 16px;
+  height: 11px;
+  background:url(../images/flags.png) no-repeat;
+  display: inline-block;
+  cursor: pointer;
+}
+
+.flag.flag-fr {background-position: -16px 0}
+.flag.flag-gb {background-position: 0 -11px}
+
 a.buttons, .skimboBtn {
 	-webkit-font-smoothing: antialiased;
 	font-weight: normal;
