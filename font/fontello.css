@@ -1,12 +1,10 @@
-@charset "UTF-8";
-
- @font-face {
+@font-face {
   font-family: 'fontello';
-  src: url('fontello.eot?21205392');
-  src: url('fontello.eot?21205392#iefix') format('embedded-opentype'),
-       url('fontello.woff?21205392') format('woff'),
-       url('fontello.ttf?21205392') format('truetype'),
-       url('fontello.svg?21205392#fontello') format('svg');
+  src: url('../font/fontello.eot?22656453');
+  src: url('../font/fontello.eot?22656453#iefix') format('embedded-opentype'),
+       url('../font/fontello.woff?22656453') format('woff'),
+       url('../font/fontello.ttf?22656453') format('truetype'),
+       url('../font/fontello.svg?22656453#fontello') format('svg');
   font-weight: normal;
   font-style: normal;
 }
@@ -16,7 +14,7 @@
 @media screen and (-webkit-min-device-pixel-ratio:0) {
   @font-face {
     font-family: 'fontello';
-    src: url('../font/fontello.svg?21205392#fontello') format('svg');
+    src: url('../font/fontello.svg?22656453#fontello') format('svg');
   }
 }
 */
@@ -41,7 +39,7 @@
   /* fix buttons height, for twitter bootstrap */
   line-height: 1em;
  
-  /* Animation center compensation - magrins should be symmetric */
+  /* Animation center compensation - margins should be symmetric */
   /* remove if not needed */
   margin-left: .2em;
  
@@ -52,6 +50,8 @@
   /* text-shadow: 1px 1px 1px rgba(127, 127, 127, 0.3); */
 }
  
-.icon-hourglass:before { content: '\23f3'; } /* '⏳' */
-.icon-cog-alt:before { content: '\26ef'; } /* '⛯' */
-.icon-wrench:before { content: '🔧'; } /* '\1f527' */
+.icon-hourglass:before { content: '\e800'; } /* '' */
+.icon-cog-alt:before { content: '\e801'; } /* '' */
+.icon-calendar:before { content: '\e804'; } /* '' */
+.icon-book:before { content: '\e803'; } /* '' */
+.icon-wrench:before { content: '\e802'; } /* '' */
