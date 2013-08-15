@@ -6,7 +6,7 @@ layout: fr
 {% for post in site.posts %}
 {% if post.layout == 'fr' %}
 <li>
-  <a href="{{ post.url }}">
+  <a href="{{site.baseurl}}{{post.url}}">
     <h2>{{ post.title }}</h2>
     <span>{{ post.date | date:"%b %Y" }}</span>
   </a>
