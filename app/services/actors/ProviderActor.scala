@@ -24,6 +24,7 @@ import services.commands.CmdToUser
 import services.endpoints.EndpointConfig
 import services.endpoints.Endpoints
 import services.endpoints.JsonRequest.UnifiedRequest
+import scala.concurrent.Future
 
 sealed case class ProviderActorParameter(
   provider: GenericProvider,
@@ -45,7 +46,7 @@ object ProviderActor {
     column.unifiedRequests.foreach { unifiedRequest =>
       val endpoint = for (
         provider <- Endpoints.getProvider(unifiedRequest.service);
-        time <- Endpoints.getConfig(unifiedRequest.service).map(_.delay);
+        time <- Endpoints.getConfig(unifiedRequest.service).map(_.delay(idUser));
         parser <- Endpoints.getConfig(unifiedRequest.service).map(_.parser)
       ) yield (provider, time, parser)
 
@@ -111,7 +112,7 @@ class ProviderActor(parameter:ProviderActorParameter) extends Actor {
           idUser,
           column.title,
           unifiedRequest.service,
-          config.delay)).map { listSkimbo =>
+          config.delay(idUser))).map { listSkimbo =>
         if(!listSkimbo.isDefined) {
           self ! Dead(idUser)
         } else {
