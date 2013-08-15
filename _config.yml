@@ -1,3 +1,4 @@
 pygments: true
 name: "Skimbo by Froggies"
 description: "Social networks mashup"
+baseurl: http://froggies.github.io/Skimbo/
