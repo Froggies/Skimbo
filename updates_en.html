@@ -3,12 +3,24 @@ layout: en
 ---
 <h1>Updates</h1>
 
-Retreive all Skimbo's updates.
-
+<ul>
 {% for post in site.posts %}
 {% if post.layout == 'en' and post.type == 'update' %}
-  <a href="{{site.baseurl}}{{post.url}}">
-    <h2>{{ post.title }}<span>{{ post.date | date:"%b %Y" }}</span></h2>
-  </a>
+  <li>
+	  <a href="{{site.baseurl}}{{post.url}}">{{ post.title }}</a>
+	</li>
 {% endif %}
 {% endfor %}
+</ul>
+
+<h2>Help us to translate</h2>
+
+<ul>
+{% for post in site.posts %}
+{% if post.layout == 'fr' and post.type == 'update' %}
+  <li>
+	  <a href="{{site.baseurl}}{{post.url}}">{{ post.title }}</a>
+	</li>
+{% endif %}
+{% endfor %}
+</ul>

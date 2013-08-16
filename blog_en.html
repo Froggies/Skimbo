@@ -1,13 +1,25 @@
 ---
 layout: en
 ---
-<h1>You are in blog en !</h1>
-<ul>
+<h1>Articles</h1>
+
 {% for post in site.posts %}
 {% if post.layout == 'en' and post.type == 'article' %}
-  <a href="{{site.baseurl}}{{post.url}}">
-    <h2>{{ post.title }}<span>{{ post.date | date:"%b %Y" }}</span></h2>
-  </a>
+  <p>
+  	<a href="{{site.baseurl}}{{post.url}}">{{ post.title }}</a>
+  	<span style="float:right">{{ post.date | date:"%b %Y" }}</span>
+	</p>
+{% endif %}
+{% endfor %}
+
+<h2>Help us to translate</h2>
+
+<ul>
+{% for post in site.posts %}
+{% if post.layout == 'fr' and post.type == 'article' %}
+  <li>
+	  <a href="{{site.baseurl}}{{post.url}}">{{ post.title }}</a>
+	</li>
 {% endif %}
 {% endfor %}
 </ul>
