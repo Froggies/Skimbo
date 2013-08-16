@@ -33,6 +33,12 @@
       "css": "hourglass",
       "code": 59392,
       "src": "entypo"
+    },
+    {
+      "uid": "767fede84586366cd7d6c835be745454",
+      "css": "mobile",
+      "code": 59397,
+      "src": "entypo"
     }
   ]
 }
