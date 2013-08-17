@@ -143,12 +143,9 @@ app.factory("Network", ["$http", "$timeout", "ServerCommunication", 'ArrayUtils'
 
   function msgDelaye() {
     $timeout(function() {
-      console.log(columns.length, twitterMsg);
       if(columns.length > 0 && twitterMsg) {
         var c = $arrayUtils.random(columns);
-        console.log(c);
         var s = $arrayUtils.random(c.unifiedRequests);
-        console.log(s);
         addMsg(c.title, s.service);
       }
       msgDelaye();

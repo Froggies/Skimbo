@@ -24,7 +24,7 @@ object Facebook extends OAuth2Provider {
   override val permissions: Seq[String] = Seq(
     "email",          // Get user email
     "read_stream",    // Get wall activity
-    "read_mailbox",   // Get perso mails
+    "read_mailbox",   // Get directs messages
     "publish_actions",// Post messages
     "manage_pages",   // Post on pages
     "publish_stream"  // Post on pages
