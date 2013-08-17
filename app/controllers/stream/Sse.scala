@@ -11,6 +11,8 @@ import services.security.Authentication
 import services.dao.UserDao
 import services.commands.CmdFromUser
 import services.commands.CmdToUser
+import play.libs.Akka
+import scala.concurrent.duration.DurationInt
 
 object Sse extends Controller with Authentication {
 
@@ -24,7 +26,9 @@ object Sse extends Controller with Authentication {
     import play.api.libs.concurrent.Execution.Implicits.defaultContext
     
     val userId = user.accounts.head.id
-    request.body.asJson.map(js => CmdFromUser.interpret(userId, js))
+    Akka.system.scheduler.scheduleOnce(0 seconds) {
+      request.body.asJson.map(js => CmdFromUser.interpret(userId, js))
+    }
     PingActor.ping(user.accounts.last.id)
     Ok("ok")
   }
