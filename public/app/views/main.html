@@ -32,7 +32,7 @@
   	</header>
 		<div class="column-content" scrollmanager="onlyTop" scrolldata="c">
 			<ul>
-				<li class="element {{m.isView}}" scrollmanager="m" ng-repeat="m in c.messages">
+				<li class="element {{m.isView}}" scrollmanager="m" scrolldata="c" ng-repeat="m in c.messages">
 					<div class="timeline">
 						<div class="from-social-network vertical-text {{m.from}}">{{m.from}}</div>
 						<div class="rond {{m.from}}"></div>
