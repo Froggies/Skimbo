@@ -31,7 +31,7 @@ define(["app"], function(app) {
               });
               var scrollMove = function(evt) {
                 if(scrollObjects[data] && userScroll == true) {
-                  for (var i = scrollObjects[data].length-1; i >= 0; i--) {
+                  for (var i = 0; i < scrollObjects[data].length; i++) {
                     var object = scrollObjects[data][i];
                     if(object.isView == false) {
                       object.pos = object.scrollElement.offsetTop - scroller[0].offsetTop;
@@ -40,6 +40,8 @@ define(["app"], function(app) {
                         object.isView = true;
                         $visibility.notifyMessageRead();
                         scope.$apply();
+                      } else {
+                        //when object post is above scroll we stop
                         return;
                       }
                     }
