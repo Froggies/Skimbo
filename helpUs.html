@@ -1,0 +1,38 @@
+---
+layout: fr
+---
+<h1>Aidez nous</h1>
+
+Nous ne le disons pas assez mais Skimbo est un projet open-source. Rejoignez notre groupe de la façon qu'il vous plaît.
+
+<h2><a name="translation">Traduction</a></h2>
+
+Tous nos fichiers se trouvent sur <a href="https://github.com/Froggies/Skimbo" target="_blank">Github</a>, il vous suffit donc de cliquer sur le bouton "Edit" (en haut à droite du document) pour pouvoir le modifier.
+
+<ul>
+	<li><a href="https://github.com/Froggies/Skimbo/blob/master/app/assets/javascripts/filters/translation.js" target="_blank">Traduire skimbo</a></li>
+	{% for post in site.posts %}
+	{% if post.layout == 'fr' and post.type == 'update' %}
+	  <li>
+		  <a href="{{site.baseurl}}{{post.url}}">Traduire {{ post.title }}</a>
+		</li>
+	{% endif %}
+	{% endfor %}
+	{% for post in site.posts %}
+	{% if post.layout == 'fr' and post.type == 'article' %}
+	  <li>
+		  <a href="{{site.baseurl}}{{post.url}}">Traduire {{ post.title }}</a>
+		</li>
+	{% endif %}
+	{% endfor %}
+<ul>
+
+<h2><a name="bug">Remonter des bugs, idées...</a></h2>
+
+Si vous êtes développeur le meilleur moyen est d'utiliser les <a href="https://github.com/Froggies/Skimbo/issues" target="_blank">issues</a> Github. 
+
+Sinon passez simplement par le formulaire de contact dans Skimbo (pour le trouver veuillez utiliser l'aide).
+
+<h2><a name="provider">Ajouter un provider</a></h2>
+
+A l'aide de cet <a href="{{site.baseurl}}/2013/06/11/fr-article.html">article</a>, vous pouvez facilement ajouter de nouveaux réseaux sociaux. Ensuite pensez à nous faire une <a href="https://help.github.com/articles/creating-a-pull-request" target="_blank">PullRequest</a>.

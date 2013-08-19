@@ -1,0 +1,38 @@
+---
+layout: en
+---
+<h1>Help us</h1>
+
+May be you doesn't know it for now, but  Skimbo is an open-source project. You can join our team to help us to improve Skimbo as you like it.
+
+<h2><a name="translation">Translation</a></h2>
+
+You can find Skimbo's translation files on <a href="https://github.com/Froggies/Skimbo" target="_blank">Github</a>. To help us to translate Skimbo, you just have to click on the "Edit" button (on the top right of the document).
+
+<ul>
+	<li><a href="https://github.com/Froggies/Skimbo/blob/master/app/assets/javascripts/filters/translation.js" target="_blank">Translate Skimbo</a></li>
+	{% for post in site.posts %}
+	{% if post.layout == 'fr' and post.type == 'update' %}
+	  <li>
+		  <a href="{{site.baseurl}}{{post.url}}">Translate {{ post.title }}</a>
+		</li>
+	{% endif %}
+	{% endfor %}
+	{% for post in site.posts %}
+	{% if post.layout == 'fr' and post.type == 'article' %}
+	  <li>
+		  <a href="{{site.baseurl}}{{post.url}}">Translate {{ post.title }}</a>
+		</li>
+	{% endif %}
+	{% endfor %}
+<ul>
+
+<h2><a name="bug">Any bugs ? Ideas ?</a></h2>
+
+If you are a developper, the best way to share your ideas or to report us a bug, is to use <a href="https://github.com/Froggies/Skimbo/issues" target="_blank">Github issues</a>.  
+Or you can even fill the Skimbo contact form, the Help page can help you to found it. 
+
+
+<h2><a name="provider">Add a provider</a></h2>
+
+If you read this <a href="{{site.baseurl}}/2013/06/11/fr-article.html">article</a>, you could easily add new providers for any social networks you wanted to. And then, don't forget to make a <a href="https://help.github.com/articles/creating-a-pull-request" target="_blank">PullRequest</a>.

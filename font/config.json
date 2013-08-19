@@ -23,9 +23,33 @@
       "src": "fontawesome"
     },
     {
+      "uid": "3a00327e61b997b58518bd43ed83c3df",
+      "css": "login",
+      "code": 59399,
+      "src": "fontawesome"
+    },
+    {
+      "uid": "53dd31a6cc6438192b2d7b09b1c1dd45",
+      "css": "columns",
+      "code": 59400,
+      "src": "fontawesome"
+    },
+    {
       "uid": "9755f76110ae4d12ac5f9466c9152031",
       "css": "book",
       "code": 59395,
+      "src": "fontawesome"
+    },
+    {
+      "uid": "7432077e6a2d6aa19984ca821bb6bbda",
+      "css": "bug",
+      "code": 59403,
+      "src": "fontawesome"
+    },
+    {
+      "uid": "6dbf07228006788a96eb6244b3591970",
+      "css": "ambulance",
+      "code": 59398,
       "src": "fontawesome"
     },
     {
@@ -39,6 +63,18 @@
       "css": "mobile",
       "code": 59397,
       "src": "entypo"
+    },
+    {
+      "uid": "ddecf5ad7935e3fb1b70dac6ed00d06a",
+      "css": "language",
+      "code": 59402,
+      "src": "entypo"
+    },
+    {
+      "uid": "51fb22f9ff9d7f60c95ef31e4c59502d",
+      "css": "comment",
+      "code": 59401,
+      "src": "mfglabs"
     }
   ]
 }
