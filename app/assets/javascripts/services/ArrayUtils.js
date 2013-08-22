@@ -53,6 +53,20 @@ app.factory("ArrayUtils", ['Visibility', '$rootScope', function($visibility, $ro
       return array[index];
     },
 
+    sortedArrayLocationOf: function(element, array, property, start, end) {
+      start = start || 0;
+      end = end || array.length;
+      var pivot = parseInt(start + (end - start) / 2);
+      if(end-start <= 1 || array[pivot][property] == element[property]) {
+        return pivot;
+      }
+      if(array[pivot][property] < element[property]) {
+        return this.sortedArrayLocationOf(element, array, property, pivot, end);
+      } else{
+        return this.sortedArrayLocationOf(element, array, property, start, pivot);
+      }
+    },
+
     sortMsg: function(sortMe, newMsg) {
       if(insertedMsgInProgress == false) {
         insertedMsgInProgress = true;

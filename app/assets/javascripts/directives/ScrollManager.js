@@ -2,8 +2,8 @@
 
 define(["app"], function(app) {
 
-  app.directive("scrollmanager", ["$timeout", "$rootScope", "Visibility", 
-    function($timeout, $rootScope, $visibility) {
+  app.directive("scrollmanager", ["$timeout", "$rootScope", "Visibility", "ArrayUtils",
+    function($timeout, $rootScope, $visibility, $arrayUtils) {
     
     var userScroll = false;
 
@@ -19,7 +19,6 @@ define(["app"], function(app) {
           var unwatch = scope.$watch(attrs["scrolldata"], function(newValue, oldValue) {
             if(newValue) {
               var data = newValue.title;
-              console.log(data);
               $rootScope.$on("scrollManagerGoTop", function(evt, column) {
                 if(angular.equals(column.title, data)) {
                   userScroll = false;
@@ -34,15 +33,16 @@ define(["app"], function(app) {
                   for (var i = 0; i < scrollObjects[data].length; i++) {
                     var object = scrollObjects[data][i];
                     if(object.isView == false) {
-                      object.pos = object.scrollElement.offsetTop - scroller[0].offsetTop;
-                      if(evt.target.scrollTop <= object.pos) {
+                      var pos = object.refElement.offsetTop - scroller[0].offsetTop;
+                      if(evt.target.scrollTop <= pos) {
                         scrollObjects[data].splice(i, 1);
                         object.isView = true;
                         $visibility.notifyMessageRead();
                         scope.$apply();
                       } else {
                         //when object post is above scroll we stop
-                        return;
+                        //why the fuck insert array isn't ordered ?????????
+                        //return;
                       }
                     }
                   }
@@ -54,23 +54,28 @@ define(["app"], function(app) {
           });
         } else {
           var scroller = angular.element(element.parentElement.parentElement);
-          var referer = scope[attrs["scrolldata"]].title;
-          var object = scope[attrs["scrollmanager"]];
-          object.scrollElement = element;
-          scrollObjects[referer] = scrollObjects[referer] || [];
-          scrollObjects[referer].push(object);
-          object.isView = false;
           var unwatch = scope.$watch(attrs["scrollmanager"], function(newValue, oldValue) {
-            if(object.isView == false) {
-              userScroll = false;
-              scroller[0].scrollTop += element.clientHeight;
-              if(timeout != undefined) {
-                $timeout.cancel(timeout);
+            if(newValue) {
+              var object = scope[attrs["scrollmanager"]];
+              if(object.isView === false) {
+                var referer = scope[attrs["scrolldata"]].title;
+                object.refElement = element;
+                scrollObjects[referer] = scrollObjects[referer] || [];
+                object.isView = false;
+                userScroll = false;
+                scroller[0].scrollTop += element.clientHeight;
+                if(timeout != undefined) {
+                  $timeout.cancel(timeout);
+                }
+                timeout = $timeout(function() {
+                  userScroll = true;
+                  timeout = undefined;
+                }, 500);
+                scrollObjects[referer].splice(
+                  $arrayUtils.sortedArrayLocationOf(object, scrollObjects[referer], 'createdAt')+1, 
+                  0, 
+                  object);
               }
-              timeout = $timeout(function() {
-                userScroll = true;
-                timeout = undefined;
-              }, 500);
               unwatch();
             }
           });

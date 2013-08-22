@@ -14,10 +14,10 @@ app.factory("DataCache", [
     fireEvent(key);
   }
 
-  function fireEvent(key) {
+  function fireEvent(key, optionalData) {
     if(_callback[key] !== undefined) {
       for (var i = 0; i < _callback[key].length; i++) {
-        _callback[key][i](_cache[key]);
+        _callback[key][i](optionalData === undefined ? _cache[key] : optionalData);
       };
     }
   }
@@ -78,14 +78,14 @@ app.factory("DataCache", [
 
   $rootScope.$on('addColumn', function(evt, column) {
     _cache.allColumns.push(column);
-    fireEvent('allColumns');
+    fireEvent('addColumn', column);
   });
 
   $rootScope.$on('modColumn', function(evt, column) {
     var index = $arrayUtils.indexOf(_cache.allColumns, column, "title");
     if(index > -1) {
       _cache.allColumns[index] = column.column;
-      fireEvent('allColumns');
+      fireEvent('modColumn', [index, column.column]);
     }
   });
 
@@ -93,7 +93,7 @@ app.factory("DataCache", [
     var index = $arrayUtils.indexOf(_cache.allColumns, column, "title");
     if(index > -1) {
       _cache.allColumns.splice(index, 1);
-      fireEvent('allColumns');
+      fireEvent('delColumn', [index, column]);
     }
   });
 

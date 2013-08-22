@@ -3,8 +3,8 @@
 define(["app"], function(app) {
 
 app.factory("ServerCommunication", [
-  "$http", "$rootScope", "UnifiedRequestUtils", "ImagesUtils", "StringUtils",
-  function($http, $rootScope, $unifiedRequestUtils, $imagesUtils, $stringUtils) {
+  "$http", "$rootScope", "UnifiedRequestUtils", "ImagesUtils", "StringUtils", "ArrayUtils",
+  function($http, $rootScope, $unifiedRequestUtils, $imagesUtils, $stringUtils, $arrayUtils) {
 
   function broadcast(cmd, data) {
     $rootScope.$broadcast(cmd, data);
@@ -67,15 +67,7 @@ app.factory("ServerCommunication", [
             clientUnifiedRequest.fromServer = true;
             clientColumn.unifiedRequests.push(clientUnifiedRequest);
           };
-          if($rootScope.tempColumns != undefined && $rootScope.tempColumns[originalColumn.title]) {
-            var temp = $rootScope.tempColumns[originalColumn.title];
-            for (var j = 0; j < temp.length; j++) {
-              for (var h = 0; h < temp[j].messages.length; h++) {
-                clientColumn.messages.push(temp[j].messages[h]);
-              };
-            };
-          }
-          columns.splice(originalColumn.index, 0, clientColumn);
+          columns.splice($arrayUtils.sortedArrayLocationOf(originalColumn, columns, 'index')+1, 0, clientColumn);
         }
         broadcast('allColumns', columns);
       } else if(data.cmd == "delColumn") {

@@ -8,6 +8,8 @@ app.controller('ColumnController', [
   function($scope, $network, $rootScope, $visibility, $dataCache,
     $arrayUtils, $columnSize, $window, $timeout) {
 
+    var tempColumns;
+
     $scope.globalContainerSize = "100%";
     $scope.columns = [];
 
@@ -22,28 +24,60 @@ app.controller('ColumnController', [
     });
 
     $dataCache.on('allColumns', function(columns) {
-      var copy = columns.slice(0);
+      if($scope.columns.length === 0) {//on deco/reco will not clear all columns
+        var copy = columns.slice(0);
 
-      $columnSize.setSize(copy);
-      $columnSize.buildSizeCompo(copy);
-      $scope.columns = copy;
-      if($scope.columns.length === 0) {
-        $rootScope.$broadcast('glassShowView', 'help');
-      }
-      if($columnSize.isMobileSize() && $scope.columns.length > 0) {
-        $scope.globalContainerSize = $scope.columns.length+"10%";
-      } else {
-        $scope.globalContainerSize = "100%";
-      }
+        $columnSize.setSize(copy);
+        $columnSize.buildSizeCompo(copy);
+        $scope.columns = copy;
+        if($scope.columns.length === 0) {
+          $rootScope.$broadcast('glassShowView', 'help');
+        }
+        if($columnSize.isMobileSize() && $scope.columns.length > 0) {
+          $scope.globalContainerSize = $scope.columns.length+"10%";
+        } else {
+          $scope.globalContainerSize = "100%";
+        }
+        for (var i = 0; i < $scope.columns.length; i++) {
+          var originalColumn = $scope.columns[i];
+          if(tempColumns != undefined && tempColumns[originalColumn.title]) {
+            var temp = tempColumns[originalColumn.title];
+            for (var h = 0; h < temp.messages.length; h++) {
+              addMsg(temp.messages[h], originalColumn.title);
+            };
+          }
+        }
 
-      $scope.$apply();
+        $scope.$apply();
+      }
+    });
+
+    $dataCache.on('addColumn', function(column) {
+      $columnSize.setSize([column]);
+      $columnSize.buildSizeCompo([column]);
+      $scope.columns.push(column);
+    });
+
+    $dataCache.on('modColumn', function(newColumn) {
+      var index = newColumn[0];
+      var column = newColumn[1];
+      var oldColumn = $scope.columns[index];
+      $columnSize.setSize([column]);
+      $columnSize.buildSizeCompo([column]);
+      $scope.columns[index] = column;
+      for (var i = 0; i < oldColumn.messages.length; i++) {
+        addMsg(oldColumn.messages[i], column.title);
+      };
+    });
+
+    $dataCache.on('delColumn', function(column) {
+      $scope.columns.splice(column[0], 1);
     });
 
     $rootScope.$on('msg', function(evt, msg) {
       $scope.$apply(function() {
-        var column = getColumnByName(msg.column);
-        column.messages = column.messages || [];
-        $arrayUtils.sortMsg(column.messages, msg.msg);
+        msg.msg.isView = false;
+        addMsg(msg.msg, msg.column);
       });
     });
 
@@ -176,21 +210,28 @@ app.controller('ColumnController', [
       });
     };
 
+    function addMsg(msg, columnName) {
+      var column = getColumnByName(columnName);
+      column.messages = column.messages || [];
+      if(column.isTemp !== true) {
+        $arrayUtils.sortMsg(column.messages, msg);
+      } else {
+        column.messages.push(msg);
+      }
+    }
+
     function getColumnByName(name) {
       if($scope.columns !== undefined) {
         for (var i = 0; i < $scope.columns.length; i++) {
           if ($scope.columns[i].title == name) {
-              return $scope.columns[i];
+            return $scope.columns[i];
           }
         }
       }
-      if($rootScope.tempColumns == undefined) {
-        $rootScope.tempColumns = [];
-      }
-      if($rootScope.tempColumns[name] == undefined) {
-        $rootScope.tempColumns[name] = {};
-      }
-      return $rootScope.tempColumns[name];
+      
+      tempColumns = tempColumns || [];
+      tempColumns[name] = tempColumns[name] || {isTemp: true};
+      return tempColumns[name];
     }
 
     $scope.showMedias = undefined;
