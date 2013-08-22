@@ -21,6 +21,8 @@ import services.commands.CmdFromUser
 import services.commands.CmdToUser
 import scala.collection.mutable.HashMap
 import services.auth.GenericProvider
+import play.api.cache.Cache
+import play.api.Play.current
 
 case object Retreive
 case class StartProvider(userId: String, column: Column)
@@ -96,13 +98,18 @@ class UserInfosActor(idUser: String) extends Actor {
         UserDao.findOneById(idUser).map {
           _.map { user =>
             if (provider.isAuthProvider && provider.canStart(idUser)) {
-              (provider.asInstanceOf[AuthProvider]).getUser(idUser).map { providerUser =>
-                if (providerUser.isDefined && !user.distants.exists(
-                  _.exists(pu => pu.socialType == provider.name && pu.id == providerUser.get.id))) {
-                  self ! AddInfosUser(ProviderUser(providerUser.get.id, provider.name, None))
-                }
-                if (providerUser.isDefined) {
-                  CmdToUser.sendTo(idUser, Command("userInfos", Some(Json.toJson(providerUser.get))))
+              Cache.getAs[ProviderUser](user.accounts.head.id+provider.name).map { providerUser =>
+                CmdToUser.sendTo(idUser, Command("userInfos", Some(Json.toJson(providerUser))))
+              }.getOrElse {
+                (provider.asInstanceOf[AuthProvider]).getUser(idUser).map { providerUser =>
+                  if (providerUser.isDefined && !user.distants.exists(
+                    _.exists(pu => pu.socialType == provider.name && pu.id == providerUser.get.id))) {
+                    self ! AddInfosUser(ProviderUser(providerUser.get.id, provider.name, None))
+                  }
+                  if (providerUser.isDefined) {
+                    Cache.set(user.accounts.head.id+provider.name, providerUser.get)
+                    CmdToUser.sendTo(idUser, Command("userInfos", Some(Json.toJson(providerUser.get))))
+                  }
                 }
               }
             }
