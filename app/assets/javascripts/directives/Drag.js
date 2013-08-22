@@ -74,14 +74,15 @@ app.directive("drag", ["$rootScope", "$timeout",
               currentElement.dragData.title != elements[i].dragData.title) {
               $rootScope.$broadcast("moveColumnEvent", currentElement.dragData, elements[i].dragData);
               listen = false;
-              var oldWidth = currentElement[0].style.width;
-              var oldHeight = currentElement[0].style.height;
-              currentElement[0].style.width = elm.style.width;
-              currentElement[0].style.height = elm.style.height;
-              originalElement.style.width = elm.style.width;
-              originalElement.style.height = elm.style.height;
-              elm.style.width = oldWidth;
-              elm.style.height = oldHeight;
+              // exchange size between 2 columns
+              // var oldWidth = currentElement[0].style.width;
+              // var oldHeight = currentElement[0].style.height;
+              // currentElement[0].style.width = elm.style.width;
+              // currentElement[0].style.height = elm.style.height;
+              // originalElement.style.width = elm.style.width;
+              // originalElement.style.height = elm.style.height;
+              // elm.style.width = oldWidth;
+              // elm.style.height = oldHeight;
               $timeout(function() {
                 listen = true;
                 var elm2 = document.getElementById(elements[i].originalId);
