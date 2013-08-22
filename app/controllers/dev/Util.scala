@@ -135,5 +135,15 @@ object Util extends Controller with Authentication {
     }
     Ok("ok")
   }
+  
+  def myInfos() = Action { implicit request =>
+    val idUser = request.session.get("id").get
+    import scala.concurrent.ExecutionContext.Implicits.global
+    Async {
+      UserDao.findOneById(idUser).map { user =>
+        user.map(u => Ok(models.User.toJson(u))).getOrElse(Ok("error"))
+      }
+    }
+  }
 
 }

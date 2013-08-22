@@ -40,6 +40,7 @@ GET		/api/dev/util/userRes/:p		controllers.dev.Util.userRes(p: String)
 GET		/api/dev/util/userDistant/:p	controllers.dev.Util.userDistantRes(p: String)
 GET		/api/dev/util/invalidToken/:p/:pwd	controllers.dev.Util.invalidToken(p: String, pwd: String)
 GET		/api/dev/util/urlTest/:id		controllers.dev.Util.urlTest(id:String)
+GET		/api/dev/util/myInfos			controllers.dev.Util.myInfos()
 
 GET		/download						controllers.Application.downloadDistant
 GET     /demo                           controllers.Application.mocked
