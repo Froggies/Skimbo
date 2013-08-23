@@ -54,7 +54,7 @@ class PingActor(idUser: String, channel:Concurrent.Channel[JsValue]) extends Act
       }
     }
     case Ping(id) => {
-      if (id == idUser) {
+      if (id == idUser && schedulerKill != null) {
         schedulerKill.cancel
       }
     }
