@@ -103,7 +103,7 @@ app.factory("Network", ["$http", "$timeout", "ServerCommunication", "$location",
             $serverCommunication.cmd({'cmd':'disconnect'});
           }
         }, 800);
-        console.log('sse error : nb = ', nbError);
+        console.log('sse error : nb = ', nbError, e);
       }, false);
     }
   }
