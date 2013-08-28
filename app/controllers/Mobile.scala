@@ -51,7 +51,15 @@ object Mobile extends Controller {
   }
 
   def command(idUser: String) = Action { implicit request =>
-    request.body.asJson.map(js => CmdFromUser.interpret(idUser, js))
+    
+    import play.api.libs.concurrent.Execution.Implicits.defaultContext
+    
+    request.body.asJson.map(js => {
+      println("####################")
+      println(js)
+      println("####################")
+      CmdFromUser.interpret(idUser, js)
+    })
     PingActor.ping(idUser)
     Ok("ok")
   }
