@@ -24,7 +24,8 @@ object SavedStatsAppPolling {
       log.info("is after : "+new DateTime(last.timestamp).plusHours(1).isBeforeNow())
       log.info(DateTimeFormat.forPattern("dd-MMMM-yyyy HH:mm").print(new DateTime(last.timestamp)))
       log.info(DateTimeFormat.forPattern("dd-MMMM-yyyy HH:mm").print(DateTime.now))
-      if(new DateTime(last.timestamp).plusHours(1).isBeforeNow()) {
+      if(new DateTime(last.timestamp).plusHours(1).isEqualNow() || 
+         new DateTime(last.timestamp).plusHours(1).isBeforeNow()) {
       log.info("Save stats app")
         Stats.createStatApp().flatMap { newStats =>
           StatsAppDao.add(newStats)
