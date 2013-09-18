@@ -12,11 +12,14 @@ import play.api.mvc.Controller
 import services.auth.ProviderDispatcher
 import services.commands.DelayedPostPolling
 import play.api.mvc.DiscardingCookie
+import services.commands.SavedStatsAppPolling
 
 object Application extends Controller {
 
   //start polling delayed
   private val pollDelayedPost = DelayedPostPolling
+  //start polling stats
+  private val pollStatsApp = SavedStatsAppPolling
   
   def index = Action { implicit request =>
     session.get("id")

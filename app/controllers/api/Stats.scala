@@ -9,64 +9,126 @@ import services.actors.UserInfosActor
 import services.actors.HelperUserInfosActor
 import services.actors.HelperProviderActor
 import services.commands.CmdToUser
+import services.dao.StatsAppDao
+import scala.util.Success
+import scala.util.Failure
+import reactivemongo.core.commands.LastError
+import play.api.Routes
+import org.joda.time.format.DateTimeFormat
+import scala.concurrent.Future
 
 object Stats extends Controller {
 
   import play.api.libs.concurrent.Execution.Implicits._
   
   def get() = Action { implicit request =>
-    
-    val today = new DateTime().withHourOfDay(0).withMillisOfDay(0)
-    val week = today.withDayOfWeek(1)
-    val month = today.withDayOfMonth(1)
-    val year = today.withMonthOfYear(1)
-    
     Async {
-      UserDao.findAll.map { users =>
-        val res = new StringBuilder
-        res ++= "Skimbo's stats\n\n"
-        
-        res ++= "nb users = " + users.size + "\n\n"
-        
-        res ++= "nb connexions :\n"
-        res ++= "\t" + "today = " + nbUsersByDate(users, today) + "\n"
-        res ++= "\t" + "weekly = " + nbUsersByDate(users, week) + "\n"
-        res ++= "\t" + "monthly = " + nbUsersByDate(users, month) + "\n"
-        res ++= "\t" + "yearly = " + nbUsersByDate(users, year) + "\n\n"
-        
-        res ++= "nb tokens :\n"
-        val list = ProviderDispatcher.listAll.map { provider =>
-          (provider.name -> nbUsersByProvider(users, provider.name))
-        }
-        list.sortBy(_._2).reverse.foreach { m =>
-          res ++= "\t" + m._1 + " = " + m._2 + "\n"
-        }
-        res ++= "\n"
-        
-        res ++= "nb accounts by user :\n"
-        res ++= formatMap(users.size, nbAccountsByUser(users))
-        
-        res ++= "nb columns by user :\n"
-        res ++= formatMap(users.size, nbColumnsByUser(users))
-        
-        res ++= "nb services by columns :\n"
-        res ++= formatMap(users.size, nbServiceByColumn(users))
-        
-        res ++= "nb services by user :\n"
-        res ++= formatMap(users.size, nbServiceByUser(users))
-        
-        res ++= "nb user actors actifs :\n"
-        res ++= "\t" + HelperUserInfosActor.getNbAccount + " avec " + HelperUserInfosActor.getNbActor + "\n"
-        res ++= "nb provider actor actifs : " + "\n"
-        res ++= "\t" + HelperProviderActor.getNbAccount + " avec " + HelperProviderActor.getNbActor + "\n"
-        
-        res ++= "nb channels actifs :\n"
-        res ++= "\t" + CmdToUser.getNbAccount + " avec " + CmdToUser.getNbChannels + "\n"
-        res ++= "\t" + CmdToUser.getNbOtherAccount + " autres accounts\n"
-          
-        Ok(res.toString)
+      createStatApp().map { stats =>
+        Ok(toReadStats(stats, false))
       }
     }
+  }
+  
+  def load(timestamp: String) = Action { implicit request =>
+    Async {
+      StatsAppDao.get(timestamp.toLong).map { _.map { stats =>
+        Ok(toReadStats(stats, true))
+      }.getOrElse(Ok("Ko"))}
+    }
+  }
+  
+  def all() = Action { implicit request =>
+    Async {
+      StatsAppDao.allTimestamp().map { l =>
+        val s = new StringBuilder
+        l.map { timestamp =>
+          s ++= DateTimeFormat.forPattern("dd-MMMM-yyyy HH:mm").print(new DateTime(timestamp))
+          s ++= " : "
+          s ++= routes.Stats.load(timestamp.toString).absoluteURL(false)
+          s ++= "\n"
+        }
+        Ok(s.toString)
+      }
+    }
+  }
+  
+  def createStatApp(): Future[models.StatsApp] = {
+    val today = new DateTime().withHourOfDay(0).withMillisOfDay(0)
+    
+    UserDao.findAll.map { users =>
+        
+        val list = ProviderDispatcher.listAll.map { provider =>
+          (provider.name -> nbUsersByProvider(users, provider.name))
+        }.sortBy(_._2).reverse
+          
+        models.StatsApp(
+            DateTime.now().getMillis(),
+            users.size,
+            nbUsersByDate(users, today),
+            list.map(s => models.StatsToken(s._1, s._2)),
+            nbAccountsByUser(users).toSeq.map(s => models.StatsX(s._1, s._2)),
+            nbColumnsByUser(users).toSeq.map(s => models.StatsX(s._1, s._2)),
+            nbServiceByUser(users).toSeq.map(s => models.StatsX(s._1, s._2)),
+            nbServiceByColumn(users).toSeq.map(s => models.StatsX(s._1, s._2)),
+            models.StatsX(HelperUserInfosActor.getNbAccount, HelperUserInfosActor.getNbActor),
+            models.StatsX(CmdToUser.getNbAccount, CmdToUser.getNbChannels),
+            models.StatsX(HelperProviderActor.getNbAccount, HelperProviderActor.getNbActor),
+            CmdToUser.getNbOtherAccount
+        )
+    }
+  }
+  
+  def toReadStats(stats: models.StatsApp, includePermaLink: Boolean): String = {
+    val res = new StringBuilder
+    res ++= """
+ _____ _    _           _             _____ _        _       
+/  ___| |  (_)         | |           /  ___| |      | |      
+\ `--.| | ___ _ __ ___ | |__   ___   \ `--.| |_ __ _| |_ ___ 
+ `--. \ |/ / | '_ ` _ \| '_ \ / _ \   `--. \ __/ _` | __/ __|
+/\__/ /   <| | | | | | | |_) | (_) | /\__/ / || (_| | |_\__ \
+\____/|_|\_\_|_| |_| |_|_.__/ \___/  \____/ \__\__,_|\__|___/
+                                                             
+                                                             
+"""
+    
+    res ++= "date = " + DateTimeFormat.forPattern("dd-MMMM-yyyy HH:mm").print(new DateTime(stats.timestamp)) + "\n\n"
+      
+    res ++= "nb users = " + stats.nbUsers + "\n\n"
+    
+    res ++= "nb connexions : " + stats.nbConnexion + "\n\n"
+    
+    res ++= "nb tokens :\n"
+    stats.nbToken.foreach { m =>
+      res ++= "\t" + m.providerName + " = " + m.nbToken + "\n"
+    }
+    res ++= "\n"
+    
+    res ++= "nb accounts by user :\n"
+    res ++= formatMap(stats.nbUsers, stats.nbAccounts)
+    
+    res ++= "nb columns by user :\n"
+    res ++= formatMap(stats.nbUsers, stats.nbColumns)
+    
+    res ++= "nb services by columns :\n"
+    res ++= formatMap(stats.nbUsers, stats.nbServicesByColumn)
+    
+    res ++= "nb services by user :\n"
+    res ++= formatMap(stats.nbUsers, stats.nbServices)
+    
+    res ++= "nb user actors actifs :\n"
+    res ++= "\t" + HelperUserInfosActor.getNbAccount + " avec " + HelperUserInfosActor.getNbActor + "\n"
+    res ++= "nb provider actor actifs : " + "\n"
+    res ++= "\t" + HelperProviderActor.getNbAccount + " avec " + HelperProviderActor.getNbActor + "\n"
+    
+    res ++= "nb channels actifs :\n"
+    res ++= "\t" + CmdToUser.getNbAccount + " avec " + CmdToUser.getNbChannels + "\n"
+    res ++= "\t" + CmdToUser.getNbOtherAccount + " autres accounts\n\n"
+    
+    if(includePermaLink) {
+      res ++= "Perma-link : " + routes.Stats.load(stats.timestamp.toString)
+    }
+    
+    res.toString
   }
   
   def nbUsersByDate(users: Seq[User], date: DateTime):Int = {
@@ -85,16 +147,16 @@ object Stats extends Controller {
     }.size
   }
   
-  def formatMap(nbUsers: Double, map : Map[Int, Int]) = {
+  def formatMap(nbUsers: Double, map : Seq[models.StatsX]) = {
     val res = new StringBuilder
-    map.toList.sortBy(_._1).foreach { m => 
-        res ++= "\t" + m._1 + " : " + m._2 + "\n"
+    map.sortBy(_.nbUser).foreach { m => 
+        res ++= "\t" + m.nbUser + " : " + m.nbX + "\n"
     }
     var nb = 0.0
     var coef = 0
-    map.toList.foreach(coef += _._2)
-    map.toList.foreach { v =>
-      nb += v._2 * v._1
+    map.foreach(coef += _.nbX)
+    map.foreach { v =>
+      nb += v.nbX * v.nbUser
     }
     val r = nb/coef
     res ++= "Average : " + r + "\n\n"

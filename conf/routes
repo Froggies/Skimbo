@@ -29,6 +29,8 @@ POST	/api/mobile/command/:id			controllers.Mobile.command(id: String)
 
 # Stats
 GET		/api/stats						controllers.api.Stats.get
+GET		/api/stats/all					controllers.api.Stats.all
+GET		/api/stats/:timestamp			controllers.api.Stats.load(timestamp: String)
 
 # Dev util
 GET		/api/dev/util/testRes/:service	controllers.dev.Util.testRes(service: String)

@@ -20,7 +20,7 @@ object DelayedPostPolling {
   }
   
   def run() = {
-    log.info("Run polling")
+    log.info("Run polling delayed post")
     DelayedPostDao.get(tempo).map( _.foreach { delayedPost =>
       delayedPost.providers.foreach { provider =>
         val post = delayedPost.post
