@@ -29,7 +29,7 @@ object SavedStatsAppPolling {
         }
       }
     }.getOrElse {
-      log.info("Save stats app")
+      log.info("Save first stats app")
       Stats.createStatApp().flatMap { newStats =>
         StatsAppDao.add(newStats)
       }
