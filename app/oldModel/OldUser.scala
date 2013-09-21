@@ -3,6 +3,7 @@ package oldModel
 import reactivemongo.bson.BSONDocument
 import services.dao.UtilBson
 import reactivemongo.bson.BSONDocumentReader
+import models.user.OptionUser
 
 case class OldUser(
   accounts: Seq[OldAccount],
@@ -28,7 +29,45 @@ object OldUser {
   }
   
   def toUser(oldUser: OldUser): models.User = {
-    models.User.create("")
+    
+    val accounts = oldUser.accounts.map { account =>
+      models.user.Account(account.id, account.lastUse)
+    }
+    
+    val distants = oldUser.distants.getOrElse(Seq.empty).map { distant =>
+      val token = distant.token.map { token =>
+        models.user.SkimboToken(
+          token.token,
+          token.secret
+        )
+      }
+      models.user.ProviderUser(
+          distant.id,
+          distant.socialType,
+          token
+      )
+    }
+    
+    val columns = oldUser.columns.getOrElse(Seq.empty).map { column =>
+      val ur = column.unifiedRequests.map( unifiedRequest =>
+          models.user.UnifiedRequest(unifiedRequest.service, unifiedRequest.args)
+      )
+      models.user.Column(
+          column.title,
+          ur,
+          column.index,
+          column.width,
+          column.height
+      )
+    }
+    
+    models.User(
+        OptionUser.create,
+        accounts,
+        distants,
+        columns,
+        Seq.empty
+    )
   }
   
 }

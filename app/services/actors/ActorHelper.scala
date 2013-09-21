@@ -11,7 +11,6 @@ import akka.actor.ActorRef
 import services.commands.CmdFromUser
 import models.command.Command
 import services.auth.GenericProvider
-import services.endpoints.JsonRequest.UnifiedRequest
 import parser.GenericParser
 import models.user.Column
 import play.api.Logger

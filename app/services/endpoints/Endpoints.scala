@@ -1,5 +1,6 @@
 package services.endpoints
 
+import models.user.UnifiedRequest
 import play.api.Logger
 import play.api.libs.json.JsValue
 import play.api.mvc.AnyContent
@@ -7,8 +8,6 @@ import play.api.mvc.Request
 import services.auth.GenericProvider
 import services.auth.RssProvider
 import services.auth.providers._
-import services.endpoints.JsonRequest.UnifiedRequest
-import services.endpoints.JsonRequest.unifiedRequestReader
 
 case class Endpoint(provider: GenericProvider, services: Seq[EndpointConfig])
 

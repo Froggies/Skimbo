@@ -10,6 +10,7 @@ import akka.actor.actorRef2Scala
 import models.Skimbo
 import models.command.Command
 import models.user.Column
+import models.user.UnifiedRequest
 import parser.GenericParser
 import play.api.Logger
 import play.api.UnexpectedException
@@ -23,7 +24,6 @@ import services.auth.GenericProvider
 import services.commands.CmdToUser
 import services.endpoints.EndpointConfig
 import services.endpoints.Endpoints
-import services.endpoints.JsonRequest.UnifiedRequest
 
 sealed case class ProviderActorParameter(
   provider: GenericProvider,
