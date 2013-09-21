@@ -44,9 +44,7 @@ object UserDao {
     val query = BSONDocument("accounts.id" -> idUser)
     val update = BSONDocument(
       "$set" -> BSONDocument(
-        "accounts.$" -> BSONDocument( 
-          "id" -> BSONString(idUser),
-          "lastUse" -> BSONDateTime(new Date().getTime()))))
+        "accounts.$.lastUse" -> BSONDateTime(new Date().getTime())))
     collection.update(query, update).andThen {
       case _ => {
         val update2 = 
@@ -135,7 +133,8 @@ object UserDao {
             } else {
               Seq(ProviderUser(
                 distantId.getOrElse(""),
-                provider.name, Some(token))) ++ user.get.distants
+                provider.name, 
+                Some(token))) ++ user.get.distants
             }
           models.User(user.get.options, user.get.accounts, providersUser, user.get.columns)
         } else {
