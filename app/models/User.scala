@@ -7,29 +7,37 @@ import play.api.libs.json.JsValue
 import play.api.libs.json.Json
 import play.api.libs.json.Json.toJsFieldJsValueWrapper
 import reactivemongo.bson.BSONDocument
-import services.dao.UtilBson
 import reactivemongo.bson.BSONDocumentReader
+import reactivemongo.bson.Producer.nameValue2Producer
+import services.dao.UtilBson
+import models.user.OptionUser
+import models.user.StatUser
 
 case class User(
+  options: OptionUser,
   accounts: Seq[models.user.Account],
-  distants: Option[Seq[ProviderUser]] = None,
-  columns: Option[Seq[Column]] = None)
+  distants: Seq[ProviderUser] = Seq.empty,
+  columns: Seq[Column] = Seq.empty,
+  stats: Seq[StatUser] = Seq.empty
+)
 
 object User {
 
   def create(id: String): User = {
-    User(Seq[models.user.Account](models.user.Account(id, new Date())))
+    User(OptionUser.create, Seq[models.user.Account](models.user.Account(id, new Date())))
   }
 
   def toJson(user: User): JsValue = {
     Json.obj(
+      "options" -> Json.toJson(user.options),
       "accounts" -> Json.toJson(user.accounts),
-      "distants" -> Json.toJson(user.distants.getOrElse(Seq.empty)),
-      "columns" -> Json.toJson(user.columns.getOrElse(Seq.empty)))
+      "distants" -> Json.toJson(user.distants),
+      "columns" -> Json.toJson(user.columns))
   }
 
   implicit object UserBSONReader extends BSONDocumentReader[User] {
     def read(document: BSONDocument): User = {
+      val optionUser = OptionUser.fromBSON(document.getAs[BSONDocument]("options").get)
       val accounts = UtilBson.tableTo[models.user.Account](document, "accounts", { a =>
         models.user.Account.fromBSON(a)
       })
@@ -39,7 +47,10 @@ object User {
       val columns = UtilBson.tableTo[Column](document, "columns", { c =>
         Column.fromBSON(c)
       })
-      User(accounts, Some(providers), Some(columns))
+      val stats = UtilBson.tableTo[StatUser](document, "stats", { c =>
+        StatUser.fromBSON(c)
+      })
+      User(optionUser, accounts, providers, columns, stats)
     }
   }
 
@@ -47,19 +58,21 @@ object User {
     val accounts = UtilBson.toArray[models.user.Account](user.accounts, { account =>
       models.user.Account.toBSON(account)
     })
-
-    val distants = UtilBson.toArray[ProviderUser](user.distants.getOrElse(Seq()), { distant =>
+    val distants = UtilBson.toArray[ProviderUser](user.distants, { distant =>
       ProviderUser.toBSON(distant)
     })
-
-    val columns = UtilBson.toArray[Column](user.columns.getOrElse(Seq()), { column =>
+    val columns = UtilBson.toArray[Column](user.columns, { column =>
       Column.toBSON(column)
     })
-
+    val stats = UtilBson.toArray[StatUser](user.stats, { stat =>
+      StatUser.toBSON(stat)
+    })
     BSONDocument(
+      "options" -> OptionUser.toBSON(user.options),
       "accounts" -> accounts,
       "distants" -> distants,
-      "columns" -> columns)
+      "columns" -> columns,
+      "stats" -> stats)
   }
 
 }
