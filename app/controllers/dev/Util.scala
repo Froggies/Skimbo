@@ -23,7 +23,7 @@ object Util extends Controller with Authentication {
     val idUser = request.session.get("id").get
     Async {
       Endpoints.getConfig(service).flatMap { config =>
-        Endpoints.genererUrl(service, Map.empty, None).map { url =>
+        Endpoints.genererUrl(service, Seq.empty, None).map { url =>
           config.provider.fetch(idUser, url).get.map { response =>
             Ok(config.provider.resultAsJson(response))
           }
@@ -36,7 +36,7 @@ object Util extends Controller with Authentication {
     val idUser = request.session.get("id").get
     Async {
       Endpoints.getConfig(service).flatMap { config =>
-        Endpoints.genererUrl(service, Map.empty, None).map { url =>
+        Endpoints.genererUrl(service, Seq.empty, None).map { url =>
           config.provider.fetch(idUser, url).get.map { response =>
             val res = config.parser.get.getSkimboMsg(response, config.provider)
             Ok(res.map(Json.toJson(_)).toString)
@@ -51,7 +51,7 @@ object Util extends Controller with Authentication {
     import scala.concurrent.ExecutionContext.Implicits.global
     Async {
       Endpoints.getConfig("facebook.notification").flatMap { config =>
-        Endpoints.genererUrl("facebook.notification", Map.empty, None).map { url =>
+        Endpoints.genererUrl("facebook.notification", Seq.empty, None).map { url =>
           config.provider.fetch(idUser, url).get.map { response =>
             Ok(config.provider.resultAsJson(response))
           }

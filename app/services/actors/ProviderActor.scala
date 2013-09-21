@@ -103,7 +103,7 @@ class ProviderActor(parameter:ProviderActorParameter) extends Actor {
 
   def receive = {
     case ReceiveTimeout => {
-      val url = Endpoints.genererUrl(unifiedRequest.service, unifiedRequest.args.getOrElse(Map.empty), sinceId);
+      val url = Endpoints.genererUrl(unifiedRequest.service, unifiedRequest.args, sinceId);
       Fetcher(FetcherParameter(
           provider, 
           parser, 

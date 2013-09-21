@@ -4,6 +4,8 @@ import reactivemongo.bson.BSONDocument
 import services.dao.UtilBson
 import reactivemongo.bson.BSONDocumentReader
 import models.user.OptionUser
+import models.user.ServiceArg
+import models.ParamHelper
 
 case class OldUser(
   accounts: Seq[OldAccount],
@@ -49,9 +51,12 @@ object OldUser {
     }
     
     val columns = oldUser.columns.getOrElse(Seq.empty).map { column =>
-      val ur = column.unifiedRequests.map( unifiedRequest =>
-          models.user.UnifiedRequest(unifiedRequest.service, unifiedRequest.args)
-      )
+      val ur = column.unifiedRequests.map{ unifiedRequest =>
+        val args = unifiedRequest.args.map( _.map { oldArg =>
+          ServiceArg(oldArg._1, ParamHelper(oldArg._2, oldArg._2, "", None))
+        }).getOrElse(Seq.empty).toSeq
+        models.user.UnifiedRequest(unifiedRequest.service, args, "")//TODO 2eme passe pour recoller les token !!
+      }
       models.user.Column(
           column.title,
           ur,

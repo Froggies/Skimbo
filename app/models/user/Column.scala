@@ -35,15 +35,12 @@ object Column {
     (__ \ "height").write[Int])(unlift(Column.unapply))
 
   def toBSON(column: Column) = {
-    val unifiedRequests: Seq[BSONDocument] = column.unifiedRequests.map { unifiedRequest =>
-      val args: Seq[(String, BSONString)] = unifiedRequest.args.getOrElse(Map.empty).mapValues(BSONString(_)).toSeq
-      BSONDocument(
-        "service" -> BSONString(unifiedRequest.service),
-        "args" -> BSONDocument(args))
-    }
+    val unifiedRequests = UtilBson.toArray[UnifiedRequest](column.unifiedRequests, { ur => 
+      UnifiedRequest.toBSON(ur)
+    })
     BSONDocument(
       "title" -> BSONString(column.title),
-      "unifiedRequests" -> BSONArray(unifiedRequests),
+      "unifiedRequests" -> unifiedRequests,
       "index" -> BSONInteger(column.index),
       "width" -> BSONInteger(column.width),
       "height" -> BSONInteger(column.height))
@@ -51,12 +48,14 @@ object Column {
 
   def fromBSON(c: BSONDocument) = {
     val unifiedRequests = UtilBson.tableTo[UnifiedRequest](c, "unifiedRequests", { r =>
-      val requestArgs = r.getAs[BSONDocument]("args").get
-      val args = requestArgs.elements.toList.map(n => (n._1, requestArgs.getAs[String](n._1).get)).toMap
-      UnifiedRequest(r.getAs[String]("service").get, if (args.nonEmpty) Some(args) else None)
+      UnifiedRequest.fromBSON(r)
     })
-    Column(c.getAs[String]("title").get, unifiedRequests,
-      c.getAs[Int]("index").get, c.getAs[Int]("width").get, c.getAs[Int]("height").get)
+    Column(
+        c.getAs[String]("title").get, 
+        unifiedRequests,
+        c.getAs[Int]("index").get, 
+        c.getAs[Int]("width").get, 
+        c.getAs[Int]("height").get)
   }
 
 }
