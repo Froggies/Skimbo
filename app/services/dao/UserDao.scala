@@ -16,6 +16,7 @@ import org.joda.time.DateTime
 import reactivemongo.bson.BSONDateTime
 import play.Logger
 import models.user.OptionUser
+import reactivemongo.bson.BSONString
 
 object UserDao {
 
@@ -43,7 +44,9 @@ object UserDao {
     val query = BSONDocument("accounts.id" -> idUser)
     val update = BSONDocument(
       "$set" -> BSONDocument(
-        "accounts.$" -> models.user.Account.toBSON(models.user.Account(idUser, new Date()))))
+        "accounts.$" -> BSONDocument( 
+          "id" -> BSONString(idUser),
+          "lastUse" -> BSONDateTime(new Date().getTime()))))
     collection.update(query, update).andThen {
       case _ => {
         val update2 = 
@@ -138,7 +141,7 @@ object UserDao {
         } else {
           models.User(
             OptionUser.create,
-            Seq(Account(idUser, new Date())),
+            Seq(Account.create(idUser)),
             Seq(ProviderUser(distantId.getOrElse(""), provider.name, Some(token))),
             Seq.empty,
             Seq.empty)

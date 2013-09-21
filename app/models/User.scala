@@ -1,8 +1,11 @@
 package models
 
 import java.util.Date
+
 import models.user.Column
+import models.user.OptionUser
 import models.user.ProviderUser
+import models.user.StatUser
 import play.api.libs.json.JsValue
 import play.api.libs.json.Json
 import play.api.libs.json.Json.toJsFieldJsValueWrapper
@@ -10,8 +13,6 @@ import reactivemongo.bson.BSONDocument
 import reactivemongo.bson.BSONDocumentReader
 import reactivemongo.bson.Producer.nameValue2Producer
 import services.dao.UtilBson
-import models.user.OptionUser
-import models.user.StatUser
 
 case class User(
   options: OptionUser,
@@ -24,7 +25,7 @@ case class User(
 object User {
 
   def create(id: String): User = {
-    User(OptionUser.create, Seq[models.user.Account](models.user.Account(id, new Date())))
+    User(OptionUser.create, Seq[models.user.Account](models.user.Account.create(id)))
   }
 
   def toJson(user: User): JsValue = {

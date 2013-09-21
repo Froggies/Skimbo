@@ -10,6 +10,7 @@ case class StatUser(
     provider: String,
     service: String,
     action: String,
+    idProvider: String,
     value: Int
 )
 
@@ -20,6 +21,7 @@ object StatUser {
     (__ \ "provider").read[String] and
     (__ \ "service").read[String] and
     (__ \ "action").read[String] and
+    (__ \ "idProvider").read[String] and
     (__ \ "value").read[Int])(StatUser.apply _)
 
   implicit val writer = (
@@ -27,6 +29,7 @@ object StatUser {
     (__ \ "provider").write[String] and
     (__ \ "service").write[String] and
     (__ \ "action").write[String] and
+    (__ \ "idProvider").write[String] and
     (__ \ "value").write[Int])(unlift(StatUser.unapply))
     
   def toBSON(statUser: StatUser) = {
@@ -35,6 +38,7 @@ object StatUser {
       "provider" -> BSONString(statUser.provider),
       "service" -> BSONString(statUser.service),
       "action" -> BSONString(statUser.action),
+      "idProvider" -> BSONString(statUser.idProvider),
       "value" -> BSONInteger(statUser.value))
   }
   
@@ -44,6 +48,7 @@ object StatUser {
         c.getAs[String]("provider").get,
         c.getAs[String]("service").get,
         c.getAs[String]("action").get,
+        c.getAs[String]("idProvider").get,
         c.getAs[Int]("value").get)
   }
   

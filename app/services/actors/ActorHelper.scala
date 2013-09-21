@@ -82,7 +82,7 @@ trait ActorHelper[P] {
         log.info(logName(p, "find user "))
         val alreadyRun = user.accounts.filter(account => found(account.id).isDefined)
         log.info(logName(p, "find account "))
-        val alreadyP = found(alreadyRun.headOption.getOrElse(Account("", new Date())).id)
+        val alreadyP = found(alreadyRun.headOption.getOrElse(Account.create("")).id)
         val isSame = alreadyP.getOrElse(List.empty).filter(o => same(p, o._2))
         if (!isSame.isEmpty) {
           val t = isSame.head

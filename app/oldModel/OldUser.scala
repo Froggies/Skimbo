@@ -31,7 +31,7 @@ object OldUser {
   def toUser(oldUser: OldUser): models.User = {
     
     val accounts = oldUser.accounts.map { account =>
-      models.user.Account(account.id, account.lastUse)
+      models.user.Account(account.id, account.lastUse, "", "Skimbo", Seq.empty)
     }
     
     val distants = oldUser.distants.getOrElse(Seq.empty).map { distant =>
