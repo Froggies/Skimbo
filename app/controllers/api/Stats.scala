@@ -141,9 +141,9 @@ object Stats extends Controller {
   
   def nbUsersByProvider(users: Seq[User], providerName: String):Int = {
     users.filter{ user =>
-      user.distants.map(_.exists { providerUser =>
+      user.distants.exists { providerUser =>
         providerUser.socialType == providerName
-      }).getOrElse(false)
+      }
     }.size
   }
   
@@ -165,8 +165,8 @@ object Stats extends Controller {
   def nbColumnsByUser(users: Seq[User]):Map[Int, Int] = {
     var map = Map.empty[Int, Int]
     users.foreach{ user =>
+      val size = user.columns.size
       user.columns.map { columns =>
-        val size = columns.size
         val value = map.get(size).getOrElse(0) + 1
         map += (size -> value)
       }
@@ -187,12 +187,10 @@ object Stats extends Controller {
   def nbServiceByColumn(users: Seq[User]):Map[Int, Int] = {
     var map = Map.empty[Int, Int]
     users.foreach{ user =>
-      user.columns.map { columns =>
-        columns.map { column =>
-          val size = column.unifiedRequests.size
-          val value = map.get(size).getOrElse(0) + 1
-          map += (size -> value)
-        }
+      user.columns.map { column =>
+        val size = column.unifiedRequests.size
+        val value = map.get(size).getOrElse(0) + 1
+        map += (size -> value)
       }
     }
     map
@@ -201,14 +199,12 @@ object Stats extends Controller {
   def nbServiceByUser(users: Seq[User]):Map[Int, Int] = {
     var map = Map.empty[Int, Int]
     users.foreach{ user =>
-      user.columns.map { columns =>
-        var size = 0
-        columns.map { column =>
-          size += column.unifiedRequests.size
-        }
-        val value = map.get(size).getOrElse(0) + 1
-        map += (size -> value)
+      var size = 0
+      user.columns.map { column =>
+        size += column.unifiedRequests.size
       }
+      val value = map.get(size).getOrElse(0) + 1
+      map += (size -> value)
     }
     map
   }

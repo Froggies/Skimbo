@@ -56,11 +56,11 @@ object CmdFromUser {
     cmd.name match {
       case "allColumns" => {
         UserDao.findOneById(internalIdUser).map(_.map { user =>
-          user.columns.map(columns =>
-            CmdToUser.sendTo(internalIdUser, Command(cmd.name, Some(Json.toJson(columns))))
-          ).getOrElse(
+          if(user.columns.isEmpty) {
             CmdToUser.sendTo(internalIdUser, Command(cmd.name, Some(Json.toJson(new JsArray))))
-          )
+          } else {
+            CmdToUser.sendTo(internalIdUser, Command(cmd.name, Some(Json.toJson(user.columns))))
+          }
         })
       }
       case "addColumn" => {
@@ -80,7 +80,7 @@ object CmdFromUser {
       case "modColumnsOrder" => {
         val columnsOrder = (cmd.body.get \ "columns").as[List[String]]
         UserDao.findOneById(internalIdUser).map(_.map { user =>
-          user.columns.map(_.map { column =>
+          user.columns.map { column =>
             Logger(CmdFromUser.getClass).info("Columns order "+column.title+" --> "+columnsOrder.indexOf(column.title))
             UserDao.updateColumn(
               internalIdUser,
@@ -91,7 +91,7 @@ object CmdFromUser {
                 columnsOrder.indexOf(column.title),
                 column.width,
                 column.height))
-          })
+          }
         })
       }
       case "delColumn" => {
@@ -105,7 +105,7 @@ object CmdFromUser {
         val columnWidth = (cmd.body.get \ "width").as[Int]
         val columnHeight = (cmd.body.get \ "height").as[Int]
         UserDao.findOneById(internalIdUser).map(_.map { user =>
-          user.columns.map(_.filter(_.title == columnTitle).map { column =>
+          user.columns.filter(_.title == columnTitle).map { column =>
             UserDao.updateColumn(
               internalIdUser,
               column.title,
@@ -115,7 +115,7 @@ object CmdFromUser {
                 column.index,
                 columnWidth,
                 columnHeight))
-          })
+          }
         })
       }
       case "allUnifiedRequests" => {

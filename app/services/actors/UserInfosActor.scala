@@ -49,10 +49,9 @@ object UserInfosActor {
 
   def restartProviderColumns(userId: String, provider: GenericProvider) = {
     UserDao.findOneById(userId).map(_.map { user =>
-      user.columns.map(
-        _.filter(
+      user.columns.filter(
           _.unifiedRequests.exists(
-            _.service.startsWith(provider.name))).foreach(startProfiderFor(userId, _)))
+            _.service.startsWith(provider.name))).foreach(startProfiderFor(userId, _))
     })
   }
 
@@ -102,9 +101,9 @@ class UserInfosActor(idUser: String) extends Actor {
                 CmdToUser.sendTo(idUser, Command("userInfos", Some(Json.toJson(providerUser))))
               }.getOrElse {
                 (provider.asInstanceOf[AuthProvider]).getUser(idUser).map { providerUser =>
-                  if (providerUser.isDefined && !user.distants.exists(
-                    _.exists(pu => pu.socialType == provider.name && pu.id == providerUser.get.id))) {
-                    self ! AddInfosUser(ProviderUser(providerUser.get.id, provider.name, None))
+                  if (providerUser.isDefined && !user.distants.exists( pu => 
+                    pu.socialType == provider.name && pu.id == providerUser.get.id)) {
+                      self ! AddInfosUser(ProviderUser(providerUser.get.id, provider.name, None))
                   }
                   if (providerUser.isDefined) {
                     Cache.set(user.accounts.head.id+provider.name, providerUser.get)
@@ -125,7 +124,7 @@ class UserInfosActor(idUser: String) extends Actor {
 
   def start(user: User) = {
     val providers = ProviderDispatcher.listAll.filter(_.hasToken(idUser))
-    if (user.columns.map(_.isEmpty).getOrElse(true)) {
+    if (user.columns.isEmpty) {
       val idUser = user.accounts.lastOption.map(_.id).getOrElse("")
       if (providers.isEmpty) {
         CmdFromUser.interpretCmd(idUser, Command("allColumns"))
@@ -133,7 +132,7 @@ class UserInfosActor(idUser: String) extends Actor {
         checkUserByIdProvider(providers)
       }
     } else {
-      user.columns.map(_.foreach(self ! StartProvider(idUser, _)))
+      user.columns.foreach(self ! StartProvider(idUser, _))
       providers.foreach(self ! RefreshInfosUser(idUser, _))
       CmdFromUser.interpretCmd(idUser, Command("allColumns"))
     }
@@ -147,7 +146,7 @@ class UserInfosActor(idUser: String) extends Actor {
             optUser.map { originalUser =>
               UserDao.merge(idUser, originalUser.accounts.head.id, {
                 CmdFromUser.interpretCmd(idUser, Command("allColumns"))
-                originalUser.columns.map(_.foreach(self ! StartProvider(idUser, _)))
+                originalUser.columns.foreach(self ! StartProvider(idUser, _))
                 ProviderDispatcher.listAll.filter(_.hasToken(idUser)).foreach(self ! RefreshInfosUser(idUser, _))
               })
             }.getOrElse {//provider id user not found in db

@@ -15,6 +15,7 @@ import services.auth.ProviderDispatcher
 import org.joda.time.DateTime
 import reactivemongo.bson.BSONDateTime
 import play.Logger
+import models.user.OptionUser
 
 object UserDao {
 
@@ -107,9 +108,8 @@ object UserDao {
     val query = BSONDocument("accounts.id" -> idUser)
     collection.find(query).cursor[models.User]
       .headOption().map( _.flatMap( 
-            _.distants.flatMap( 
-                _.filter( _.socialType == provider.name ).headOption.flatMap( 
-                    _.token ))))
+            _.distants.filter( _.socialType == provider.name ).headOption.flatMap( 
+                  _.token )))
   }
 
   def setToken(idUser: String, provider: GenericProvider, token: SkimboToken, distantId: Option[String] = None) = {
@@ -117,12 +117,12 @@ object UserDao {
     findOneById(idUser).flatMap { user =>
       val toUpdate =
         if (user.isDefined) {
-          val exist = user.get.distants.getOrElse(Seq[ProviderUser]()).exists {
+          val exist = user.get.distants.exists {
             _.socialType == provider.name
           }
           val providersUser =
             if (exist) {
-              user.get.distants.getOrElse(Seq[ProviderUser]()).map { distant =>
+              user.get.distants.map { distant =>
                 if (distant.socialType == provider.name) {
                   ProviderUser(distantId.getOrElse(distant.id), distant.socialType, Some(token))
                 } else {
@@ -132,14 +132,16 @@ object UserDao {
             } else {
               Seq(ProviderUser(
                 distantId.getOrElse(""),
-                provider.name, Some(token))) ++ user.get.distants.getOrElse(Seq[ProviderUser]())
+                provider.name, Some(token))) ++ user.get.distants
             }
-          models.User(user.get.accounts, Some(providersUser), user.get.columns)
+          models.User(user.get.options, user.get.accounts, providersUser, user.get.columns)
         } else {
           models.User(
+            OptionUser.create,
             Seq(Account(idUser, new Date())),
-            Some(Seq(ProviderUser(distantId.getOrElse(""), provider.name, Some(token)))),
-            None)
+            Seq(ProviderUser(distantId.getOrElse(""), provider.name, Some(token))),
+            Seq.empty,
+            Seq.empty)
         }
       collection.update(query, models.User.toBSON(toUpdate), upsert = true)
     }
@@ -155,10 +157,12 @@ object UserDao {
     findOneById(fromUserId).map(_.map { fromUser =>
       findOneById(toUserId).map(_.map { toUser =>
         if (fromUser.accounts.head.id != toUser.accounts.head.id) {
+          val options = OptionUser.merge(fromUser.options, toUser.options)
           val accounts = fromUser.accounts ++ toUser.accounts
-          val columns = fromUser.columns.getOrElse(Seq()) ++ toUser.columns.getOrElse(Seq())
-          val distants = fromUser.distants.getOrElse(Seq()).filter( _.id != "") ++ toUser.distants.getOrElse(Seq()).filter( _.id != "")
-          val newUser = models.User(accounts, Some(distants), Some(columns))
+          val columns = fromUser.columns ++ toUser.columns
+          val distants = fromUser.distants.filter( _.id != "") ++ toUser.distants.filter( _.id != "")
+          val stats = fromUser.stats ++ toUser.stats
+          val newUser = models.User(options, accounts, distants, columns, stats)
           val query = BSONDocument("accounts.id" -> toUserId)
           delete(fromUserId) onSuccess {
             case _ => collection.update(query, models.User.toBSON(newUser)) onSuccess {

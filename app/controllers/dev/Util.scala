@@ -123,9 +123,9 @@ object Util extends Controller with Authentication {
       ProviderDispatcher(providerName).map { provider =>
         UserDao.findAll().map { users =>
           val userWithProvider = users.filter { user =>
-            user.distants.map(_.exists { distant =>
+            user.distants.exists { distant =>
               distant.socialType == providerName
-            }).getOrElse(false)
+            }
           }
           userWithProvider.map { user =>
             UserDao.setToken(user.accounts.head.id, provider, SkimboToken("1"), None);
