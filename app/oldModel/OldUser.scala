@@ -52,7 +52,7 @@ object OldUser {
     
     val columns = oldUser.columns.getOrElse(Seq.empty).map { column =>
       val ur = column.unifiedRequests.map{ unifiedRequest =>
-        val args = unifiedRequest.args.map( _.map { oldArg =>
+        val args = unifiedRequest.args.map( _.filter(_._1 != "undefined").map { oldArg =>
           ServiceArg(oldArg._1, ParamHelper(oldArg._2, oldArg._2, "", None))
         }).getOrElse(Seq.empty).toSeq
         models.user.UnifiedRequest(unifiedRequest.service, args, "")//TODO 2eme passe pour recoller les token !!

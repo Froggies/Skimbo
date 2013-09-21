@@ -14,8 +14,8 @@ object UpdateController extends Controller {
   
   def updateUser() = Action {  implicit request =>
     
-    var addedUser = new ArrayList[OldUser]
-    var nonAddedUser = new ArrayList[OldUser]
+    var addedUser = 0
+    var nonAddedUser = 0
     var sizeAllUsers = 0
     
     val f = OldUserDao.findAll.map { allUsers =>
@@ -23,11 +23,11 @@ object UpdateController extends Controller {
       allUsers.map { oldUser =>
         val user = OldUser.toUser(oldUser)
         UserDao.delete(oldUser.accounts.head.id).onComplete {
-          case Failure(e) => nonAddedUser.add(oldUser)
+          case Failure(e) => nonAddedUser = nonAddedUser+1
           case Success(_) => {
             UserDao.add(user).onComplete {
-              case Failure(e) => nonAddedUser.add(oldUser)
-              case Success(_) => addedUser.add(oldUser)
+              case Failure(e) => nonAddedUser = nonAddedUser+1
+              case Success(_) => addedUser = addedUser+1
             }
           }
         }
@@ -38,18 +38,15 @@ object UpdateController extends Controller {
       f.map { n =>
         val sb = new StringBuilder
         sb ++= "Added : "
-        sb ++= addedUser.size.toString
+        sb ++= addedUser.toString
         sb ++= "/"
         sb ++= sizeAllUsers.toString
         sb ++= "\n\n"
         var i = 0;
-        if(!nonAddedUser.isEmpty) {
-          sb ++= "users :\n\n"
-        }
-        while(i < nonAddedUser.size) {
-          sb ++= nonAddedUser.get(i).accounts.head.id
-          sb ++= "\n"
-          i = i + 1
+        if(nonAddedUser > 0) {
+          sb ++= "non added users : "
+          sb ++= nonAddedUser.toString
+          sb ++= "\n\n"
         }
         Ok(sb.toString)
       }
