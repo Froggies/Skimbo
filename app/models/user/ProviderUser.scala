@@ -9,7 +9,6 @@ case class ProviderUser(
   id: String,
   socialType: String,
   token:Option[SkimboToken],
-  uid: Option[String] = None,
   username: Option[String] = None,
   name: Option[String] = None,
   description: Option[String] = None,
@@ -21,7 +20,6 @@ object ProviderUser {
 	  (__ \ "id").write[String] and
 	  (__ \ "socialType").write[String] and
 	  (__ \ "token").write[Option[SkimboToken]] and
-	  (__ \ "_id").write[Option[String]] and
 	  (__ \ "username").write[Option[String]] and
 	  (__ \ "name").write[Option[String]] and
 	  (__ \ "description").write[Option[String]] and
@@ -29,26 +27,17 @@ object ProviderUser {
 	)(unlift(ProviderUser.unapply))
 	
   def toBSON(distant: ProviderUser) = {
-    if(distant.uid.isDefined) {
-      BSONDocument(
-        "_id" -> BSONObjectID(distant.uid.get),
-        "id" -> BSONString(distant.id),
-        "social" -> BSONString(distant.socialType),
-        "token" -> SkimboToken.toBSON(distant.token.getOrElse(SkimboToken(""))))
-    } else {
-      BSONDocument(
-        "id" -> BSONString(distant.id),
-        "social" -> BSONString(distant.socialType),
-        "token" -> SkimboToken.toBSON(distant.token.getOrElse(SkimboToken(""))))
-    }
+    BSONDocument(
+      "id" -> BSONString(distant.id),
+      "social" -> BSONString(distant.socialType),
+      "token" -> SkimboToken.toBSON(distant.token.getOrElse(SkimboToken(""))))
   }
   
   def fromBSON(d: BSONDocument) = {
     ProviderUser(
       d.getAs[String]("id").get,
       d.getAs[String]("social").get,
-      SkimboToken.fromBSON(d.getAs[BSONDocument]("token").get),
-      d.getAs[String]("_id")
+      SkimboToken.fromBSON(d.getAs[BSONDocument]("token").get)
     )
   }
   

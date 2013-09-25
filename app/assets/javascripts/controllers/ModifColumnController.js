@@ -93,6 +93,9 @@ app.controller('ModifColumnController', [
     $scope.selectOracle = function(arg, value) {
       arg.possibleValues = [];
       arg.value = value.call;
+      arg.display = value.display;
+      arg.avatarUrl = value.avatarUrl;
+      arg.description = value.description;
     }
 
     $scope.close = function() {
@@ -212,7 +215,7 @@ app.controller('ModifColumnController', [
       for (var i = 0; i < column.unifiedRequests.length; i++) {
         for (var j = 0; j < column.unifiedRequests[i].args.length; j++) {
           column.unifiedRequests[i].args[j].value = column.unifiedRequests[i].args[j].value.replace(cleanRegex, '');
-          if (column.unifiedRequests[i].args[j].value == "") {
+          if (column.unifiedRequests[i].args[j].value == undefined || column.unifiedRequests[i].args[j].value == "") {
             return true;
           }
         };
