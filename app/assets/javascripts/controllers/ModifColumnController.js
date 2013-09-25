@@ -123,38 +123,7 @@ app.controller('ModifColumnController', [
     }
 
     $scope.validate = function() {
-      var json = "";
-      var unifiedRequests = [];
       var column = $scope.column;
-      for (var i = 0; i < column.unifiedRequests.length; i++) {
-        unifiedRequests.push($unifiedRequestUtils.clientToServerUnifiedRequest(column.unifiedRequests[i]));
-      };
-      if(column.newColumn == false) {
-        json = {
-          "cmd": "modColumn", 
-          "body": {
-            "title": column.oldTitle, 
-            "column": {
-              "title": column.title,
-              "unifiedRequests": unifiedRequests,
-              "index": column.index,
-              "width": column.width,
-              "height": column.height
-            }
-          }
-        };
-      } else {
-        json = {
-          "cmd": "addColumn", 
-          "body": {
-            "title": column.title,
-            "unifiedRequests": unifiedRequests,
-            "index": $scope.columnsTitle.length,
-            "width": -1,
-            "height": -1
-          }
-        };
-      }
 
       $scope.showErrorBlankArg = checkErrorEmptyArg(column);
       $scope.showErrorDoubleParser = checkErrorDoubleParser(column);
@@ -165,6 +134,40 @@ app.controller('ModifColumnController', [
           $scope.showErrorDoubleParser == false &&
           $scope.showErrorTitleRequired == false &&
           $scope.showErrorTitleAlreadyExist == false) {
+
+        var json;
+        var unifiedRequests = [];
+        for (var i = 0; i < column.unifiedRequests.length; i++) {
+          unifiedRequests.push($unifiedRequestUtils.clientToServerUnifiedRequest(column.unifiedRequests[i]));
+        };
+
+        if(column.newColumn == false) {
+          json = {
+            "cmd": "modColumn", 
+            "body": {
+              "title": column.oldTitle, 
+              "column": {
+                "title": column.title,
+                "unifiedRequests": unifiedRequests,
+                "index": column.index,
+                "width": column.width,
+                "height": column.height
+              }
+            }
+          };
+        } else {
+          json = {
+            "cmd": "addColumn", 
+            "body": {
+              "title": column.title,
+              "unifiedRequests": unifiedRequests,
+              "index": $scope.columnsTitle.length,
+              "width": -1,
+              "height": -1
+            }
+          };
+        }
+
         $scope.close();
         $network.send(json);
       }
@@ -214,6 +217,10 @@ app.controller('ModifColumnController', [
     function checkErrorEmptyArg(column) {
       for (var i = 0; i < column.unifiedRequests.length; i++) {
         for (var j = 0; j < column.unifiedRequests[i].args.length; j++) {
+          if(column.unifiedRequests[i].args[j].value === "" && column.unifiedRequests[i].args[j].display !== "") {
+            //when service haven't oracle (twitter hashtag, rss...)
+            column.unifiedRequests[i].args[j].value = column.unifiedRequests[i].args[j].display;
+          }
           column.unifiedRequests[i].args[j].value = column.unifiedRequests[i].args[j].value.replace(cleanRegex, '');
           if (column.unifiedRequests[i].args[j].value == undefined || column.unifiedRequests[i].args[j].value == "") {
             return true;

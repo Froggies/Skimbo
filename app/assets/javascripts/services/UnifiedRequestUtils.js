@@ -36,7 +36,13 @@ app.factory("UnifiedRequestUtils", function() {
       clientUnifiedRequest.args = []
       for (var index in unifiedRequest.args) {
         var key = unifiedRequest.args[index];
-        clientUnifiedRequest.args.push({"key":key,"value":{}});
+        clientUnifiedRequest.args.push({
+          "key": key,
+          "value": "",
+          "display": "",
+          "avatarUrl": "",
+          "description": ""
+        });
       };
       clientUnifiedRequest.hasArguments = clientUnifiedRequest.args.length > 0;
       return clientUnifiedRequest;

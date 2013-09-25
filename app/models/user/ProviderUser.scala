@@ -16,15 +16,15 @@ case class ProviderUser(
 
 object ProviderUser {
   
-  implicit val writer = (
-	  (__ \ "id").write[String] and
-	  (__ \ "socialType").write[String] and
-	  (__ \ "token").write[Option[SkimboToken]] and
-	  (__ \ "username").write[Option[String]] and
-	  (__ \ "name").write[Option[String]] and
-	  (__ \ "description").write[Option[String]] and
-	  (__ \ "avatar").write[Option[String]]
-	)(unlift(ProviderUser.unapply))
+	implicit val writer = (
+    (__ \ "id").write[String] and
+    (__ \ "socialType").write[String] and
+    (__ \ "token").write[Option[SkimboToken]] and
+    (__ \ "username").write[Option[String]] and
+    (__ \ "name").write[Option[String]] and
+    (__ \ "description").write[Option[String]] and
+    (__ \ "avatar").write[Option[String]]
+  )(unlift(ProviderUser.unapply))
 	
   def toBSON(distant: ProviderUser) = {
     BSONDocument(
