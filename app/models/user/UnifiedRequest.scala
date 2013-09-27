@@ -4,26 +4,35 @@ import play.api.libs.json._
 import play.api.libs.functional.syntax._
 import reactivemongo.bson._
 import services.dao.UtilBson
+import parser.json.PathDefaultReads
 
 case class UnifiedRequest(
     service: String,
     args: Seq[ServiceArg],
-    uidProviderUser: String
+    uidProviderUser: String,
+    sinceId: Option[String]
 )
 
 object UnifiedRequest {
 
-  implicit val unifiedRequestReader: Reads[UnifiedRequest] = (
-    (__ \ "service").read[String] and
-    (__ \ "args").read[Seq[ServiceArg]] and
-    (__ \ "uidProviderUser").read[String])(UnifiedRequest.apply _)
-        
+  implicit val unifiedRequestReader: Reads[UnifiedRequest] = new Reads[UnifiedRequest] {
+    def reads(js: JsValue): JsSuccess[UnifiedRequest] = {
+      JsSuccess(UnifiedRequest(
+        (js \ "service").as[String],
+        (js \ "args").as[Seq[ServiceArg]],
+        (js \ "uidProviderUser").as[String],
+        None
+      ))
+    }
+  }
+
   implicit val writes = new Writes[UnifiedRequest] {
     def writes(unifiedRequest: UnifiedRequest): JsValue = {
       Json.obj(
         "service" -> unifiedRequest.service,
         "args" -> unifiedRequest.args,
-        "uidProviderUser" -> unifiedRequest.uidProviderUser
+        "uidProviderUser" -> unifiedRequest.uidProviderUser,
+        "sinceId" -> unifiedRequest.sinceId
       )
     }
   }
@@ -35,7 +44,8 @@ object UnifiedRequest {
     BSONDocument(
       "service" -> BSONString(unifiedRequest.service),
       "args" -> args,
-      "uidProviderUser" -> BSONString(unifiedRequest.uidProviderUser)
+      "uidProviderUser" -> BSONString(unifiedRequest.uidProviderUser),
+      "sinceId" -> unifiedRequest.sinceId
     )
   }
 
@@ -46,7 +56,9 @@ object UnifiedRequest {
     UnifiedRequest(
         c.getAs[String]("service").get, 
         args,
-        c.getAs[String]("uidProviderUser").get)
+        c.getAs[String]("uidProviderUser").get,
+        c.getAs[String]("sinceId")
+    )
   }
   
 }

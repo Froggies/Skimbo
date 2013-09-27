@@ -17,6 +17,7 @@ import reactivemongo.bson.BSONDateTime
 import play.Logger
 import models.user.OptionUser
 import reactivemongo.bson.BSONString
+import models.user.UnifiedRequest
 
 object UserDao {
 
@@ -53,8 +54,16 @@ object UserDao {
               BSONDocument("lastUse" ->
                 BSONDocument("$lt" -> BSONDateTime(DateTime.now().minusDays(30).toDate().getTime())))))
         collection.update(query, update2)
-      }
-    }
+  }}}
+  
+  def updateSinceId(idUser: String, uidProviderUser: String, sinceId: String) = {
+    val query = BSONDocument(
+        "accounts.id" -> idUser, 
+        "columns.unifiedRequests.uidProviderUser" -> uidProviderUser)
+    val update = BSONDocument(
+        "$set" -> BSONDocument(
+            "columns.unifiedRequests.sinceId" -> sinceId))
+    collection.update(query, update)
   }
 
   def addAccount(idUser: String, account: models.user.Account) = {

@@ -33,7 +33,7 @@ object OldUser {
   def toUser(oldUser: OldUser): models.User = {
     
     val accounts = oldUser.accounts.map { account =>
-      models.user.Account(account.id, account.lastUse, "", "Skimbo", Seq.empty)
+      models.user.Account(account.id, account.lastUse, "", "Skimbo")
     }
     
     val distants = oldUser.distants.getOrElse(Seq.empty).map { distant =>
@@ -55,7 +55,8 @@ object OldUser {
         val args = unifiedRequest.args.map( _.filter(_._1 != "undefined").map { oldArg =>
           ServiceArg(oldArg._1, ParamHelper(oldArg._2, oldArg._2, "", None))
         }).getOrElse(Seq.empty).toSeq
-        models.user.UnifiedRequest(unifiedRequest.service, args, "")//TODO 2eme passe pour recoller les token !!
+        val uidProviderUser = oldUser.distants.map(_.filter(opu => unifiedRequest.service.startsWith(opu.socialType)).headOption.map(_.id).getOrElse("No found")).get
+        models.user.UnifiedRequest(unifiedRequest.service, args, uidProviderUser, None)
       }
       models.user.Column(
           column.title,
