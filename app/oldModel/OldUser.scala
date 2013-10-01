@@ -55,9 +55,11 @@ object OldUser {
         val args = unifiedRequest.args.map( _.filter(_._1 != "undefined").map { oldArg =>
           ServiceArg(oldArg._1, ParamHelper(oldArg._2, oldArg._2, "", None))
         }).getOrElse(Seq.empty).toSeq
-        val uidProviderUser = oldUser.distants.map(_.filter(opu => unifiedRequest.service.startsWith(opu.socialType)).headOption.map(_.id).getOrElse("No found")).get
-        models.user.UnifiedRequest(unifiedRequest.service, args, uidProviderUser, None)
-      }
+        val uidProviderUser = oldUser.distants.map(_.filter(opu => unifiedRequest.service.startsWith(opu.socialType)).headOption.map(_.id)).get
+        uidProviderUser.map{ uidP =>
+            models.user.UnifiedRequest(unifiedRequest.service, args, uidP, None)
+        }
+      }.filter(_.isDefined).map(_.get)
       models.user.Column(
           column.title,
           ur,
