@@ -18,6 +18,7 @@ import play.Logger
 import models.user.OptionUser
 import reactivemongo.bson.BSONString
 import models.user.UnifiedRequest
+import models.user.SinceId
 
 object UserDao {
 
@@ -56,14 +57,16 @@ object UserDao {
         collection.update(query, update2)
   }}}
   
-  def updateSinceId(idUser: String, uidProviderUser: String, sinceId: String) = {
-    val query = BSONDocument(
-        "accounts.id" -> idUser, 
-        "columns.unifiedRequests.uidProviderUser" -> uidProviderUser)
-    val update = BSONDocument(
-        "$set" -> BSONDocument(
-            "columns.unifiedRequests.sinceId" -> sinceId))
-    collection.update(query, update)
+  def updateSinceId(idUser: String, uidProviderUser: String, sinceId: SinceId) = {
+    //TODO find a way
+//    val query = BSONDocument(
+//        "accounts.id" -> idUser, 
+//        "columns.unifiedRequests.uidProviderUser" -> uidProviderUser,
+//        "columns.unifiedRequests.sinceId.accountId" -> idUser)
+//    val update = BSONDocument(
+//        "$set" -> 
+//            BSONDocument("columns.unifiedRequests.sinceId" -> SinceId.toBSON(sinceId)))
+//    collection.update(query, update, upsert=true)
   }
 
   def addAccount(idUser: String, account: models.user.Account) = {

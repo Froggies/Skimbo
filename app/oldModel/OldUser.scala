@@ -57,7 +57,7 @@ object OldUser {
         }).getOrElse(Seq.empty).toSeq
         val uidProviderUser = oldUser.distants.map(_.filter(opu => unifiedRequest.service.startsWith(opu.socialType)).headOption.map(_.id)).get
         uidProviderUser.map{ uidP =>
-            models.user.UnifiedRequest(unifiedRequest.service, args, uidP, None)
+            models.user.UnifiedRequest(unifiedRequest.service, args, uidP, Seq.empty)
         }
       }.filter(_.isDefined).map(_.get)
       models.user.Column(

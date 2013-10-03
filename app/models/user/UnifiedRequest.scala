@@ -10,7 +10,7 @@ case class UnifiedRequest(
     service: String,
     args: Seq[ServiceArg],
     uidProviderUser: String,
-    sinceId: Option[String]
+    sinceId: Seq[SinceId]
 )
 
 object UnifiedRequest {
@@ -21,7 +21,7 @@ object UnifiedRequest {
         (js \ "service").as[String],
         (js \ "args").as[Seq[ServiceArg]],
         (js \ "uidProviderUser").as[String],
-        None
+        Seq.empty
       ))
     }
   }
@@ -41,11 +41,14 @@ object UnifiedRequest {
     val args = UtilBson.toArray[ServiceArg](unifiedRequest.args, { arg =>
       ServiceArg.toBSON(arg)
     })
+    val sinceId = UtilBson.toArray[SinceId](unifiedRequest.sinceId, { sinceId =>
+      SinceId.toBSON(sinceId)
+    })
     BSONDocument(
       "service" -> BSONString(unifiedRequest.service),
       "args" -> args,
       "uidProviderUser" -> BSONString(unifiedRequest.uidProviderUser),
-      "sinceId" -> unifiedRequest.sinceId
+      "sinceId" -> sinceId
     )
   }
 
@@ -53,11 +56,14 @@ object UnifiedRequest {
     val args = UtilBson.tableTo[ServiceArg](c, "args", { r =>
       ServiceArg.fromBSON(r)
     })
+    val sinceId = UtilBson.tableTo[SinceId](c, "sinceId", { r =>
+      SinceId.fromBSON(r)
+    })
     UnifiedRequest(
         c.getAs[String]("service").get, 
         args,
         c.getAs[String]("uidProviderUser").get,
-        c.getAs[String]("sinceId")
+        sinceId
     )
   }
   
