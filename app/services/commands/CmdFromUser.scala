@@ -1,21 +1,14 @@
 package services.commands
 
 import java.net.URLEncoder
-
 import scala.util.Failure
 import scala.util.Success
-
 import org.apache.commons.mail.DefaultAuthenticator
 import org.apache.commons.mail.SimpleEmail
-
 import models.Comment
 import models.Post
 import models.Service
-import models.command.Command
-import models.command.DelayedPost
-import models.command.Error
-import models.command.ErrorType
-import models.command.PostDelayedProvider
+import models.command._
 import models.user.Column
 import models.user.Column.reader
 import models.user.Column.writer
@@ -23,23 +16,17 @@ import play.api.Logger
 import play.api.Play.current
 import play.api.http.Status
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
-import play.api.libs.json.JsArray
-import play.api.libs.json.JsObject
-import play.api.libs.json.JsValue
-import play.api.libs.json.Json
+import play.api.libs.json._
 import play.api.libs.json.Json.toJsFieldJsValueWrapper
 import play.api.mvc.RequestHeader
-import services.actors.Fetcher
-import services.actors.FetcherParameter
-import services.actors.PingActor
-import services.actors.ProviderActor
-import services.actors.UserInfosActor
+import services.actors._
 import services.auth.ProviderDispatcher
 import services.comment.Commenters
 import services.dao.DelayedPostDao
 import services.dao.UserDao
 import services.endpoints.Endpoints
 import services.post.Posters
+import models.user.SinceId
 
 object CmdFromUser {
 
@@ -285,6 +272,12 @@ object CmdFromUser {
           }
         }
 
+      }
+      case "updateSinceId" => {
+        val columnTitle = (cmd.body.get \ "columnTitle").as[String]
+        val uidProviderUser = (cmd.body.get \ "uidProviderUser").as[String]
+        val sinceId = SinceId((cmd.body.get \ "sinceId").as[String], idUser)
+        UserDao.updateSinceId(idUser, columnTitle, uidProviderUser, sinceId)
       }
       case _ => {
         Logger(CmdFromUser.getClass).error("Command not found " + cmd)
