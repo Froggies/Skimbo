@@ -57,16 +57,21 @@ object UserDao {
         collection.update(query, update2)
   }}}
   
-  def updateSinceId(idUser: String, uidProviderUser: String, sinceId: SinceId) = {
-    //TODO find a way
-//    val query = BSONDocument(
-//        "accounts.id" -> idUser, 
-//        "columns.unifiedRequests.uidProviderUser" -> uidProviderUser,
-//        "columns.unifiedRequests.sinceId.accountId" -> idUser)
-//    val update = BSONDocument(
-//        "$set" -> 
-//            BSONDocument("columns.unifiedRequests.sinceId" -> SinceId.toBSON(sinceId)))
-//    collection.update(query, update, upsert=true)
+  def updateSinceId(idUser: String, columnTitle: String, uidProviderUser: String, sinceId: SinceId) = {
+//    TODO find a better way
+    val query = BSONDocument(
+        "accounts.id" -> idUser, 
+        "columns.title" -> columnTitle,
+        "columns.unifiedRequests.uidProviderUser" -> uidProviderUser)
+    collection.find(query).cursor[models.User].headOption.map(_.map {user =>
+      val column = user.columns.filter(_.title == columnTitle).head
+      val unifiedRequest = column.unifiedRequests.filter(_.uidProviderUser == uidProviderUser).head
+      val newUnifiedRequest = UnifiedRequest.merge(unifiedRequest, sinceId)
+      val update = BSONDocument(
+          "$set" -> BSONDocument(
+              "columns.$.unifiedRequests" -> UnifiedRequest.toBSON(newUnifiedRequest)))
+      collection.update(query, update)
+    })
   }
 
   def addAccount(idUser: String, account: models.user.Account) = {

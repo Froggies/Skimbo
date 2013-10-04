@@ -15,6 +15,25 @@ case class UnifiedRequest(
 
 object UnifiedRequest {
 
+  def merge(unifiedRequest:UnifiedRequest, sinceId: SinceId): UnifiedRequest =  {
+    val optSinceId = unifiedRequest.sinceId.filter(_.accountId == sinceId.accountId).headOption
+    optSinceId.map { s => 
+      UnifiedRequest(
+          unifiedRequest.service,
+          unifiedRequest.args,
+          unifiedRequest.uidProviderUser,
+          unifiedRequest.sinceId.filterNot(_.accountId == sinceId.accountId) ++ Seq(sinceId)
+      )
+    }.getOrElse {
+      UnifiedRequest(
+          unifiedRequest.service,
+          unifiedRequest.args,
+          unifiedRequest.uidProviderUser,
+          unifiedRequest.sinceId ++ Seq(sinceId)
+      )
+    }
+  }
+  
   implicit val unifiedRequestReader: Reads[UnifiedRequest] = new Reads[UnifiedRequest] {
     def reads(js: JsValue): JsSuccess[UnifiedRequest] = {
       JsSuccess(UnifiedRequest(
