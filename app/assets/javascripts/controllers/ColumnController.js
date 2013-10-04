@@ -213,6 +213,7 @@ app.controller('ColumnController', [
     function addMsg(msg, columnName) {
       var column = getColumnByName(columnName);
       column.messages = column.messages || [];
+      msg.column = columnName;
       if(column.isTemp !== true) {
         $arrayUtils.sortMsg(column.messages, msg);
       } else {

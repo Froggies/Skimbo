@@ -2,8 +2,8 @@
 
 define(["app"], function(app) {
 
-  app.directive("scrollmanager", ["$timeout", "$rootScope", "Visibility", "ArrayUtils",
-    function($timeout, $rootScope, $visibility, $arrayUtils) {
+  app.directive("scrollmanager", ["$timeout", "$rootScope", "Visibility", "ArrayUtils", "Network",
+    function($timeout, $rootScope, $visibility, $arrayUtils, $network) {
     
     var userScroll = false;
 
@@ -13,7 +13,7 @@ define(["app"], function(app) {
       restrict: 'A',
       link: function(scope, elmt, attrs)  {
         var element = elmt[0];
-        var timeout = undefined;
+        var timeout = undefined, timeoutUpdateSinceId = undefined;
         if(attrs["scrollmanager"] === "onlyTop") {
           var scroller = angular.element(element);
           var unwatch = scope.$watch(attrs["scrolldata"], function(newValue, oldValue) {
@@ -39,6 +39,21 @@ define(["app"], function(app) {
                         object.isView = true;
                         $visibility.notifyMessageRead();
                         scope.$apply();
+                        if(timeoutUpdateSinceId != undefined) {
+                          $timeout.cancel(timeoutUpdateSinceId);
+                        }
+                        timeoutUpdateSinceId = $timeout(function() {
+                          console.log(object);
+                          $network.send({
+                            cmd: "updateSinceId",
+                            body: {
+                              columnTitle: object.column,
+                              uidProviderUser: "TODO!!!",//object.uidProviderUser,
+                              sinceId: object.sinceId
+                            }
+                          });
+                          timeoutUpdateSinceId = undefined;
+                        }, 3000);
                       } else {
                         //when object post is above scroll we stop
                         //why the fuck insert array isn't ordered ?????????
@@ -61,7 +76,6 @@ define(["app"], function(app) {
                 var referer = scope[attrs["scrolldata"]].title;
                 object.refElement = element;
                 scrollObjects[referer] = scrollObjects[referer] || [];
-                object.isView = false;
                 userScroll = false;
                 scroller[0].scrollTop += element.clientHeight;
                 if(timeout != undefined) {
