@@ -34,13 +34,17 @@ object Column {
     (__ \ "width").write[Int] and
     (__ \ "height").write[Int])(unlift(Column.unapply))
 
-  def toBSON(column: Column) = {
-    val unifiedRequests = UtilBson.toArray[UnifiedRequest](column.unifiedRequests, { ur => 
+  def toUnifiedRequestsBSON(unifiedRequests: Seq[UnifiedRequest]): BSONArray = {
+    UtilBson.toArray[UnifiedRequest](unifiedRequests, { ur => 
       UnifiedRequest.toBSON(ur)
     })
+  }
+    
+  def toBSON(column: Column) = {
+    
     BSONDocument(
       "title" -> BSONString(column.title),
-      "unifiedRequests" -> unifiedRequests,
+      "unifiedRequests" -> toUnifiedRequestsBSON(column.unifiedRequests),
       "index" -> BSONInteger(column.index),
       "width" -> BSONInteger(column.width),
       "height" -> BSONInteger(column.height))

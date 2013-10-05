@@ -278,7 +278,11 @@ object CmdFromUser {
         val uidProviderUser = (cmd.body.get \ "uidProviderUser").as[String]
         val sinceId = SinceId((cmd.body.get \ "sinceId").as[String], idUser)
         Logger(CmdFromUser.getClass).info(Json.prettyPrint(cmd.body.get))
-        UserDao.updateSinceId(idUser, columnTitle, uidProviderUser, sinceId)
+        UserDao.updateSinceId(idUser, columnTitle, uidProviderUser, sinceId).andThen {
+          case _ => UserDao.findOneById(idUser).map { user =>
+            Logger(CmdFromUser.getClass).info("update ok or ko : "+user)
+          }
+        }
       }
       case _ => {
         Logger(CmdFromUser.getClass).error("Command not found " + cmd)

@@ -76,13 +76,12 @@ object UserDao {
       Logger(UserDao.getClass).info("(l.73) unifiedRequest : "+unifiedRequest)
       val newUnifiedRequest = UnifiedRequest.merge(unifiedRequest, sinceId)
       Logger(UserDao.getClass).info("(l.75) newUnifiedR : "+newUnifiedRequest)
+      val allUnifiedRequest = column.unifiedRequests.filterNot(_.uidProviderUser == uidProviderUser) ++ Seq(newUnifiedRequest)
+      val arrayUnifiedRequest = Column.toUnifiedRequestsBSON(allUnifiedRequest)
       val update = BSONDocument(
           "$set" -> BSONDocument(
-              "columns.$.unifiedRequests" -> UnifiedRequest.toBSON(newUnifiedRequest)))
-      collection.update(query, update).onComplete {
-        case Failure(e) => Logger(UserDao.getClass).info(e.getMessage())
-        case Success(_) => Logger(UserDao.getClass).info("sinceId updated !!!")
-      }
+              "columns.$.unifiedRequests" -> arrayUnifiedRequest))
+      collection.update(query, update)
     })
   }
 
