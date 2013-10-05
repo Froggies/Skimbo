@@ -9,6 +9,24 @@ define(["app"], function(app) {
 
     var scrollObjects = {};
 
+    function updateSinceId(timeoutUpdateSinceId, msg) {
+      if(timeoutUpdateSinceId != undefined) {
+        $timeout.cancel(timeoutUpdateSinceId);
+      }
+      timeoutUpdateSinceId = $timeout(function() {
+        console.log(msg);
+        $network.send({
+          cmd: "updateSinceId",
+          body: {
+            columnTitle: msg.column,
+            uidProviderUser: "1492516",//msg.uidProviderUser,
+            sinceId: msg.sinceId
+          }
+        });
+        timeoutUpdateSinceId = undefined;
+      }, 3000);
+    }
+
     return {
       restrict: 'A',
       link: function(scope, elmt, attrs)  {
@@ -23,6 +41,7 @@ define(["app"], function(app) {
                 if(angular.equals(column.title, data)) {
                   userScroll = false;
                   scroller[0].scrollTop = 0;
+                  updateSinceId(timeoutUpdateSinceId, scrollObjects[data][0]);
                   $timeout(function() {
                     userScroll = true;
                   }, 100);
@@ -32,28 +51,14 @@ define(["app"], function(app) {
                 if(scrollObjects[data] && userScroll == true) {
                   for (var i = 0; i < scrollObjects[data].length; i++) {
                     var object = scrollObjects[data][i];
-                    if(object.isView == false) {
+                    if(object.isView === false) {
                       var pos = object.refElement.offsetTop - scroller[0].offsetTop;
                       if(evt.target.scrollTop <= pos) {
                         scrollObjects[data].splice(i, 1);
                         object.isView = true;
                         $visibility.notifyMessageRead();
                         scope.$apply();
-                        if(timeoutUpdateSinceId != undefined) {
-                          $timeout.cancel(timeoutUpdateSinceId);
-                        }
-                        timeoutUpdateSinceId = $timeout(function() {
-                          console.log(object);
-                          $network.send({
-                            cmd: "updateSinceId",
-                            body: {
-                              columnTitle: object.column,
-                              uidProviderUser: "TODO!!!",//object.uidProviderUser,
-                              sinceId: object.sinceId
-                            }
-                          });
-                          timeoutUpdateSinceId = undefined;
-                        }, 3000);
+                        updateSinceId(timeoutUpdateSinceId, object);
                       } else {
                         //when object post is above scroll we stop
                         //why the fuck insert array isn't ordered ?????????

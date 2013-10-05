@@ -65,6 +65,7 @@ app.controller('ColumnController', [
       $columnSize.setSize([column]);
       $columnSize.buildSizeCompo([column]);
       $scope.columns[index] = column;
+      oldColumn.messages = oldColumn.messages || [];//on add column !! Why ??
       for (var i = 0; i < oldColumn.messages.length; i++) {
         addMsg(oldColumn.messages[i], column.title);
       };

@@ -64,7 +64,7 @@ app.factory("UnifiedRequestUtils", function() {
           }
         })
       };
-      serverUnifiedRequest.uidProviderUser = "TODO!!!";
+      serverUnifiedRequest.uidProviderUser = unifiedRequest.uidProviderUser;
       return serverUnifiedRequest;
     }
 
