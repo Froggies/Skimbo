@@ -1,21 +1,17 @@
 package services.actors
 
-import play.api.Logger
-import play.api.mvc.RequestHeader
-import services.endpoints.Endpoints
-import scala.util.Success
-import scala.util.Failure
-import play.api.http.Status
-import services.commands.CmdToUser
-import models.command.Command
-import models.command.Error
-import models.command.TokenInvalid
-import models.Skimbo
-import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import scala.concurrent.Future
-import services.auth.GenericProvider
-import parser.GenericParser
+
+import models.Skimbo
+import models.command.Error
 import models.command.ErrorType
+import models.command.TokenInvalid
+import parser.GenericParser
+import play.api.Logger
+import play.api.http.Status
+import play.api.libs.concurrent.Execution.Implicits.defaultContext
+import services.auth.GenericProvider
+import services.commands.CmdToUser
 
 case class FetcherParameter(
   provider:GenericProvider,

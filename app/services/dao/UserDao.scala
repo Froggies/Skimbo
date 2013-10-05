@@ -14,11 +14,13 @@ import services.auth.GenericProvider
 import services.auth.ProviderDispatcher
 import org.joda.time.DateTime
 import reactivemongo.bson.BSONDateTime
-import play.Logger
 import models.user.OptionUser
 import reactivemongo.bson.BSONString
 import models.user.UnifiedRequest
 import models.user.SinceId
+import play.api.Logger
+import scala.util.Success
+import scala.util.Failure
 
 object UserDao {
 
@@ -39,7 +41,10 @@ object UserDao {
 
   def findOneById(idUser: String): Future[Option[models.User]] = {
     val query = BSONDocument("accounts.id" -> idUser)
-    collection.find(query).cursor[models.User].headOption()
+    collection.find(query).cursor[models.User].headOption().map(_.map{user =>
+      Logger(UserDao.getClass).info("user from bd (l.45) :: "+user)
+      user
+    })
   }
 
   def updateLastUse(idUser: String) = {
@@ -64,13 +69,20 @@ object UserDao {
         "columns.title" -> columnTitle,
         "columns.unifiedRequests.uidProviderUser" -> uidProviderUser)
     collection.find(query).cursor[models.User].headOption.map(_.map {user =>
+      Logger(UserDao.getClass).info("user found (l.67) !!!")
       val column = user.columns.filter(_.title == columnTitle).head
+      Logger(UserDao.getClass).info("(l.71) column : "+column)
       val unifiedRequest = column.unifiedRequests.filter(_.uidProviderUser == uidProviderUser).head
+      Logger(UserDao.getClass).info("(l.73) unifiedRequest : "+unifiedRequest)
       val newUnifiedRequest = UnifiedRequest.merge(unifiedRequest, sinceId)
+      Logger(UserDao.getClass).info("(l.75) newUnifiedR : "+newUnifiedRequest)
       val update = BSONDocument(
           "$set" -> BSONDocument(
               "columns.$.unifiedRequests" -> UnifiedRequest.toBSON(newUnifiedRequest)))
-      collection.update(query, update)
+      collection.update(query, update).onComplete {
+        case Failure(e) => Logger(UserDao.getClass).info(e.getMessage())
+        case Success(_) => Logger(UserDao.getClass).info("sinceId updated !!!")
+      }
     })
   }
 

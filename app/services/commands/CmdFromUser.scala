@@ -277,6 +277,7 @@ object CmdFromUser {
         val columnTitle = (cmd.body.get \ "columnTitle").as[String]
         val uidProviderUser = (cmd.body.get \ "uidProviderUser").as[String]
         val sinceId = SinceId((cmd.body.get \ "sinceId").as[String], idUser)
+        Logger(CmdFromUser.getClass).info(Json.prettyPrint(cmd.body.get))
         UserDao.updateSinceId(idUser, columnTitle, uidProviderUser, sinceId)
       }
       case _ => {

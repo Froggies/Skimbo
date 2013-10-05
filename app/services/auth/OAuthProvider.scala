@@ -2,19 +2,18 @@ package services.auth
 
 import scala.concurrent.Await
 import scala.concurrent.duration.DurationInt
-import models.command.NewToken
+
 import models.user.SkimboToken
-import play.api.libs.oauth._
+import play.api.libs.oauth.ConsumerKey
+import play.api.libs.oauth.OAuth
+import play.api.libs.oauth.OAuthCalculator
+import play.api.libs.oauth.RequestToken
+import play.api.libs.oauth.ServiceInfo
 import play.api.libs.ws.WS
 import play.api.mvc.Call
 import play.api.mvc.RequestHeader
 import play.api.mvc.Result
 import services.dao.UserDao
-import services.post.Poster
-import scala.util.Success
-import scala.util.Failure
-import play.api.libs.concurrent.Execution.Implicits.defaultContext
-import services.star.Starer
 
 trait OAuthProvider extends AuthProvider {
 

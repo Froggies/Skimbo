@@ -1,21 +1,18 @@
 package controllers.dev;
 
-import play.api.mvc._
-import services.auth.providers._
-import services.endpoints.Endpoints
-import scala.concurrent.future
-import services.dao.UserDao
-import services.auth.ProviderDispatcher
-import play.api.libs.json.Json
-import services.security.Authentication
 import scala.concurrent.ExecutionContext.Implicits.global
-import play.api.Play.current
+import scala.concurrent.future
+
 import models.user.SkimboToken
-import views.html.defaultpages.badRequest
-import play.api.libs.iteratee.Enumerator
-import scala.util.Success
-import scala.util.Failure
-import scala.concurrent.Await
+import play.api.Play.current
+import play.api.libs.json.Json
+import play.api.mvc.Action
+import play.api.mvc.Controller
+import services.auth.ProviderDispatcher
+import services.auth.providers.Twitter
+import services.dao.UserDao
+import services.endpoints.Endpoints
+import services.security.Authentication
 
 object Util extends Controller with Authentication {
 

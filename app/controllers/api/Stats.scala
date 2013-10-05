@@ -1,21 +1,20 @@
 package controllers.api
 
+import scala.concurrent.Future
+
 import org.joda.time.DateTime
+import org.joda.time.format.DateTimeFormat
+
 import models.User
-import play.api.mvc._
-import services.dao.UserDao
-import services.auth.ProviderDispatcher
-import services.actors.UserInfosActor
-import services.actors.HelperUserInfosActor
+import play.api.libs.concurrent.Execution.Implicits.defaultContext
+import play.api.mvc.Action
+import play.api.mvc.Controller
 import services.actors.HelperProviderActor
+import services.actors.HelperUserInfosActor
+import services.auth.ProviderDispatcher
 import services.commands.CmdToUser
 import services.dao.StatsAppDao
-import scala.util.Success
-import scala.util.Failure
-import reactivemongo.core.commands.LastError
-import play.api.Routes
-import org.joda.time.format.DateTimeFormat
-import scala.concurrent.Future
+import services.dao.UserDao
 
 object Stats extends Controller {
 

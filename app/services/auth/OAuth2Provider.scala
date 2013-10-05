@@ -1,9 +1,11 @@
 package services.auth
 
 import java.util.UUID.randomUUID
+
 import scala.concurrent.Await
+import scala.concurrent.Future
 import scala.concurrent.duration.DurationInt
-import models.command.NewToken
+
 import models.user.SkimboToken
 import play.api.Logger
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
@@ -12,11 +14,6 @@ import play.api.mvc.Call
 import play.api.mvc.RequestHeader
 import play.api.mvc.Result
 import services.dao.UserDao
-import services.post.Poster
-import scala.util.Success
-import scala.util.Failure
-import services.star.Starer
-import scala.concurrent.Future
 
 trait OAuth2Provider extends AuthProvider {
 
