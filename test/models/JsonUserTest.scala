@@ -11,13 +11,12 @@ class JsonUserTest extends Specification {
 
   "JsonUserTest" should {
     "Deserialize json to user" in {
-      val jsonMsg = ColumnFixture.jsonMsg
-      val columnopt = Json.fromJson[Column](Json.parse(jsonMsg))
-      println(columnopt)
-      val column = columnopt.get
+      val jsonMsg = ColumnFixture.newJsonMsg
+      val column = Json.fromJson[Column](Json.parse(jsonMsg)).get
+      println(column)
       column.title must beEqualTo("title2")
-      column.unifiedRequests.size must beEqualTo(2)
-      column.unifiedRequests(1).args.size must beEqualTo(1)
+      column.unifiedRequests.size must beEqualTo(1)
+      column.unifiedRequests(0).args.size must beEqualTo(1)
     }
   }
 }

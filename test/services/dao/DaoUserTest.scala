@@ -1,21 +1,23 @@
 package services.dao
 
-import org.specs2.mutable._
-import play.api.test._
-import play.api.test.Helpers._
+import scala.concurrent.Await
+import scala.concurrent.duration.Duration
+
+import org.joda.time.DateTime
+import org.specs2.mutable.Specification
+
+import models.ParamHelper
 import models.User
 import models.user.Account
-import java.util.Date
-import scala.concurrent.Await
-import java.util.concurrent.TimeoutException
-import scala.concurrent.ExecutionContext.Implicits.global
 import models.user.Column
-import services.endpoints.JsonRequest._
+import models.user.OptionUser
 import models.user.ProviderUser
-import scala.concurrent.duration.Duration
+import models.user.ServiceArg
+import models.user.SinceId
 import models.user.SkimboToken
+import play.api.test.FakeApplication
+import play.api.test.Helpers.running
 import services.auth.providers.Twitter
-import org.joda.time.DateTime
 
 object UtilTest {
 
@@ -24,22 +26,34 @@ object UtilTest {
   }
 
   def makeAccount(id: String) = {
-    Account(id, new Date())
+    Account.create(id)
   }
 
   def makeAccountOld(id: String) = {
-    Account(id, new DateTime().minusDays(1).toDate())
+    Account(id, new DateTime().minusDays(1).toDate(), "", "Skimbo")
   }
 
   def makeColumn(title: String, urService: String, urArg1: String, urArg2: String) = {
-    Column(title, Seq(UnifiedRequest(urService, Some(Map(urArg1 -> urArg2)))), 0, -1, -1)
+    Column(
+        title, 
+        Seq(
+            models.user.UnifiedRequest(
+                urService, 
+                Seq(
+                    ServiceArg(
+                        urArg1, 
+                        ParamHelper(urArg2, urArg2, "", None))),
+                "",
+                Seq(SinceId("", "")))), 
+        0, -1, -1)
   }
 
   def makeFullUser(id: String) = {
     User(
+      OptionUser.create(),
       Seq(makeAccount(id)),
-      Some(Seq(ProviderUser("provider_" + id, "provider_" + id, None))),
-      Some(Seq(makeColumn("col_" + id, "col_" + id, "col_" + id, "col_" + id))))
+      Seq(ProviderUser("provider_" + id, "provider_" + id, None)),
+      Seq(makeColumn("col_" + id, "col_" + id, "col_" + id, "col_" + id)))
   }
 
 }
@@ -117,14 +131,11 @@ class DaoUserSimpleFind extends Specification {
     //Find user
     val optionUser3: Option[User] = Await.result(UserDao.findOneById(id), Duration("10 seconds"))
     optionUser3 must beSome
-    optionUser3.get.columns must beSome
-    optionUser3.get.columns.get.size must beEqualTo(1)
-    optionUser3.get.columns.get(0).title must beEqualTo("test")
-    optionUser3.get.columns.get(0).unifiedRequests.size must beEqualTo(1)
-    optionUser3.get.columns.get(0).unifiedRequests(0).service must beEqualTo("test")
-    optionUser3.get.columns.get(0).unifiedRequests(0).args must beSome
-    optionUser3.get.columns.get(0).unifiedRequests(0).args.get.size must beEqualTo(1)
-    optionUser3.get.columns.get(0).unifiedRequests(0).args.get("t") must beEqualTo("t")
+    optionUser3.get.columns.size must beEqualTo(1)
+    optionUser3.get.columns(0).title must beEqualTo("test")
+    optionUser3.get.columns(0).unifiedRequests.size must beEqualTo(1)
+    optionUser3.get.columns(0).unifiedRequests(0).service must beEqualTo("test")
+    optionUser3.get.columns(0).unifiedRequests(0).args.size must beEqualTo(1)
     //Delete user
     Await.result(UserDao.delete(id), Duration("10 seconds"))
     Await.result(UserDao.findOneById(id), Duration("10 seconds")) must be beNone
@@ -144,8 +155,7 @@ class DaoUserSimpleFind extends Specification {
     //Find user
     val optionUser3: Option[User] = Await.result(UserDao.findOneById(id), Duration("10 seconds"))
     optionUser3 must beSome
-    optionUser3.get.columns must beSome
-    optionUser3.get.columns.get.size must beEqualTo(0)
+    optionUser3.get.columns.size must beEqualTo(0)
     //Delete user
     Await.result(UserDao.delete(id), Duration("10 seconds"))
     Await.result(UserDao.findOneById(id), Duration("10 seconds")) must be beNone
@@ -167,14 +177,12 @@ class DaoUserSimpleFind extends Specification {
     //Find user
     val optionUser3: Option[User] = Await.result(UserDao.findOneById(id), Duration("10 seconds"))
     optionUser3 must beSome
-    optionUser3.get.columns must beSome
-    optionUser3.get.columns.get.size must beEqualTo(2)
-    optionUser3.get.columns.get(0).title must beEqualTo("test2")
-    optionUser3.get.columns.get(0).unifiedRequests.size must beEqualTo(1)
-    optionUser3.get.columns.get(0).unifiedRequests(0).service must beEqualTo("test2")
-    optionUser3.get.columns.get(0).unifiedRequests(0).args must beSome
-    optionUser3.get.columns.get(0).unifiedRequests(0).args.get.size must beEqualTo(1)
-    optionUser3.get.columns.get(0).unifiedRequests(0).args.get("t2") must beEqualTo("t2")
+    optionUser3.get.columns.size must beEqualTo(2)
+    optionUser3.get.columns(0).title must beEqualTo("test2")
+    optionUser3.get.columns(0).unifiedRequests.size must beEqualTo(1)
+    optionUser3.get.columns(0).unifiedRequests(0).service must beEqualTo("test2")
+    optionUser3.get.columns(0).unifiedRequests(0).args.size must beEqualTo(1)
+    optionUser3.get.columns(0).unifiedRequests(0).args(0).value.call must beEqualTo("t2")
     //Delete user
     Await.result(UserDao.delete(id), Duration("10 seconds"))
     Await.result(UserDao.findOneById(id), Duration("10 seconds")) must be beNone
@@ -194,15 +202,14 @@ class DaoUserSimpleFind extends Specification {
     //Find user
     val optionUser3: Option[User] = Await.result(UserDao.findByIdProvider(Twitter.name, "p1"), Duration("10 seconds"))
     optionUser3 must beSome
-    optionUser3.get.distants must beSome
-    optionUser3.get.distants.get.size must beEqualTo(1)
-    optionUser3.get.distants.get(0).id must beEqualTo("p1")
-    optionUser3.get.distants.get(0).socialType must beEqualTo(Twitter.name)
+    optionUser3.get.distants.size must beEqualTo(1)
+    optionUser3.get.distants(0).id must beEqualTo("p1")
+    optionUser3.get.distants(0).socialType must beEqualTo(Twitter.name)
     // we don't save personal data
-    optionUser3.get.distants.get(0).username must beNone
-    optionUser3.get.distants.get(0).name must beNone
-    optionUser3.get.distants.get(0).description must beNone
-    optionUser3.get.distants.get(0).avatar must beNone
+    optionUser3.get.distants(0).username must beNone
+    optionUser3.get.distants(0).name must beNone
+    optionUser3.get.distants(0).description must beNone
+    optionUser3.get.distants(0).avatar must beNone
     //Delete user
     Await.result(UserDao.delete(id), Duration("10 seconds"))
     Await.result(UserDao.findOneById(id), Duration("10 seconds")) must be beNone
