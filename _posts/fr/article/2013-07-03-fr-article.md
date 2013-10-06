@@ -44,5 +44,3 @@ En deux mots, il compile la version actuelle du projet grâce à la fonction sta
 Comme vous pourrez le remarquer, j'utilise les fichiers scripts <a href="https://github.com/Froggies/Skimbo/blob/master/.openshift/action_hooks/start" target="_blank">start</a> et <a href="https://github.com/Froggies/Skimbo/blob/master/.openshift/action_hooks/stop" target="_blank">stop</a> du répertoire .openshift/action_hooks. C'est pour garder le fonctionnement standard d'Openshift, si un jour un cartbridge playframeworks sort, ou si le serveur est mis à jour ce seront ces scripts qui seront appelés.
 
 La procédure dure une dizaine de minutes pour une interruption de service n'excédant pas les 5 minutes. Certes interruption de service il y a, mais elle est raisonnable. Je pense également qu'on peut imaginer de déplacer l'arrêt du serveur après le rsync mais cela dépend de votre projet et de votre déploiement.
-
-Une faute d'orthographe, une grosse bétise, une photo mal placée ? Faites une pull-request ;)

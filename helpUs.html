@@ -10,18 +10,12 @@ Nous ne le disons pas assez mais Skimbo est un projet open-source. Rejoignez not
 Tous nos fichiers se trouvent sur <a href="https://github.com/Froggies/Skimbo" target="_blank">Github</a>, il vous suffit donc de cliquer sur le bouton "Edit" (en haut à droite du document) pour pouvoir le modifier.
 
 <ul>
-	<li><a href="https://github.com/Froggies/Skimbo/blob/master/app/assets/javascripts/filters/translation.js" target="_blank">Traduire skimbo</a></li>
+	<li><a href="https://github.com/Froggies/Skimbo/edit/master/app/assets/javascripts/filters/translation.js" target="_blank">Traduire skimbo</a></li>
 	{% for post in site.posts %}
-	{% if post.layout == 'fr' and post.type == 'update' %}
+	{% if post.needTranslation == 'en' %}
 	  <li>
 		  <a href="{{site.baseurl}}{{post.url}}">Traduire {{ post.title }}</a>
-		</li>
-	{% endif %}
-	{% endfor %}
-	{% for post in site.posts %}
-	{% if post.layout == 'fr' and post.type == 'article' %}
-	  <li>
-		  <a href="{{site.baseurl}}{{post.url}}">Traduire {{ post.title }}</a>
+		  <a style="float:right" href="https://github.com/Froggies/Skimbo/edit/gh-pages/{{post.path}}">Edit</a>
 		</li>
 	{% endif %}
 	{% endfor %}

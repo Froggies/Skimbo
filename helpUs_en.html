@@ -12,16 +12,10 @@ You can find Skimbo's translation files on <a href="https://github.com/Froggies/
 <ul>
 	<li><a href="https://github.com/Froggies/Skimbo/blob/master/app/assets/javascripts/filters/translation.js" target="_blank">Translate Skimbo</a></li>
 	{% for post in site.posts %}
-	{% if post.layout == 'fr' and post.type == 'update' %}
+	{% if post.needTranslation == 'en' %}
 	  <li>
 		  <a href="{{site.baseurl}}{{post.url}}">Translate {{ post.title }}</a>
-		</li>
-	{% endif %}
-	{% endfor %}
-	{% for post in site.posts %}
-	{% if post.layout == 'fr' and post.type == 'article' %}
-	  <li>
-		  <a href="{{site.baseurl}}{{post.url}}">Translate {{ post.title }}</a>
+		  <a style="float:right" href="https://github.com/Froggies/Skimbo/edit/gh-pages/{{post.path}}">Edit</a>
 		</li>
 	{% endif %}
 	{% endfor %}

@@ -5,7 +5,7 @@ layout: fr
 
 <ul>
 {% for post in site.posts %}
-{% if post.layout == 'fr' and post.type == 'update' %}
+{% if post.layout == 'update_fr' and post.type == 'update' %}
   <li>
 	  <a href="{{site.baseurl}}{{post.url}}">{{ post.title }}</a>
 	</li>

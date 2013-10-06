@@ -4,7 +4,7 @@ layout: en
 <h1>Articles</h1>
 
 {% for post in site.posts %}
-{% if post.layout == 'en' and post.type == 'article' %}
+{% if post.layout == 'en' and post.type == 'article' and post.needTranslation != 'en' %}
   <p>
   	<a href="{{site.baseurl}}{{post.url}}">{{ post.title }}</a>
   	<span style="float:right">{{ post.date | date:"%b %Y" }}</span>
@@ -16,9 +16,10 @@ layout: en
 
 <ul>
 {% for post in site.posts %}
-{% if post.layout == 'fr' and post.type == 'article' %}
+{% if post.needTranslation == 'en' and post.type == 'article' and post.needTranslation == 'en' %}
   <li>
 	  <a href="{{site.baseurl}}{{post.url}}">{{ post.title }}</a>
+	  <a style="float:right" href="https://github.com/Froggies/Skimbo/edit/gh-pages/{{post.path}}">Edit</a>
 	</li>
 {% endif %}
 {% endfor %}

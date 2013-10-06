@@ -1,0 +1,10 @@
+---
+layout: en
+---
+<h1>{{page.title}}</h1>
+
+{% if page.image %}
+<a href="{{site.baseurl}}/{{page.image}}"><img src="{{site.baseurl}}/{{page.image}}" /></a>
+{% endif %}
+
+{{content}}

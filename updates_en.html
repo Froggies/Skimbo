@@ -5,7 +5,7 @@ layout: en
 
 <ul>
 {% for post in site.posts %}
-{% if post.layout == 'en' and post.type == 'update' %}
+{% if post.layout == 'update_en' and post.type == 'update' and post.needTranslation != 'en' %}
   <li>
 	  <a href="{{site.baseurl}}{{post.url}}">{{ post.title }}</a>
 	</li>
@@ -17,9 +17,10 @@ layout: en
 
 <ul>
 {% for post in site.posts %}
-{% if post.layout == 'fr' and post.type == 'update' %}
+{% if post.layout == 'update_en' and post.type == 'update' and post.needTranslation == 'en' %}
   <li>
 	  <a href="{{site.baseurl}}{{post.url}}">{{ post.title }}</a>
+	  <a style="float:right" href="https://github.com/Froggies/Skimbo/edit/gh-pages/{{post.path}}">Edit</a>
 	</li>
 {% endif %}
 {% endfor %}
