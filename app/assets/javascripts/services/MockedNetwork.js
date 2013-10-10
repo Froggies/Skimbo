@@ -114,6 +114,11 @@ app.factory("Network", ["$http", "$timeout", "ServerCommunication", 'ArrayUtils'
       "cmd":"msg", 
       "body": {
         "column": columnTitle,
+        "unifiedRequest": {
+          "service": service,
+          "args": [{name: "n", value:{call:"blabla"}}],
+          "uidProviderUser": "12345"+service
+        },
         "msg": {
           "authorName": "Froggies",
           "authorScreenName": "Skimbo",

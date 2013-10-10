@@ -8,10 +8,15 @@ define(["app"], function(app) {
     var userScroll = false, scrollObjects = {}, timeoutsUpdateSinceId = {};
 
     function updateSinceId(referer, msg) {
-      if(timeoutsUpdateSinceId[referer] != undefined) {
-        $timeout.cancel(timeoutsUpdateSinceId[referer]);
+      timeoutsUpdateSinceId[referer] = timeoutsUpdateSinceId[referer] || {};
+      var uidProviderUser = msg.unifiedRequest.uidProviderUser;
+      if(msg.unifiedRequest.args && msg.unifiedRequest.args[0]) {
+        uidProviderUser + msg.unifiedRequest.args[0].value.call;//discriminant server side
       }
-      timeoutsUpdateSinceId[referer] = $timeout(function() {
+      if(timeoutsUpdateSinceId[referer][uidProviderUser] != undefined) {
+        $timeout.cancel(timeoutsUpdateSinceId[referer][uidProviderUser]);
+      }
+      timeoutsUpdateSinceId[referer][uidProviderUser] = $timeout(function() {
         console.log(msg);
         $network.send({
           cmd: "updateSinceId",
@@ -21,7 +26,7 @@ define(["app"], function(app) {
             sinceId: msg.sinceId
           }
         });
-        timeoutsUpdateSinceId[referer] = undefined;
+        timeoutsUpdateSinceId[referer][uidProviderUser] = undefined;
       }, 3000);
     }
 
@@ -35,11 +40,13 @@ define(["app"], function(app) {
           var unwatch = scope.$watch(attrs["scrolldata"], function(newValue, oldValue) {
             if(newValue) {
               var data = newValue.title;
+              console.log(newValue);
               $rootScope.$on("scrollManagerGoTop", function(evt, column) {
                 if(angular.equals(column.title, data)) {
                   userScroll = false;
                   scroller[0].scrollTop = 0;
-                  updateSinceId(data, scrollObjects[data][0]);
+                  console.log(scrollObjects[data]);
+                  updateSinceId(data, scrollObjects[data][scrollObjects[data].length-1]);
                   $timeout(function() {
                     userScroll = true;
                   }, 100);
@@ -60,7 +67,7 @@ define(["app"], function(app) {
                       } else {
                         //when object post is above scroll we stop
                         //why the fuck insert array isn't ordered ?????????
-                        //return;
+                        return;
                       }
                     }
                   }
