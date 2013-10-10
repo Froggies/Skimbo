@@ -5,25 +5,23 @@ define(["app"], function(app) {
   app.directive("scrollmanager", ["$timeout", "$rootScope", "Visibility", "ArrayUtils", "Network",
     function($timeout, $rootScope, $visibility, $arrayUtils, $network) {
     
-    var userScroll = false;
+    var userScroll = false, scrollObjects = {}, timeoutsUpdateSinceId = {};
 
-    var scrollObjects = {};
-
-    function updateSinceId(timeoutUpdateSinceId, msg) {
-      if(timeoutUpdateSinceId != undefined) {
-        $timeout.cancel(timeoutUpdateSinceId);
+    function updateSinceId(referer, msg) {
+      if(timeoutsUpdateSinceId[referer] != undefined) {
+        $timeout.cancel(timeoutsUpdateSinceId[referer]);
       }
-      timeoutUpdateSinceId = $timeout(function() {
+      timeoutsUpdateSinceId[referer] = $timeout(function() {
         console.log(msg);
         $network.send({
           cmd: "updateSinceId",
           body: {
             columnTitle: msg.column,
-            uidProviderUser: "1492516",//msg.uidProviderUser,
+            unifiedRequest: msg.unifiedRequest,
             sinceId: msg.sinceId
           }
         });
-        timeoutUpdateSinceId = undefined;
+        timeoutsUpdateSinceId[referer] = undefined;
       }, 3000);
     }
 
@@ -31,7 +29,7 @@ define(["app"], function(app) {
       restrict: 'A',
       link: function(scope, elmt, attrs)  {
         var element = elmt[0];
-        var timeout = undefined, timeoutUpdateSinceId = undefined;
+        var timeout = undefined;
         if(attrs["scrollmanager"] === "onlyTop") {
           var scroller = angular.element(element);
           var unwatch = scope.$watch(attrs["scrolldata"], function(newValue, oldValue) {
@@ -41,7 +39,7 @@ define(["app"], function(app) {
                 if(angular.equals(column.title, data)) {
                   userScroll = false;
                   scroller[0].scrollTop = 0;
-                  updateSinceId(timeoutUpdateSinceId, scrollObjects[data][0]);
+                  updateSinceId(data, scrollObjects[data][0]);
                   $timeout(function() {
                     userScroll = true;
                   }, 100);
@@ -58,7 +56,7 @@ define(["app"], function(app) {
                         object.isView = true;
                         $visibility.notifyMessageRead();
                         scope.$apply();
-                        updateSinceId(timeoutUpdateSinceId, object);
+                        updateSinceId(data, object);
                       } else {
                         //when object post is above scroll we stop
                         //why the fuck insert array isn't ordered ?????????

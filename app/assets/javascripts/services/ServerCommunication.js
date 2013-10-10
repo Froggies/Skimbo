@@ -41,6 +41,7 @@ app.factory("ServerCommunication", [
       } else if(data.cmd == "msg") {
         data.body.msg.authorAvatar = $imagesUtils.checkExistingImage(data.body.msg.authorAvatar);
         data.body.msg.original = data.body.msg.message;
+        data.body.msg.unifiedRequest = data.body.unifiedRequest;
         //no urlify for rss because almost are in html
         if(data.body.msg.from !== "rss" && 
           data.body.msg.from !== "scoopit") {
