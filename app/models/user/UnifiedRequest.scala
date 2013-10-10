@@ -14,6 +14,15 @@ case class UnifiedRequest(
 )
 
 object UnifiedRequest {
+  
+  def equals(unifiedRequest:UnifiedRequest, unifiedRequest2:UnifiedRequest, checkSinceId:Boolean=false):Boolean = {
+    unifiedRequest.service == unifiedRequest2.service &&
+    unifiedRequest.uidProviderUser == unifiedRequest2.uidProviderUser &&
+    unifiedRequest.args.exists(a1 => unifiedRequest2.args.exists(a2 => a1.value.call == a2.value.call)) &&
+    (!checkSinceId || 
+        unifiedRequest.sinceId.exists(s1 => unifiedRequest2.sinceId.exists(s2 => s1.accountId == s2.accountId && s1.sinceId == s2.sinceId))
+    )
+  }
 
   def merge(unifiedRequest:UnifiedRequest, sinceId: SinceId): UnifiedRequest =  {
     val optSinceId = unifiedRequest.sinceId.filter(_.accountId == sinceId.accountId).headOption
@@ -40,7 +49,7 @@ object UnifiedRequest {
         (js \ "service").as[String],
         (js \ "args").as[Seq[ServiceArg]],
         (js \ "uidProviderUser").as[String],
-        Seq.empty
+        Seq.empty//client no send sinceId
       ))
     }
   }
@@ -51,7 +60,7 @@ object UnifiedRequest {
         "service" -> unifiedRequest.service,
         "args" -> unifiedRequest.args,
         "uidProviderUser" -> unifiedRequest.uidProviderUser,
-        "sinceId" -> unifiedRequest.sinceId
+        "sinceId" -> Seq[SinceId]()//client no need sinceId
       )
     }
   }

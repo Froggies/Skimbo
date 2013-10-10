@@ -21,6 +21,7 @@ import models.user.SinceId
 import play.api.Logger
 import scala.util.Success
 import scala.util.Failure
+import models.user.ServiceArg
 
 object UserDao {
 
@@ -62,21 +63,21 @@ object UserDao {
         collection.update(query, update2)
   }}}
   
-  def updateSinceId(idUser: String, columnTitle: String, uidProviderUser: String, sinceId: SinceId) = {
+  def updateSinceId(idUser: String, columnTitle: String, originalUnifiedRequest: UnifiedRequest, sinceId: SinceId) = {
 //    TODO find a better way
     val query = BSONDocument(
         "accounts.id" -> idUser, 
         "columns.title" -> columnTitle,
-        "columns.unifiedRequests.uidProviderUser" -> uidProviderUser)
+        "columns.unifiedRequests.uidProviderUser" -> originalUnifiedRequest.uidProviderUser)
     collection.find(query).cursor[models.User].headOption.map(_.map {user =>
       Logger(UserDao.getClass).info("user found (l.67) !!!")
       val column = user.columns.filter(_.title == columnTitle).head
       Logger(UserDao.getClass).info("(l.71) column : "+column)
-      val unifiedRequest = column.unifiedRequests.filter(_.uidProviderUser == uidProviderUser).head
+      val unifiedRequest = column.unifiedRequests.find(ur => UnifiedRequest.equals(ur, originalUnifiedRequest)).get
       Logger(UserDao.getClass).info("(l.73) unifiedRequest : "+unifiedRequest)
       val newUnifiedRequest = UnifiedRequest.merge(unifiedRequest, sinceId)
       Logger(UserDao.getClass).info("(l.75) newUnifiedR : "+newUnifiedRequest)
-      val allUnifiedRequest = column.unifiedRequests.filterNot(_.uidProviderUser == uidProviderUser) ++ Seq(newUnifiedRequest)
+      val allUnifiedRequest = column.unifiedRequests.filterNot(ur => UnifiedRequest.equals(ur, originalUnifiedRequest)) ++ Seq(newUnifiedRequest)
       val arrayUnifiedRequest = Column.toUnifiedRequestsBSON(allUnifiedRequest)
       val update = BSONDocument(
           "$set" -> BSONDocument(

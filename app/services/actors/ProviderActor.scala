@@ -158,7 +158,7 @@ class ProviderActor(parameter:ProviderActorParameter) extends Actor {
 
   def pushNewMessagesIteratee(config: EndpointConfig) = {
     Iteratee.foreach { skimboMsg: Skimbo =>
-      val msg = Json.obj("column" -> column.title, "msg" -> skimboMsg)
+      val msg = Json.obj("column" -> column.title, "msg" -> skimboMsg, "unifiedRequest" -> unifiedRequest)
       if (config.since.isEmpty /* == None */) {
         if (skimboMsg.createdAt.isAfter(sinceDate)) {
           CmdToUser.sendTo(idUser, Command("msg", Some(msg)))

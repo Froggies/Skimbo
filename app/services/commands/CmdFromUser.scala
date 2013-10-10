@@ -27,6 +27,7 @@ import services.dao.UserDao
 import services.endpoints.Endpoints
 import services.post.Posters
 import models.user.SinceId
+import models.user.UnifiedRequest
 
 object CmdFromUser {
 
@@ -275,10 +276,10 @@ object CmdFromUser {
       }
       case "updateSinceId" => {
         val columnTitle = (cmd.body.get \ "columnTitle").as[String]
-        val uidProviderUser = (cmd.body.get \ "uidProviderUser").as[String]
+        val unifiedRequest = Json.fromJson[UnifiedRequest](cmd.body.get \ "unifiedRequest").get
         val sinceId = SinceId((cmd.body.get \ "sinceId").as[String], idUser)
         Logger(CmdFromUser.getClass).info(Json.prettyPrint(cmd.body.get))
-        UserDao.updateSinceId(idUser, columnTitle, uidProviderUser, sinceId).andThen {
+        UserDao.updateSinceId(idUser, columnTitle, unifiedRequest, sinceId).andThen {
           case _ => UserDao.findOneById(idUser).map { user =>
             Logger(CmdFromUser.getClass).info("update ok or ko : "+user)
           }
