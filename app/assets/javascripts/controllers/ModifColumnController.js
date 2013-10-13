@@ -85,17 +85,6 @@ app.controller('ModifColumnController', [
     function addService(service) {
       service.fromServer = false;
       var unifiedRequest = JSON.parse(JSON.stringify(service));//clone service
-      //add uidProviderUser
-      var userInfos = $dataCache.get("userInfos");
-      var uidProviderUser;
-      console.log(service, userInfos);
-      for (var i = 0; i < userInfos.length && uidProviderUser === undefined; i++) {
-        if(userInfos[i].socialType === service.providerName) {
-          uidProviderUser = userInfos[i].id;
-        }
-      };
-      console.log(uidProviderUser);
-      unifiedRequest.uidProviderUser = uidProviderUser;
       $scope.column.unifiedRequests.push(unifiedRequest);
       if($scope.column.title == "") {
         $scope.column.title = service.providerName + " " + service.serviceName;
@@ -149,7 +138,18 @@ app.controller('ModifColumnController', [
 
         var json;
         var unifiedRequests = [];
+        var userInfos = $dataCache.get("userInfos");
         for (var i = 0; i < column.unifiedRequests.length; i++) {
+          //add uidProviderUser
+          var uidProviderUser;
+          console.log(column.unifiedRequests[i], userInfos);
+          for (var j = 0; j < userInfos.length && uidProviderUser === undefined; j++) {
+            if(userInfos[j].socialType === column.unifiedRequests[i].providerName) {
+              uidProviderUser = userInfos[j].id;
+            }
+          };
+          console.log(uidProviderUser);
+          column.unifiedRequests[i].uidProviderUser = uidProviderUser;
           unifiedRequests.push($unifiedRequestUtils.clientToServerUnifiedRequest(column.unifiedRequests[i]));
         };
 
