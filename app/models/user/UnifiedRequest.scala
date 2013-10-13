@@ -18,7 +18,8 @@ object UnifiedRequest {
   def equals(unifiedRequest:UnifiedRequest, unifiedRequest2:UnifiedRequest, checkSinceId:Boolean=false):Boolean = {
     unifiedRequest.service == unifiedRequest2.service &&
     unifiedRequest.uidProviderUser == unifiedRequest2.uidProviderUser &&
-    unifiedRequest.args.exists(a1 => unifiedRequest2.args.exists(a2 => a1.value.call == a2.value.call)) &&
+    ((unifiedRequest.args.isEmpty && unifiedRequest2.args.isEmpty) ||
+        unifiedRequest.args.exists(a1 => unifiedRequest2.args.exists(a2 => a1.value.call == a2.value.call))) &&
     (!checkSinceId || 
         unifiedRequest.sinceId.exists(s1 => unifiedRequest2.sinceId.exists(s2 => s1.accountId == s2.accountId && s1.sinceId == s2.sinceId))
     )

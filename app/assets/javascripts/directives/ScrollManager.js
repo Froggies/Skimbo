@@ -67,7 +67,7 @@ define(["app"], function(app) {
                       } else {
                         //when object post is above scroll we stop
                         //why the fuck insert array isn't ordered ?????????
-                        return;
+                        //return;
                       }
                     }
                   }

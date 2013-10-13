@@ -53,6 +53,7 @@ app.controller('ColumnController', [
     });
 
     $dataCache.on('addColumn', function(column) {
+      console.log(column);
       $columnSize.setSize([column]);
       $columnSize.buildSizeCompo([column]);
       $scope.columns.push(column);
@@ -112,6 +113,7 @@ app.controller('ColumnController', [
     });
 
     $scope.modifyColumn = function(column) {
+      console.log(column);
       $rootScope.$broadcast('glassShowView', 'modifColumn', function() {
         $rootScope.$broadcast('clientModifyColumn', column);
       });

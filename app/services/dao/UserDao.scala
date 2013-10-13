@@ -63,6 +63,20 @@ object UserDao {
         collection.update(query, update2)
   }}}
   
+  def findSinceId(idUser: String, columnTitle: String, originalUnifiedRequest: UnifiedRequest): Future[Option[String]] = {
+    val query = BSONDocument(
+        "accounts.id" -> idUser, 
+        "columns.title" -> columnTitle,
+        "columns.unifiedRequests.uidProviderUser" -> originalUnifiedRequest.uidProviderUser)
+    collection.find(query).cursor[models.User].headOption.map(_.flatMap {user =>
+      Logger(UserDao.getClass).info("user found (l.67) !!!")
+      val column = user.columns.filter(_.title == columnTitle).head
+      Logger(UserDao.getClass).info("(l.71) column : "+column)
+      val unifiedRequest = column.unifiedRequests.find(ur => UnifiedRequest.equals(ur, originalUnifiedRequest)).get
+      unifiedRequest.sinceId.find(_.accountId == idUser).map(_.sinceId)
+    })
+  }
+  
   def updateSinceId(idUser: String, columnTitle: String, originalUnifiedRequest: UnifiedRequest, sinceId: SinceId) = {
 //    TODO find a better way
     val query = BSONDocument(

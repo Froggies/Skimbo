@@ -23,6 +23,7 @@ app.factory("UnifiedRequestUtils", function() {
         });
       };
       clientUnifiedRequest.hasArguments = clientUnifiedRequest.args.length > 0;
+      clientUnifiedRequest.uidProviderUser = unifiedRequest.uidProviderUser;
       return clientUnifiedRequest;
     },
 
@@ -45,6 +46,7 @@ app.factory("UnifiedRequestUtils", function() {
         });
       };
       clientUnifiedRequest.hasArguments = clientUnifiedRequest.args.length > 0;
+      clientUnifiedRequest.uidProviderUser = unifiedRequest.uidProviderUser;
       return clientUnifiedRequest;
     },
 

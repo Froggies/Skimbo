@@ -85,7 +85,7 @@ object GithubWallParser extends GenericJsonParser {
         Nil,
         -1,
         buildLink(e),
-        e.createdAt.toString(GithubWallMessage.datePattern),
+        e.createdAt.getMillis().toString,
         e.avatarUser,
         Configuration.Github.userEvents)))
   }

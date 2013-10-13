@@ -1,9 +1,7 @@
 package services.actors;
 
 import scala.concurrent.duration.DurationInt
-
 import org.joda.time.DateTime
-
 import akka.actor.Actor
 import akka.actor.ReceiveTimeout
 import akka.actor.actorRef2Scala
@@ -24,6 +22,7 @@ import services.auth.GenericProvider
 import services.commands.CmdToUser
 import services.endpoints.EndpointConfig
 import services.endpoints.Endpoints
+import services.dao.UserDao
 
 sealed case class ProviderActorParameter(
   provider: GenericProvider,
@@ -31,7 +30,8 @@ sealed case class ProviderActorParameter(
   delay: Int,
   idUser: String,
   parser: Option[GenericParser] = None,
-  column: Column
+  column: Column,
+  config: EndpointConfig
 )
 
 sealed case class Dead(idUser: String)
@@ -45,15 +45,16 @@ object ProviderActor {
     column.unifiedRequests.foreach { unifiedRequest =>
       val endpoint = for (
         provider <- Endpoints.getProvider(unifiedRequest.service);
+        config <- Endpoints.getConfig(unifiedRequest.service);
         time <- Endpoints.getConfig(unifiedRequest.service).map(_.delay);
         parser <- Endpoints.getConfig(unifiedRequest.service).map(_.parser)
-      ) yield (provider, time, parser)
+      ) yield (provider, config, time, parser)
 
       endpoint match {
-        case Some((provider, time, parser)) => {
+        case Some((provider, config, time, parser)) => {
           println("---------------------------------------------------")
           println("ProviderActor - launch : "+provider.name+" "+unifiedRequest.service)
-          HelperProviderActor.foundOrCreate(idUser, ProviderActorParameter(provider, unifiedRequest, time, idUser, parser, column))
+          HelperProviderActor.foundOrCreate(idUser, ProviderActorParameter(provider, unifiedRequest, time, idUser, parser, column, config))
         }
         case _ => Logger.error("Provider or Url not found for " + unifiedRequest.service + " :: args = " + unifiedRequest.args)
       }
@@ -88,10 +89,10 @@ class ProviderActor(parameter:ProviderActorParameter) extends Actor {
   val idUser = parameter.idUser
   val parser = parameter.parser
   val column = parameter.column
-  val config = Endpoints.getConfig(unifiedRequest.service).get
+  val config = parameter.config
   
-  var sinceId:Option[String] = None
-  var sinceDate = new DateTime().minusYears(1)
+  var sinceId:Option[String] = unifiedRequest.sinceId.find(_.accountId == idUser).map(_.sinceId)
+  var sinceDate = dateFromSinceBd()
   
   val scheduler = Akka.system.scheduler.schedule(0 second, delay second) {
     self ! ReceiveTimeout
@@ -111,7 +112,7 @@ class ProviderActor(parameter:ProviderActorParameter) extends Actor {
           idUser,
           column.title,
           unifiedRequest.service,
-          config.delay)).map { listSkimbo =>
+          delay)).map { listSkimbo =>
         if(!listSkimbo.isDefined) {
           self ! Dead(idUser)
         } else {
@@ -143,13 +144,25 @@ class ProviderActor(parameter:ProviderActorParameter) extends Actor {
     case Restart(id: String) => {
       log.info("ProviderActor RESTART => "+id+" :: "+idUser)
       if(id == idUser) {
-        sinceId = None
-        sinceDate = new DateTime().minusYears(1)
-        self ! ReceiveTimeout
-        log.info("ProviderActor RESTART")
+        UserDao.findSinceId(idUser, column.title, unifiedRequest).map { bdSinceId =>
+          sinceId = bdSinceId
+          sinceDate = dateFromSinceBd()
+          self ! ReceiveTimeout
+          log.info("ProviderActor RESTART")
+        }
       }
     }
     case e: Exception => throw new UnexpectedException(Some("Incorrect message receive"), Some(e))
+  }
+  
+  def dateFromSinceBd() = {
+    if(config.since.isEmpty /* == None */){
+      val res = sinceId.map(stringDate => new DateTime(stringDate.toLong)).getOrElse(new DateTime().minusYears(1))
+      sinceId = None
+      res
+    } else {
+      null//not use
+    }
   }
 
   def reorderMessagesByDate(msgs: List[Skimbo]) = {
