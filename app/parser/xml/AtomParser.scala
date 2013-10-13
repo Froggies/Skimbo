@@ -27,7 +27,7 @@ object AtomParser extends GenericXmlParser {
         List(),
         -1,
         Some((node \ "link" \ "@href").text),
-        foundDateTime(node).toDate().getTime().toString,
+        foundDateTime(node).getMillis().toString,
         RssHelper.foundImg(node),
         Configuration.Rss.rss
     ))

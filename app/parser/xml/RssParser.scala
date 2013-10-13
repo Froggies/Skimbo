@@ -29,7 +29,7 @@ object RssParser extends GenericXmlParser {
         List(),
         -1,
         Some((node \ "link").text),
-        "",
+        date.getMillis().toString,
         RssHelper.foundImg(node),
         Configuration.Rss.rss
     ))

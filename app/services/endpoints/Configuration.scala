@@ -1,51 +1,12 @@
 package services.endpoints
 
-import parser.GenericParser
-import parser.GenericParserParamHelper
-import parser.json.detail.FacebookPostDetails
-import parser.json.detail.GoogleplusDetails
-import parser.json.detail.LinkedInPostDetails
-import parser.json.detail.ScoopitPostDetails
-import parser.json.detail.TweetDetails
-import parser.json.providers.BetaseriesPlanningParser
-import parser.json.providers.BetaseriesTimelineParser
-import parser.json.providers.BitbucketCommitParser
-import parser.json.providers.BitbucketEventsRepoParser
-import parser.json.providers.BitbucketRepoParamHelper
-import parser.json.providers.FacebookInboxParser
-import parser.json.providers.FacebookUser
-import parser.json.providers.FacebookWallParser
-import parser.json.providers.GithubUser
-import parser.json.providers.GithubWallParser
-import parser.json.providers.GoogleplusUser
-import parser.json.providers.GoogleplusWallParser
-import parser.json.providers.LinkedInWallParser
-import parser.json.providers.RedditMessageParser
-import parser.json.providers.ScoopitTopic
-import parser.json.providers.ScoopitTopicParamHelper
-import parser.json.providers.ScoopitWallParser
-import parser.json.providers.TrelloWallParser
-import parser.json.providers.TwitterDirectMessageParser
-import parser.json.providers.TwitterHashtagParser
-import parser.json.providers.TwitterTimelineParser
-import parser.json.providers.TwitterUser
-import parser.json.providers.ViadeoInboxParser
-import parser.json.providers.ViadeoWallParser
+import parser._
+import parser.json.detail._
+import parser.json.providers._
 import parser.xml.GenericRssParser
-import services.auth.GenericProvider
-import services.auth.RssProvider
-import services.auth.providers
-import services.comment.Commenter
-import services.comment.FacebookCommenter
-import services.comment.LinkedInCommenter
-import services.comment.ScoopitCommenter
-import services.comment.TwitterCommenter
-import services.star.FacebookStarer
-import services.star.LinkedInStarer
-import services.star.RedditStarer
-import services.star.ScoopitStarer
-import services.star.Starer
-import services.star.TwitterStarer
+import services.auth._
+import services.comment._
+import services.star._
 
 object Configuration {
 

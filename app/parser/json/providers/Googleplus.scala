@@ -39,7 +39,7 @@ object GoogleplusWallParser extends GenericJsonParser {
         Nil,
         e.plusoners,
         e.url,
-        e.publishedDate.toString(GoogleplusWallMessage.datePattern),
+        e.publishedDate.getMillis().toString,
         e.actorImage,
         Configuration.GooglePlus.wall,
         false,
@@ -49,11 +49,11 @@ object GoogleplusWallParser extends GenericJsonParser {
   override def cut(json: JsValue): List[JsValue] = super.cut(json \ "items")
   
   override def nextSinceId(sinceId: String, compareSinceIdOpt: Option[String]): String = {
-    val date = DateTime.parse(sinceId, DateTimeFormat.forPattern(GoogleplusWallMessage.datePattern))
+    val date = new DateTime(sinceId.toLong)
     if (compareSinceIdOpt.isEmpty /* == None */) {
       date.toString(GoogleplusWallMessage.datePattern)
     } else {
-      val date1 = DateTime.parse(compareSinceIdOpt.get, DateTimeFormat.forPattern(GoogleplusWallMessage.datePattern))
+      val date1 = new DateTime(compareSinceIdOpt.get.toLong)
       if (date.isAfter(date1)) {
         date.toString(GoogleplusWallMessage.datePattern)
       } else {

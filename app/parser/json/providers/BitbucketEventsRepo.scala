@@ -46,7 +46,7 @@ object BitbucketEventsRepoParser extends GenericJsonParser {
         Nil,
         -1,
         e.repo.map(repo => urlRepo.replace(":owner", repo.owner).replace(":slug", repo.slug)),
-        e.date.toDate().getTime().toString,
+        e.date.getMillis().toString,
         user.avatar.orElse(e.repo.map(_.logo)),
         Configuration.Bitbucket.eventsRepo)))
   }
