@@ -43,7 +43,7 @@ class DelayedPostTest extends Specification {
         Await.result(DelayedPostDao.add(createDelayedPost(20)), Duration("10 seconds"))
         val posts = Await.result(DelayedPostDao.get(15), Duration("10 seconds"))
         posts.length must beEqualTo(2)
-        posts.foreach(DelayedPostDao.delete(_))
+        posts.foreach(p => Await.result(DelayedPostDao.delete(p), Duration("10 seconds")))
         val posts2 = Await.result(DelayedPostDao.get(20), Duration("10 seconds"))
         posts2.length must beEqualTo(1)
         posts2.foreach(DelayedPostDao.delete(_))
