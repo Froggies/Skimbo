@@ -1,0 +1,39 @@
+@(title: String)(css: Html)(content: Html)
+
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+  <head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta name="description" content=""/>
+    <meta name="viewport" content="width=device-width"/>
+    <title>@title</title>
+    <link rel="shortcut icon" type="image/png" href="@routes.Assets.at("img/favicon.png")">
+    @css
+    <!-- Twitter card meta -->
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:url" content="http://skimbo.studio-dev.fr">
+    <meta name="twitter:title" content="Skimbo">
+    <meta name="twitter:description" content="Skimbo will change the way you follow streams from social networks by displaying them in a unique window, thus you will always be aware of new informations ! Just try it ! 😊">
+    <meta name="twitter:image" content="https://trello-attachments.s3.amazonaws.com/505a376f783db194689c3972/509035d5c0af2b130c0020db/2a06737f55267206f4a40dd62c2ac9b9/128x128_transparent.png">
+    <meta name="twitter:creator:id" content="854525299">
+  </head>
+  <body>
+    @content
+      
+  	<script type="text/javascript">
+  	  var _gaq = _gaq || [];
+  	  _gaq.push(['_setAccount', 'UA-36716356-1']);
+  	  _gaq.push(['_trackPageview']);
+  	  (function() {
+  	    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+  	    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+  	    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  	  })();
+  	</script>
+	    
+  </body>
+</html>

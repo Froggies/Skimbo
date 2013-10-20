@@ -84,3 +84,7 @@ $RECYCLE.BIN/
 
 *.iml
 .idea
+
+# lib js
+public/app/scripts/vendor/*
+node_modules/*

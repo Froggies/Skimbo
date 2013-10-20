@@ -1,0 +1,90 @@
+@import "reset.less";
+
+body {
+  height:100%;
+
+  background-color:#F5F5F5;
+  color:#2F2F2F;
+  text-align:center;
+  font-size:0.8em;
+
+  background:url(img/login/motif.png) #F5F5F5;
+}
+
+#container {
+  min-height:100%;
+  height:auto;
+  position:relative;
+  
+  background: -moz-linear-gradient(top,  rgba(255,255,255,0.7) 0%, rgba(255,255,255,0) 50%, rgba(0,0,0,0.15) 100%);
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(255,255,255,0.7)), color-stop(50%,rgba(255,255,255,0)), color-stop(100%,rgba(0,0,0,0.15)));
+  background: -webkit-linear-gradient(top,  rgba(255,255,255,0.7) 0%,rgba(255,255,255,0) 50%,rgba(0,0,0,0.15) 100%);
+  background: -o-linear-gradient(top,  rgba(255,255,255,0.7) 0%,rgba(255,255,255,0) 50%,rgba(0,0,0,0.15) 100%);
+  background: -ms-linear-gradient(top,  rgba(255,255,255,0.7) 0%,rgba(255,255,255,0) 50%,rgba(0,0,0,0.15) 100%);
+  background: linear-gradient(to bottom,  rgba(255,255,255,0.7) 0%,rgba(255,255,255,0) 50%,rgba(0,0,0,0.15) 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#b3ffffff', endColorstr='#26000000',GradientType=0 );
+}
+
+img.logo {
+  padding:80px 0;
+}
+
+.signinwith {
+  position:relative;
+  border-radius:2px;
+  padding:10px 20px 10px 50px;
+  display:inline-block;
+  margin:10px;
+}
+
+#signinwithtwitter { 
+  background-color:#00baf0;
+  color:#FFFFFF;
+}
+
+#signinwithtwitter:hover, #signinwithtwitter:focus {
+  background-color:#60d1f0;
+}
+
+#signinwithfacebook { 
+  background-color:#325c99;
+  color:#FFFFFF;
+}
+
+#signinwithfacebook:hover, #signinwithfacebook:focus {
+  background-color:#5c7499;
+}
+
+#signinwithgoogleplus { 
+  background-color:#e54c32;color:#FFFFFF;
+}
+
+#signinwithgoogleplus:hover, #signinwithgoogleplus:focus {
+  background-color:#eb6950;
+}
+
+.signinwith img {
+  position:absolute;
+  top:5px;
+  left:0;
+  padding:5px 10px;
+  border-right:1px solid rgba(0,0,0,0.15);
+  box-shadow:1px 0 0 0 rgba(255,255,255,0.1);
+}
+
+.or-sign-via-sentence {
+  padding: 35px 0 20px 0;
+}
+
+.providers-list {
+  display: inline-block;
+}
+
+footer {
+  position:absolute;
+  bottom:0;
+  font-size:0.8em;
+  color:#999;
+  padding:10px 0;
+  width:100%;
+}

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+  <head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta name="description" content=""/>
+    <meta name="viewport" content="width=device-width"/>
+    <title>Skimbo - Demo</title>
+    <link rel="shortcut icon" type="image/png" href="../img/favicon.png">
+    <link rel="stylesheet" media="screen" href="stylesheets/logged.less"/>
+    <!-- Twitter card meta -->
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:url" content="http://skimbo.studio-dev.fr">
+    <meta name="twitter:title" content="Skimbo">
+    <meta name="twitter:description" content="Skimbo will change the way you follow streams from social networks by displaying them in a unique window, thus you will always be aware of new informations ! Just try it ! 😊">
+    <meta name="twitter:image" content="https://trello-attachments.s3.amazonaws.com/505a376f783db194689c3972/509035d5c0af2b130c0020db/2a06737f55267206f4a40dd62c2ac9b9/128x128_transparent.png">
+    <meta name="twitter:creator:id" content="854525299">
+  </head>
+  <body>
+    <div id="publicApp" ng-controller="MainController">
+      <header ng-include="'views/header.html'"></header>
+
+      <div class="container" ng-view>
+        <noscript>
+          <p>Your navigator must run javascript files !</p>
+          <p>Vous devez autoriser l'exécution de javascript !</p>
+        </noscript>
+      </div>
+
+      <div class="glass-div-container" ng-controller="GlassController" ng-show="showView">
+        <div class="glass-div" ng-click="hide()"></div>
+        <div ng-include="showView" onload="loaded()"></div>
+      </div>
+
+      <script src="scripts/vendor/angular/angular.min.js"></script>
+      <script src="scripts/vendor/angular-sanitize/angular-sanitize.min.js"></script>
+      <script src="scripts/vendor/momentjs/min/moment.min.js"></script>
+      <script src="scripts/vendor/momentjs/min/langs.min.js"></script>
+      <script src="scripts/vendor/whoareyou/whoareyou.js"></script>
+        
+    </div>
+      
+  	<script type="text/javascript">
+  	  var _gaq = _gaq || [];
+  	  _gaq.push(['_setAccount', 'UA-36716356-1']);
+  	  _gaq.push(['_trackPageview']);
+  	  (function() {
+  	    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+  	    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+  	    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  	  })();
+  	</script>
+
+    <script src="javascripts/app.js"> </script>
+    <script src="javascripts/controllers/MainController.js"> </script>
+
+
+
+
+  </body>
+</html>

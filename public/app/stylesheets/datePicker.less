@@ -1,0 +1,88 @@
+.date-picker-global-container,.time-picker-global-container {
+  font-family:sans-serif;
+  font-size:0.9em;
+  display:inline-block;
+  vertical-align:top;
+}
+
+.date-picker-global-container {
+  width: 203px;
+}
+
+.date-picker-controls-header {
+  background: none repeat scroll 0 0 #2F2F2F;
+    border-bottom: 1px solid #555555;
+    color: #AAAAAA;
+    padding: 5px 10px;
+    text-align: center;
+}
+
+.date-picker-prev {
+  float: left;
+  cursor: pointer;
+}
+
+.date-picker-current-month {
+color: #FFF;
+}
+
+.date-picker-next {
+  float: right;
+  cursor: pointer;
+}
+
+
+.date-picker-prev,.date-picker-next {
+  color:#AAA;
+}
+
+
+
+.date-picker-day-header {
+  text-align: center;
+  background-color: #2F2F2F;
+  font-size:0.9em;
+}
+
+.date-picker-month {
+  text-align: center;
+  background-color: #E2E2E2;
+}
+
+.date-picker-week {
+    
+}
+
+.date-picker-day {
+  cursor: pointer;
+  text-align: center;
+  display: inline-block;
+  width: 25px;
+  height: 25px;
+  padding:2px;
+  line-height: 25px;
+  color: #AAA;
+  transition:background-color 100ms,color 100ms;
+}
+.date-picker-prev:hover,.date-picker-prev:focus,
+.date-picker-next:hover,.date-picker-next:focus ,
+.date-picker-month .date-picker-day:hover,
+.date-picker-month .date-picker-day:focus,
+.date-picker-month .date-picker-day.isSelected-true {
+  background-color:#2F2F2F;
+  color: #FFF;
+}
+
+.date-picker-day-header .date-picker-day {
+  cursor: default;
+}
+
+.date-picker-day.isSameMonth-true {
+  background-color: #E2E2E2;
+  color: #2F2F2F;
+}
+
+.date-picker-day.isToday-true {
+  background-color: #EEEEEE;
+  font-weight:bold;
+}
