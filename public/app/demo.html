@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width"/>
     <title>Skimbo - Demo</title>
     <link rel="shortcut icon" type="image/png" href="../img/favicon.png">
-    <link rel="stylesheet" media="screen" href="stylesheets/logged.less"/>
+   <!-- <link rel="stylesheet" media="screen" href="stylesheets/logged.less"/> -->
     <!-- Twitter card meta -->
     <meta name="twitter:card" content="summary">
     <meta name="twitter:url" content="http://skimbo.studio-dev.fr">
@@ -35,12 +35,12 @@
         <div ng-include="showView" onload="loaded()"></div>
       </div>
 
-      <script src="scripts/vendor/angular/angular.min.js"></script>
+<!--      <script src="scripts/vendor/angular/angular.min.js"></script>
       <script src="scripts/vendor/angular-sanitize/angular-sanitize.min.js"></script>
       <script src="scripts/vendor/momentjs/min/moment.min.js"></script>
       <script src="scripts/vendor/momentjs/min/langs.min.js"></script>
       <script src="scripts/vendor/whoareyou/whoareyou.js"></script>
-        
+-->        
     </div>
       
   	<script type="text/javascript">
@@ -54,11 +54,11 @@
   	  })();
   	</script>
 
-    <script src="javascripts/app.js"> </script>
-    <script src="javascripts/controllers/MainController.js"> </script>
+    <!-- compiled CSS --><% styles.forEach( function ( file ) { %>
+    <link rel="stylesheet" type="text/css" href="<%= file %>" /><% }); %>
 
-
-
+    <!-- compiled JavaScript --><% scripts.forEach( function ( file ) { %>
+    <script type="text/javascript" src="<%= file %>"></script><% }); %>
 
   </body>
 </html>

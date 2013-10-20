@@ -87,4 +87,6 @@ $RECYCLE.BIN/
 
 # lib js
 public/app/scripts/vendor/*
-node_modules/*
+public/node_modules/*
+public/bin/*
+public/build/*
