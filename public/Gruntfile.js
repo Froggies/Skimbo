@@ -599,6 +599,24 @@ module.exports = function ( grunt ) {
   }
 
   /**
+   * A utility function to get all app JavaScript sources for the demo.html file.
+   */
+  function filterJSFilesForDemo ( files ) {
+    return files.filter( function ( file ) {
+      return !file.match( /.\/Network\.js$/ );
+    });
+  }
+
+  /**
+   * A utility function to get all app JavaScript sources for the index.html file.
+   */
+  function filterJSFilesForIndex ( files ) {
+    return files.filter( function ( file ) {
+      return !file.match( /.\/MockedNetwork\.js$/ );
+    });
+  }
+
+  /**
    * A utility function to get all app CSS sources.
    */
   function filterForCSS ( files ) {
@@ -618,15 +636,29 @@ module.exports = function ( grunt ) {
     var jsFiles = filterForJS( this.filesSrc ).map( function ( file ) {
       return file.replace( dirRE, '' );
     });
+    var jsFilesForDemo = filterJSFilesForDemo(jsFiles);
+    var jsFilesForIndex = filterJSFilesForIndex(jsFiles);
+
     var cssFiles = filterForCSS( this.filesSrc ).map( function ( file ) {
       return file.replace( dirRE, '' );
     });
 
-    grunt.file.copy('app/demo.html', this.data.dir + '/index.html', { 
+    grunt.file.copy('app/index.html', this.data.dir + '/demo.html', { 
       process: function ( contents, path ) {
         return grunt.template.process( contents, {
           data: {
-            scripts: jsFiles,
+            scripts: jsFilesForDemo,
+            styles: cssFiles,
+            version: grunt.config( 'pkg.version' )
+          }
+        });
+      }
+    });
+    grunt.file.copy('app/index.html', this.data.dir + '/index.html', { 
+      process: function ( contents, path ) {
+        return grunt.template.process( contents, {
+          data: {
+            scripts: jsFilesForIndex,
             styles: cssFiles,
             version: grunt.config( 'pkg.version' )
           }
