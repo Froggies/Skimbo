@@ -165,7 +165,7 @@
       }
 
       $scope.dispatchMsg = function(message) {
-        $rootScope.$broadcast('glassShowView', '/assets/app/views/post.html', function() {
+        $rootScope.$broadcast('glassShowView', 'views/post.html', function() {
           $rootScope.$broadcast('dispatchMsg', message);
         });
       }
@@ -240,7 +240,7 @@
       $scope.showMedias = undefined;
 
       $scope.showMediasClick = function(message) {
-        $scope.showMedias = "/assets/app/views/medias.html";
+        $scope.showMedias = "views/medias.html";
         $timeout(function() {
           $rootScope.$broadcast('displayMedias', message);
         }, 10);

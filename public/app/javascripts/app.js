@@ -14,11 +14,11 @@
     function($routeProvider, $locationProvider) {
     $routeProvider
       .when('/', {
-        templateUrl: '/assets/app/views/main.html',
+        templateUrl: 'views/main.html',
         controller: "ColumnController"
       })
       .when('/p/:pageName', {
-        templateUrl: '/assets/app/views/main.html',
+        templateUrl: 'views/main.html',
         controller: "ColumnController"
       })
       .otherwise({

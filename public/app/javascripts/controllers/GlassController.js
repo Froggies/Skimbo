@@ -9,7 +9,7 @@
     $rootScope.$on('glassShowView', function(evt, view, optionalCallback) {
       _optionalCallback = optionalCallback;
       if(view == 'modifColumn') {
-        show('/assets/app/views/modifColumn.html');
+        show('views/modifColumn.html');
       } else if(view == 'help') {
         var lang;
         if($rootScope.currentLanguage === 'fr') {
@@ -17,7 +17,7 @@
         } else {
           lang = 'en';
         }
-        show('/assets/app/views/help_'+lang+'.html');
+        show('views/help_'+lang+'.html');
       } else {
         show(view);
       }

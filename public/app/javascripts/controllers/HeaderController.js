@@ -42,15 +42,15 @@
     });
 
     $scope.showAccount = function() {
-      $rootScope.$broadcast('glassShowView', '/assets/app/views/account.html');
+      $rootScope.$broadcast('glassShowView', 'views/account.html');
     }
 
     $scope.showSkimber = function() {
-      $rootScope.$broadcast('glassShowView', '/assets/app/views/post.html');
+      $rootScope.$broadcast('glassShowView', 'views/post.html');
     }
 
     $scope.showModifColumn = function() {
-      $rootScope.$broadcast('glassShowView', '/assets/app/views/modifColumn.html');
+      $rootScope.$broadcast('glassShowView', 'views/modifColumn.html');
     }
 
     $scope.showHelp = function() {
