@@ -1,8 +1,8 @@
-'use strict';
+(function () {
 
-define(["app"], function(app) {
+  'use strict';
 
-  app.directive('oracle', ['Network', '$rootScope', '$timeout', 
+  angular.module('publicApp').directive('oracle', ['Network', '$rootScope', '$timeout', 
     function($network, $rootScope, $timeout) {
 
     var lastSend = undefined;
@@ -68,4 +68,5 @@ define(["app"], function(app) {
     };
 
   }]);
-});
+
+})();

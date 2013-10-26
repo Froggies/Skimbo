@@ -1,8 +1,8 @@
-'use strict';
+(function () {  
 
-define(["app"], function(app) {
+  'use strict';
 
-  app.directive('timePicker', [function() {
+  angular.module('publicApp').directive('timePicker', [function() {
 
     var defaultCssStyle = [
       '-webkit-transform: rotate(', '0', 'deg);',
@@ -109,4 +109,5 @@ define(["app"], function(app) {
     }
 
   }]);
-});
+
+})();

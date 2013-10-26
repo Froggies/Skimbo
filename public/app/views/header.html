@@ -1,22 +1,22 @@
 <div ng-controller="HeaderController" class="header">
 
 	<div class="header-user-img" ng-click="showAccount()" ng-hide="loading" style="background: url('{{userInfos[0].avatar}}') repeat scroll center center / cover transparent;"></div>
-	<img class="header-loader" ng-show="loading" alt="loader" src="/assets/img/loader.gif" />
+	<img class="header-loader" ng-show="loading" alt="loader" src="assets/img/loader.gif" />
 
 	<a class="header-menu-button" ng-click="showSkimber()">
-		<img id="skimber" alt="skimber" src="/assets/img/icone_skimber.png">
+		<img id="skimber" alt="skimber" src="assets/img/icone_skimber.png">
 		<br />
 		Skimber
 	</a>
 
 	<a class="header-menu-button" ng-click="showModifColumn()">
-		<img id="addcolonne" alt="column" src="/assets/img/icone_addcolonne.png">
+		<img id="addcolonne" alt="column" src="assets/img/icone_addcolonne.png">
 		<br />
 		{{'COLUMN' | i18n}}
 	</a>
 
 	<a class="header-menu-button header-help-button" ng-click="showHelp()">
-		<img id="addcolonne" alt="column" src="/assets/img/icone_aide.png">
+		<img id="addcolonne" alt="column" src="assets/img/icone_aide.png">
 		<br />
 		Aide
 	</a>

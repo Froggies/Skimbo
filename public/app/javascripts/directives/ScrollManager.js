@@ -1,8 +1,8 @@
-'use strict';
+(function () {
 
-define(["app"], function(app) {
+  'use strict';
 
-  app.directive("scrollmanager", ["$timeout", "$rootScope", "Visibility", "ArrayUtils", "Network",
+  angular.module('publicApp').directive("scrollmanager", ["$timeout", "$rootScope", "Visibility", "ArrayUtils", "Network",
     function($timeout, $rootScope, $visibility, $arrayUtils, $network) {
     
     var userScroll = false, scrollObjects = {}, timeoutsUpdateSinceId = {};
@@ -109,4 +109,4 @@ define(["app"], function(app) {
 
   }]);
 
-})
+})();

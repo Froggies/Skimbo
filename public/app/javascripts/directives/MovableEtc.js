@@ -1,8 +1,8 @@
-'use strict';
+(function () {
 
-define(["app"], function(app) {
+  'use strict';
 
-  app.directive('movableEtc', ['$timeout', '$filter', function($timeout, $filter) {
+  angular.module('publicApp').directive('movableEtc', ['$timeout', '$filter', function($timeout, $filter) {
 
     var retreiveMessage = $filter('i18n')('RETRIEVING_MESSAGES');
     var scrollToShowMessage = $filter('i18n')('SCROLL_TO_SHOW_MSG');
@@ -44,4 +44,5 @@ define(["app"], function(app) {
     };
 
   }]);
-});
+
+})();

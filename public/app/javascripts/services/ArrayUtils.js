@@ -1,123 +1,122 @@
-'use strict';
+(function () {
 
-define(["app"], function(app) {
+  'use strict';
 
-app.factory("ArrayUtils", ['Visibility', '$rootScope', function($visibility, $rootScope) {
+  angular.module('publicApp').factory("ArrayUtils", ['Visibility', '$rootScope', function($visibility, $rootScope) {
 
-  var insertedMsgInProgress = false;
-  var msgToBeInserted = [];
+    var insertedMsgInProgress = false;
+    var msgToBeInserted = [];
 
-  return {
+    return {
 
-    exist: function(array, object, field) {
-      return this.indexOf(array, object, field) > -1;
-    },
+      exist: function(array, object, field) {
+        return this.indexOf(array, object, field) > -1;
+      },
 
-    indexOf: function(array, object, field) {
-      var index = -1;
-      if(array !== undefined) {
-        if(field  !== undefined) {
-          return this.indexOfWith(array, object, function(inArray, data) {
-            return inArray[field] == data[field];
-          });
-        } else {
-          return this.indexOfWith(array, object, function(inArray, data) {
-            return inArray == data;
-          });
-        }
-      }
-      return index;
-    },
-
-    existWith: function(array, object, cond) {
-      return this.indexOfWith(array, object, cond) > -1;
-    },
-
-    indexOfWith: function(array, object, cond) {
-      var index = -1;
-      if(array !== undefined && cond !== undefined) {
-        for (var i = 0; i < array.length; i++) {
-          if (cond(array[i], object) == true) {
-            return i;
-          }
-        }
-      }
-      return index;
-    },
-
-    random: function(array) {
-      var index = Math.floor(Math.random() * (array.length + 1));
-      if(index > array.length - 1) {
-        index = 0;
-      }
-      return array[index];
-    },
-
-    sortedArrayLocationOf: function(element, array, property, start, end) {
-      start = start || 0;
-      end = end || array.length;
-      var pivot = parseInt(start + (end - start) / 2);
-      if(end-start <= 1 || array[pivot][property] == element[property]) {
-        return pivot;
-      }
-      if(array[pivot][property] < element[property]) {
-        return this.sortedArrayLocationOf(element, array, property, pivot, end);
-      } else{
-        return this.sortedArrayLocationOf(element, array, property, start, pivot);
-      }
-    },
-
-    sortMsg: function(sortMe, newMsg) {
-      if(insertedMsgInProgress == false) {
-        insertedMsgInProgress = true;
+      indexOf: function(array, object, field) {
         var index = -1;
-        var isOldMsg = false;
-        newMsg.dateAgo = moment(moment(Number(newMsg.createdAt)), "YYYYMMDD").fromNow();
-        for(var i=0, len=sortMe.length; i<len; ++i ) {
-          if(sortMe[i].createdAt < newMsg.createdAt && index == -1) {
-            index = i;
+        if(array !== undefined) {
+          if(field  !== undefined) {
+            return this.indexOfWith(array, object, function(inArray, data) {
+              return inArray[field] == data[field];
+            });
+          } else {
+            return this.indexOfWith(array, object, function(inArray, data) {
+              return inArray == data;
+            });
           }
-          if(sortMe[i].idProvider == newMsg.idProvider || 
-            (sortMe[i].authorName == newMsg.authorName && sortMe[i].message == newMsg.message)) {
-            isOldMsg = true;
-            //update old msg
-            if(newMsg.stared !== undefined) {
-              sortMe[i].stared = newMsg.stared;
+        }
+        return index;
+      },
+
+      existWith: function(array, object, cond) {
+        return this.indexOfWith(array, object, cond) > -1;
+      },
+
+      indexOfWith: function(array, object, cond) {
+        var index = -1;
+        if(array !== undefined && cond !== undefined) {
+          for (var i = 0; i < array.length; i++) {
+            if (cond(array[i], object) == true) {
+              return i;
             }
-            sortMe[i].iStared = newMsg.iStared;
-            sortMe[i].styleRefresh = "";
           }
-          //refresh time
-          sortMe[i].dateAgo = moment(moment(Number(sortMe[i].createdAt)), "YYYYMMDD")
-                                 .lang($rootScope.currentLanguage || 'en')
-                                 .fromNow();
         }
-        //insert data
-        if(index > -1 && isOldMsg == false) {
-          sortMe.splice(index, 0, newMsg);
-          $visibility.notifyNewMessage();
-        } else if(isOldMsg == false) {
-          sortMe.push(newMsg);
-          $visibility.notifyNewMessage();
+        return index;
+      },
+
+      random: function(array) {
+        var index = Math.floor(Math.random() * (array.length + 1));
+        if(index > array.length - 1) {
+          index = 0;
         }
-        //recursion powa
-        if(msgToBeInserted.length == 0) {
-          insertedMsgInProgress = false;
+        return array[index];
+      },
+
+      sortedArrayLocationOf: function(element, array, property, start, end) {
+        start = start || 0;
+        end = end || array.length;
+        var pivot = parseInt(start + (end - start) / 2);
+        if(end-start <= 1 || array[pivot][property] == element[property]) {
+          return pivot;
+        }
+        if(array[pivot][property] < element[property]) {
+          return this.sortedArrayLocationOf(element, array, property, pivot, end);
+        } else{
+          return this.sortedArrayLocationOf(element, array, property, start, pivot);
+        }
+      },
+
+      sortMsg: function(sortMe, newMsg) {
+        if(insertedMsgInProgress == false) {
+          insertedMsgInProgress = true;
+          var index = -1;
+          var isOldMsg = false;
+          newMsg.dateAgo = moment(moment(Number(newMsg.createdAt)), "YYYYMMDD").fromNow();
+          for(var i=0, len=sortMe.length; i<len; ++i ) {
+            if(sortMe[i].createdAt < newMsg.createdAt && index == -1) {
+              index = i;
+            }
+            if(sortMe[i].idProvider == newMsg.idProvider || 
+              (sortMe[i].authorName == newMsg.authorName && sortMe[i].message == newMsg.message)) {
+              isOldMsg = true;
+              //update old msg
+              if(newMsg.stared !== undefined) {
+                sortMe[i].stared = newMsg.stared;
+              }
+              sortMe[i].iStared = newMsg.iStared;
+              sortMe[i].styleRefresh = "";
+            }
+            //refresh time
+            sortMe[i].dateAgo = moment(moment(Number(sortMe[i].createdAt)), "YYYYMMDD")
+                                   .lang($rootScope.currentLanguage || 'en')
+                                   .fromNow();
+          }
+          //insert data
+          if(index > -1 && isOldMsg == false) {
+            sortMe.splice(index, 0, newMsg);
+            $visibility.notifyNewMessage();
+          } else if(isOldMsg == false) {
+            sortMe.push(newMsg);
+            $visibility.notifyNewMessage();
+          }
+          //recursion powa
+          if(msgToBeInserted.length == 0) {
+            insertedMsgInProgress = false;
+          } else {
+            var toBeInserted = msgToBeInserted.shift();
+            this.sortMsg(toBeInserted.tab, toBeInserted.msg);
+          }
         } else {
-          var toBeInserted = msgToBeInserted.shift();
-          this.sortMsg(toBeInserted.tab, toBeInserted.msg);
+          msgToBeInserted.push({
+            tab: sortMe,
+            msg: newMsg
+          })
         }
-      } else {
-        msgToBeInserted.push({
-          tab: sortMe,
-          msg: newMsg
-        })
       }
-    }
 
-  };
+    };
 
-}]);
+  }]);
 
-return app;
-});
+})();

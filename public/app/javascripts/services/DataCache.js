@@ -1,123 +1,122 @@
-'use strict';
+(function () {
 
-define(["app"], function(app) {
+  'use strict';
 
-app.factory("DataCache", [
-  "$rootScope", "ImagesUtils", "ArrayUtils",
-  function($rootScope, $imagesUtils, $arrayUtils) {
+  angular.module('publicApp').factory("DataCache", [
+    "$rootScope", "ImagesUtils", "ArrayUtils",
+    function($rootScope, $imagesUtils, $arrayUtils) {
 
-  var _cache = {};
-  var _callback = {};
+    var _cache = {};
+    var _callback = {};
 
-  function add(key, data) {
-    _cache[key] = data;
-    fireEvent(key);
-  }
-
-  function fireEvent(key, optionalData) {
-    if(_callback[key] !== undefined) {
-      for (var i = 0; i < _callback[key].length; i++) {
-        _callback[key][i](optionalData === undefined ? _cache[key] : optionalData);
-      };
+    function add(key, data) {
+      _cache[key] = data;
+      fireEvent(key);
     }
-  }
 
-  $rootScope.$on('userInfos', function(evt, data) {
-    if(_cache.userInfos == undefined) {
-      _cache.userInfos = [];
-      _cache.userInfos.push(data);
-    } else {
+    function fireEvent(key, optionalData) {
+      if(_callback[key] !== undefined) {
+        for (var i = 0; i < _callback[key].length; i++) {
+          _callback[key][i](optionalData === undefined ? _cache[key] : optionalData);
+        };
+      }
+    }
+
+    $rootScope.$on('userInfos', function(evt, data) {
+      if(_cache.userInfos == undefined) {
+        _cache.userInfos = [];
+        _cache.userInfos.push(data);
+      } else {
+        var index = $arrayUtils.indexOf(_cache.userInfos, data, "socialType");
+        if(index > -1) {
+          _cache.userInfos[index] = data;
+        } else {
+          if($imagesUtils.isDefaultImage(_cache.userInfos[0].avatar)) {
+            _cache.userInfos.splice(0, 0, data);
+          } else {
+            _cache.userInfos.push(data);
+          }
+        }
+      }
+      fireEvent('userInfos');
+    });
+
+    $rootScope.$on('deleteProvider', function(evt, data) {
+      data.socialType = data.provider;
       var index = $arrayUtils.indexOf(_cache.userInfos, data, "socialType");
       if(index > -1) {
-        _cache.userInfos[index] = data;
+        _cache.userInfos.splice(index, 1);
+      }
+      fireEvent('userInfos');
+
+      data.providerName = data.provider;
+      var index = $arrayUtils.indexOf(_cache.tokenInvalid, data, "providerName");
+      if(index > -1) {
+        _cache.tokenInvalid.splice(index, 1);
+        fireEvent('tokenInvalid');
+      }
+    });
+
+    $rootScope.$on('tokenInvalid', function(evt, data) {
+      if(_cache.tokenInvalid == undefined) {
+        _cache.tokenInvalid = [];
+        _cache.tokenInvalid.push(data);
       } else {
-        if($imagesUtils.isDefaultImage(_cache.userInfos[0].avatar)) {
-          _cache.userInfos.splice(0, 0, data);
+        var index = $arrayUtils.indexOf(_cache.tokenInvalid, data, "providerName");
+        if(index > -1) {
+          _cache.tokenInvalid[index] = data;
         } else {
-          _cache.userInfos.push(data);
+          _cache.tokenInvalid.push(data);
+        }
+      }
+      fireEvent('tokenInvalid');
+    });
+
+    $rootScope.$on('allColumns', function(evt, columns) {
+      add('allColumns', columns);
+    });
+
+    $rootScope.$on('addColumn', function(evt, column) {
+      _cache.allColumns.push(column);
+      fireEvent('addColumn', column);
+    });
+
+    $rootScope.$on('modColumn', function(evt, column) {
+      var index = $arrayUtils.indexOf(_cache.allColumns, column, "title");
+      if(index > -1) {
+        _cache.allColumns[index] = column.column;
+        fireEvent('modColumn', [index, column.column]);
+      }
+    });
+
+    $rootScope.$on('delColumn', function(evt, column) {
+      var index = $arrayUtils.indexOf(_cache.allColumns, column, "title");
+      if(index > -1) {
+        _cache.allColumns.splice(index, 1);
+        fireEvent('delColumn', [index, column]);
+      }
+    });
+
+    $rootScope.$on('allUnifiedRequests', function(evt, providers) {
+      add('allUnifiedRequests', providers);
+    });
+
+    return {
+      get: function(key, callback) {
+        return _cache[key];
+      },
+      add: function(key, data) {
+        add(key, data);
+      },
+      on: function(key, callback) {
+        _callback[key] = _callback[key] || [];
+        _callback[key].push(callback);
+        if(_cache[key] !== undefined) {
+          callback(_cache[key]);
         }
       }
     }
-    fireEvent('userInfos');
-  });
 
-  $rootScope.$on('deleteProvider', function(evt, data) {
-    data.socialType = data.provider;
-    var index = $arrayUtils.indexOf(_cache.userInfos, data, "socialType");
-    if(index > -1) {
-      _cache.userInfos.splice(index, 1);
-    }
-    fireEvent('userInfos');
+  }]);
 
-    data.providerName = data.provider;
-    var index = $arrayUtils.indexOf(_cache.tokenInvalid, data, "providerName");
-    if(index > -1) {
-      _cache.tokenInvalid.splice(index, 1);
-      fireEvent('tokenInvalid');
-    }
-  });
-
-  $rootScope.$on('tokenInvalid', function(evt, data) {
-    if(_cache.tokenInvalid == undefined) {
-      _cache.tokenInvalid = [];
-      _cache.tokenInvalid.push(data);
-    } else {
-      var index = $arrayUtils.indexOf(_cache.tokenInvalid, data, "providerName");
-      if(index > -1) {
-        _cache.tokenInvalid[index] = data;
-      } else {
-        _cache.tokenInvalid.push(data);
-      }
-    }
-    fireEvent('tokenInvalid');
-  });
-
-  $rootScope.$on('allColumns', function(evt, columns) {
-    add('allColumns', columns);
-  });
-
-  $rootScope.$on('addColumn', function(evt, column) {
-    _cache.allColumns.push(column);
-    fireEvent('addColumn', column);
-  });
-
-  $rootScope.$on('modColumn', function(evt, column) {
-    var index = $arrayUtils.indexOf(_cache.allColumns, column, "title");
-    if(index > -1) {
-      _cache.allColumns[index] = column.column;
-      fireEvent('modColumn', [index, column.column]);
-    }
-  });
-
-  $rootScope.$on('delColumn', function(evt, column) {
-    var index = $arrayUtils.indexOf(_cache.allColumns, column, "title");
-    if(index > -1) {
-      _cache.allColumns.splice(index, 1);
-      fireEvent('delColumn', [index, column]);
-    }
-  });
-
-  $rootScope.$on('allUnifiedRequests', function(evt, providers) {
-    add('allUnifiedRequests', providers);
-  });
-
-  return {
-    get: function(key, callback) {
-      return _cache[key];
-    },
-    add: function(key, data) {
-      add(key, data);
-    },
-    on: function(key, callback) {
-      _callback[key] = _callback[key] || [];
-      _callback[key].push(callback);
-      if(_cache[key] !== undefined) {
-        callback(_cache[key]);
-      }
-    }
-  }
-
-}]);
-
-return app;
-});
+})();

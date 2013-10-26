@@ -1,7 +1,8 @@
-'use strict';
+(function () {
+  
+  'use strict';
 
-define(["app"], function(app) {
-  app.directive('onKeyPress', ['ArrayUtils', '$timeout', function($arrayUtils, $timeout) {
+  angular.module('publicApp').directive('onKeyPress', ['ArrayUtils', '$timeout', function($arrayUtils, $timeout) {
 
     var allCallback = {/*charCode, [{ ctrl, elmt, global, scope, onKeyPress, uniqueKey }]*/};
     var uniqueKey = 0;
@@ -70,4 +71,5 @@ define(["app"], function(app) {
       }
     }
   }]);
-});
+
+})();

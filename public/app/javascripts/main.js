@@ -1,4 +1,4 @@
-'use strict';
+/*'use strict';
 
 require([
   'app',
@@ -37,3 +37,4 @@ require([
 ], function(app) {
   window.angular.bootstrap(window.document.getElementById('publicApp'), ['publicApp']);
 });
+*/

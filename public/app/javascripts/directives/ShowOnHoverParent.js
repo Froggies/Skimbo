@@ -1,8 +1,8 @@
-'use strict';
+(function () {
 
-define(["app"], function(app) {
+  'use strict';
 
-  app.directive('showonhoverparent', [function() {
+  angular.module('publicApp').directive('showonhoverparent', [function() {
 
     return {
       link : function(scope, element, attrs) {
@@ -17,4 +17,5 @@ define(["app"], function(app) {
     };
 
   }]);
-});
+
+})();

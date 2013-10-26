@@ -1,4 +1,4 @@
-'use strict';
+/*'use strict';
 
 require([
   'app',
@@ -36,4 +36,4 @@ require([
   'controllers/PostController'
 ], function(app) {
   window.angular.bootstrap(window.document.getElementById('publicApp'), ['publicApp']);
-});
+});*/

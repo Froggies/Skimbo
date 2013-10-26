@@ -27,8 +27,8 @@ module.exports = {
     coffee: [ 'app/**/*.coffee', '!app/**/*.spec.coffee' ],
     coffeeunit: [ 'app/**/*.spec.coffee' ],
 
-    atpl: [ 'app/**/*.tpl.html' ],
-    ctpl: [ 'common/**/*.tpl.html' ],
+    atpl: [ 'app/views/**/*.html' ],
+    ctpl: [ 'common/**/*.html' ],
 
     html: [ 'app/demo.html' ],
     less: 'app/stylesheets/logged.less'

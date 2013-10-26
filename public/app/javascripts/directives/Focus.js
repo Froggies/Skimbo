@@ -1,12 +1,14 @@
-'use strict';
+(function () {
 
-define(["app"], function(app) {
+	'use strict';
 
-  app.directive('focus', [function() {
+  angular.module('publicApp').directive('focus', [function() {
 
     return function (scope, element) {
       element[0].focus();
     };
 
   }]);
-});
+
+})();
+

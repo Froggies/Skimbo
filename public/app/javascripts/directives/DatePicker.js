@@ -1,8 +1,8 @@
-'use strict';
+(function () {
 
-define(["app"], function(app) {
+  'use strict';
 
-  app.directive('datePicker', [function() {
+  angular.module('publicApp').directive('datePicker', [function() {
 
     return {
       restrict: 'E',
@@ -114,4 +114,5 @@ define(["app"], function(app) {
     }
     
   }]);
-});
+
+})();

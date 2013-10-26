@@ -1,49 +1,47 @@
-'use strict';
+(function () {
+  'use strict';
 
-define(["app"], function(app) {
+  angular.module('publicApp').controller('GlassController', ["$scope", "$rootScope", function($scope, $rootScope) {
 
-app.controller('GlassController', ["$scope", "$rootScope", function($scope, $rootScope) {
-
-  var _optionalCallback = undefined;
-  $scope.showView = false;
-
-  $rootScope.$on('glassShowView', function(evt, view, optionalCallback) {
-    _optionalCallback = optionalCallback;
-    if(view == 'modifColumn') {
-      show('/assets/app/views/modifColumn.html');
-    } else if(view == 'help') {
-      var lang;
-      if($rootScope.currentLanguage === 'fr') {
-        lang = 'fr';
-      } else {
-        lang = 'en';
-      }
-      show('/assets/app/views/help_'+lang+'.html');
-    } else {
-      show(view);
-    }
-  });
-
-  function show(view) {
-    if(view == $scope.showView) {
-      $scope.hide();
-    } else {
-      $scope.showView = view;
-    }
-  }
-
-  $scope.hide = function() {
+    var _optionalCallback = undefined;
     $scope.showView = false;
-  }
 
-  $scope.loaded = function() {
-    if(_optionalCallback !== undefined) {
-      _optionalCallback();
+    $rootScope.$on('glassShowView', function(evt, view, optionalCallback) {
+      _optionalCallback = optionalCallback;
+      if(view == 'modifColumn') {
+        show('/assets/app/views/modifColumn.html');
+      } else if(view == 'help') {
+        var lang;
+        if($rootScope.currentLanguage === 'fr') {
+          lang = 'fr';
+        } else {
+          lang = 'en';
+        }
+        show('/assets/app/views/help_'+lang+'.html');
+      } else {
+        show(view);
+      }
+    });
+
+    function show(view) {
+      if(view == $scope.showView) {
+        $scope.hide();
+      } else {
+        $scope.showView = view;
+      }
     }
-    _optionalCallback = undefined;
-  }
 
-}]);
+    $scope.hide = function() {
+      $scope.showView = false;
+    }
 
-return app;
-});
+    $scope.loaded = function() {
+      if(_optionalCallback !== undefined) {
+        _optionalCallback();
+      }
+      _optionalCallback = undefined;
+    }
+
+  }]);
+})();
+

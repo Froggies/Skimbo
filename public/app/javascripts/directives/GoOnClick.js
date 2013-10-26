@@ -1,8 +1,8 @@
-'use strict';
+(function () {
 
-define(["app"], function(app) {
+  'use strict';
 
-  app.directive('goOnClick', ['$rootScope', function($rootScope) {
+  angular.module('publicApp').directive('goOnClick', ['$rootScope', function($rootScope) {
 
     $rootScope.$on('goOnClick', function(evt, idElement) {
       go(idElement);
@@ -23,4 +23,4 @@ define(["app"], function(app) {
     };
 
   }]);
-});
+})();

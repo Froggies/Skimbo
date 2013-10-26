@@ -19,7 +19,7 @@
       <ul>
         <li class="services-proposes" ng-repeat="service in column.unifiedRequests">
           <div class="input-service" ng-show="service.hasArguments" ng-repeat="arg in service.args ">
-            <img class="img-service" ng-src="/assets/img/brand/{{service.providerName}}.png" alt="{{service.providerName}}" width="24" height="24">
+            <img class="img-service" ng-src="assets/img/brand/{{service.providerName}}.png" alt="{{service.providerName}}" width="24" height="24">
             <input class="arg-service" type="text" ng-model="arg.display" placeholder="{{arg.key}}" pattern="[ a-zA-Z0-9]*" oracle="service" oracle-type="paramHelperSearch" oracle-store="arg" focus/>
             <a class="delete-service {{service.providerName}}" ng-click="deleteService(service,arg)">✘</a>
             <div class="container-oracle" ng-show="arg.possibleValues.length > 0">
@@ -33,7 +33,7 @@
             </div>
           </div>
           <div class="input-service" ng-hide="service.hasArguments">
-            <img class="img-service" ng-src="/assets/img/brand/{{service.providerName}}.png" alt="{{service.providerName}}" width="24" height="24">
+            <img class="img-service" ng-src="assets/img/brand/{{service.providerName}}.png" alt="{{service.providerName}}" width="24" height="24">
             <div class="receving-service">{{service.serviceName}}</div>
             <a class="delete-service {{service.providerName}}"
               ng-click="deleteService(service,arg)"
@@ -47,7 +47,7 @@
       <ul>
         <li class="services-proposes" ng-repeat="provider in providers">
           <a class="button-a {{provider.selected}} button-provider modif-column-button-provider" ng-click="selectSocialNetwork(provider)">
-            <img class="social-network-active" ng-src="/assets/img/brand/{{provider.name}}.png" alt="{{provider.name}}" width="32" height="32">
+            <img class="social-network-active" ng-src="assets/img/brand/{{provider.name}}.png" alt="{{provider.name}}" width="32" height="32">
           </a>
         </li>
       </ul>

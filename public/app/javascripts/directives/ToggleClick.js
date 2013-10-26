@@ -1,8 +1,8 @@
-'use strict';
+(function () {
 
-define(["app"], function(app) {
+  'use strict';
 
-  app.directive('toggleClick', [function() {
+  angular.module('publicApp').directive('toggleClick', [function() {
 
     return function (scope, element) {
       element.addClass('icon-play');
@@ -27,4 +27,5 @@ define(["app"], function(app) {
     };
 
   }]);
-});
+
+})();

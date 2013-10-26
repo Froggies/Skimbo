@@ -1,17 +1,16 @@
-'use strict';
+(function () {
 
-define(["app"], function(app) {
+	'use strict';
 
-app.controller('MainController', [
+	angular.module('publicApp').controller('MainController', [
 	'$scope', '$rootScope', 'Network',
 	function($scope, $rootScope, $network) {
 
-  // translation : 
-  $rootScope.currentLanguage = navigator.language.substring(0,2);
+	  // translation : 
+	  $rootScope.currentLanguage = navigator.language.substring(0,2);
 
-  $network.send({cmd:"allUnifiedRequests"});
+	  $network.send({cmd:"allUnifiedRequests"});
 
-}]);
+	}]);
 
-return app;
-});
+})();

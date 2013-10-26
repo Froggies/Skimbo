@@ -1,10 +1,15 @@
-'use strict';
+(function () {
+  'use strict';
 
-// HACK Facebook : redirect to #_=_ and angular dont like this ...
-if (document.location.hash == "#_=_") { document.location.replace("/"); }
+  // HACK Facebook : redirect to #_=_ and angular dont like this ...
+  if (document.location.hash == "#_=_") { document.location.replace("/"); }
 
-define(function() {
-  var publicApp = window.angular.module('publicApp', ['ngSanitize']);
+
+
+  var publicApp = angular.module('publicApp', ['ngSanitize', 'templates-app']);
+
+
+
   publicApp.config(["$routeProvider", "$locationProvider",
     function($routeProvider, $locationProvider) {
     $routeProvider
@@ -21,5 +26,11 @@ define(function() {
       });
       //$locationProvider.html5Mode(true);
   }]);
-  return publicApp;
-});
+
+  window.onload = function() {
+    angular.bootstrap(window.document.getElementById('publicApp'), ['publicApp']);
+  };
+
+
+
+})();
