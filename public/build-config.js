@@ -21,14 +21,14 @@ module.exports = {
    * app's unit tests.
    */
   app_files: {
-    js: [ 'app/javascripts/**/*.js', '!src/**/*.spec.js', '!src/assets/**/*.js' ],
-    jsunit: [ 'src/**/*.spec.js' ],
+    js: [ 'app/javascripts/**/*.js', '!app/**/*.spec.js', '!app/assets/**/*.js' ],
+    jsunit: [ 'app/**/*.spec.js' ],
     
-    coffee: [ 'src/**/*.coffee', '!src/**/*.spec.coffee' ],
-    coffeeunit: [ 'src/**/*.spec.coffee' ],
+    coffee: [ 'app/**/*.coffee', '!app/**/*.spec.coffee' ],
+    coffeeunit: [ 'app/**/*.spec.coffee' ],
 
-    atpl: [ 'src/app/**/*.tpl.html' ],
-    ctpl: [ 'src/common/**/*.tpl.html' ],
+    atpl: [ 'app/**/*.tpl.html' ],
+    ctpl: [ 'common/**/*.tpl.html' ],
 
     html: [ 'app/demo.html' ],
     less: 'app/stylesheets/logged.less'

@@ -34,13 +34,7 @@
         <div class="glass-div" ng-click="hide()"></div>
         <div ng-include="showView" onload="loaded()"></div>
       </div>
-
-<!--      <script src="scripts/vendor/angular/angular.min.js"></script>
-      <script src="scripts/vendor/angular-sanitize/angular-sanitize.min.js"></script>
-      <script src="scripts/vendor/momentjs/min/moment.min.js"></script>
-      <script src="scripts/vendor/momentjs/min/langs.min.js"></script>
-      <script src="scripts/vendor/whoareyou/whoareyou.js"></script>
--->        
+     
     </div>
       
   	<script type="text/javascript">
@@ -54,11 +48,16 @@
   	  })();
   	</script>
 
-    <!-- compiled CSS --><% styles.forEach( function ( file ) { %>
-    <link rel="stylesheet" type="text/css" href="<%= file %>" /><% }); %>
+    <!-- compiled CSS -->
+    <% styles.forEach( function ( file ) { %>
+      <link rel="stylesheet" type="text/css" href="<%= file %>" />
+    <% }); %>
 
-    <!-- compiled JavaScript --><% scripts.forEach( function ( file ) { %>
-    <script type="text/javascript" src="<%= file %>"></script><% }); %>
+    <!-- compiled JavaScript -->
+    <% scripts.forEach( function ( file ) { %>
+      <script type="text/javascript" src="<%= file %>">
+      </script>
+    <% }); %>
 
   </body>
 </html>

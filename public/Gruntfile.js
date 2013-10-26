@@ -104,7 +104,7 @@ module.exports = function ( grunt ) {
           { 
             src: [ '**' ],
             dest: '<%= build_dir %>/assets/',
-            cwd: 'src/assets',
+            cwd: 'app/assets',
             expand: true
           }
        ]   
@@ -178,7 +178,7 @@ module.exports = function ( grunt ) {
         src: [ 
           '<%= vendor_files.js %>', 
           'module.prefix', 
-          '<%= build_dir %>/public/app/javascripts/**/*.js', 
+          '<%= build_dir %>/app/javascripts/**/*.js', 
           '<%= html2js.app.dest %>', 
           '<%= html2js.common.dest %>', 
           'module.suffix' 
@@ -328,7 +328,7 @@ module.exports = function ( grunt ) {
        */
       app: {
         options: {
-          base: 'src/app'
+          base: 'app'
         },
         src: [ '<%= app_files.atpl %>' ],
         dest: '<%= build_dir %>/templates-app.js'
@@ -339,7 +339,7 @@ module.exports = function ( grunt ) {
        */
       common: {
         options: {
-          base: 'src/common'
+          base: 'app/common'
         },
         src: [ '<%= app_files.ctpl %>' ],
         dest: '<%= build_dir %>/templates-common.js'
@@ -378,7 +378,7 @@ module.exports = function ( grunt ) {
         dir: '<%= build_dir %>',
         src: [
           '<%= vendor_files.js %>',
-          '<%= build_dir %>/src/**/*.js',
+          '<%= build_dir %>/app/**/*.js',
           '<%= html2js.common.dest %>',
           '<%= html2js.app.dest %>',
           '<%= vendor_files.css %>',
@@ -478,7 +478,7 @@ module.exports = function ( grunt ) {
        */
       assets: {
         files: [ 
-          'src/assets/**/*'
+          'app/assets/**/*'
         ],
         tasks: [ 'copy:build_assets' ]
       },
@@ -506,7 +506,7 @@ module.exports = function ( grunt ) {
        * When the CSS files change, we need to compile and minify them.
        */
       less: {
-        files: [ 'src/**/*.less' ],
+        files: [ 'app/**/*.less' ],
         tasks: [ 'recess:build' ]
       },
 
@@ -570,7 +570,7 @@ module.exports = function ( grunt ) {
   grunt.registerTask( 'build-test', [
     'clean', 'html2js', 'recess:build',
     'concat:build_css', 'copy:build_app_assets', 'copy:build_vendor_assets',
-    'copy:build_appjs', 'copy:build_vendorjs', 'index:build',
+    'copy:build_appjs', 'copy:build_vendorjs', 'index:build'
   ]);
 
   /**
@@ -581,8 +581,12 @@ module.exports = function ( grunt ) {
     'recess:compile', 'copy:compile_assets', 'ngmin', 'concat:compile_js', 'uglify', 'index:compile'
   ]);*/
 
-   grunt.registerTask( 'compile-test', [
-    'recess:compile', 'copy:compile_assets', 'ngmin', 'concat:compile_js', 'uglify', 'index:compile'
+  grunt.registerTask( 'compile-test', [
+    'recess:compile', 'copy:compile_assets', 'concat:compile_js', 'index:compile'
+  ]);   
+
+  grunt.registerTask( 'clean-folder', [
+    'clean'
   ]);
 
   /**
