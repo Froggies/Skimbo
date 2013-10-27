@@ -5,18 +5,17 @@
   angular.module('publicApp').factory("Network", ["$http", "$timeout", "ServerCommunication", "$location", '$window',
     function($http, $timeout, $serverCommunication, $location, $window) {
 
-    var isSecure = $location.$$protocol === "https";
     var pageName = $location.path().split('/');
 
-    var wshost = jsRoutes.controllers.stream.WebSocket.connect().webSocketURL(isSecure);
+    var wshost = 'api/stream/webSocket';
 
     if(pageName !== undefined && pageName.length == 3) {
       wshost = wshost + "/" + pageName[2];
     }
 
-    var ssehost = jsRoutes.controllers.stream.Sse.connect().absoluteURL(isSecure);
-    var sseping = jsRoutes.controllers.stream.Sse.ping().absoluteURL(isSecure);
-    var longpolling = jsRoutes.controllers.stream.LongPolling.connect().absoluteURL(isSecure);
+    var ssehost = 'api/stream/sse'; 
+    var sseping =  'api/stream/ping';
+    var longpolling = 'api/stream/longpolling';
 
     var socket = undefined;//ws mode
     var source = undefined;//sse mode
