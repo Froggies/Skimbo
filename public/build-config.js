@@ -28,7 +28,8 @@ module.exports = {
     ctpl: [ 'common/**/*.html' ],
 
     html: [ 'app/demo.html' ],
-    less: 'app/stylesheets/logged.less'
+    less: 'app/stylesheets/logged.less',
+    less_login: 'app/stylesheets/login.less'
   },
 
   /**

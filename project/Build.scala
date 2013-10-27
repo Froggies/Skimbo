@@ -13,9 +13,7 @@ object ApplicationBuild extends Build {
 	)
 	
 	val main = play.Project(appName, appVersion, appDependencies).settings(
-       scalacOptions ++= Seq("-language:postfixOps", "-deprecation","-unchecked","-feature"),
-       requireJs += "main.js",
-       requireJs += "mockedMain.js"
+       scalacOptions ++= Seq("-language:postfixOps", "-deprecation","-unchecked","-feature")
    )
 	
 }

@@ -23,14 +23,16 @@ object Application extends Controller {
   
   def index = Action { implicit request =>
     session.get("id")
-      .map(_ => Ok(views.html.unified()))
+      .map(_ => Assets.at("public/build", "index.html").apply(request))
       .getOrElse(Ok(views.html.index(Service.list)))
   }
 
-  def mocked = Action { Ok(views.html.mockedUnified()) }
+  def mocked = Action { implicit request => 
+    Assets.at("public/build", "demo.html").apply(request) 
+  }
   
   def publicPage(namePage: String) = Action { implicit request =>
-    Ok(views.html.unified())
+    Assets.at("public/build", "demo.html").apply(request)
   }
 
   def authenticate(providerName: String) = Action { implicit request =>
@@ -53,19 +55,6 @@ object Application extends Controller {
   
   def closePopup() = Action {
     Ok(views.html.popupEndAuthentication())
-  }
-  
-  def jsRouter() = Action { implicit request =>
-    import routes.javascript._
-    import controllers.stream.javascript._
-
-    Ok(
-      Routes.javascriptRouter("jsRoutes")(
-       stream.routes.javascript.WebSocket.connect,
-       stream.routes.javascript.Sse.connect,
-       stream.routes.javascript.Sse.ping,
-       stream.routes.javascript.LongPolling.connect
-    )).as(JAVASCRIPT)
   }
   
   def downloadDistant = Action { implicit request =>

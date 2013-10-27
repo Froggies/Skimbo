@@ -254,9 +254,31 @@ module.exports = function ( grunt ) {
           zeroUnits: false
         }
       },
+      build_login: {
+        src: [ '<%= app_files.less_login %>' ],
+        dest: '<%= build_dir %>/assets/<%= pkg.name %>-login-<%= pkg.version %>.css',
+        options: {
+          compile: true,
+          compress: false,
+          noUnderscores: false,
+          noIDs: false,
+          zeroUnits: false
+        }
+      },
       compile: {
         src: [ '<%= recess.build.dest %>' ],
         dest: '<%= recess.build.dest %>',
+        options: {
+          compile: true,
+          compress: true,
+          noUnderscores: false,
+          noIDs: false,
+          zeroUnits: false
+        }
+      },
+      compile_login: {
+        src: [ '<%= recess.build_login.dest %>' ],
+        dest: '<%= recess.build_login.dest %>',
         options: {
           compile: true,
           compress: true,
@@ -363,7 +385,8 @@ module.exports = function ( grunt ) {
           '<%= html2js.common.dest %>',
           '<%= html2js.app.dest %>',
           '<%= vendor_files.css %>',
-          '<%= recess.build.dest %>'
+          '<%= recess.build.dest %>',
+          '<%= recess.build_login.dest %>'
         ]
       },
 
@@ -481,6 +504,13 @@ module.exports = function ( grunt ) {
         files: [ 'app/**/*.less' ],
         tasks: [ 'recess:build' ]
       },
+      /**
+       * When the CSS files change, we need to compile and minify them.
+       */
+      less_login: {
+        files: [ 'app/**/*.less' ],
+        tasks: [ 'recess:build_login' ]
+      },
 
       /**
        * When a JavaScript unit test file changes, we only want to lint it and
@@ -530,6 +560,7 @@ module.exports = function ( grunt ) {
     'clean', 
     'html2js', 
     'recess:build',
+    'recess:build_login',
     'concat:build_css', 
     'copy:build_app_assets', 
     'copy:build_vendor_assets',
@@ -544,6 +575,7 @@ module.exports = function ( grunt ) {
    */
   grunt.registerTask( 'compile', [
     'recess:compile', 
+    'recess:compile_login', 
     'copy:compile_assets', 
     'ngmin', 
     'concat:compile_js_demo', 
@@ -584,7 +616,7 @@ module.exports = function ( grunt ) {
    */
   function filterForCSS ( files ) {
     return files.filter( function ( file ) {
-      return file.match( /\.css$/ );
+      return !file.match( /.*-login-.*\.css$/ ) && !file.match( /\.js$/ );
     });
   }
 
