@@ -168,22 +168,42 @@ module.exports = function ( grunt ) {
         dest: '<%= recess.build.dest %>'
       },
       /**
-       * The `compile_js` target is the concatenation of our application source
-       * code and all specified vendor source code into a single file.
+       * The `compile_js_demo` target is the concatenation of our application source
+       * code and all specified vendor source code into a single file, for the demo.html
        */
-      compile_js: {
+      compile_js_demo: {
         options: {
           banner: '<%= meta.banner %>'
         },
         src: [ 
           '<%= vendor_files.js %>', 
-          'module.prefix', 
-          '<%= build_dir %>/app/javascripts/**/*.js', 
+          'module.prefix',
+          '<%= build_dir %>/app/javascripts/*.js',
+          '<%= build_dir %>/app/javascripts/**/!(nomocked)/*.js',    
           '<%= html2js.app.dest %>', 
           '<%= html2js.common.dest %>', 
           'module.suffix' 
         ],
-        dest: '<%= compile_dir %>/assets/<%= pkg.name %>-<%= pkg.version %>.js'
+        dest: '<%= compile_dir %>/assets/<%= pkg.name %>-<%= pkg.version %>-demo.js'
+      },
+      /**
+       * The `compile_js_demo` target is the concatenation of our application source
+       * code and all specified vendor source code into a single file, for the demo.html
+       */
+      compile_js_index: {
+        options: {
+          banner: '<%= meta.banner %>'
+        },
+        src: [ 
+          '<%= vendor_files.js %>', 
+          'module.prefix',
+          '<%= build_dir %>/app/javascripts/*.js',
+          '<%= build_dir %>/app/javascripts/**/!(mocked)/*.js',    
+          '<%= html2js.app.dest %>', 
+          '<%= html2js.common.dest %>', 
+          'module.suffix' 
+        ],
+        dest: '<%= compile_dir %>/assets/<%= pkg.name %>-<%= pkg.version %>-index.js'
       }
     },
 
@@ -233,7 +253,8 @@ module.exports = function ( grunt ) {
           banner: '<%= meta.banner %>'
         },
         files: {
-          '<%= concat.compile_js.dest %>': '<%= concat.compile_js.dest %>'
+          '<%= concat.compile_js_demo.dest %>': '<%= concat.compile_js_demo.dest %>',
+          '<%= concat.compile_js_index.dest %>': '<%= concat.compile_js_index.dest %>'
         }
       }
     },
@@ -378,7 +399,7 @@ module.exports = function ( grunt ) {
         dir: '<%= build_dir %>',
         src: [
           '<%= vendor_files.js %>',
-          '<%= build_dir %>/app/javascripts/**/*.js',
+          '<%= build_dir %>/app/javascripts/**/**/*.js',
           '<%= html2js.common.dest %>',
           '<%= html2js.app.dest %>',
           '<%= vendor_files.css %>',
@@ -394,11 +415,26 @@ module.exports = function ( grunt ) {
       compile: {
         dir: '<%= compile_dir %>',
         src: [
-          '<%= concat.compile_js.dest %>',
+          '<%= concat.compile_js_demo.dest %>',
+          '<%= concat.compile_js_index.dest %>',
           '<%= vendor_files.css %>',
           '<%= recess.compile.dest %>'
         ]
-      }
+      },
+
+      /**
+       * When it is time to have a completely compiled application, we can
+       * alter the above to include only a single JavaScript and a single CSS
+       * file. Now we're back!
+       */
+      /*compile_index: {
+        dir: '<%= compile_dir %>',
+        src: [
+          '<%= concat.compile_js_index.dest %>',
+          '<%= vendor_files.css %>',
+          '<%= recess.compile.dest %>'
+        ]
+      }*/
     },
 
     /**
@@ -568,26 +604,36 @@ module.exports = function ( grunt ) {
   ]);  */
 
   grunt.registerTask( 'build-test', [
-    'clean', 'html2js', 'recess:build',
-    'concat:build_css', 'copy:build_app_assets', 'copy:build_vendor_assets',
-    'copy:build_appjs', 'copy:build_vendorjs', 'index:build'
+    'clean', 
+    'html2js', 
+    'recess:build',
+    'concat:build_css', 
+    'copy:build_app_assets', 
+    'copy:build_vendor_assets',
+    'copy:build_appjs', 
+    'copy:build_vendorjs', 
+    'index:build'
   ]);
 
   /**
    * The `compile` task gets your app ready for deployment by concatenating and
    * minifying your code.
    */
-/*  grunt.registerTask( 'compile', [
-    'recess:compile', 'copy:compile_assets', 'ngmin', 'concat:compile_js', 'uglify', 'index:compile'
-  ]);*/
+  grunt.registerTask( 'compile', [
+    'recess:compile', 
+    'copy:compile_assets', 
+    'concat:compile_js_demo', 
+    'concat:compile_js_index', 
+    'index:compile'
+  ]);  
 
-  grunt.registerTask( 'compile-test', [
-    'recess:compile', 'copy:compile_assets', 'concat:compile_js', 'index:compile'
-  ]);   
-
-  grunt.registerTask( 'clean-folder', [
-    'clean'
-  ]);
+      /*'recess:compile', 
+    'copy:compile_assets', 
+    'ngmin',
+    'concat:compile_js_demo', 
+    'concat:compile_js_index', 
+    'uglify', 
+    'index:compile'*/ 
 
   /**
    * A utility function to get all app JavaScript sources.
@@ -603,7 +649,7 @@ module.exports = function ( grunt ) {
    */
   function filterJSFilesForDemo ( files ) {
     return files.filter( function ( file ) {
-      return !file.match( /.\/Network\.js$/ );
+      return !file.match( /\/nomocked\/.*\.js$/ ) && !file.match( /-index\.js$/ );
     });
   }
 
@@ -612,7 +658,7 @@ module.exports = function ( grunt ) {
    */
   function filterJSFilesForIndex ( files ) {
     return files.filter( function ( file ) {
-      return !file.match( /.\/MockedNetwork\.js$/ );
+      return !file.match( /\/mocked\/.*\.js$/ ) && !file.match( /-demo\.js$/ );
     });
   }
 
@@ -636,6 +682,9 @@ module.exports = function ( grunt ) {
     var jsFiles = filterForJS( this.filesSrc ).map( function ( file ) {
       return file.replace( dirRE, '' );
     });
+
+    grunt.log.write(dirRE);
+
     var jsFilesForDemo = filterJSFilesForDemo(jsFiles);
     var jsFilesForIndex = filterJSFilesForIndex(jsFiles);
 
