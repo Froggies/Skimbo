@@ -24,9 +24,6 @@ module.exports = {
     js: [ 'app/javascripts/*.js', 'app/javascripts/**/**/*.js', '!app/scripts/**/*.js','!app/**/*.spec.js', '!app/assets/**/*.js' ],
     jsunit: [ 'app/**/*.spec.js' ],
     
-    coffee: [ 'app/**/*.coffee', '!app/**/*.spec.coffee' ],
-    coffeeunit: [ 'app/**/*.spec.coffee' ],
-
     atpl: [ 'app/views/**/*.html' ],
     ctpl: [ 'common/**/*.html' ],
 
