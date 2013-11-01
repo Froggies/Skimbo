@@ -334,7 +334,7 @@ module.exports = function ( grunt ) {
           base: 'app'
         },
         src: [ '<%= app_files.atpl %>' ],
-        dest: '<%= build_dir %>/templates-app.js'
+        dest: '<%= build_dir %>/app/javascripts/templates-app.js'
       },
 
       /**
@@ -345,7 +345,7 @@ module.exports = function ( grunt ) {
           base: 'app/common'
         },
         src: [ '<%= app_files.ctpl %>' ],
-        dest: '<%= build_dir %>/templates-common.js'
+        dest: '<%= build_dir %>/app/javascripts/templates-common.js'
       }
     },
 
@@ -354,7 +354,7 @@ module.exports = function ( grunt ) {
      */
     karma: {
       options: {
-        configFile: '<%= build_dir %>/karma-unit.js'
+        configFile: '<%= build_dir %>/karma.conf.js'
       },
       unit: {
         runnerPort: 9101,
@@ -556,7 +556,7 @@ module.exports = function ( grunt ) {
     'karma:continuous' 
   ]);  */
 
-  grunt.registerTask( 'build-test', [
+  grunt.registerTask( 'build', [
     'clean', 
     'html2js', 
     'recess:build',
@@ -566,7 +566,9 @@ module.exports = function ( grunt ) {
     'copy:build_vendor_assets',
     'copy:build_appjs', 
     'copy:build_vendorjs', 
-    'index:build'
+    'index:build',
+    'karmaconfig',
+    'karma:continuous'
   ]);
 
   /**
@@ -590,6 +592,12 @@ module.exports = function ( grunt ) {
   function filterForJS ( files ) {
     return files.filter( function ( file ) {
       return file.match( /\.js$/ );
+    });
+  }
+
+  function filterForJSWithoutTestsFiles ( files ) {
+    return files.filter( function ( file ) {
+      return !file.match( /.*test\.js$/ );
     });
   }
 
@@ -617,6 +625,15 @@ module.exports = function ( grunt ) {
   function filterForCSS ( files ) {
     return files.filter( function ( file ) {
       return !file.match( /.*-login-.*\.css$/ ) && !file.match( /\.js$/ );
+    });
+  }
+
+  /**
+   * A utility function to get all app CSS sources.
+   */
+  function filterForTestFiles ( files ) {
+    return files.filter( function ( file ) {
+      return file.match( /.*.test\.js$/ );
     });
   }
 
@@ -671,11 +688,16 @@ module.exports = function ( grunt ) {
   grunt.registerMultiTask( 'karmaconfig', 'Process karma config templates', function () {
     var jsFiles = filterForJS( this.filesSrc );
     
-    grunt.file.copy( 'karma/karma-unit.tpl.js', grunt.config( 'build_dir' ) + '/karma-unit.js', { 
+    var testsFiles = filterForTestFiles(this.filesSrc).map(function(file) {
+        return "../" + file;
+    });
+
+    grunt.file.copy( 'karma.conf.tpl.js', grunt.config( 'build_dir' ) + '/karma.conf.js', { 
       process: function ( contents, path ) {
         return grunt.template.process( contents, {
           data: {
-            scripts: jsFiles
+            vendorsScripts: jsFiles,
+            testsScripts: testsFiles
           }
         });
       }

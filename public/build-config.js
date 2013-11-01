@@ -37,7 +37,7 @@ module.exports = {
    */
   test_files: {
     js: [
-      'vendor/angular-mocks/angular-mocks.js'
+      'test/**/*.js'
     ]
   },
 
@@ -62,6 +62,7 @@ module.exports = {
   vendor_files: {
     js: [
       'app/scripts/vendor/angular/angular.js',
+      'app/scripts/vendor/angular-mocks/angular-mocks.js',
       'app/scripts/vendor/angular-sanitize/angular-sanitize.js',
       'app/scripts/vendor/momentjs/moment.js',
       'app/scripts/vendor/momentjs/lang/fr.js',
